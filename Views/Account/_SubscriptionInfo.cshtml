@@ -15,7 +15,7 @@
 
 @foreach (var plans in Model)
 {
-    @Html.RadioButtonFor(model => model.rateID, plans.rateid)
+    @Html.RadioButtonFor(model => model.RateID, plans.rateid)
     @(" " + plans.RateDescr + " | " + plans.Type + " (" + plans.Market + ") [" + plans.ETerm + " " + plans.ETermUnit + "][" + plans.PrintTerm + " " + plans.PrintTermUnit + "] : $" + plans.Rate)
     <br />
 }

@@ -24,7 +24,7 @@ INSERT INTO [dbo].[subscriber]
 GO
 
 INSERT INTO [dbo].[subscriber_address]
-           ([subscriberID]
+           ([SubscriberID]
             ,[addressType]
            ,[emailAddress]
            ,[addressLine1]
@@ -33,7 +33,7 @@ INSERT INTO [dbo].[subscriber_address]
            ,[zipCode]
            ,[country]
            ,[createdAt])
-           (SELECT(SELECT subscriberID FROM [dbo].[subscriber] WHERE emailAddress = [email])
+           (SELECT(SELECT SubscriberID FROM [dbo].[subscriber] WHERE emailAddress = [email])
             ,'M'
 			,[email]
 			,CASE WHEN [address] IS NULL THEN 'N/A' ELSE SUBSTRING([address], 1, case when  CHARINDEX(',', [address] ) = 0 then 50 else CHARINDEX(',', [address]) -1 end) END AS Line1
@@ -50,7 +50,7 @@ INSERT INTO [dbo].[subscriber_address]
 GO
 
 INSERT INTO [dbo].[subscriber_tranx]
-           ([subscriberID]
+           ([SubscriberID]
            ,[emailAddress]
 		   ,[tranxAmount]
            ,[cardOwner]
@@ -61,7 +61,7 @@ INSERT INTO [dbo].[subscriber_tranx]
            ,[ipAddress])
      --VALUES
            (SELECT 
-		   (SELECT(SELECT top 1 subscriberID FROM [dbo].[subscriber] WHERE emailAddress = [email]))
+		   (SELECT(SELECT top 1 SubscriberID FROM [dbo].[subscriber] WHERE emailAddress = [email]))
 			  ,[email]
 			  ,[cardAmount]
 			  ,[cardOwnerName]
@@ -78,7 +78,7 @@ GO
 
 INSERT INTO [dbo].[subscriber_epaper]
 (
-      [subscriberID]
+      [SubscriberID]
       ,[emailAddress]
       ,[rateID]
       ,[startDate]
@@ -88,7 +88,7 @@ INSERT INTO [dbo].[subscriber_epaper]
       ,[createdAt]
 	  )
 
-SELECT(SELECT [subscriberID] FROM [dbo].[subscriber] WHERE [emailAddress] = [email])
+SELECT(SELECT [SubscriberID] FROM [dbo].[subscriber] WHERE [emailAddress] = [email])
        ,e.[email]
 	   ,CASE WHEN T.[rateID] IS NULL THEN 5 ELSE t.[rateID] END
       ,e.[subscriptionStart]
@@ -97,7 +97,7 @@ SELECT(SELECT [subscriberID] FROM [dbo].[subscriber] WHERE [emailAddress] = [ema
 	  ,t.[orderID]
       ,e.[transactionDate]
   FROM [dbo].[eusers] e
-   JOIN [dbo].[subscriber_tranx] t ON t.emailAddress = e.email
+   JOIN [dbo].[subscriber_tranx] t ON t.EmailAddress = e.email
   WHERE [subscriptionEnd] > GETDATE();
 
 GO

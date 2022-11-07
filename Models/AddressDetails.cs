@@ -13,30 +13,30 @@ namespace ePaperLive.Models
       
         [Display(Name = "Address Line 1")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Provide an address")]
-        public string addressLine1 { get; set; }
+        public string AddressLine1 { get; set; }
 
         [Display(Name = "Address Line 2")]
         //[Required(AllowEmptyStrings = false, ErrorMessage = "Email address is required")]
-        public string addressLine2 { get; set; }
+        public string AddressLine2 { get; set; }
 
         [Display(Name = "City/Town")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Enter a city or closest town")]
-        public string cityTown { get; set; }
+        public string CityTown { get; set; }
 
         [Display(Name = "State/Parish")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Enter a state or parish")]
-        public string stateParish { get; set; }
+        public string StateParish { get; set; }
         
         [Display(Name = "Zip")]
-        public string zipCode { get; set; }
+        public string ZipCode { get; set; }
 
         [Display(Name = "Country")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Please select a country")]
-        public string country { get; set; }
+        public string CountryCode { get; set; }
 
         [Display(Name = "Phone Number")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Please enter a valid phone number")]
-        public string phone { get; set; }
+        public string Phone { get; set; }
 
         
     }

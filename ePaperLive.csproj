@@ -221,42 +221,13 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ReaderController.cs" />
-    <Compile Include="DBModel\DBModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DBModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DBModel\DBModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DBModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DBModel\DBModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DBModel.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="DBModel\printandsubrate.cs">
-      <DependentUpon>DBModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DBModel\subscriber.cs">
-      <DependentUpon>DBModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DBModel\subscriber_address.cs">
-      <DependentUpon>DBModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DBModel\subscriber_epaper.cs">
-      <DependentUpon>DBModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DBModel\subscriber_print.cs">
-      <DependentUpon>DBModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DBModel\subscriber_roles.cs">
-      <DependentUpon>DBModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DBModel\subscriber_tranx.cs">
-      <DependentUpon>DBModel.tt</DependentUpon>
-    </Compile>
+    <Compile Include="DBModel\printandsubrate.cs" />
+    <Compile Include="DBModel\subscriber.cs" />
+    <Compile Include="DBModel\subscriber_address.cs" />
+    <Compile Include="DBModel\subscriber_epaper.cs" />
+    <Compile Include="DBModel\subscriber_print.cs" />
+    <Compile Include="DBModel\subscriber_roles.cs" />
+    <Compile Include="DBModel\subscriber_tranx.cs" />
     <Compile Include="Filters\BasicAuthenticationAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -391,16 +362,6 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
-    <Content Include="DBModel\DBModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>DBModel.edmx</DependentUpon>
-      <LastGenOutput>DBModel.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="DBModel\DBModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>DBModel.edmx</DependentUpon>
-      <LastGenOutput>DBModel.cs</LastGenOutput>
-    </Content>
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -435,13 +396,6 @@
     <Content Include="assets\vendor\boxicons\fonts\boxicons.woff2" />
     <Content Include="bin\FACGatewayService.dll.config" />
     <Content Include="bin\gateway_settings.json" />
-    <EntityDeploy Include="DBModel\DBModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>DBModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="DBModel\DBModel.edmx.diagram">
-      <DependentUpon>DBModel.edmx</DependentUpon>
-    </Content>
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />
