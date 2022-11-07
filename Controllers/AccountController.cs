@@ -481,7 +481,7 @@ namespace ePaperLive.Controllers
                             return View(data);
                         }
 
-                        subscriber obj = GetSubscriber();
+                        Subscriber obj = GetSubscriber();
                         obj.FirstName = data.FirstName;
                         obj.LastName = data.LastName;
                         obj.EmailAddress = data.EmailAddress;
@@ -524,7 +524,7 @@ namespace ePaperLive.Controllers
             {
                 try
                 {
-                    subscriber obj = GetSubscriber();
+                    Subscriber obj = GetSubscriber();
                     LoginDetails ld = new LoginDetails
                     {
                         FirstName = obj.FirstName,
@@ -548,7 +548,7 @@ namespace ePaperLive.Controllers
                 {
                     try
                     {
-                        subscriber objSub = GetSubscriber();
+                        Subscriber objSub = GetSubscriber();
                         subscriber_address objAdd = GetSubscriberAddress();
                         UserLocation objLoc = GetSubscriberLocation();
 
@@ -679,8 +679,8 @@ namespace ePaperLive.Controllers
 
                     try
                     {
-                        subscriber objSub = GetSubscriber();
-                        subscriber_epaper objEp = GetEpaperDetails();
+                        Subscriber objSub = GetSubscriber();
+                        Subscriber_Epaper objEp = GetEpaperDetails();
                         subscriber_print objPr = GetPrintDetails();
                         subscriber_tranx objTran = GetTransaction();
 
@@ -768,8 +768,8 @@ namespace ePaperLive.Controllers
                 try
                 {
                     ApplicationDbContext db = new ApplicationDbContext();
-                    subscriber objSub = GetSubscriber();
-                    subscriber_epaper objEp = GetEpaperDetails();
+                    Subscriber objSub = GetSubscriber();
+                    Subscriber_Epaper objEp = GetEpaperDetails();
                     subscriber_print objPr = GetPrintDetails();
                     UserLocation objLoc = GetSubscriberLocation();
                     var market = (objLoc.Country_Code == "JM") ? "Local" : "International";
@@ -804,9 +804,9 @@ namespace ePaperLive.Controllers
                     try
                     {
                         //get all session variables
-                        subscriber objSub = GetSubscriber();
+                        Subscriber objSub = GetSubscriber();
                         subscriber_address objAdd = GetSubscriberAddress();
-                        subscriber_epaper objE = GetEpaperDetails();
+                        Subscriber_Epaper objE = GetEpaperDetails();
                         subscriber_print objP = GetPrintDetails();
                         subscriber_tranx objTran = GetTransaction();
 
@@ -936,13 +936,13 @@ namespace ePaperLive.Controllers
 
         }
 
-        private subscriber GetSubscriber()
+        private Subscriber GetSubscriber()
         {
             if (Session["subscriber"] == null)
             {
-                Session["subscriber"] = new subscriber();
+                Session["subscriber"] = new Subscriber();
             }
-            return (subscriber)Session["subscriber"];
+            return (Subscriber)Session["subscriber"];
         }
 
         private subscriber_address GetSubscriberAddress()
@@ -963,13 +963,13 @@ namespace ePaperLive.Controllers
             return (subscriber_address)Session["subscriber_del_address"];
         }
 
-        private subscriber_epaper GetEpaperDetails()
+        private Subscriber_Epaper GetEpaperDetails()
         {
             if (Session["subscriber_epaper"] == null)
             {
-                Session["subscriber_epaper"] = new subscriber_epaper();
+                Session["subscriber_epaper"] = new Subscriber_Epaper();
             }
-            return (subscriber_epaper)Session["subscriber_epaper"];
+            return (Subscriber_Epaper)Session["subscriber_epaper"];
         }
 
         private subscriber_print GetPrintDetails()
