@@ -83,13 +83,13 @@ namespace ePaperLive.Controllers
             return (UserLocation)Session["subscriber_location"];
         }
 
-        private subscriber GetSubscriber()
+        private Subscriber GetSubscriber()
         {
             if (Session["subscriber"] == null)
             {
-                Session["subscriber"] = new subscriber();
+                Session["subscriber"] = new Subscriber();
             }
-            return (subscriber)Session["subscriber"];
+            return (Subscriber)Session["subscriber"];
         }
     }
 }
