@@ -2,9 +2,12 @@ namespace ePaperLive.DBModel
 {
     using System;
     using System.Collections.Generic;
-    
-    public partial class printandsubrate
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+
+    public class printandsubrate
     {
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Rateid { get; set; }
         public string Market { get; set; }
         public string Type { get; set; }

@@ -5,9 +5,11 @@ namespace ePaperLive.DBModel
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    public partial class subscriber_epaper
+    public class Subscriber_Epaper
     {
-        public int EpaperID { get; set; }
+        // This was changed  to follow convention and prevent errors
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Subscriber_EpaperID { get; set; }
         public int SubscriberID { get; set; }
         public string EmailAddress { get; set; }
         public int RateID { get; set; }
@@ -20,6 +22,6 @@ namespace ePaperLive.DBModel
 
         [ForeignKey("SubscriberID")]
         [Required]
-        public virtual subscriber Subscriber { get; set; }
+        public Subscriber Subscriber { get; set; }
     }
 }

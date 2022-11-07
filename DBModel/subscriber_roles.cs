@@ -3,17 +3,17 @@ namespace ePaperLive.DBModel
     using System;
     using System.Collections.Generic;
     
-    public partial class subscriber_roles
+    public class Subscriber_Roles
     {
-        public subscriber_roles()
+        public Subscriber_Roles()
         {
-            this.subscribers = new HashSet<subscriber>();
+            this.Subscribers = new List<Subscriber>();
         }
     
-        public int RoleID { get; set; }
+        public int Subscriber_RolesID { get; set; }
         public string RoleDescription { get; set; }
         public System.DateTime CreatedAt { get; set; }
     
-        public virtual ICollection<subscriber> subscribers { get; set; }
+        public virtual ICollection<Subscriber> Subscribers { get; set; }
     }
 }

@@ -6,20 +6,16 @@ namespace ePaperLive.DBModel
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    public partial class subscriber
+    public class Subscriber
     {
-        public subscriber()
+        public Subscriber()
         {
-            this.Subscriber_Epaper = new HashSet<subscriber_epaper>();
-            this.Subscriber_Print = new HashSet<subscriber_print>();
-            this.Subscriber_Tranx = new HashSet<subscriber_tranx>();
+            this.Subscriber_Epaper = new List<Subscriber_Epaper>();
+            this.Subscriber_Print = new List<Subscriber_Print>();
+            this.Subscriber_Tranx = new List<Subscriber_Tranx>();
         }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Index(IsUnique = true)]
-        public int Id { get; set; }
-
-        [Key, ForeignKey("ApplicationUser")]
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int SubscriberID { get; set; }
         public string EmailAddress { get; set; }
         public string FirstName { get; set; }
@@ -39,15 +35,14 @@ namespace ePaperLive.DBModel
         public Nullable<System.DateTime> LastLogin { get; set; }
 
         //Navigation properties
-        [ForeignKey("SubscriberID")]
-        [Required]
+        
         public ApplicationUser ApplicationUser { get; set; }
         //Navigation properties
-        [ForeignKey("AddressID")]
-        public virtual ICollection<subscriber_address> Subscriber_Address { get; set; }
-        public virtual ICollection<subscriber_epaper> Subscriber_Epaper { get; set; }
-        public virtual ICollection<subscriber_print> Subscriber_Print { get; set; }
-        public virtual subscriber_roles Subscriber_Roles { get; set; }
-        public virtual ICollection<subscriber_tranx> Subscriber_Tranx { get; set; }
+        
+        public virtual ICollection<Subscriber_Address> Subscriber_Address { get; set; }
+        public virtual ICollection<Subscriber_Epaper> Subscriber_Epaper { get; set; }
+        public virtual ICollection<Subscriber_Print> Subscriber_Print { get; set; }
+        public virtual Subscriber_Roles Subscriber_Roles { get; set; }
+        public virtual ICollection<Subscriber_Tranx> Subscriber_Tranx { get; set; }
     }
 }

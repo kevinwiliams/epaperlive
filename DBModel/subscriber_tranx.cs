@@ -5,9 +5,10 @@ namespace ePaperLive.DBModel
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    public partial class subscriber_tranx
+    public class Subscriber_Tranx
     {
-        public int TranxID { get; set; }
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Subscriber_TranxID { get; set; }
         public int SubscriberID { get; set; }
         public string EmailAddress { get; set; }
         public string CardOwner { get; set; }
@@ -24,6 +25,6 @@ namespace ePaperLive.DBModel
 
         [ForeignKey("SubscriberID")]
         [Required]
-        public virtual subscriber Subscriber { get; set; }
+        public virtual Subscriber Subscriber { get; set; }
     }
 }
