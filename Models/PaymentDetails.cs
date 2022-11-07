@@ -11,28 +11,28 @@ namespace ePaperLive.Models
         [Display(Name = "Name on Card")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Enter cardholder name")]
         [StringLength(50, MinimumLength = 5, ErrorMessage = "Must have a minimum length of 5.")]
-        public string cardOwner { get; set; }
+        public string CardOwner { get; set; }
 
         [Display(Name = "Type of Card")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Please select a card type")]
-        public string cardType { get; set; }
+        public string CardType { get; set; }
 
         [Display(Name = "Card Number")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Enter cardholder name")]
         [StringLength(16, MinimumLength = 16, ErrorMessage = "Please enter a valid card number")]
-        public string cardNumber { get; set; }
+        public string CardNumber { get; set; }
 
         [Display(Name = "CVV")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Please enter card CVV number")]
         [StringLength(4, MinimumLength = 3, ErrorMessage = "Please enter 3 digit CVV.")]
-        public string cardCVV { get; set; }
+        public string CardCVV { get; set; }
 
         [Display(Name = "Expiration Date")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Enter card expiration date")]
-        public string cardExp { get; set; }
+        public string CardExp { get; set; }
 
         [Required]
-        public int rateID;
+        public int RateID;
 
     }
 

@@ -32,7 +32,7 @@ GO
 
 
 CREATE TABLE [dbo].[subscriber](
-	[subscriberID] [int] IDENTITY(1,1) NOT NULL,
+	[SubscriberID] [int] IDENTITY(1,1) NOT NULL,
 	[emailAddress] [varchar](50) NOT NULL,
 	[firstName] [varchar](50) NOT NULL,
 	[lastName] [varchar](50) NOT NULL,
@@ -52,7 +52,7 @@ CREATE TABLE [dbo].[subscriber](
 	[lastLogin] [datetime] NULL,
  CONSTRAINT [PK_subscriber] PRIMARY KEY CLUSTERED 
 (
-	[subscriberID] ASC
+	[SubscriberID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
@@ -66,7 +66,7 @@ GO
 
 CREATE TABLE [dbo].[subscriber_address](
 	[addressID] [int] IDENTITY(1,1) NOT NULL,
-	[subscriberID] [int],
+	[SubscriberID] [int],
 	[addressType] [varchar](2) NULL,
 	[emailAddress] [varchar](50) NOT NULL,
 	[addressLine1] [varchar](100) NOT NULL,
@@ -93,7 +93,7 @@ GO
 
 CREATE TABLE [dbo].[subscriber_epaper](
 	[epaperID] [int] IDENTITY(1,1) NOT NULL,
-	[subscriberID] [int] NOT NULL,
+	[SubscriberID] [int] NOT NULL,
 	[emailAddress] [varchar](50) NOT NULL,
 	[token] [varchar](50) NULL,
 	[rateID] [int] NOT NULL,
@@ -120,7 +120,7 @@ GO
 
 CREATE TABLE [dbo].[subscriber_print](
 	[printID] [int] IDENTITY(1,1) NOT NULL,
-	[subscriberID] [int] NOT NULL,
+	[SubscriberID] [int] NOT NULL,
 	[emailAddress] [varchar](50) NOT NULL,
 	[rateID] [int] NOT NULL,
 	[addressID] [int] NOT NULL,
@@ -146,7 +146,7 @@ GO
 
 CREATE TABLE [dbo].[subscriber_tranx](
 	[tranxID] [int] IDENTITY(1,1) NOT NULL,
-	[subscriberID] [int] NULL,
+	[SubscriberID] [int] NULL,
 	[emailAddress] [varchar](50) NULL,
 	[cardOwner] [varchar](50) NULL,
 	[cardType] [varchar](20) NULL,
@@ -180,22 +180,22 @@ GO
 ALTER TABLE [dbo].[subscriber] CHECK CONSTRAINT [roles]
 GO
 
-ALTER TABLE [dbo].[subscriber_epaper]  WITH NOCHECK ADD  CONSTRAINT [epaper] FOREIGN KEY([subscriberID])
-REFERENCES [dbo].[subscriber] ([subscriberID])
+ALTER TABLE [dbo].[subscriber_epaper]  WITH NOCHECK ADD  CONSTRAINT [epaper] FOREIGN KEY([SubscriberID])
+REFERENCES [dbo].[subscriber] ([SubscriberID])
 GO
 
 ALTER TABLE [dbo].[subscriber_epaper] CHECK CONSTRAINT [epaper]
 GO
 
-ALTER TABLE [dbo].[subscriber_print]  WITH NOCHECK ADD  CONSTRAINT [print] FOREIGN KEY([subscriberID])
-REFERENCES [dbo].[subscriber] ([subscriberID])
+ALTER TABLE [dbo].[subscriber_print]  WITH NOCHECK ADD  CONSTRAINT [print] FOREIGN KEY([SubscriberID])
+REFERENCES [dbo].[subscriber] ([SubscriberID])
 GO
 
 ALTER TABLE [dbo].[subscriber_print] CHECK CONSTRAINT [print]
 GO
 
-ALTER TABLE [dbo].[subscriber_tranx]  WITH NOCHECK ADD  CONSTRAINT [tranx] FOREIGN KEY([subscriberID])
-REFERENCES [dbo].[subscriber] ([subscriberID])
+ALTER TABLE [dbo].[subscriber_tranx]  WITH NOCHECK ADD  CONSTRAINT [tranx] FOREIGN KEY([SubscriberID])
+REFERENCES [dbo].[subscriber] ([SubscriberID])
 GO
 
 ALTER TABLE [dbo].[subscriber_tranx] CHECK CONSTRAINT [tranx]

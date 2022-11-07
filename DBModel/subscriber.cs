@@ -10,9 +10,9 @@ namespace ePaperLive.DBModel
     {
         public subscriber()
         {
-            this.subscriber_epaper = new HashSet<subscriber_epaper>();
-            this.subscriber_print = new HashSet<subscriber_print>();
-            this.subscriber_tranx = new HashSet<subscriber_tranx>();
+            this.Subscriber_Epaper = new HashSet<subscriber_epaper>();
+            this.Subscriber_Print = new HashSet<subscriber_print>();
+            this.Subscriber_Tranx = new HashSet<subscriber_tranx>();
         }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -28,7 +28,7 @@ namespace ePaperLive.DBModel
         public string Secretquestion { get; set; }
         public string Secretans { get; set; }
         public string IpAddress { get; set; }
-        public bool isActive { get; set; }
+        public bool IsActive { get; set; }
         public Nullable<int> AddressID { get; set; }
         
         public Nullable<bool> Newsletter { get; set; }

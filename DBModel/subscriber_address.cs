@@ -8,7 +8,7 @@ namespace ePaperLive.DBModel
     public partial class subscriber_address
     {
           
-        public int addressID { get; set; }
+        public int AddressID { get; set; }
         public int SubscriberID { get; set; }
         public string AddressType { get; set; }
         public string EmailAddress { get; set; }

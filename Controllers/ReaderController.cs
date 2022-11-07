@@ -39,18 +39,18 @@ namespace ePaperLive.Controllers
                     // Convert any HTML markup in the status text.
                     reader.call = HttpUtility.HtmlEncode(reader.call);
 
-                    using (var context = new Entities())
+                    using (var context = new ApplicationDbContext())
                     {
 
                         /* var tableData = (from s in context.subscribers
-                                       join a in context.subscriber_address on s.addressID equals a.addressID
-                                       join e in context.subscriber_epaper on s.subscriberID equals e.subscriberID
+                                       join a in context.subscriber_address on s.AddressID equals a.AddressID
+                                       join e in context.subscriber_epaper on s.SubscriberID equals e.SubscriberID
                                        select new { subscriber = s, address = a, subscription = e});*/
 
                         //load data and join via foriegn keys
                         var tableData = context.subscribers
-                            .Include(x => x.subscriber_address)
-                            .Include(x => x.subscriber_epaper);
+                            .Include(x => x.Subscriber_Address)
+                            .Include(x => x.Subscriber_Epaper);
 
                         if (tableData != null)
                         {
@@ -60,19 +60,19 @@ namespace ePaperLive.Controllers
                                 case "authenticate":
                                     //encrypt password
                                     var password = PasswordHash(reader.password);
-                                    result = tableData.SingleOrDefault(b => b.emailAddress == reader.username && b.passwordHash == password && b.isActive == true);
+                                    result = tableData.SingleOrDefault(b => b.EmailAddress == reader.username /*&& b.passwordHash == password*/ && b.IsActive == true);
                                     //pass error values if query fails
                                     errCode = "03";
                                     errMsg = "Invalid credentials";
                                     break;
                                 case "get_user_by_userid":
-                                    result = tableData.SingleOrDefault(b => b.subscriberID == reader.userid && b.isActive == true);
+                                    result = tableData.SingleOrDefault(b => b.SubscriberID == reader.userid && b.IsActive == true);
                                     //pass error values if query fails
                                     errCode = "04";
                                     errMsg = "User not found";
                                     break;
                                 case "get_user_by_token":
-                                    result = tableData.SingleOrDefault(b => b.token == reader.token && b.isActive == true);
+                                    result = tableData.SingleOrDefault(b => b.Token == reader.token && b.IsActive == true);
                                     //pass error values if query fails
                                     errCode = "05";
                                     errMsg = "Invalid token";
@@ -86,9 +86,9 @@ namespace ePaperLive.Controllers
                         if (result != null)
                         {
                             //get active subscription
-                            if (result.subscriber_epaper != null)
+                            if (result.Subscriber_Epaper != null)
                             {
-                                if (result.subscriber_epaper.FirstOrDefault(x => x.isActive == true) != null)
+                                if (result.Subscriber_Epaper.FirstOrDefault(x => x.IsActive == true) != null)
                                     xml = MemberXML(mb, result);
                                 else
                                     xml = ErrorXML(errCode, errMsg);
@@ -123,7 +123,7 @@ namespace ePaperLive.Controllers
             {
            
                 DateTime today = DateTime.Now;
-                DateTime endDate = result.subscriber_epaper.FirstOrDefault(x => x.isActive == true).endDate;
+                DateTime endDate = result.Subscriber_Epaper.FirstOrDefault(x => x.IsActive == true).EndDate;
 
                 TimeSpan t = endDate - today;
                 double daysLeft = t.TotalDays;
@@ -132,26 +132,26 @@ namespace ePaperLive.Controllers
                 //set subscription code is epaper valid
                 if (daysLeft > 1)
                 {
-                    mb.userID = result.subscriberID;
-                    mb.email = result.emailAddress;
-                    mb.loginName = result.emailAddress;
-                    mb.firstname = result.firstName;
-                    mb.lastname = result.lastName;
-                    mb.homeareacode = result.phoneNumber;
-                    mb.homephone = result.phoneNumber;
+                    mb.userID = result.SubscriberID;
+                    mb.email = result.EmailAddress;
+                    mb.loginName = result.EmailAddress;
+                    mb.firstname = result.FirstName;
+                    mb.lastname = result.LastName;
+                    mb.homeareacode = String.Empty;
+                    mb.homephone = String.Empty;
                     mb.workareacode = String.Empty;
                     mb.workphone = String.Empty;
-                    mb.address = result.subscriber_address.addressLine1;
-                    mb.apartment = result.subscriber_address.addressLine2;
-                    mb.city = result.subscriber_address.cityTown;
-                    mb.province = result.subscriber_address.stateParish;
-                    mb.postalcode = result.subscriber_address.zipCode;
-                    mb.country = result.subscriber_address.country;
+                    mb.address = result.Subscriber_Address.FirstOrDefault(x => x.AddressType == "M").AddressLine1;
+                    mb.apartment = result.Subscriber_Address.FirstOrDefault(x => x.AddressType == "M").AddressLine2;
+                    mb.city = result.Subscriber_Address.FirstOrDefault(x => x.AddressType == "M").CityTown;
+                    mb.province = result.Subscriber_Address.FirstOrDefault(x => x.AddressType == "M").StateParish;
+                    mb.postalcode = result.Subscriber_Address.FirstOrDefault(x => x.AddressType == "M").ZipCode;
+                    mb.country = result.Subscriber_Address.FirstOrDefault(x => x.AddressType == "M").CountryCode;
                     mb.gender = String.Empty;
                     mb.nickname = String.Empty;
                     mb.subscription = subscriptionCode;
                     //change date format to YYYY-MM-DD
-                    var dateTime = result.subscriber_epaper.FirstOrDefault(x => x.isActive == true).endDate.ToString();
+                    var dateTime = result.Subscriber_Epaper.FirstOrDefault(x => x.IsActive == true).EndDate.ToString();
                     DateTime dt = DateTime.ParseExact(dateTime, "d/M/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
                     mb.expiration = dt.ToString("yyyy-MM-dd");
                 }

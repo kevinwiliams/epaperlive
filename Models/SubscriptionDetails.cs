@@ -11,21 +11,21 @@ namespace ePaperLive.Models
     {
         [Required(AllowEmptyStrings = false, ErrorMessage = "Please select a plan to proceed")]
         [Key]
-        public int rateID { get; set; }
-        public string subType { get; set; }
+        public int RateID { get; set; }
+        public string SubType { get; set; }
 
         [Display(Name = "Subscription Start Date")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Please select a start date")]
         [DataType(DataType.Date)]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
-        public DateTime startDate { get; set; }
-        public DateTime endDate { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
 
         [Display(Name = "Email address for promotions and updates")]
-        public string notificationEmail { get; set; }
+        public string NotificationEmail { get; set; }
 
         [Display(Name = "Special delivery instructions")]
-        public string deliveryInstructions { get; set; }
+        public string DeliveryInstructions { get; set; }
 
         [Display(Name = "Newsletter")]
         public bool newsletterSignUp { get; set; }
@@ -35,12 +35,12 @@ namespace ePaperLive.Models
         //[Range(typeof(bool), "true", "true", ErrorMessage = "Please select terms and conditions")]
         [MustBeTrue(ErrorMessage = "Please select terms and conditions!")]
         [Required(ErrorMessage = "Please select terms and conditions")]
-        public bool termsAndCon { get; set; }
+        public bool TermsAndCon { get; set; }
 
         public IEnumerable<printandsubrate> RatesList { get; set; }
 
         [Display(Name = "Same as mailing address?")]
-        public bool sameAsMailing { get; set; }
+        public bool SameAsMailing { get; set; }
 
         public AddressDetails deliveryAddress { get; set; }
 
