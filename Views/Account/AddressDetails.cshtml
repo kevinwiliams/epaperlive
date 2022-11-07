@@ -1,0 +1,152 @@
+﻿@model ePaperLive.Models.AddressDetails
+
+@{
+    ViewBag.Title = "AddressDetails";
+}
+
+    <main id="main">
+
+        <!-- ======= Breadcrumbs ======= -->
+        <section id="breadcrumbs" class="breadcrumbs">
+            <div class="container">
+
+                <ol>
+                    <li><a href="@Url.Action("index", "home")">Home</a></li>
+                    <li>@ViewData["Title"]</li>
+                </ol>
+                <h2>@ViewData["Title"]</h2>
+
+            </div>
+        </section><!-- End Breadcrumbs -->
+        <!-- ======= Wizard Breadcrumbs ======= -->
+        <div class="container form-header d-flex mb-4 mt-4">
+            <span class="stepIndicator active">Login Details</span>
+            <span class="stepIndicator active">Mailing Address</span>
+            <span class="stepIndicator">Subscription</span>
+            <span class="stepIndicator">Payment</span>
+        </div><!-- End Wizard Breadcrumbs -->
+        <!-- ======= Wizard Section ======= -->
+        <section id="portfolio-details" class="portfolio-details">
+            <div class="container">
+
+                <div class="row gy-4">
+                    <div class="col-lg-8">
+                        <!-- start:wizrd -->
+                        @using (Html.BeginForm("AddressDetails", "Account", FormMethod.Post, new { @class = "row g-3 needs-validation", novalidate = "novalidate" }))
+                        {
+                            @Html.AntiForgeryToken()
+
+                        <div class="row form-horizontal">
+                            <h4>AddressDetails</h4>
+                            <hr />
+                            @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                            <div class="form-group p-2">
+                                @*@Html.LabelFor(model => model.addressLine1, htmlAttributes: new { @class = "control-label" })*@
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.addressLine1, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.addressLine1) } })
+                                    @*@Html.ValidationMessageFor(model => model.addressLine1, "", new { @class = "text-danger" })*@
+                                </div>
+                            </div>
+
+                            <div class="form-group p-2">
+                                @*@Html.LabelFor(model => model.addressLine2, htmlAttributes: new { @class = "control-label" })*@
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.addressLine2, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.addressLine2) } })
+                                    @*@Html.ValidationMessageFor(model => model.addressLine2, "", new { @class = "text-danger" })*@
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group p-2">
+                                    @*@Html.LabelFor(model => model.cityTown, htmlAttributes: new { @class = "control-label " })*@
+                                    <div class="col-md-10">
+                                        @Html.EditorFor(model => model.cityTown, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.cityTown) } })
+                                        @*@Html.ValidationMessageFor(model => model.cityTown, "", new { @class = "text-danger" })*@
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group p-2">
+                                    @*@Html.LabelFor(model => model.stateParish, htmlAttributes: new { @class = "control-label " })*@
+                                    <div class="col-md-10">
+                                        @Html.EditorFor(model => model.stateParish, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.stateParish) } })
+                                        @*@Html.ValidationMessageFor(model => model.stateParish, "", new { @class = "text-danger" })*@
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-5">
+                                <div class="form-group p-2">
+                                    @*@Html.LabelFor(model => model.zipCode, htmlAttributes: new { @class = "control-label " })*@
+                                    <div class="col-md-10">
+                                        @Html.EditorFor(model => model.zipCode, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.zipCode) } })
+                                        @*@Html.ValidationMessageFor(model => model.zipCode, "", new { @class = "text-danger" })*@
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group p-2">
+                                    @*@Html.LabelFor(model => model.country, htmlAttributes: new { @class = "control-label " })*@
+                                    <div class="col-md-10">
+                                        @Html.EditorFor(model => model.country, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.country) } })
+                                        @*@Html.ValidationMessageFor(model => model.country, "", new { @class = "text-danger" })*@
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group p-3">
+                                @*@Html.LabelFor(model => model.phone, htmlAttributes: new { @class = "control-label " })*@
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.phone, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.phone) } })
+                                    @*@Html.ValidationMessageFor(model => model.phone, "", new { @class = "text-danger" })*@
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-12 pt-3">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <input type="submit" value="Prev" name="prevBtn" class="btn btn-sign-in bx-pull-left" />
+                                        </div>
+                                        <div class="col-6">
+                                            <input type="submit" value="Next" name="nextBtn" class="btn btn-sign-in bx-pull-right" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                        <!-- end:wizrd -->
+                    </div>
+                    <div class="col-lg-4">
+                        @Html.Partial("_SubcriptionSummary")
+                    </div>
+
+
+                </div>
+
+            </div>
+        </section><!-- End Wizard Section -->
+
+    </main><!-- End #main -->
+    <script>
+        // Example starter JavaScript for disabling form submissions if there are invalid fields
+        (() => {
+            'use strict'
+
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            const forms = document.querySelectorAll('.needs-validation')
+
+            // Loop over them and prevent submission
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })();
+
+    </script>

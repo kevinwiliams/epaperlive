@@ -1,0 +1,70 @@
+﻿
+@{
+    ViewBag.Title = "Dashboard";
+}
+
+<main id="main">
+
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+        <div class="container">
+
+            <ol>
+                <li><a href="@Url.Action("index", "home")">Home</a></li>
+                <li>@ViewData["Title"]</li>
+            </ol>
+            <h2>Welcome, @Session["name"].ToString()</h2>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+    <!-- ======= Wizard Section ======= -->
+    <section id="portfolio-details" class="portfolio-details">
+        <div class="container">
+
+            <div class="row gy-4">
+                <div class="col-lg-8">
+                    <!-- left-col -->
+                    
+                    <div class="row">
+                        <h5>Today's Paper</h5>
+                        <div class="col-lg-4 hero-img" data-aos="fade-right">
+                            <!-- Press Reader Front Page -->
+                            <a href="@Url.Action("ReadPaper", "Account")">
+                                <img src="https://i.prcdn.co/img?cid=9IJ5&page=1&height=300" class="img-fluid" alt="" style="border: 2px solid red;">
+                            </a>
+                        </div>
+                        <div class="col-lg-8">
+                            <p>Click the front page to read your ePaper or click here</p>
+
+                        </div>
+                    </div>
+                    
+
+
+
+
+                    <!-- end:left-col -->
+                </div>
+                <div class="col-lg-4">
+                    <div class="portfolio-info">
+                        <h3>Active Subscription</h3>
+                        <ul>
+                            <li><strong>Plan</strong>: 1 Month (30 Days) - Free</li>
+                            <li><strong>Client</strong>: ASU Company</li>
+                            <li><strong>Project date</strong>: 01 March, 2020</li>
+                       
+                        </ul>
+                    </div>
+                   
+                </div>
+
+
+
+
+
+            </div>
+
+        </div>
+    </section><!-- End Wizard Section -->
+
+</main><!-- End #main -->

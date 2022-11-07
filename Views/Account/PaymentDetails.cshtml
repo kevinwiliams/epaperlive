@@ -1,0 +1,148 @@
+﻿@model ePaperLive.Models.PaymentDetails
+
+@{
+    ViewBag.Title = "PaymentDetails";
+}
+    <main id="main">
+
+        <!-- ======= Breadcrumbs ======= -->
+        <section id="breadcrumbs" class="breadcrumbs">
+            <div class="container">
+
+                <ol>
+                    <li><a href="@Url.Action("index", "home")">Home</a></li>
+                    <li>@ViewData["Title"]</li>
+                </ol>
+                <h2>@ViewData["Title"]</h2>
+
+            </div>
+        </section><!-- End Breadcrumbs -->
+        <!-- ======= Wizard Breadcrumbs ======= -->
+        <div class="container form-header d-flex mb-4 mt-4">
+            <span class="stepIndicator active">Login Details</span>
+            <span class="stepIndicator active">Mailing Address</span>
+            <span class="stepIndicator active">Subscription</span>
+            <span class="stepIndicator active">Payment</span>
+        </div><!-- End Wizard Breadcrumbs -->
+        <!-- ======= Wizard Section ======= -->
+        <section id="portfolio-details" class="portfolio-details">
+            <div class="container">
+
+                <div class="row gy-4">
+                    <div class="col-lg-8">
+                        <!-- start:wizrd -->
+                        @using (Html.BeginForm("PaymentDetails", "Account", FormMethod.Post, new { @class = "row g-3 needs-validation", novalidate = "novalidate" }))
+                        {
+                            @Html.AntiForgeryToken()
+
+                        <div class="form-horizontal">
+                            <h4>PaymentDetails</h4>
+                            <hr />
+                            @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.rateID, htmlAttributes: new { @class = "control-label " })
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.rateID, new { htmlAttributes = new { @class = "form-control", @readonly="readonly" } })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.cardType, htmlAttributes: new { @class = "control-label " }) <br />
+                                @foreach (var method in @ePaperLive.Util.GetEnumSelectList<ePaperLive.Models.PaymentMethod>())
+                                {
+                                    <div class="form-check form-check-inline">
+                                        @Html.RadioButtonFor(model => model.cardType, method.Text, new { @class = "form-check-input", @required = "required" })
+                                        @Html.LabelFor(model => model.cardType, method.Text, htmlAttributes: new { @class = "form-check-label " })
+                                    </div>
+
+                                }
+                                @Html.HiddenFor(m => m.cardType)
+
+                            </div>
+                            <div class="form-group p-2">
+                                @*@Html.LabelFor(model => model.cardOwner, htmlAttributes: new { @class = "control-label " })*@
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.cardOwner, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.cardOwner) } })
+                                </div>
+                            </div>
+                            <div class="form-group p-2">
+                                @*@Html.LabelFor(model => model.cardNumber, htmlAttributes: new { @class = "control-label " })*@
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.cardNumber, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.cardNumber) } })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10 pt-3">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            @*@Html.LabelFor(model => model.cardExp, htmlAttributes: new { @class = "control-label " })*@
+                                            <div class="col-md-10">
+                                                @Html.EditorFor(model => model.cardExp, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.cardExp) } })
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            @*@Html.LabelFor(model => model.cardCVV, htmlAttributes: new { @class = "control-label " })*@
+                                            <div class="col-md-10">
+                                                @Html.EditorFor(model => model.cardCVV, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.cardCVV) } })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10 pt-3">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <input type="submit" value="Prev" name="prevBtn" class="btn btn-sign-in bx-pull-left" />
+                                        </div>
+                                        <div class="col-6">
+                                            <input type="submit" value="Pay Now" name="nextBtn" class="btn btn-sign-in bx-pull-right" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                        <!-- end:wizrd -->
+                    </div>
+                    <div class="col-lg-4">
+                        @Html.Partial("_SubcriptionSummary")
+                    </div>
+
+
+
+
+
+                </div>
+
+            </div>
+        </section><!-- End Wizard Section -->
+
+    </main><!-- End #main -->
+
+    <script>
+        // Example starter JavaScript for disabling form submissions if there are invalid fields
+        (() => {
+            'use strict'
+
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            const forms = document.querySelectorAll('.needs-validation')
+
+            // Loop over them and prevent submission
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })();
+
+    </script>

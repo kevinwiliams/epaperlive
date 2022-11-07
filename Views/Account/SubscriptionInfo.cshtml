@@ -1,0 +1,177 @@
+﻿@model ePaperLive.Models.SubscriptionDetails
+
+@{
+    ViewBag.Title = "SubscriptionInfo";
+}
+
+    <main id="main">
+
+        <!-- ======= Breadcrumbs ======= -->
+        <section id="breadcrumbs" class="breadcrumbs">
+            <div class="container">
+
+                <ol>
+                    <li><a href="@Url.Action("index", "home")">Home</a></li>
+                    <li>@ViewData["Title"]</li>
+                </ol>
+                <h2>@ViewData["Title"]</h2>
+
+            </div>
+        </section><!-- End Breadcrumbs -->
+        <!-- ======= Wizard Breadcrumbs ======= -->
+        <div class="container form-header d-flex mb-4 mt-4">
+            <span class="stepIndicator active">Login Details</span>
+            <span class="stepIndicator active">Mailing Address</span>
+            <span class="stepIndicator active">Subscription</span>
+            <span class="stepIndicator">Payment</span>
+        </div><!-- End Wizard Breadcrumbs -->
+        <!-- ======= Wizard Section ======= -->
+        <section id="portfolio-details" class="portfolio-details">
+            <div class="container">
+
+                <div class="row gy-4">
+                    <div class="col-lg-8">
+                        
+                        <!-- start:wizrd -->
+                        @using (Html.BeginForm("SubscriptionInfo", "Account", FormMethod.Post, new { @class = "row g-3 needs-validation", novalidate = "novalidate" }))
+                        {
+                            @Html.AntiForgeryToken()
+
+                        <div class="form-horizontal">
+                            <h4>SubscriptionDetails</h4>
+                            <hr />
+                            @*@Html.Partial("_Rates", Model)*@
+
+                            @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+                            <div id="search-form">
+                                @Html.Partial("_RatesFormPartial")
+                               @* @Html.Action("GetRatesList", "Account")*@
+                            </div>
+                            <div class="container pb-3" id="rates-results"></div>
+
+                            <script>
+                            const ratesList = [@(Html.Raw(Json.Encode(this.Model.RatesList)))];
+
+                            var epaperList = filterByProperty(ratesList, "Type", "Epaper");
+                            var printList = filterByProperty(ratesList, "Type", "Print");
+                            var bundleList = filterByProperty(ratesList, "Type", "Bundle");
+                            console.log(epaperList);
+                            //$("$ratesList").val(stringList);
+                            function filterByProperty(array, prop, value)
+                    {
+                                    var filtered = [];
+                                    for (var i = 0; i < array.length; i++)
+                        {
+
+                                        var obj = array[i];
+
+                                        for(var key in obj)
+                            {
+                                            if (typeof(obj[key] == "object")){
+                                                var item = obj[key];
+                                                if (item[prop] == value)
+                            {
+                                                    filtered.push(item);
+                                                }
+                                            }
+                                        }
+
+                                    }
+
+                                    return filtered;
+
+                                }
+
+
+                            </script>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.subType, htmlAttributes: new { @class = "control-label " })
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.subType, new { htmlAttributes = new { @class = "form-control" } })
+                        @*@Html.ValidationMessageFor(model => model.subType, "", new { @class = "text-danger" })*@
+                        </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.startDate, htmlAttributes: new { @class = "control-label " })
+                                    <div class="col-md-10">
+                                        @Html.EditorFor(model => model.startDate, "", new
+                                        {
+                                            htmlAttributes = new
+                                            {
+                                                @class = "form-control",
+                                                maxlength = 10
+                                            }
+                                        })
+
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.notificationEmail, htmlAttributes: new { @class = "control-label " })
+                                    <div class="col-md-10">
+                                        @Html.EditorFor(model => model.notificationEmail, new { htmlAttributes = new { @class = "form-control" } })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.deliveryInstructions, htmlAttributes: new { @class = "control-label " })
+                                    <div class="col-md-10">
+                                        @Html.EditorFor(model => model.deliveryInstructions, new { htmlAttributes = new { @class = "form-control" } })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+
+                                    <div class="col-md-10 p-3">
+                                        <div class="form-check">
+                                            @Html.EditorFor(model => model.newsletterSignUp, new { htmlAttributes = new { @class = "form-check-input" } })
+                                            @Html.LabelFor(model => model.newsletterSignUp, htmlAttributes: new { @class = "form-check-label" })
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-md-10 p-3">
+                                        <div class="form-check">
+                                            @Html.EditorFor(model => model.termsAndCon, new { htmlAttributes = new { @class = "form-check-input", @required = "required" } })
+                                            @Html.LabelFor(model => model.termsAndCon, htmlAttributes: new { @class = "form-check-label" })<br />
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                                <div class="form-group">
+                                    <div class="col-md-offset-2 col-md-10 pt-3">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <input type="submit" value="Prev" name="prevBtn" class="btn btn-sign-in bx-pull-left" />
+                                            </div>
+                                            <div class="col-6">
+                                                <input type="submit" value="Next" name="nextBtn" class="btn btn-sign-in bx-pull-right" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <!-- end:wizrd -->
+                    </div>
+                    <div class="col-lg-4">
+                        @Html.Partial("_SubcriptionSummary")
+                    </div>
+
+
+
+
+
+                </div>
+
+            </div>
+        </section><!-- End Wizard Section -->
+
+    </main><!-- End #main -->
+  

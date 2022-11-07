@@ -1,0 +1,40 @@
+﻿{
+  "gateway_publisher_pass": "Testncb123",
+  "gateway_publisher_url": "https://pay2.plugnpay.com/payment/pnpremote.cgi",
+  "gateway_publisher_name": "demo",
+  "gateway_publisher_email": "ecommerce_test@jamaicaobserver.com",
+  "centinel_message_version": "1.7",
+  "centinel_processor_id": "275",
+  "centinel_merchant_id": "601101900000039",
+  "centinel_transaction_password": "changeit",
+  "centinel_transaction_url": "https://centineltest.cardinalcommerce.com/MAPS/txns.asp",
+  "centinel_timeout": "10000",
+  "centinel_term_url": "http://localhost/Standard3DS/ccAuthenticate.aspx",
+  "centinel_dns_ttl": "1000"
+}
+
+
+
+/*
+  Amounts for Credit Card Transactions - Testing Environment
+  Determines is the value being sent to the gateway is over-ridden
+      Successful Orders - amount less than 1000
+      Failed Orders - amount over 1000
+      
+      For Testing Only
+        * yes - override amount sent to gateway with Override_PaymentAmount
+        * no - passes amount to gateway (for production)
+
+  "gateway_publisher_pass": "55pnpdemo55",
+  "gateway_publisher_url": "https://pay2.plugnpay.com/payment/pnpremote.cgi",
+  "gateway_publisher_name": "pnpdemo2",
+  "gateway_publisher_email": "payments@jamaicaobserver.com",
+  "centinel_message_version": "1.7",
+  "centinel_processor_id": "275",
+  "centinel_merchant_id": "601101900000039",
+  "centinel_transaction_password": "changeit",
+  "centinel_transaction_url": "https://centineltest.cardinalcommerce.com/MAPS/txns.asp",
+  "centinel_timeout": "10000",
+  "centinel_term_url": "http://localhost/Standard3DS/ccAuthenticate.aspx",
+  "centinel_dns_ttl": "1000"
+*/

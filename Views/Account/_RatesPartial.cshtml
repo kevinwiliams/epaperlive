@@ -1,0 +1,19 @@
+﻿@model ePaperLive.Models.PrintSubRates
+
+@if (Model.Rates == null)
+{
+    <h3 class="text-error">No items matched your search query!</h3>
+}
+else
+{
+    foreach (var plans in Model.Rates)
+    {
+
+        @Html.RadioButton("rateID", plans.rateid, htmlAttributes: new { @checked ="checked" })
+        @(" " + plans.RateDescr + " | " + plans.Type + " (" + plans.Market + ") [" + plans.ETerm + " " + plans.ETermUnit + "][" + plans.PrintTerm + " " + plans.PrintTermUnit + "] : $" + plans.Rate)
+        <br />
+
+
+    }
+}
+

@@ -1,0 +1,258 @@
+﻿@{ ViewBag.Title = "Home Page"; }
+
+
+<!-- ======= Hero Section ======= -->
+<section id="hero">
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 pt-5 pt-lg-0 order-2 order-lg-1 d-flex flex-column justify-content-center" data-aos="fade-up">
+                <div>
+                    <h1>The Paper at your doorstep or on the GO!</h1>
+                    <h2>
+                        Subscribe to the Jamaica Observer digital replica of the printed newspaper or have it delivered nationwide* directly at your doorstep.
+                    </h2>
+                    <a href="@Url.Action("Subscribe", "Account")" class="btn-get-started scrollto">Subscribe Now</a>
+                    @*<a href="#about" class="btn-get-started scrollto">Sign In</a>*@
+                </div>
+            </div>
+            <div class="col-lg-6 order-1 order-lg-2 hero-img" data-aos="fade-left">
+                <!-- Press Reader Front Page -->
+                <img src="https://i.prcdn.co/img?cid=9IJ5&page=1&height=450" class="img-fluid" alt="" style="border: 2px solid red;">
+            </div>
+        </div>
+    </div>
+
+</section>
+<!-- End Hero -->
+<!-- ======= Pricing Section ======= -->
+<section id="pricing" class="pricing section-bg">
+    <div class="container">
+
+        <div class="section-title" data-aos="fade-up">
+            <h2>Subscription Packages</h2>
+            <p>Subscribe to trusted, insightful journalism and enjoy unlimited access online or offline</p>
+        </div>
+
+        <div class="row">
+
+            <div class="col-lg-3 col-md-6">
+                <div class="box" data-aos="zoom-in">
+                    <h3>ePaper</h3>
+                    <h4><sup>$</sup>15<span> / month</span></h4>
+                    <ul>
+                        <li>30 days unlimited access</li>
+                        <li>Read offline</li>
+                        <li>Save articles</li>
+                        <li>Latest news after publication</li>
+                        <li class="na">Massa ultricies mi</li>
+                    </ul>
+                    <div class="btn-wrap">
+                        <a href="@Url.Action("Subscribe", "Account")" class="btn-buy">Subscribe</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mt-4 mt-md-0">
+                <div class="box featured" data-aos="zoom-in" data-aos-delay="100">
+                    <h3>ePaper</h3>
+                    <h4><sup>$</sup>40<span> / quarter</span></h4>
+                    <ul>
+                        <li>90 days unlimited access</li>
+                        <li>Read offline</li>
+                        <li>Save articles</li>
+                        <li>Latest news after publication</li>
+                        <li class="na">Massa ultricies mi</li>
+                    </ul>
+                    <div class="btn-wrap">
+                        <a href="@Url.Action("Subscribe", "Account")" class="btn-buy">Subscribe</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mt-4 mt-lg-0">
+                <div class="box" data-aos="zoom-in" data-aos-delay="200">
+                    <h3>Print Delivery</h3>
+                    <h4><sup>$</sup>32<span> / 2 months</span></h4>
+                    <ul>
+                        <li><strong>Delivery Frequency</strong></li>
+                        <li>S <span style="color:forestgreen">M T W T F</span> S</li>
+                        <li>Nulla at volutpat dola</li>
+                        <li>Pharetra massa</li>
+                        <li>Massa ultricies mi</li>
+                    </ul>
+                    <div class="btn-wrap">
+                        <a href="@Url.Action("Subscribe", "Account")" class="btn-buy">Subscribe</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mt-4 mt-lg-0">
+                <div class="box" data-aos="zoom-in" data-aos-delay="300">
+                    <span class="advanced">Best Deal</span>
+                    <h3>Print/ePaper Bundle</h3>
+                    <h4><sup>$</sup>180<span> / year</span></h4>
+                    <ul>
+                        <li>360 Days ePaper access</li>
+                        <li>Nec feugiat nisl</li>
+                        <li><strong>Delivery Frequency</strong></li>
+                        <li><span style="color:forestgreen">S M T W T F S</span></li>
+                        <li>Massa ultricies mi</li>
+                    </ul>
+                    <div class="btn-wrap">
+                        <a href="@Url.Action("Subscribe", "Account")" class="btn-buy">Subscribe</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+<!-- End Pricing Section -->
+<!-- ======= Cta Section ======= -->
+<section id="cta" class="cta">
+    <div class="container">
+
+        <div class="row" data-aos="zoom-in">
+            <div class="col-lg-9 text-center text-lg-start">
+                <h3>Download App</h3>
+                <p> Read stories in your news feed on one device and pick up where you left off on another. Subscribe and authorize your devices with one account. Apps are available for iOS and Android devices</p>
+                <p>First time users get to enjoy one month <strong>FREE</strong> access</p>
+                <br>
+                <a href="#"><img src="@Url.Content("~/assets/img/appstore-google.png")" alt="" class="img-fluid" width="150" data-aos="zoom-in"></a>
+                <a href="#"><img src="@Url.Content("~/assets/img/appstore-apple.png")" alt="" class="img-fluid" width="150" data-aos="zoom-in"></a>
+
+            </div>
+            <div class="col-lg-3 cta-btn-container text-center">
+                @*<a class="cta-btn align-middle" href="#">Download</a>*@
+                <a href="/"><img src="@Url.Content("~/assets/img/epaper-jol-logo.png")" alt="" class="img-fluid"></a>
+
+            </div>
+        </div>
+
+    </div>
+</section><!-- End Cta Section -->
+<!-- ======= Features Section ======= -->
+<section id="features" class="services section-bg">
+    <div class="container">
+
+        <div class="section-title" data-aos="fade-up">
+            <h2>Features</h2>
+            <p>The Jamaica Observer e-paper app is superfast, easy to use and gets you right to the news you want.</p>
+            <p>The e-paper is a complete digital version of the print edition of your favorite paper, Jamaica Observer Newspaper. This app aims to help you replicate the experience that our readers enjoy as they read our print papers..</p>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0" data-aos="zoom-in">
+                <div class="icon-box icon-box-red">
+                    <div class="icon"><i class="bx bx-search-alt"></i></div>
+                    <h4 class="title"><a href="">Search</a></h4>
+                    <p class="description">Search for news, keywords, articles and past editions of the The Jamaica Observer.</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0" data-aos="zoom-in" data-aos-delay="100">
+                <div class="icon-box icon-box-black">
+                    <div class="icon"><i class="bx bx-volume-full"></i></div>
+                    <h4 class="title"><a href="">Listen</a></h4>
+                    <p class="description">On-demand narration is a great feature for users who like to listen to their newspaper while multitasking or who are visually impaired.</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0" data-aos="zoom-in" data-aos-delay="200">
+                <div class="icon-box icon-box-red">
+                    <div class="icon"><i class="bx bx-share-alt"></i></div>
+                    <h4 class="title"><a href="">Share</a></h4>
+                    <p class="description">Love an article? Share it! You can get a direct link to an article, post it on Facebook and other social media.</p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3 d-flex align-items-stretch mb-5 mb-lg-0" data-aos="zoom-in" data-aos-delay="300">
+                <div class="icon-box icon-box-black">
+                    <div class="icon"><i class="bx bx-unlink"></i></div>
+                    <h4 class="title"><a href="">Print</a></h4>
+                    <p class="description">
+                        Print articles and supplements anytime you need.
+
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section><!-- End Services Section -->
+<!-- ======= F.A.Q Section ======= -->
+<section id="faq" class="faq">
+    <div class="container">
+
+        <div class="section-title" data-aos="fade-up">
+            <h2>Frequently Asked Questions</h2>
+        </div>
+
+        <ul class="faq-list">
+
+            <li>
+                <div data-bs-toggle="collapse" class="collapsed question" href="#faq1">How can I contact Customer Services? <i class="bi bi-chevron-down icon-show"></i><i class="bi bi-chevron-up icon-close"></i></div>
+                <div id="faq1" class="collapse" data-bs-parent=".faq-list">
+                    <p>
+                        If you have any questions or concerns, please call us on 876 018 5177 (free from a landline) or 876 7022 6620 (charged at your network providers standard rate). Call us Monday – Fri 8:30am to 5:00pm.
+
+                     </p><p>Alternatively, email us at info@jamaicaobserver.com
+                    </p>
+                </div>
+            </li>
+
+            <li>
+                <div data-bs-toggle="collapse" href="#faq2" class="collapsed question">Can I cancel my subscription?? <i class="bi bi-chevron-down icon-show"></i><i class="bi bi-chevron-up icon-close"></i></div>
+                <div id="faq2" class="collapse" data-bs-parent=".faq-list">
+                    <p>
+                        You can cancel your subscription by calling Customer Services on 876 068 4965. Call us Monday – Friday 8:30am to 5:00pm. If you wish to cancel your subscription after your minimum term, you must call us at least 2 days before your next billing date. For print subscriptions, please contact us at least 15 days before your next billing date.
+                    </p>
+                    <p>
+                        If you cancel within 14 days of the start of your subscription, we will refund any payments received from you using the same method of payment that you used to purchase your subscription. You will not be entitled to a refund of your initial payment if you cancel after the first 14 days of the start of your subscription.
+                    </p>
+                </div>
+            </li>
+
+            <li>
+                <div data-bs-toggle="collapse" href="#faq3" class="collapsed question">Dolor sit amet consectetur adipiscing elit pellentesque habitant morbi? <i class="bi bi-chevron-down icon-show"></i><i class="bi bi-chevron-up icon-close"></i></div>
+                <div id="faq3" class="collapse" data-bs-parent=".faq-list">
+                    <p>
+                        If you have a current subscription or previously had a subscription, we will already recognise your email address at checkout. Please click <a href="">sign in</a> and use forget password to continue.
+                    </p>
+                </div>
+            </li>
+
+            <li>
+                <div data-bs-toggle="collapse" href="#faq4" class="collapsed question">Ac odio tempor orci dapibus. Aliquam eleifend mi in nulla? <i class="bi bi-chevron-down icon-show"></i><i class="bi bi-chevron-up icon-close"></i></div>
+                <div id="faq4" class="collapse" data-bs-parent=".faq-list">
+                    <p>
+                        Dolor sit amet consectetur adipiscing elit pellentesque habitant morbi. Id interdum velit laoreet id donec ultrices. Fringilla phasellus faucibus scelerisque eleifend donec pretium. Est pellentesque elit ullamcorper dignissim. Mauris ultrices eros in cursus turpis massa tincidunt dui.
+                    </p>
+                </div>
+            </li>
+
+            <li>
+                <div data-bs-toggle="collapse" href="#faq5" class="collapsed question">Tempus quam pellentesque nec nam aliquam sem et tortor consequat? <i class="bi bi-chevron-down icon-show"></i><i class="bi bi-chevron-up icon-close"></i></div>
+                <div id="faq5" class="collapse" data-bs-parent=".faq-list">
+                    <p>
+                        Molestie a iaculis at erat pellentesque adipiscing commodo. Dignissim suspendisse in est ante in. Nunc vel risus commodo viverra maecenas accumsan. Sit amet nisl suscipit adipiscing bibendum est. Purus gravida quis blandit turpis cursus in
+                    </p>
+                </div>
+            </li>
+
+            <li>
+                <div data-bs-toggle="collapse" href="#faq6" class="collapsed question">Tortor vitae purus faucibus ornare. Varius vel pharetra vel turpis nunc eget lorem dolor? <i class="bi bi-chevron-down icon-show"></i><i class="bi bi-chevron-up icon-close"></i></div>
+                <div id="faq6" class="collapse" data-bs-parent=".faq-list">
+                    <p>
+                        Laoreet sit amet cursus sit amet dictum sit amet justo. Mauris vitae ultricies leo integer malesuada nunc vel. Tincidunt eget nullam non nisi est sit amet. Turpis nunc eget lorem dolor sed. Ut venenatis tellus in metus vulputate eu scelerisque. Pellentesque diam volutpat commodo sed egestas egestas fringilla phasellus faucibus. Nibh tellus molestie nunc non blandit massa enim nec.
+                    </p>
+                </div>
+            </li>
+
+        </ul>
+
+    </div>
+</section><!-- End Frequently Asked Questions Section -->
