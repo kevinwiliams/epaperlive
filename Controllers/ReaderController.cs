@@ -32,7 +32,7 @@ namespace ePaperLive.Controllers
                 var xml = "";
                 var errCode = "";
                 var errMsg = "";
-                subscriber result = new subscriber();
+                Subscriber result = new Subscriber();
 
                 try
                 {
@@ -116,7 +116,7 @@ namespace ePaperLive.Controllers
         }
 
         [NonAction]
-        public string MemberXML(member mb, subscriber result)
+        public string MemberXML(member mb, Subscriber result)
         {
             var xml = "";
             try
