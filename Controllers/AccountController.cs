@@ -21,9 +21,11 @@ namespace ePaperLive.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private ApplicationDbContext _db;
 
         public AccountController()
         {
+            _db = new ApplicationDbContext();
         }
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
@@ -156,6 +158,7 @@ namespace ePaperLive.Controllers
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -549,7 +552,7 @@ namespace ePaperLive.Controllers
                     try
                     {
                         Subscriber objSub = GetSubscriber();
-                        subscriber_address objAdd = GetSubscriberAddress();
+                        Subscriber_Address objAdd = GetSubscriberAddress();
                         UserLocation objLoc = GetSubscriberLocation();
 
                         var market = (objLoc.Country_Code == "JM") ? "Local" : "International";
@@ -650,7 +653,7 @@ namespace ePaperLive.Controllers
             {
                 try
                 {
-                    subscriber_address objAdd = GetSubscriberAddress();
+                    Subscriber_Address objAdd = GetSubscriberAddress();
                     AddressDetails ad = new AddressDetails
                     {
                         AddressLine1 = objAdd.AddressLine1,
@@ -681,8 +684,8 @@ namespace ePaperLive.Controllers
                     {
                         Subscriber objSub = GetSubscriber();
                         Subscriber_Epaper objEp = GetEpaperDetails();
-                        subscriber_print objPr = GetPrintDetails();
-                        subscriber_tranx objTran = GetTransaction();
+                        Subscriber_Print objPr = GetPrintDetails();
+                        Subscriber_Tranx objTran = GetTransaction();
 
                         objSub.Newsletter = data.newsletterSignUp;
                         objTran.RateID = data.RateID;
@@ -770,7 +773,7 @@ namespace ePaperLive.Controllers
                     ApplicationDbContext db = new ApplicationDbContext();
                     Subscriber objSub = GetSubscriber();
                     Subscriber_Epaper objEp = GetEpaperDetails();
-                    subscriber_print objPr = GetPrintDetails();
+                    Subscriber_Print objPr = GetPrintDetails();
                     UserLocation objLoc = GetSubscriberLocation();
                     var market = (objLoc.Country_Code == "JM") ? "Local" : "International";
 
@@ -805,10 +808,10 @@ namespace ePaperLive.Controllers
                     {
                         //get all session variables
                         Subscriber objSub = GetSubscriber();
-                        subscriber_address objAdd = GetSubscriberAddress();
+                        Subscriber_Address objAdd = GetSubscriberAddress();
                         Subscriber_Epaper objE = GetEpaperDetails();
-                        subscriber_print objP = GetPrintDetails();
-                        subscriber_tranx objTran = GetTransaction();
+                        Subscriber_Print objP = GetPrintDetails();
+                        Subscriber_Tranx objTran = GetTransaction();
 
                         int SubscriberID = 0;
                         int addressID = 0;
@@ -945,22 +948,22 @@ namespace ePaperLive.Controllers
             return (Subscriber)Session["subscriber"];
         }
 
-        private subscriber_address GetSubscriberAddress()
+        private Subscriber_Address GetSubscriberAddress()
         {
             if (Session["subscriber_address"] == null)
             {
-                Session["subscriber_address"] = new subscriber_address();
+                Session["subscriber_address"] = new Subscriber_Address();
             }
-            return (subscriber_address)Session["subscriber_address"];
+            return (Subscriber_Address)Session["subscriber_address"];
         }
 
-        private subscriber_address GetSubscriberDeliveryAddress()
+        private Subscriber_Address GetSubscriberDeliveryAddress()
         {
             if (Session["subscriber_del_address"] == null)
             {
-                Session["subscriber_del_address"] = new subscriber_address();
+                Session["subscriber_del_address"] = new Subscriber_Address();
             }
-            return (subscriber_address)Session["subscriber_del_address"];
+            return (Subscriber_Address)Session["subscriber_del_address"];
         }
 
         private Subscriber_Epaper GetEpaperDetails()
@@ -972,22 +975,22 @@ namespace ePaperLive.Controllers
             return (Subscriber_Epaper)Session["subscriber_epaper"];
         }
 
-        private subscriber_print GetPrintDetails()
+        private Subscriber_Print GetPrintDetails()
         {
             if (Session["subscriber_print"] == null)
             {
-                Session["subscriber_print"] = new subscriber_print();
+                Session["subscriber_print"] = new Subscriber_Print();
             }
-            return (subscriber_print)Session["subscriber_print"];
+            return (Subscriber_Print)Session["subscriber_print"];
         }
 
-        private subscriber_tranx GetTransaction()
+        private Subscriber_Tranx GetTransaction()
         {
             if (Session["subscriber_tranx"] == null)
             {
-                Session["subscriber_tranx"] = new subscriber_tranx();
+                Session["subscriber_tranx"] = new Subscriber_Tranx();
             }
-            return (subscriber_tranx)Session["subscriber_tranx"];
+            return (Subscriber_Tranx)Session["subscriber_tranx"];
         }
 
         private UserLocation GetSubscriberLocation()
