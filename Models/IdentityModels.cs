@@ -12,7 +12,7 @@ namespace ePaperLive.Models
     public class ApplicationUser : IdentityUser
     {
         //add subsciber to Idenity Class
-        public subscriber Subscriber { get; set; }
+        public Subscriber Subscriber { get; set; }
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
@@ -25,7 +25,7 @@ namespace ePaperLive.Models
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
-            : base("DBEntities", throwIfV1Schema: false)
+            : base("DefaultConnection", throwIfV1Schema: false)
         {
         }
 
@@ -37,17 +37,17 @@ namespace ePaperLive.Models
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<subscriber>()
-                .HasRequired(u => u.ApplicationUser).WithRequiredDependent(c => c.Subscriber);
+            modelBuilder.Entity<ApplicationUser>()
+                .HasRequired(u => u.Subscriber).WithOptional(a => a.ApplicationUser);
         }
 
         public virtual DbSet<printandsubrate> printandsubrates { get; set; }
-        public virtual DbSet<subscriber> subscribers { get; set; }
-        public virtual DbSet<subscriber_address> subscriber_address { get; set; }
-        public virtual DbSet<subscriber_epaper> subscriber_epaper { get; set; }
-        public virtual DbSet<subscriber_print> subscriber_print { get; set; }
-        public virtual DbSet<subscriber_roles> subscriber_roles { get; set; }
-        public virtual DbSet<subscriber_tranx> subscriber_tranx { get; set; }
+        public virtual DbSet<Subscriber> subscribers { get; set; }
+        public virtual DbSet<Subscriber_Address> subscriber_address { get; set; }
+        public virtual DbSet<Subscriber_Epaper> subscriber_epaper { get; set; }
+        public virtual DbSet<Subscriber_Print> subscriber_print { get; set; }
+        public virtual DbSet<Subscriber_Roles> subscriber_roles { get; set; }
+        public virtual DbSet<Subscriber_Tranx> subscriber_tranx { get; set; }
 
     }
 }
