@@ -35,7 +35,7 @@
             var userManager = new ApplicationUserManager(userStore);
 
             // Create roles if the don't exist
-            context.Roles.AddOrUpdate(
+            context.Roles.AddOrUpdate( r => r.Name,
                 new IdentityRole() { Name = adminRole },
                 new IdentityRole() { Name = staffRole },
                 new IdentityRole() { Name = subscriberRole });
@@ -52,7 +52,7 @@
                 UserName = adminEmail,
                 LockoutEnabled = true
             };
-            context.Users.AddOrUpdate(adminUser);
+            context.Users.AddOrUpdate(u => u.Id, adminUser);
             context.SaveChanges();
 
             userManager.AddToRole(adminUser.Id, adminRole);
