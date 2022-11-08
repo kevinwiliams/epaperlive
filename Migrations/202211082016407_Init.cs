@@ -3,7 +3,7 @@
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class Reset : DbMigration
+    public partial class Init : DbMigration
     {
         public override void Up()
         {
@@ -12,19 +12,19 @@
                 c => new
                     {
                         Rateid = c.Int(nullable: false, identity: true),
-                        Market = c.String(),
-                        Type = c.String(),
+                        Market = c.String(maxLength: 25),
+                        Type = c.String(maxLength: 25),
                         RateDescr = c.String(),
-                        PrintDayPattern = c.String(),
+                        PrintDayPattern = c.String(maxLength: 10),
                         PrintTerm = c.Int(),
-                        PrintTermUnit = c.String(),
-                        EDayPattern = c.String(),
+                        PrintTermUnit = c.String(maxLength: 25),
+                        EDayPattern = c.String(maxLength: 10),
                         ETerm = c.Int(),
-                        ETermUnit = c.String(),
-                        Curr = c.String(),
+                        ETermUnit = c.String(maxLength: 25),
+                        Curr = c.String(maxLength: 10),
                         Rate = c.Double(),
                         SortOrder = c.Int(),
-                        Active = c.Int(),
+                        Active = c.Boolean(),
                     })
                 .PrimaryKey(t => t.Rateid);
             
@@ -56,19 +56,19 @@
                 c => new
                     {
                         AddressID = c.Int(nullable: false, identity: true),
-                        SubscriberID = c.String(nullable: false, maxLength: 128),
-                        AddressType = c.String(),
-                        EmailAddress = c.String(),
-                        AddressLine1 = c.String(),
-                        AddressLine2 = c.String(),
-                        CityTown = c.String(),
-                        StateParish = c.String(),
-                        ZipCode = c.String(),
-                        CountryCode = c.String(),
+                        SubscriberID = c.String(maxLength: 128),
+                        AddressType = c.String(maxLength: 5),
+                        EmailAddress = c.String(maxLength: 50),
+                        AddressLine1 = c.String(maxLength: 100),
+                        AddressLine2 = c.String(maxLength: 100),
+                        CityTown = c.String(maxLength: 50),
+                        StateParish = c.String(maxLength: 50),
+                        ZipCode = c.String(maxLength: 10),
+                        CountryCode = c.String(maxLength: 50),
                         CreatedAt = c.DateTime(nullable: false),
                     })
                 .PrimaryKey(t => t.AddressID)
-                .ForeignKey("dbo.Subscribers", t => t.SubscriberID, cascadeDelete: true)
+                .ForeignKey("dbo.Subscribers", t => t.SubscriberID)
                 .Index(t => t.SubscriberID);
             
             CreateTable(
@@ -77,29 +77,25 @@
                     {
                         SubscriberID = c.String(nullable: false, maxLength: 128),
                         Id = c.Int(nullable: false, identity: true),
-                        EmailAddress = c.String(),
-                        FirstName = c.String(),
-                        LastName = c.String(),
+                        EmailAddress = c.String(maxLength: 50),
+                        FirstName = c.String(maxLength: 50),
+                        LastName = c.String(maxLength: 50),
                         DateOfBirth = c.DateTime(),
-                        Secretquestion = c.String(),
-                        Secretans = c.String(),
-                        IpAddress = c.String(),
+                        Secretquestion = c.String(maxLength: 50),
+                        Secretans = c.String(maxLength: 50),
+                        IpAddress = c.String(maxLength: 50),
                         IsActive = c.Boolean(nullable: false),
                         AddressID = c.Int(),
                         Newsletter = c.Boolean(),
                         CreatedAt = c.DateTime(nullable: false),
-                        RoleID = c.Int(),
                         Token = c.String(),
                         CCHashID = c.Int(),
                         LastLogin = c.DateTime(),
-                        Subscriber_Roles_Subscriber_RolesID = c.Int(),
                     })
                 .PrimaryKey(t => t.SubscriberID)
                 .ForeignKey("dbo.AspNetUsers", t => t.SubscriberID)
-                .ForeignKey("dbo.Subscriber_Roles", t => t.Subscriber_Roles_Subscriber_RolesID)
                 .Index(t => t.SubscriberID)
-                .Index(t => t.Id, unique: true)
-                .Index(t => t.Subscriber_Roles_Subscriber_RolesID);
+                .Index(t => t.Id, unique: true);
             
             CreateTable(
                 "dbo.AspNetUsers",
@@ -151,18 +147,18 @@
                 c => new
                     {
                         Subscriber_EpaperID = c.Int(nullable: false, identity: true),
-                        SubscriberID = c.String(nullable: false, maxLength: 128),
-                        EmailAddress = c.String(),
+                        SubscriberID = c.String(maxLength: 128),
+                        EmailAddress = c.String(maxLength: 50),
                         RateID = c.Int(nullable: false),
                         StartDate = c.DateTime(nullable: false),
                         EndDate = c.DateTime(nullable: false),
                         IsActive = c.Boolean(nullable: false),
-                        SubType = c.String(),
+                        SubType = c.String(maxLength: 50),
                         CreatedAt = c.DateTime(nullable: false),
-                        NotificationEmail = c.String(),
+                        NotificationEmail = c.String(maxLength: 50),
                     })
                 .PrimaryKey(t => t.Subscriber_EpaperID)
-                .ForeignKey("dbo.Subscribers", t => t.SubscriberID, cascadeDelete: true)
+                .ForeignKey("dbo.Subscribers", t => t.SubscriberID)
                 .Index(t => t.SubscriberID);
             
             CreateTable(
@@ -170,63 +166,52 @@
                 c => new
                     {
                         Subscriber_PrintID = c.Int(nullable: false, identity: true),
-                        SubscriberID = c.String(nullable: false, maxLength: 128),
-                        EmailAddress = c.String(),
+                        SubscriberID = c.String(maxLength: 128),
+                        EmailAddress = c.String(maxLength: 50),
                         RateID = c.Int(nullable: false),
                         AddressID = c.Int(nullable: false),
                         StartDate = c.DateTime(nullable: false),
                         EndDate = c.DateTime(nullable: false),
                         IsActive = c.Boolean(nullable: false),
                         DeliveryInstructions = c.String(),
-                        Circprosubid = c.String(),
+                        Circprosubid = c.String(maxLength: 50),
                         CreatedAt = c.DateTime(nullable: false),
                     })
                 .PrimaryKey(t => t.Subscriber_PrintID)
-                .ForeignKey("dbo.Subscribers", t => t.SubscriberID, cascadeDelete: true)
+                .ForeignKey("dbo.Subscribers", t => t.SubscriberID)
                 .Index(t => t.SubscriberID);
-            
-            CreateTable(
-                "dbo.Subscriber_Roles",
-                c => new
-                    {
-                        Subscriber_RolesID = c.Int(nullable: false, identity: true),
-                        RoleDescription = c.String(),
-                        CreatedAt = c.DateTime(nullable: false),
-                    })
-                .PrimaryKey(t => t.Subscriber_RolesID);
             
             CreateTable(
                 "dbo.Subscriber_Tranx",
                 c => new
                     {
                         Subscriber_TranxID = c.Int(nullable: false, identity: true),
-                        SubscriberID = c.String(nullable: false, maxLength: 128),
-                        EmailAddress = c.String(),
-                        CardOwner = c.String(),
-                        CardType = c.String(),
-                        CardExp = c.String(),
-                        CardLastFour = c.String(),
+                        SubscriberID = c.String(maxLength: 128),
+                        EmailAddress = c.String(maxLength: 50),
+                        CardOwner = c.String(maxLength: 50),
+                        CardType = c.String(maxLength: 20),
+                        CardExp = c.String(maxLength: 5),
+                        CardLastFour = c.String(maxLength: 5),
                         TranxAmount = c.Double(),
                         TranxDate = c.DateTime(),
                         RateID = c.Int(),
-                        TranxType = c.String(),
-                        OrderID = c.String(),
-                        TranxNotes = c.String(),
-                        IpAddress = c.String(),
+                        TranxType = c.String(maxLength: 50),
+                        OrderID = c.String(maxLength: 50),
+                        TranxNotes = c.String(maxLength: 100),
+                        IpAddress = c.String(maxLength: 50),
                     })
                 .PrimaryKey(t => t.Subscriber_TranxID)
-                .ForeignKey("dbo.Subscribers", t => t.SubscriberID, cascadeDelete: true)
+                .ForeignKey("dbo.Subscribers", t => t.SubscriberID)
                 .Index(t => t.SubscriberID);
             
         }
         
         public override void Down()
         {
-            DropForeignKey("dbo.Subscriber_Address", "SubscriberID", "dbo.Subscribers");
             DropForeignKey("dbo.Subscriber_Tranx", "SubscriberID", "dbo.Subscribers");
-            DropForeignKey("dbo.Subscribers", "Subscriber_Roles_Subscriber_RolesID", "dbo.Subscriber_Roles");
             DropForeignKey("dbo.Subscriber_Print", "SubscriberID", "dbo.Subscribers");
             DropForeignKey("dbo.Subscriber_Epaper", "SubscriberID", "dbo.Subscribers");
+            DropForeignKey("dbo.Subscriber_Address", "SubscriberID", "dbo.Subscribers");
             DropForeignKey("dbo.Subscribers", "SubscriberID", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserRoles", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserLogins", "UserId", "dbo.AspNetUsers");
@@ -238,7 +223,6 @@
             DropIndex("dbo.AspNetUserLogins", new[] { "UserId" });
             DropIndex("dbo.AspNetUserClaims", new[] { "UserId" });
             DropIndex("dbo.AspNetUsers", "UserNameIndex");
-            DropIndex("dbo.Subscribers", new[] { "Subscriber_Roles_Subscriber_RolesID" });
             DropIndex("dbo.Subscribers", new[] { "Id" });
             DropIndex("dbo.Subscribers", new[] { "SubscriberID" });
             DropIndex("dbo.Subscriber_Address", new[] { "SubscriberID" });
@@ -246,7 +230,6 @@
             DropIndex("dbo.AspNetUserRoles", new[] { "UserId" });
             DropIndex("dbo.AspNetRoles", "RoleNameIndex");
             DropTable("dbo.Subscriber_Tranx");
-            DropTable("dbo.Subscriber_Roles");
             DropTable("dbo.Subscriber_Print");
             DropTable("dbo.Subscriber_Epaper");
             DropTable("dbo.AspNetUserLogins");

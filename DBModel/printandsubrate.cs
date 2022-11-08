@@ -9,18 +9,25 @@ namespace ePaperLive.DBModel
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Rateid { get; set; }
+        [StringLength(25)]
         public string Market { get; set; }
+        [StringLength(25)]
         public string Type { get; set; }
         public string RateDescr { get; set; }
+        [StringLength(10)]
         public string PrintDayPattern { get; set; }
         public Nullable<int> PrintTerm { get; set; }
+        [StringLength(25)]
         public string PrintTermUnit { get; set; }
+        [StringLength(10)]
         public string EDayPattern { get; set; }
         public Nullable<int> ETerm { get; set; }
+        [StringLength(25)]
         public string ETermUnit { get; set; }
+        [StringLength(10)]
         public string Curr { get; set; }
         public Nullable<double> Rate { get; set; }
         public Nullable<int> SortOrder { get; set; }
-        public Nullable<int> Active { get; set; }
+        public Nullable<bool> Active { get; set; }
     }
 }

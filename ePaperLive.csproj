@@ -229,16 +229,15 @@
     <Compile Include="DBModel\subscriber_address.cs" />
     <Compile Include="DBModel\subscriber_epaper.cs" />
     <Compile Include="DBModel\subscriber_print.cs" />
-    <Compile Include="DBModel\subscriber_roles.cs" />
     <Compile Include="DBModel\subscriber_tranx.cs" />
     <Compile Include="Filters\BasicAuthenticationAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\Util.cs" />
-    <Compile Include="Migrations\202211080045100_Reset.cs" />
-    <Compile Include="Migrations\202211080045100_Reset.designer.cs">
-      <DependentUpon>202211080045100_Reset.cs</DependentUpon>
+    <Compile Include="Migrations\202211082016407_Init.cs" />
+    <Compile Include="Migrations\202211082016407_Init.designer.cs">
+      <DependentUpon>202211082016407_Init.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -513,8 +512,8 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202211080045100_Reset.resx">
-      <DependentUpon>202211080045100_Reset.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202211082016407_Init.resx">
+      <DependentUpon>202211082016407_Init.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

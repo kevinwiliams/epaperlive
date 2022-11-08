@@ -631,7 +631,7 @@ namespace ePaperLive.Controllers
                     ApplicationDbContext db = new ApplicationDbContext();
                     List<printandsubrate> ratesList = db.printandsubrates
                                         .Where(x => x.Market == market)
-                                        .Where(x => x.Active == 1).ToList();
+                                        .Where(x => x.Active == true).ToList();
 
 
                     var nratesList = (rateType != null) ? ratesList.Where(x => x.Type == rateType).ToList() : ratesList;
@@ -799,7 +799,7 @@ namespace ePaperLive.Controllers
                         newsletterSignUp = objSub.Newsletter ?? false,
                         NotificationEmail = objEp.NotificationEmail,
                         SubType = objEp.SubType,
-                        RatesList = db.printandsubrates.Where(x => x.Market == market).Where(x => x.Active == 1).ToList()
+                        RatesList = db.printandsubrates.Where(x => x.Market == market).Where(x => x.Active == true).ToList()
                     };
 
                     return View("SubscriptionInfo", sd);
@@ -833,7 +833,7 @@ namespace ePaperLive.Controllers
 
                         //save subscribers
                         objSub.IsActive = true;
-                        objSub.RoleID = 9002; //User
+                        //objSub.RoleID = 9002; //SET AspNetUsersRole
 
                         var newAccount = new ApplicationUser
                         {

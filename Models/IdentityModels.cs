@@ -37,17 +37,16 @@ namespace ePaperLive.Models
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<Subscriber>()
-                .HasRequired(u => u.ApplicationUser).WithRequiredDependent(c => c.Subscriber);
+            //modelBuilder.Entity<Subscriber>()
+            //    .HasRequired(u => u.ApplicationUser).WithRequiredDependent(c => c.Subscriber);
         }
 
-        public virtual DbSet<printandsubrate> printandsubrates { get; set; }
-        public virtual DbSet<Subscriber> subscribers { get; set; }
-        public virtual DbSet<Subscriber_Address> subscriber_address { get; set; }
-        public virtual DbSet<Subscriber_Epaper> subscriber_epaper { get; set; }
-        public virtual DbSet<Subscriber_Print> subscriber_print { get; set; }
-        public virtual DbSet<Subscriber_Roles> subscriber_roles { get; set; }
-        public virtual DbSet<Subscriber_Tranx> subscriber_tranx { get; set; }
+        public DbSet<printandsubrate> printandsubrates { get; set; }
+        public DbSet<Subscriber> subscribers { get; set; }
+        public DbSet<Subscriber_Address> subscriber_address { get; set; }
+        public DbSet<Subscriber_Epaper> subscriber_epaper { get; set; }
+        public DbSet<Subscriber_Print> subscriber_print { get; set; }
+        public DbSet<Subscriber_Tranx> subscriber_tranx { get; set; }
 
     }
 }
