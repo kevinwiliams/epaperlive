@@ -9,7 +9,7 @@ namespace ePaperLive.DBModel
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Subscriber_PrintID { get; set; }
-        public int SubscriberID { get; set; }
+        public string SubscriberID { get; set; }
         public string EmailAddress { get; set; }
         public int RateID { get; set; }
         public int AddressID { get; set; }
@@ -22,7 +22,6 @@ namespace ePaperLive.DBModel
 
         [ForeignKey("SubscriberID")]
         [Required]
-        public Subscriber Subscriber { get; set; }
-        public Subscriber_Address Address { get; set; }
+        public virtual Subscriber Subscriber { get; set; }
     }
 }
