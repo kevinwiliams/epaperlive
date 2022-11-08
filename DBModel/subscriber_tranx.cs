@@ -9,7 +9,7 @@ namespace ePaperLive.DBModel
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Subscriber_TranxID { get; set; }
-        public int SubscriberID { get; set; }
+        public string SubscriberID { get; set; }
         public string EmailAddress { get; set; }
         public string CardOwner { get; set; }
         public string CardType { get; set; }
