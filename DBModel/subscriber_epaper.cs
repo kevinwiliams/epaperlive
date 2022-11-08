@@ -10,7 +10,7 @@ namespace ePaperLive.DBModel
         // This was changed  to follow convention and prevent errors
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Subscriber_EpaperID { get; set; }
-        public int SubscriberID { get; set; }
+        public string SubscriberID { get; set; }
         public string EmailAddress { get; set; }
         public int RateID { get; set; }
         public System.DateTime StartDate { get; set; }
