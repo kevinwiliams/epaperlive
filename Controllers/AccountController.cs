@@ -813,7 +813,7 @@ namespace ePaperLive.Controllers
                         Subscriber_Print objP = GetPrintDetails();
                         Subscriber_Tranx objTran = GetTransaction();
 
-                        int SubscriberID = 0;
+                        string SubscriberID = "";
                         int addressID = 0;
                         var rateID = objTran.RateID;
 
