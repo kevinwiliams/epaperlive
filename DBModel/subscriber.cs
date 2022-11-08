@@ -15,8 +15,12 @@ namespace ePaperLive.DBModel
             this.Subscriber_Tranx = new List<Subscriber_Tranx>();
         }
 
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int SubscriberID { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Index(IsUnique = true)]
+        public int Id { get; set; }
+
+        [Key, ForeignKey("ApplicationUser")]
+        public string SubscriberID { get; set; }
         public string EmailAddress { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -35,10 +39,11 @@ namespace ePaperLive.DBModel
         public Nullable<System.DateTime> LastLogin { get; set; }
 
         //Navigation properties
-        
+        [ForeignKey("SubscriberID")]
+        [Required]
         public ApplicationUser ApplicationUser { get; set; }
         //Navigation properties
-        
+        [ForeignKey("AddressID")]
         public virtual ICollection<Subscriber_Address> Subscriber_Address { get; set; }
         public virtual ICollection<Subscriber_Epaper> Subscriber_Epaper { get; set; }
         public virtual ICollection<Subscriber_Print> Subscriber_Print { get; set; }
