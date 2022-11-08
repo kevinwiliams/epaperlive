@@ -25,7 +25,7 @@ namespace ePaperLive.Models
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
-            : base("DefaultConnection", throwIfV1Schema: false)
+            : base("DBEntities", throwIfV1Schema: false)
         {
         }
 
@@ -37,8 +37,8 @@ namespace ePaperLive.Models
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<ApplicationUser>()
-                .HasRequired(u => u.Subscriber).WithOptional(a => a.ApplicationUser);
+            modelBuilder.Entity<Subscriber>()
+                .HasRequired(u => u.ApplicationUser).WithRequiredDependent(c => c.Subscriber);
         }
 
         public virtual DbSet<printandsubrate> printandsubrates { get; set; }
