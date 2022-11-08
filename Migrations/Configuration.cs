@@ -36,15 +36,15 @@
 
             // Create roles if the don't exist
             context.Roles.AddOrUpdate( r => r.Name,
-                new IdentityRole() { Name = adminRole },
+                new IdentityRole() { Name = adminRole,  },
                 new IdentityRole() { Name = staffRole },
                 new IdentityRole() { Name = subscriberRole });
             context.SaveChanges();
             // Create an admin and add to role
             var adminPwd = ConfigurationManager.AppSettings["adminPassword"] ?? "Password37!";
             var hashedPwd = userManager.PasswordHasher.HashPassword(adminPwd);
-            var adminUser = new ApplicationUser() 
-            { 
+            var adminUser = new ApplicationUser()
+            {
                 Id = Guid.NewGuid().ToString(),
                 Email = adminEmail,
                 PasswordHash = hashedPwd,
@@ -52,10 +52,13 @@
                 UserName = adminEmail,
                 LockoutEnabled = true
             };
-            context.Users.AddOrUpdate(u => u.Id, adminUser);
+            context.Users.AddOrUpdate(u => u.Email, adminUser);
             context.SaveChanges();
 
-            userManager.AddToRole(adminUser.Id, adminRole);
+            if (!userManager.IsInRole(adminUser.Id, adminRole))
+            {
+                userManager.AddToRole(adminUser.Id, adminRole);
+            }
 
             context.printandsubrates.AddOrUpdate(x => x.Rateid,
             new printandsubrate() { Rateid = 1, Market = "Local", Type = "Epaper", RateDescr = "1 Month (30 Days)", EDayPattern = "1111111", ETerm = 30, ETermUnit = "Days", Curr = "JMD", Rate = 1248, SortOrder = 1, Active = true },
@@ -96,5 +99,6 @@
             context.SaveChanges();
 
         }
+        
     }
 }
