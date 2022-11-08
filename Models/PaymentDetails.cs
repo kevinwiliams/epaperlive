@@ -42,4 +42,11 @@ namespace ePaperLive.Models
         Mastercard,
         KeyCard
     }
+
+    public enum SubscriptionType
+    {
+        Paid,
+        Complimentary,
+        Promotion
+    }
 }
