@@ -12,13 +12,13 @@ namespace ePaperLive.Models
         public string call { get; set; }
         public string username { get; set; }
         public string password { get; set; }
-        public int userid { get; set; }
+        public string userid { get; set; }
         public string token { get; set; }
     }
 
     public class member
     {
-        public int userID { get; set; }
+        public string userID { get; set; }
         public string loginName { get; set; }
         public string email { get; set; }
         public string firstname { get; set; }
