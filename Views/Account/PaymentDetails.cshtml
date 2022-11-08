@@ -48,28 +48,28 @@
                             </div>
 
                             <div class="form-group">
-                                @Html.LabelFor(model => model.cardType, htmlAttributes: new { @class = "control-label " }) <br />
+                                @Html.LabelFor(model => model.CardType, htmlAttributes: new { @class = "control-label " }) <br />
                                 @foreach (var method in @ePaperLive.Util.GetEnumSelectList<ePaperLive.Models.PaymentMethod>())
                                 {
                                     <div class="form-check form-check-inline">
-                                        @Html.RadioButtonFor(model => model.cardType, method.Text, new { @class = "form-check-input", @required = "required" })
-                                        @Html.LabelFor(model => model.cardType, method.Text, htmlAttributes: new { @class = "form-check-label " })
+                                        @Html.RadioButtonFor(model => model.CardType, method.Text, new { @class = "form-check-input", @required = "required" })
+                                        @Html.LabelFor(model => model.CardType, method.Text, htmlAttributes: new { @class = "form-check-label " })
                                     </div>
 
                                 }
-                                @Html.HiddenFor(m => m.cardType)
+                                @Html.HiddenFor(m => m.CardType)
 
                             </div>
                             <div class="form-group p-2">
                                 @*@Html.LabelFor(model => model.cardOwner, htmlAttributes: new { @class = "control-label " })*@
                                 <div class="col-md-10">
-                                    @Html.EditorFor(model => model.cardOwner, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.cardOwner) } })
+                                    @Html.EditorFor(model => model.CardOwner, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.CardOwner) } })
                                 </div>
                             </div>
                             <div class="form-group p-2">
                                 @*@Html.LabelFor(model => model.cardNumber, htmlAttributes: new { @class = "control-label " })*@
                                 <div class="col-md-10">
-                                    @Html.EditorFor(model => model.cardNumber, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.cardNumber) } })
+                                    @Html.EditorFor(model => model.CardNumber, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.CardNumber) } })
                                 </div>
                             </div>
 
@@ -79,13 +79,13 @@
                                         <div class="col-6">
                                             @*@Html.LabelFor(model => model.cardExp, htmlAttributes: new { @class = "control-label " })*@
                                             <div class="col-md-10">
-                                                @Html.EditorFor(model => model.cardExp, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.cardExp) } })
+                                                @Html.EditorFor(model => model.CardExp, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.CardExp) } })
                                             </div>
                                         </div>
                                         <div class="col-6">
                                             @*@Html.LabelFor(model => model.cardCVV, htmlAttributes: new { @class = "control-label " })*@
                                             <div class="col-md-10">
-                                                @Html.EditorFor(model => model.cardCVV, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.cardCVV) } })
+                                                @Html.EditorFor(model => model.CardCVV, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.CardCVV) } })
                                             </div>
                                         </div>
                                     </div>

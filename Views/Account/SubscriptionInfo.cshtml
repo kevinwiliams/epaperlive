@@ -59,37 +59,35 @@
                             console.log(epaperList);
                             //$("$ratesList").val(stringList);
                             function filterByProperty(array, prop, value)
-                    {
-                                    var filtered = [];
-                                    for (var i = 0; i < array.length; i++)
-                        {
-
-                                        var obj = array[i];
-
-                                        for(var key in obj)
                             {
-                                            if (typeof(obj[key] == "object")){
-                                                var item = obj[key];
-                                                if (item[prop] == value)
-                            {
-                                                    filtered.push(item);
-                                                }
+                                var filtered = [];
+                                for (var i = 0; i < array.length; i++)
+                                {
+                                    var obj = array[i];
+
+                                    for(var key in obj)
+                                    {
+                                        if (typeof(obj[key] == "object")){
+                                            var item = obj[key];
+                                            if (item[prop] == value)
+                                            {
+                                                filtered.push(item);
                                             }
                                         }
-
                                     }
 
-                                    return filtered;
-
                                 }
+
+                                return filtered;
+
+                            }
 
 
                             </script>
                             <div class="form-group">
-                                @Html.LabelFor(model => model.subType, htmlAttributes: new { @class = "control-label " })
+                                @Html.LabelFor(model => model.SubType, htmlAttributes: new { @class = "control-label " })
                                 <div class="col-md-10">
-                                    @Html.EditorFor(model => model.subType, new { htmlAttributes = new { @class = "form-control" } })
-                        @*@Html.ValidationMessageFor(model => model.subType, "", new { @class = "text-danger" })*@
+                                    @Html.EditorFor(model => model.SubType, new { htmlAttributes = new { @class = "form-control" } })
                         </div>
                                 </div>
 
@@ -109,9 +107,9 @@
                                 </div>
 
                                 <div class="form-group">
-                                    @Html.LabelFor(model => model.notificationEmail, htmlAttributes: new { @class = "control-label " })
+                                    @Html.LabelFor(model => model.NotificationEmail, htmlAttributes: new { @class = "control-label " })
                                     <div class="col-md-10">
-                                        @Html.EditorFor(model => model.notificationEmail, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.EditorFor(model => model.NotificationEmail, new { htmlAttributes = new { @class = "form-control" } })
                                     </div>
                                 </div>
 
@@ -126,8 +124,8 @@
 
                                     <div class="col-md-10 p-3">
                                         <div class="form-check">
-                                            @Html.EditorFor(model => model.NewsletterSignUp, new { htmlAttributes = new { @class = "form-check-input" } })
-                                            @Html.LabelFor(model => model.NewsletterSignUp, htmlAttributes: new { @class = "form-check-label" })
+                                            @Html.EditorFor(model => model.newsletterSignUp, new { htmlAttributes = new { @class = "form-check-input" } })
+                                            @Html.LabelFor(model => model.newsletterSignUp, htmlAttributes: new { @class = "form-check-label" })
 
                                         </div>
                                     </div>
@@ -136,8 +134,8 @@
                                 <div class="form-group">
                                     <div class="col-md-10 p-3">
                                         <div class="form-check">
-                                            @Html.EditorFor(model => model.termsAndCon, new { htmlAttributes = new { @class = "form-check-input", @required = "required" } })
-                                            @Html.LabelFor(model => model.termsAndCon, htmlAttributes: new { @class = "form-check-label" })<br />
+                                            @Html.EditorFor(model => model.TermsAndCon, new { htmlAttributes = new { @class = "form-check-input", @required = "required" } })
+                                            @Html.LabelFor(model => model.TermsAndCon, htmlAttributes: new { @class = "form-check-label" })<br />
                                         </div>
                                     </div>
                                 </div>

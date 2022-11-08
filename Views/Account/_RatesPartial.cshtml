@@ -9,7 +9,7 @@ else
     foreach (var plans in Model.Rates)
     {
 
-        @Html.RadioButton("rateID", plans.rateid, htmlAttributes: new { @checked ="checked" })
+        @Html.RadioButton("RateID", plans.Rateid, htmlAttributes: new { @checked ="checked" })
         @(" " + plans.RateDescr + " | " + plans.Type + " (" + plans.Market + ") [" + plans.ETerm + " " + plans.ETermUnit + "][" + plans.PrintTerm + " " + plans.PrintTermUnit + "] : $" + plans.Rate)
         <br />
 

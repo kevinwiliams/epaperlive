@@ -48,7 +48,13 @@
                                         <li><a class="nav-link scrollto" href="#team">Change Password</a></li>
                                         <li><a class="nav-link scrollto" href="#team">Update Profile</a></li>
                                         <li><a class="nav-link scrollto" href="#testimonials">Request Refund</a></li>
-                                        <li>@Html.ActionLink("Log Out", "Logout", new { controller = "Account" }, new { area = "" })</li>
+                                        @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+                                        }
+
+
                                     </ul>
                                 </li>
                             }

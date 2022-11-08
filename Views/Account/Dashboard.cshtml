@@ -13,7 +13,7 @@
                 <li><a href="@Url.Action("index", "home")">Home</a></li>
                 <li>@ViewData["Title"]</li>
             </ol>
-            <h2>Welcome, @Session["name"].ToString()</h2>
+            <h2>Welcome, @User.Identity.Name</h2>
 
         </div>
     </section><!-- End Breadcrumbs -->
