@@ -102,10 +102,54 @@ SELECT(SELECT [SubscriberID] FROM [dbo].[subscriber] WHERE [emailAddress] = [ema
 
 GO
 
+--load  rates table
+
+SELECT CONCAT(
+'new printandsubrates() { Rateid = ', [Rateid], ', '
+      ,'Market = "', [Market], '", '
+      ,'Type = "', [Type], '", '
+      ,'RateDescr = "', [RateDescr], '", '
+	   ,CASE WHEN [PrintDayPattern] IS NOT NULL THEN
+			CONCAT('PrintDayPattern = "', [PrintDayPattern], '", ')
+	   END
+	    ,CASE WHEN [PrintTerm] IS NOT NULL THEN
+			CONCAT('PrintTerm = ', [PrintTerm], ', ')
+	   END
+	    ,CASE WHEN [PrintTermUnit] IS NOT NULL THEN
+			CONCAT('PrintTermUnit = "', [PrintTermUnit], '", ')
+	   END
+      --,'PrintTerm = ',[PrintTerm] , ', '
+      --,'PrintTermUnit = "'+ [PrintTermUnit], '", '
+
+	  ,CASE WHEN [EDayPattern] IS NOT NULL THEN
+			CONCAT('EDayPattern = "', [EDayPattern], '", ')
+	   END
+	    ,CASE WHEN [ETerm] IS NOT NULL THEN
+			CONCAT('ETerm = ', [ETerm], ', ')
+	   END
+	    ,CASE WHEN [ETermUnit] IS NOT NULL THEN
+			CONCAT('ETermUnit = "', [ETermUnit], '", ')
+	   END
+     -- ,'EDayPattern = "',[EDayPattern], '", '
+     -- ,'ETerm = ',[ETerm], ', '
+     -- ,'ETermUnit = "',[ETermUnit], '", '
+      ,'Curr = "',[Curr], '", '
+      ,'Rate = ',[Rate], ', '
+      ,'SortOrder = ',[SortOrder], ', '
+      ,'Active = ',[Active], ' }, '
+	  )
+  FROM [dbo].[printandsubrates]
+
+GO
+
 SELECT * FROM [dbo].[subscriber]
 SELECT * FROM [dbo].[subscriber_address]
 SELECT * FROM [dbo].[subscriber_epaper]
 SELECT * FROM [dbo].[subscriber_tranx]
 
 
-
+Sql(@"ALTER TABLE [dbo].[Subscriber_Address] DROP CONSTRAINT [FK_dbo.Subscriber_Address_dbo.Subscribers_SubscriberID]");
+Sql(@"ALTER TABLE [dbo].[Subscriber_Epaper] DROP CONSTRAINT [FK_dbo.Subscriber_Epaper_dbo.Subscribers_SubscriberID]");
+Sql(@"ALTER TABLE [dbo].[Subscriber_Print] DROP CONSTRAINT [FK_dbo.Subscriber_Print_dbo.Subscribers_SubscriberID]");
+Sql(@"ALTER TABLE [dbo].[Subscriber_Tranx] DROP CONSTRAINT [FK_dbo.Subscriber_Tranx_dbo.Subscribers_SubscriberID]");
+Sql(@"ALTER TABLE [dbo].[Subsribers] DROP CONSTRAINT [FK_dbo.Subscribers_dbo.AspNetUsers_SubscriberID]");
