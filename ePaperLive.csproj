@@ -236,9 +236,9 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\Util.cs" />
-    <Compile Include="Migrations\202211072258546_Initial.cs" />
-    <Compile Include="Migrations\202211072258546_Initial.designer.cs">
-      <DependentUpon>202211072258546_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\202211080045100_Reset.cs" />
+    <Compile Include="Migrations\202211080045100_Reset.designer.cs">
+      <DependentUpon>202211080045100_Reset.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -513,8 +513,8 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202211072258546_Initial.resx">
-      <DependentUpon>202211072258546_Initial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202211080045100_Reset.resx">
+      <DependentUpon>202211080045100_Reset.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
