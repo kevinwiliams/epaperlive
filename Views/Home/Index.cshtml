@@ -49,7 +49,7 @@
                         <li class="na">Massa ultricies mi</li>
                     </ul>
                     <div class="btn-wrap">
-                        <a href="@Url.Action("Subscribe", "Account")" class="btn-buy">Subscribe</a>
+                        <a href="@Url.Action("Subscribe", "Account", new { pkgType = "EPaper", price = 15, term = "month"})" class="btn-buy">Subscribe</a>
                     </div>
                 </div>
             </div>
@@ -66,7 +66,7 @@
                         <li class="na">Massa ultricies mi</li>
                     </ul>
                     <div class="btn-wrap">
-                        <a href="@Url.Action("Subscribe", "Account")" class="btn-buy">Subscribe</a>
+                        <a href="@Url.Action("Subscribe", "Account", new { pkgType = "EPaper", price = 40,term = "quarter"})" class="btn-buy">Subscribe</a>
                     </div>
                 </div>
             </div>
@@ -83,7 +83,7 @@
                         <li>Massa ultricies mi</li>
                     </ul>
                     <div class="btn-wrap">
-                        <a href="@Url.Action("Subscribe", "Account")" class="btn-buy">Subscribe</a>
+                        <a href="@Url.Action("Subscribe", "Account", new { pkgType = "Print", price = 32, term = "2 months"})" class="btn-buy">Subscribe</a>
                     </div>
                 </div>
             </div>
@@ -101,7 +101,7 @@
                         <li>Massa ultricies mi</li>
                     </ul>
                     <div class="btn-wrap">
-                        <a href="@Url.Action("Subscribe", "Account")" class="btn-buy">Subscribe</a>
+                        <a href="@Url.Action("Subscribe", "Account", new { pkgType = "Print/EPaper", price = 180, term = "year"})" class="btn-buy">Subscribe</a>
                     </div>
                 </div>
             </div>
