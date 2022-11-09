@@ -59,7 +59,7 @@ namespace ePaperLive.Controllers
                             {
                                 case "authenticate":
                                     //encrypt password
-                                    var password = PasswordHash(reader.password);
+                                    var password = reader.password;
                                     result = tableData.SingleOrDefault(b => b.EmailAddress == reader.username /*&& b.passwordHash == password*/ && b.IsActive == true);
                                     //pass error values if query fails
                                     errCode = "03";

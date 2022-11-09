@@ -30,7 +30,7 @@
                         <div class="col-lg-4 hero-img" data-aos="fade-right">
                             <!-- Press Reader Front Page -->
                             <a href="@Url.Action("ReadPaper", "Account")">
-                                <img src="https://i.prcdn.co/img?cid=9IJ5&page=1&height=300" class="img-fluid" alt="" style="border: 2px solid red;">
+                                <img src="@String.Format("https://i.prcdn.co/img?cid=9IJ5&page=1&height=300?{0}", DateTime.Now.ToString("yyyyMMdd"))" class="img-fluid" alt="" style="border: 2px solid red;">
                             </a>
                         </div>
                         <div class="col-lg-8">

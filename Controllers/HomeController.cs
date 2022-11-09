@@ -57,6 +57,10 @@ namespace ePaperLive.Controllers
 
             Session["subscriber_location"] = location;
 
+            if(Request.IsAuthenticated) {
+                return RedirectToAction("Dashboard", "Account");
+            }
+
             return View(login);
         }
 

@@ -1,7 +1,7 @@
 ﻿@{ ViewBag.Title = "Home Page"; }
 
 
-<!-- ======= Hero Section ======= -->
+    <!-- ======= Hero Section ======= -->
 <section id="hero">
 
     <div class="container">
@@ -18,10 +18,11 @@
             </div>
             <div class="col-lg-6 order-1 order-lg-2 hero-img" data-aos="fade-left">
                 <!-- Press Reader Front Page -->
-                <img src="https://i.prcdn.co/img?cid=9IJ5&page=1&height=450" class="img-fluid" alt="" style="border: 2px solid red;">
+                @*<img src="https://i.prcdn.co/img?cid=9IJ5&page=1&height=450" class="img-fluid" alt="" id="frontpage" style="border: 2px solid red;">*@
+                <img src="@String.Format("https://i.prcdn.co/img?cid=9IJ5&page=1&height=450?{0}", DateTime.Now.ToString("yyyyMMdd"))" class="img-fluid" alt="" id="frontpage" style="border: 2px solid red;">
             </div>
         </div>
-    </div>
+</div>
 
 </section>
 <!-- End Hero -->
@@ -199,7 +200,8 @@
                     <p>
                         If you have any questions or concerns, please call us on 876 018 5177 (free from a landline) or 876 7022 6620 (charged at your network providers standard rate). Call us Monday – Fri 8:30am to 5:00pm.
 
-                     </p><p>Alternatively, email us at info@jamaicaobserver.com
+                    </p><p>
+                        Alternatively, email us at info@jamaicaobserver.com
                     </p>
                 </div>
             </li>

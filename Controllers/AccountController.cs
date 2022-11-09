@@ -500,7 +500,7 @@ namespace ePaperLive.Controllers
                         obj.IpAddress = Request.UserHostAddress;
                         
                         user.Email = data.EmailAddress;
-                        user.PasswordHash = PasswordHash(data.Password);
+                        user.PasswordHash = data.Password;
 
                         //Test Data
                         AddressDetails ad = new AddressDetails
