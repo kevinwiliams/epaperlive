@@ -1,6 +1,9 @@
 ﻿<div class="portfolio-info">
     <h5><strong>The Jamaica Observer Limited</strong> </h5>
-    <p>Epaper Plan</p><br />
+    @if (!string.IsNullOrWhiteSpace((string)ViewData["pkgType"]))
+    {
+        <p>@ViewData["pkgType"] Plan</p><br />
+    }
     <p><strong>What's included</strong></p>
     <ul>
         <li>Observer's smartphone app and tablet edition</li>
@@ -11,7 +14,7 @@
     </ul>
     <br />
     <p><strong>Your subscription start date</strong></p>
-    <p>Your subscription starts today: Nov. 2, 2022
+    <p>Your subscription starts today: <br />@DateTime.Now.ToString("MMM d, yyyy")</p>
 </div>
 <div class="portfolio-description">
     <h5><strong>Billing information</strong></h5>
