@@ -1,7 +1,6 @@
 ﻿using ePaperLive.DBModel;
 using ePaperLive.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -14,6 +13,8 @@ using static ePaperLive.Util;
 using System.Globalization;
 using ePaperLive.Filters;
 using System.Web.Configuration;
+using Microsoft.AspNet.Identity.Owin;
+
 
 namespace ePaperLive.Controllers
 {
@@ -23,7 +24,7 @@ namespace ePaperLive.Controllers
     {
         [HttpPost]
         [ResponseType(typeof(Reader))]
-        public HttpResponseMessage Post([FromBody] Reader reader)
+        public async System.Threading.Tasks.Task<HttpResponseMessage> Post([FromBody] Reader reader)
         {
             if (ModelState.IsValid && reader != null)
             {
@@ -59,20 +60,23 @@ namespace ePaperLive.Controllers
                             {
                                 case "authenticate":
                                     //encrypt password
-                                    var password = reader.password;
-                                    result = tableData.SingleOrDefault(b => b.EmailAddress == reader.username /*&& b.passwordHash == password*/ && b.IsActive == true);
+                                    var userManager = Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
+                                    var user = userManager.FindAsync(reader.username, reader.password).Result;
+
+                                    if(user != null)                                   
+                                        result = await tableData.SingleOrDefaultAsync(b => b.EmailAddress == reader.username && b.IsActive == true);
                                     //pass error values if query fails
                                     errCode = "03";
                                     errMsg = "Invalid credentials";
                                     break;
                                 case "get_user_by_userid":
-                                    result = tableData.SingleOrDefault(b => b.SubscriberID == reader.userid && b.IsActive == true);
+                                    result = await tableData.SingleOrDefaultAsync(b => b.SubscriberID == reader.userid && b.IsActive == true);
                                     //pass error values if query fails
                                     errCode = "04";
                                     errMsg = "User not found";
                                     break;
                                 case "get_user_by_token":
-                                    result = tableData.SingleOrDefault(b => b.Token == reader.token && b.IsActive == true);
+                                    result = await tableData.SingleOrDefaultAsync(b => b.Token == reader.token && b.IsActive == true);
                                     //pass error values if query fails
                                     errCode = "05";
                                     errMsg = "Invalid token";
@@ -88,7 +92,7 @@ namespace ePaperLive.Controllers
                             //get active subscription
                             if (result.Subscriber_Epaper != null)
                             {
-                                if (result.Subscriber_Epaper.FirstOrDefault(x => x.IsActive == true) != null)
+                                if (result.Subscriber_Epaper.SingleOrDefault(x => x.IsActive == true) != null)
                                     xml = MemberXML(mb, result);
                                 else
                                     xml = ErrorXML(errCode, errMsg);
@@ -148,7 +152,7 @@ namespace ePaperLive.Controllers
                     mb.postalcode = result.Subscriber_Address.FirstOrDefault(x => x.AddressType == "M").ZipCode;
                     mb.country = result.Subscriber_Address.FirstOrDefault(x => x.AddressType == "M").CountryCode;
                     mb.gender = String.Empty;
-                    mb.nickname = String.Empty;
+                    mb.nickname = result.FirstName + " " + result.LastName;
                     mb.subscription = subscriptionCode;
                     //change date format to YYYY-MM-DD
                     var dateTime = result.Subscriber_Epaper.FirstOrDefault(x => x.IsActive == true).EndDate.ToString();
