@@ -887,9 +887,11 @@ namespace ePaperLive.Controllers
                             objEp.CreatedAt = DateTime.Now;
                         }
 
-                        //Test Data
+                    
                         PaymentDetails pd = new PaymentDetails
                         {
+                            RateDescription = selectedPlan.RateDescr,
+                            CardAmount = (float)selectedPlan.Rate
                             // cardOwner = "Dwayne Mendez",
                         };
 

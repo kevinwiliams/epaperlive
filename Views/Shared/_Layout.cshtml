@@ -219,22 +219,35 @@
     </script>
 
     <script>
+
+        //$("form[name=subdetails]").data("validator").settings.ignore = "";
+
         $(document).ready(function () {
+
+            $("[name=prevBtn]").click(function (e) {
+                console.log($(this).val());
+         
+            });
 
 
             $('[name=rateType]').on("click", function () {
-            console.log($(this).val());
-            //$(this).closest("form").submit();
-        });
+                console.log($(this).val());
+                //$(this).closest("form").submit();
+            });
 
             $("[name=rateType]").click(function (e) {
+
+                var rateType = $(this).val();
                 e.preventDefault();
                 $.ajax({
                     type: "POST",
                     url: '@Url.Action("GetRatesList","Account")',
-                    data: { rateType: $(this).val() },
+                    data: { rateType: rateType },
                     success: function (result) {
                         $("#rates-results").html(result);
+                        $("input[name=rateType][value=" + rateType + "]").prop('checked', true);
+                        //$('[name="radioSelectionName"]').removeAttr('checked');
+                        //$('input[name=RateID]:first-child').attr('checked',true);
                     }
                 });
             });

@@ -33,7 +33,7 @@
                     <div class="col-lg-8">
                         
                         <!-- start:wizrd -->
-                        @using (Html.BeginForm("SubscriptionInfo", "Account", FormMethod.Post, new { @class = "row g-3 needs-validation", novalidate = "novalidate" }))
+                        @using (Html.BeginForm("SubscriptionInfo", "Account", FormMethod.Post, new { @class = "row g-3 needs-validation", novalidate = "novalidate", name="subdetails" }))
                         {
                             @Html.AntiForgeryToken()
 
@@ -46,9 +46,11 @@
 
                             <div id="search-form">
                                 @Html.Partial("_RatesFormPartial")
-                               @* @Html.Action("GetRatesList", "Account")*@
+                                @* @Html.Action("GetRatesList", "Account")*@
                             </div>
                             <div class="container pb-3" id="rates-results"></div>
+                           @Html.HiddenFor(m => m.RateID)
+                            <!-- <input type="hidden" name="RateID" /> -->
 
                             <script>
                             const ratesList = [@(Html.Raw(Json.Encode(this.Model.RatesList)))];
@@ -88,73 +90,73 @@
                                 @Html.LabelFor(model => model.SubType, htmlAttributes: new { @class = "control-label " })
                                 <div class="col-md-10">
                                     @Html.EditorFor(model => model.SubType, new { htmlAttributes = new { @class = "form-control" } })
-                        </div>
                                 </div>
+                            </div>
 
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label " })
-                                    <div class="col-md-10">
-                                        @Html.EditorFor(model => model.StartDate, "", new
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label " })
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.StartDate, "", new
+                                    {
+                                        htmlAttributes = new
                                         {
-                                            htmlAttributes = new
-                                            {
-                                                @class = "form-control",
-                                                maxlength = 10
-                                            }
-                                        })
+                                            @class = "form-control",
+                                            maxlength = 10
+                                        }
+                                    })
+
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.NotificationEmail, htmlAttributes: new { @class = "control-label " })
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.NotificationEmail, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.DeliveryInstructions, htmlAttributes: new { @class = "control-label " })
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.DeliveryInstructions, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+
+                                <div class="col-md-10 p-3">
+                                    <div class="form-check">
+                                        @Html.EditorFor(model => model.newsletterSignUp, new { htmlAttributes = new { @class = "form-check-input" } })
+                                        @Html.LabelFor(model => model.newsletterSignUp, htmlAttributes: new { @class = "form-check-label" })
 
                                     </div>
                                 </div>
+                            </div>
 
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.NotificationEmail, htmlAttributes: new { @class = "control-label " })
-                                    <div class="col-md-10">
-                                        @Html.EditorFor(model => model.NotificationEmail, new { htmlAttributes = new { @class = "form-control" } })
+                            <div class="form-group">
+                                <div class="col-md-10 p-3">
+                                    <div class="form-check">
+                                        @Html.EditorFor(model => model.TermsAndCon, new { htmlAttributes = new { @class = "form-check-input", @required = "required" } })
+                                        @Html.LabelFor(model => model.TermsAndCon, htmlAttributes: new { @class = "form-check-label" })<br />
                                     </div>
                                 </div>
+                            </div>
 
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.DeliveryInstructions, htmlAttributes: new { @class = "control-label " })
-                                    <div class="col-md-10">
-                                        @Html.EditorFor(model => model.DeliveryInstructions, new { htmlAttributes = new { @class = "form-control" } })
-                                    </div>
-                                </div>
 
-                                <div class="form-group">
 
-                                    <div class="col-md-10 p-3">
-                                        <div class="form-check">
-                                            @Html.EditorFor(model => model.newsletterSignUp, new { htmlAttributes = new { @class = "form-check-input" } })
-                                            @Html.LabelFor(model => model.newsletterSignUp, htmlAttributes: new { @class = "form-check-label" })
-
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10 pt-3">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <input type="submit" value="Prev" name="prevBtn" class="btn btn-sign-in bx-pull-left" />
                                         </div>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <div class="col-md-10 p-3">
-                                        <div class="form-check">
-                                            @Html.EditorFor(model => model.TermsAndCon, new { htmlAttributes = new { @class = "form-check-input", @required = "required" } })
-                                            @Html.LabelFor(model => model.TermsAndCon, htmlAttributes: new { @class = "form-check-label" })<br />
-                                        </div>
-                                    </div>
-                                </div>
-
-
-
-                                <div class="form-group">
-                                    <div class="col-md-offset-2 col-md-10 pt-3">
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <input type="submit" value="Prev" name="prevBtn" class="btn btn-sign-in bx-pull-left" />
-                                            </div>
-                                            <div class="col-6">
-                                                <input type="submit" value="Next" name="nextBtn" class="btn btn-sign-in bx-pull-right" />
-                                            </div>
+                                        <div class="col-6">
+                                            <input type="submit" value="Next" name="nextBtn" class="btn btn-sign-in bx-pull-right" />
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
                         }
                         <!-- end:wizrd -->
                     </div>

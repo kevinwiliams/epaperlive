@@ -9,8 +9,9 @@ namespace ePaperLive.Models
 {
     public class SubscriptionDetails
     {
-        [Required(AllowEmptyStrings = false, ErrorMessage = "Please select a plan to proceed")]
         [Key]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Please select a plan to proceed")]
+        //[Range(1, int.MaxValue, ErrorMessage = "Please choose your preferred subscription")]
         public int RateID { get; set; }
         public string RateDescription { get; set; }
         public string SubType { get; set; }

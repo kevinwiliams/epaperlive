@@ -9,8 +9,8 @@ else
     foreach (var plans in Model.Rates)
     {
 
-        @Html.RadioButton("RateID", plans.Rateid, htmlAttributes: new { @checked ="checked" })
-        @(" " + plans.RateDescr + " | " + plans.Type + " (" + plans.Market + ") [" + plans.ETerm + " " + plans.ETermUnit + "][" + plans.PrintTerm + " " + plans.PrintTermUnit + "] : $" + plans.Rate)
+        @Html.RadioButton("RateID", plans.Rateid, htmlAttributes: new { })
+        @(" " + plans.RateDescr + "  [" + plans.ETerm + " " + plans.ETermUnit + "][" + plans.PrintTerm + " " + plans.PrintTermUnit + "] : $" + plans.Rate)
         <br />
 
 

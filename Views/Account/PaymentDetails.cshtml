@@ -40,14 +40,14 @@
                             <hr />
                             @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
-                            <div class="form-group">
-                                @Html.LabelFor(model => model.RateID, htmlAttributes: new { @class = "control-label " })
+                            <div class="form-group p-2">
+                                @Html.LabelFor(model => model.RateDescription, htmlAttributes: new { @class = "control-label " })
                                 <div class="col-md-10">
-                                    @Html.EditorFor(model => model.RateID, new { htmlAttributes = new { @class = "form-control", @readonly="readonly" } })
+                                    @Html.EditorFor(model => model.RateDescription, new { htmlAttributes = new { @class = "form-control", @readonly="readonly" } })
                                 </div>
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group p-2">
                                 @Html.LabelFor(model => model.CardType, htmlAttributes: new { @class = "control-label " }) <br />
                                 @foreach (var method in @ePaperLive.Util.GetEnumSelectList<ePaperLive.Models.PaymentMethod>())
                                 {
