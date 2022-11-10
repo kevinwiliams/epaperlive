@@ -37,6 +37,8 @@ namespace ePaperLive.Models
         [Display(Name = "Phone Number")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Please enter a valid phone number")]
         public string Phone { get; set; }
+        public string AddressType { get; set; }
+
 
         
     }

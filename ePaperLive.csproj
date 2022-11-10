@@ -251,6 +251,7 @@
     <Compile Include="Models\PaymentDetails.cs" />
     <Compile Include="Models\PrintSubRates.cs" />
     <Compile Include="Models\Reader.cs" />
+    <Compile Include="Models\AuthSubcriber.cs" />
     <Compile Include="Models\SubscriptionDetails.cs" />
     <Compile Include="Models\UserLocation.cs" />
     <Compile Include="Models\UserLogin.cs" />

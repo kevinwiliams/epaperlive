@@ -12,6 +12,7 @@ namespace ePaperLive.Models
         [Required(AllowEmptyStrings = false, ErrorMessage = "Please select a plan to proceed")]
         [Key]
         public int RateID { get; set; }
+        public string RateDescription { get; set; }
         public string SubType { get; set; }
 
         [Display(Name = "Subscription Start Date")]

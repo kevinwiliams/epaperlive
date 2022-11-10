@@ -13,6 +13,8 @@ using System.Web.Security;
 using ePaperLive.DBModel;
 using static ePaperLive.Util;
 using System.Collections.Generic;
+using System.Data.Entity;
+
 
 namespace ePaperLive.Controllers
 {
@@ -455,7 +457,111 @@ namespace ePaperLive.Controllers
 
         public ActionResult Dashboard()
         {
-            return View();
+
+            string authUser = User.Identity.GetUserId();
+
+            AuthSubcriber authSubcriber = GetAuthSubscriber();
+
+            if (String.IsNullOrEmpty(authSubcriber.SubscriberID)) 
+            {
+                authSubcriber.SubscriberID = authUser;
+
+                using (var context = new ApplicationDbContext())
+                {
+
+                    //load data and join via foriegn keys
+                    var tableData = context.subscribers
+                        .Include(x => x.Subscriber_Address)
+                        .Include(x => x.Subscriber_Epaper)
+                        .Include(x => x.Subscriber_Print)
+                        .Include(x => x.Subscriber_Tranx)
+                        .Where(u => u.SubscriberID == authUser).ToList();
+
+                    UserLocation objLoc = GetSubscriberLocation();
+                    var market = (objLoc.Country_Code == "JM") ? "Local" : "International";
+
+                    List<printandsubrate> ratesList = context.printandsubrates
+                                            .Where(x => x.Market == market)
+                                            .Where(x => x.Active == true).ToList();
+
+
+                    AuthSubcriber obj = new AuthSubcriber();
+
+                    if (tableData != null)
+                    {
+                        foreach (var item in tableData)
+                        {
+                            //Epaper subscriptions
+                            if (item.Subscriber_Epaper.Count() > 0)
+                            {
+                                foreach (var epaper in item.Subscriber_Epaper)
+                                {
+                                    SubscriptionDetails subscriptionDetails = new SubscriptionDetails();
+                                    subscriptionDetails.StartDate = epaper.StartDate;
+                                    subscriptionDetails.EndDate = epaper.EndDate;
+                                    subscriptionDetails.RateDescription = ratesList.FirstOrDefault(X => X.Rateid == epaper.RateID).RateDescr;
+                                    authSubcriber.SubscriptionDetails.Add(subscriptionDetails);
+
+                                }
+                            }
+                            //Print Subscriptions
+                            if (item.Subscriber_Print.Count() > 0)
+                            {
+                                foreach (var print in item.Subscriber_Print)
+                                {
+                                    SubscriptionDetails subscriptionDetails = new SubscriptionDetails();
+                                    subscriptionDetails.StartDate = print.StartDate;
+                                    subscriptionDetails.EndDate = print.EndDate;
+                                    subscriptionDetails.RateDescription = ratesList.FirstOrDefault(X => X.Rateid == print.RateID).RateDescr;
+                                    authSubcriber.SubscriptionDetails.Add(subscriptionDetails);
+
+                                }
+                            }
+                            //Addresses
+                            if (item.Subscriber_Address.Count() > 0)
+                            {
+                                foreach (var address in item.Subscriber_Address)
+                                {
+                                    AddressDetails addressDetails = new AddressDetails();
+                                    addressDetails.AddressLine1 = address.AddressLine1;
+                                    addressDetails.AddressLine2 = address.AddressLine2;
+                                    addressDetails.AddressType = address.AddressType;
+                                    addressDetails.CityTown = address.CityTown;
+                                    addressDetails.StateParish = address.StateParish;
+                                    addressDetails.CountryCode = address.CountryCode;
+                                    authSubcriber.AddressDetails.Add(addressDetails);
+                                }
+                            }
+                            //Transactions
+                            if (item.Subscriber_Tranx.Count() > 0)
+                            {
+                                foreach (var payments in item.Subscriber_Tranx)
+                                {
+                                    PaymentDetails paymentDetails = new PaymentDetails();
+                                    paymentDetails.CardAmount = (float)payments.TranxAmount;
+                                    paymentDetails.CardNumber = payments.CardLastFour;
+                                    paymentDetails.CardExp = payments.CardExp;
+                                    paymentDetails.CardOwner = payments.CardOwner;
+                                    paymentDetails.CardType = payments.CardType;
+                                    paymentDetails.TranxDate = payments.TranxDate;
+                                    paymentDetails.RateDescription = ratesList.FirstOrDefault(X => X.Rateid == payments.RateID).RateDescr;
+                                    authSubcriber.PaymentDetails.Add(paymentDetails);
+
+                                }
+                            }
+
+                        }
+
+                        //authSubcriber = obj;
+
+                    }
+
+                }
+            }
+
+            
+           
+                    return View();
         }
 
 
@@ -1039,6 +1145,15 @@ namespace ePaperLive.Controllers
                 Session["app_user"] = new ApplicationUser();
             }
             return (ApplicationUser)Session["app_user"];
+        }
+
+        private AuthSubcriber GetAuthSubscriber()
+        {
+            if (Session["auth_subscriber"] == null)
+            {
+                Session["auth_subscriber"] = new AuthSubcriber();
+            }
+            return (AuthSubcriber)Session["auth_subscriber"];
         }
 
         private void RemoveSubscriber()
