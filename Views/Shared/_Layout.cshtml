@@ -29,18 +29,36 @@
 
             <nav id="navbar" class="navbar order-last order-lg-0">
                 <ul>
-                    <!-- <li>@Html.ActionLink("Home", "index", "home")</li> -->
-                    <li><a class="nav-link scrollto" href="~/">Home</a></li>
-                    <li><a class="nav-link scrollto" href="~/#pricing">Packages</a></li>
-                    <li><a class="nav-link scrollto" href="~/#cta">ePaper</a></li>
-                    <li><a class="nav-link scrollto" href="~/#faq">FAQ</a></li>
-                    <li><a class="nav-link scrollto" href="~/#contact">Contact</a></li>
+                    @{
+                        try
+                        {
+                            if (!Request.IsAuthenticated)
+                            {
+                                <!-- <li>@Html.ActionLink("Home", "index", "home")</li> -->
+                                <li><a class="nav-link scrollto" href="~/">Home</a></li>
+                                <li><a class="nav-link scrollto" href="~/#pricing">Packages</a></li>
+                                <li><a class="nav-link scrollto" href="~/#cta">ePaper</a></li>
+                                <li><a class="nav-link scrollto" href="~/#faq">FAQ</a></li>
+                                <li><a class="nav-link scrollto" href="~/#contact">Contact</a></li>
+                            }
+                        }
+                        catch (Exception)
+                        {
+
+                            throw;
+                        }
+                    }
+
                     @{
                         try
                         {
                             //if (!String.IsNullOrEmpty(@HttpContext.Current.User.Identity.Name))
                             if (Request.IsAuthenticated)
                             {
+                                <li>@Html.ActionLink("Home", "dashboard", "account")</li>
+
+                                <li>@Html.ActionLink("Orders", "orders", "account")</li>
+
                                 <li class="dropdown">
                                     <a href="#"><span>My Account</span> <i class="bi bi-chevron-down"></i></a>
                                     <ul>

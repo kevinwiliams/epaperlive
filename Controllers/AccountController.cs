@@ -593,6 +593,13 @@ namespace ePaperLive.Controllers
             return View();
         }
 
+        public ActionResult Orders()
+        {
+            AuthSubcriber authSubcriber = GetAuthSubscriber();
+            List<SubscriptionDetails> subscriptionDetails = authSubcriber.SubscriptionDetails;
+            return View(subscriptionDetails);
+        }
+
 
         [AllowAnonymous]
         public ActionResult Subscribe(string pkgType, string term, decimal price = 0)

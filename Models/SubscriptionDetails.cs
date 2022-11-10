@@ -13,14 +13,17 @@ namespace ePaperLive.Models
         [Required(AllowEmptyStrings = false, ErrorMessage = "Please select a plan to proceed")]
         //[Range(1, int.MaxValue, ErrorMessage = "Please choose your preferred subscription")]
         public int RateID { get; set; }
+        [Display(Name = "Subscription")]
         public string RateDescription { get; set; }
+        [Display(Name = "Type")]
         public string SubType { get; set; }
 
-        [Display(Name = "Subscription Start Date")]
+        [Display(Name = "Start Date")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Please select a start date")]
         [DataType(DataType.Date)]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
         public DateTime StartDate { get; set; }
+        [Display(Name = "End Date")]
         public DateTime EndDate { get; set; }
 
         [Display(Name = "Email address for promotions and updates")]
