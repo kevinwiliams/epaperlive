@@ -12,14 +12,7 @@ namespace ePaperLive
 {
     public class Util
     {
-        public static string PasswordHash(string value)
-        {
-            return Convert.ToBase64String(
-                System.Security.Cryptography.SHA256.Create()
-                .ComputeHash(Encoding.UTF8.GetBytes(value))
-                );
-        }
-
+        
         public class ObjectSerializer<T> where T : class
         {
             public static string Serialize(T obj)
@@ -68,6 +61,26 @@ namespace ePaperLive
             }
             catch { }
             return false;
+        }
+        
+    }
+
+    public static class DateUtils
+    {
+        public static List<DateTime> GetWeekdayInRange(this DateTime from, DateTime to, DayOfWeek day)
+        {
+            const int daysInWeek = 7;
+            var result = new List<DateTime>();
+            var daysToAdd = ((int)day - (int)from.DayOfWeek + daysInWeek) % daysInWeek;
+
+            do
+            {
+                from = from.AddDays(daysToAdd);
+                result.Add(from);
+                daysToAdd = daysInWeek;
+            } while (from < to);
+
+            return result;
         }
     }
 }

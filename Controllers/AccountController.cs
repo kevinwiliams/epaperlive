@@ -576,10 +576,19 @@ namespace ePaperLive.Controllers
 
             if (authSubcriber.AddressDetails != null)
                 ViewBag.address = authSubcriber.AddressDetails.ToList();
-            if (authSubcriber.SubscriptionDetails != null)
-                ViewBag.plans = authSubcriber.SubscriptionDetails;
             if (authSubcriber.PaymentDetails != null)
                 ViewBag.payments = authSubcriber.PaymentDetails.ToList();
+            if (authSubcriber.SubscriptionDetails != null)
+            {
+                var startDate = authSubcriber.SubscriptionDetails.FirstOrDefault().StartDate;
+                var endDate = authSubcriber.SubscriptionDetails.FirstOrDefault().EndDate;
+                ViewBag.plans = authSubcriber.SubscriptionDetails;
+                ViewBag.dates = startDate.GetWeekdayInRange(endDate, DayOfWeek.Monday);
+            }
+                
+           
+
+
 
             return View();
         }
