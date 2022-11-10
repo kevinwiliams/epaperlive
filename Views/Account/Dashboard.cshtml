@@ -13,7 +13,7 @@
                 <li><a href="@Url.Action("index", "home")">Home</a></li>
                 <li>@ViewData["Title"]</li>
             </ol>
-            <h2>Welcome, @User.Identity.Name</h2>
+            <h2>Welcome, @ViewData["userFirstName"]</h2>
 
         </div>
     </section><!-- End Breadcrumbs -->
@@ -48,12 +48,21 @@
                 <div class="col-lg-4">
                     <div class="portfolio-info">
                         <h3>Active Subscription</h3>
-                        <ul>
-                            <li><strong>Plan</strong>: 1 Month (30 Days) - Free</li>
-                            <li><strong>Client</strong>: ASU Company</li>
-                            <li><strong>Project date</strong>: 01 March, 2020</li>
-                       
-                        </ul>
+                        @if (ViewBag.plans != null)
+                        {
+                            foreach (var item in (List<ePaperLive.Models.SubscriptionDetails>)ViewBag.plans)
+                            {
+                                <p>@item.RateDescription</p>
+                                <small>
+                                    <strong>Start:</strong> @Convert.ToDateTime(item.StartDate).ToString("dd MMMM yyyy") <br />
+                                    <strong>End:&nbsp;&nbsp;</strong> @Convert.ToDateTime(item.EndDate).ToString("dd MMMM yyyy") <br />
+                                    <!-- <a href="#">Cancel</a> -->
+                                </small>
+
+                            }
+                        }
+                        <br />
+                      
                     </div>
                    
                 </div>

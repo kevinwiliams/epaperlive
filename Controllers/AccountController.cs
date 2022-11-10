@@ -462,9 +462,10 @@ namespace ePaperLive.Controllers
 
             AuthSubcriber authSubcriber = GetAuthSubscriber();
 
-            if (String.IsNullOrEmpty(authSubcriber.SubscriberID)) 
+            if (authSubcriber.SubscriptionDetails == null)
             {
                 authSubcriber.SubscriberID = authUser;
+                
 
                 using (var context = new ApplicationDbContext())
                 {
@@ -477,18 +478,22 @@ namespace ePaperLive.Controllers
                         .Include(x => x.Subscriber_Tranx)
                         .Where(u => u.SubscriberID == authUser).ToList();
 
-                    UserLocation objLoc = GetSubscriberLocation();
-                    var market = (objLoc.Country_Code == "JM") ? "Local" : "International";
+                   
 
                     List<printandsubrate> ratesList = context.printandsubrates
-                                            .Where(x => x.Market == market)
                                             .Where(x => x.Active == true).ToList();
 
 
                     AuthSubcriber obj = new AuthSubcriber();
+                    List<SubscriptionDetails> SubscriptionList = new List<SubscriptionDetails>();
+                    List<AddressDetails> AddressList = new List<AddressDetails>();
+                    List<PaymentDetails> PaymentsList = new List<PaymentDetails>();
 
                     if (tableData != null)
                     {
+                        authSubcriber.FirstName = tableData.FirstOrDefault().FirstName;
+                        authSubcriber.LastName = tableData.FirstOrDefault().LastName;
+
                         foreach (var item in tableData)
                         {
                             //Epaper subscriptions
@@ -497,10 +502,11 @@ namespace ePaperLive.Controllers
                                 foreach (var epaper in item.Subscriber_Epaper)
                                 {
                                     SubscriptionDetails subscriptionDetails = new SubscriptionDetails();
+                                    subscriptionDetails.RateID = epaper.RateID;
                                     subscriptionDetails.StartDate = epaper.StartDate;
                                     subscriptionDetails.EndDate = epaper.EndDate;
                                     subscriptionDetails.RateDescription = ratesList.FirstOrDefault(X => X.Rateid == epaper.RateID).RateDescr;
-                                    authSubcriber.SubscriptionDetails.Add(subscriptionDetails);
+                                    SubscriptionList.Add(subscriptionDetails);
 
                                 }
                             }
@@ -509,13 +515,19 @@ namespace ePaperLive.Controllers
                             {
                                 foreach (var print in item.Subscriber_Print)
                                 {
-                                    SubscriptionDetails subscriptionDetails = new SubscriptionDetails();
-                                    subscriptionDetails.StartDate = print.StartDate;
-                                    subscriptionDetails.EndDate = print.EndDate;
-                                    subscriptionDetails.RateDescription = ratesList.FirstOrDefault(X => X.Rateid == print.RateID).RateDescr;
-                                    authSubcriber.SubscriptionDetails.Add(subscriptionDetails);
+                                    if (SubscriptionList.FirstOrDefault(X => X.RateID == print.RateID) == null)
+                                    {
+                                        SubscriptionDetails subscriptionDetails = new SubscriptionDetails();
+                                        subscriptionDetails.RateID = print.RateID;
+                                        subscriptionDetails.StartDate = print.StartDate;
+                                        subscriptionDetails.EndDate = print.EndDate;
+                                        subscriptionDetails.RateDescription = ratesList.FirstOrDefault(X => X.Rateid == print.RateID).RateDescr;
+                                        SubscriptionList.Add(subscriptionDetails);
+                                    }
 
                                 }
+
+
                             }
                             //Addresses
                             if (item.Subscriber_Address.Count() > 0)
@@ -529,7 +541,7 @@ namespace ePaperLive.Controllers
                                     addressDetails.CityTown = address.CityTown;
                                     addressDetails.StateParish = address.StateParish;
                                     addressDetails.CountryCode = address.CountryCode;
-                                    authSubcriber.AddressDetails.Add(addressDetails);
+                                    AddressList.Add(addressDetails);
                                 }
                             }
                             //Transactions
@@ -545,23 +557,31 @@ namespace ePaperLive.Controllers
                                     paymentDetails.CardType = payments.CardType;
                                     paymentDetails.TranxDate = payments.TranxDate;
                                     paymentDetails.RateDescription = ratesList.FirstOrDefault(X => X.Rateid == payments.RateID).RateDescr;
-                                    authSubcriber.PaymentDetails.Add(paymentDetails);
+                                    PaymentsList.Add(paymentDetails);
 
                                 }
                             }
 
                         }
 
-                        //authSubcriber = obj;
-
+                        authSubcriber.SubscriptionDetails = SubscriptionList;
+                        authSubcriber.PaymentDetails = PaymentsList;
+                        authSubcriber.AddressDetails = AddressList;
                     }
 
                 }
             }
 
-            
-           
-                    return View();
+            ViewData["userFirstName"] = authSubcriber.FirstName;
+
+            if (authSubcriber.AddressDetails != null)
+                ViewBag.address = authSubcriber.AddressDetails.ToList();
+            if (authSubcriber.SubscriptionDetails != null)
+                ViewBag.plans = authSubcriber.SubscriptionDetails;
+            if (authSubcriber.PaymentDetails != null)
+                ViewBag.payments = authSubcriber.PaymentDetails.ToList();
+
+            return View();
         }
 
 
