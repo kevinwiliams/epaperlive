@@ -21,6 +21,8 @@ namespace ePaperLive.DBModel
         public string CardExp { get; set; }
         [StringLength(5)]
         public string CardLastFour { get; set; }
+        [StringLength(25)]
+        public string PromoCode { get; set; }
         public Nullable<double> TranxAmount { get; set; }
         public Nullable<System.DateTime> TranxDate { get; set; }
         public Nullable<int> RateID { get; set; }

@@ -192,6 +192,7 @@
                         CardType = c.String(maxLength: 20),
                         CardExp = c.String(maxLength: 5),
                         CardLastFour = c.String(maxLength: 5),
+                        PromoCode = c.String(maxLength: 25),
                         TranxAmount = c.Double(),
                         TranxDate = c.DateTime(),
                         RateID = c.Int(),
@@ -203,7 +204,21 @@
                 .PrimaryKey(t => t.Subscriber_TranxID)
                 .ForeignKey("dbo.Subscribers", t => t.SubscriberID)
                 .Index(t => t.SubscriberID);
-            
+
+            CreateTable(
+                "dbo.Promocodes",
+                c => new
+                    {
+                        PromoCodeID = c.Int(nullable: false, identity: true),
+                        PromoCode = c.String(maxLength: 25),
+                        PromoDescription = c.String(maxLength: 50),
+                        Discount = c.Double(nullable: false),
+                        StartDate = c.DateTime(nullable: false),
+                        EndDate = c.DateTime(nullable: false),
+                        Active = c.Boolean(),
+                    })
+                .PrimaryKey(t => t.PromoCodeID);
+
         }
         
         public override void Down()
@@ -240,6 +255,7 @@
             DropTable("dbo.AspNetUserRoles");
             DropTable("dbo.AspNetRoles");
             DropTable("dbo.printandsubrates");
+            DropTable("dbo.Promocodes");
         }
     }
 }

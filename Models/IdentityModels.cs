@@ -41,6 +41,7 @@ namespace ePaperLive.Models
             //    .HasRequired(u => u.ApplicationUser).WithRequiredDependent(c => c.Subscriber);
         }
 
+        public DbSet<Promocodes> promocodes { get; set; }
         public DbSet<printandsubrate> printandsubrates { get; set; }
         public DbSet<Subscriber> subscribers { get; set; }
         public DbSet<Subscriber_Address> subscriber_address { get; set; }

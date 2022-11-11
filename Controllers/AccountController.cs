@@ -599,6 +599,7 @@ namespace ePaperLive.Controllers
 
         public ActionResult Orders()
         {
+            ViewData["Title"] = "Orders";
             AuthSubcriber authSubcriber = GetAuthSubscriber();
             List<SubscriptionDetails> subscriptionDetails = authSubcriber.SubscriptionDetails;
             return View(subscriptionDetails);

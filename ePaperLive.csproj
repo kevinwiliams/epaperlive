@@ -228,6 +228,7 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ReaderController.cs" />
     <Compile Include="DBModel\printandsubrate.cs" />
+    <Compile Include="DBModel\promo_codes.cs" />
     <Compile Include="DBModel\subscriber.cs" />
     <Compile Include="DBModel\subscriber_address.cs" />
     <Compile Include="DBModel\subscriber_epaper.cs" />

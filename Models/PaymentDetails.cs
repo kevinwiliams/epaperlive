@@ -30,14 +30,19 @@ namespace ePaperLive.Models
         [Display(Name = "Expiration Date")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Enter card expiration date")]
         public string CardExp { get; set; }
+        [Display(Name = "Amount")]
         public float CardAmount { get; set; }
 
         [Required]
         public int RateID;
-
+        
+        [Display(Name = "Subcription")]
         public string RateDescription { get; set; }
-
+        
+        [Display(Name = "Transaction Date")]
         public DateTime? TranxDate { get; set; }
+        [Display(Name = "Promo Code")]
+        public string PromoCode { get; set; }
 
     }
 
