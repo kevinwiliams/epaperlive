@@ -483,7 +483,7 @@ namespace ePaperLive.Controllers
                 {
 
                     //load data and join via foriegn keys
-                    var tableData = context.subscribers
+                    var tableData = context.subscribers.AsNoTracking()
                         .Include(x => x.Subscriber_Address)
                         .Include(x => x.Subscriber_Epaper)
                         .Include(x => x.Subscriber_Print)
