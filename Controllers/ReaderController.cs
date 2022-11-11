@@ -64,19 +64,22 @@ namespace ePaperLive.Controllers
                                     var user = userManager.FindAsync(reader.username, reader.password).Result;
 
                                     if(user != null)                                   
-                                        result = await tableData.SingleOrDefaultAsync(b => b.EmailAddress == reader.username && b.IsActive == true);
+                                        result = await tableData.FirstOrDefaultAsync(b => b.EmailAddress == reader.username && b.IsActive == true);
                                     //pass error values if query fails
                                     errCode = "03";
                                     errMsg = "Invalid credentials";
                                     break;
                                 case "get_user_by_userid":
-                                    result = await tableData.SingleOrDefaultAsync(b => b.SubscriberID == reader.userid && b.IsActive == true);
+                                    result = await tableData.FirstOrDefaultAsync(b => b.SubscriberID == reader.userid && b.IsActive == true);
                                     //pass error values if query fails
                                     errCode = "04";
                                     errMsg = "User not found";
                                     break;
                                 case "get_user_by_token":
-                                    result = await tableData.SingleOrDefaultAsync(b => b.Token == reader.token && b.IsActive == true);
+                                    var getUserByToken = context.Users.FirstOrDefaultAsync(x => x.SecurityStamp == reader.token).Result;
+
+                                    if(getUserByToken != null)
+                                        result = await tableData.FirstOrDefaultAsync(b => b.SubscriberID == getUserByToken.Id && b.IsActive == true);
                                     //pass error values if query fails
                                     errCode = "05";
                                     errMsg = "Invalid token";

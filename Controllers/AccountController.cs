@@ -400,6 +400,7 @@ namespace ePaperLive.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
+            Session.Clear();
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("Index", "Home");
         }
@@ -433,12 +434,23 @@ namespace ePaperLive.Controllers
         }
 
         [HttpGet]
-        public ActionResult ReadPaper()
+        public async Task<ActionResult> ReadPaper()
         {
-            string token = Session["tokenHash"].ToString();
-            string pressReaderURL = "https://jamaicaobserver.pressreader.com/?token=";
+            if (User.Identity.IsAuthenticated)
+            {
+                string token = "";
+                var applicationUser = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+                token = applicationUser.SecurityStamp;
+                string pressReaderURL = "https://jamaicaobserver.pressreader.com/?token=";
 
-            return Redirect(pressReaderURL + token);
+                return Redirect(pressReaderURL + token);
+            }
+            else 
+            {
+                return View("Dashboard");
+            }
+            
+
         }
 
         [AllowAnonymous]
@@ -476,9 +488,7 @@ namespace ePaperLive.Controllers
                         .Include(x => x.Subscriber_Epaper)
                         .Include(x => x.Subscriber_Print)
                         .Include(x => x.Subscriber_Tranx)
-                        .Where(u => u.SubscriberID == authUser).ToList();
-
-                   
+                        .FirstOrDefault(u => u.SubscriberID == authUser);
 
                     List<printandsubrate> ratesList = context.printandsubrates
                                             .Where(x => x.Active == true).ToList();
@@ -491,15 +501,13 @@ namespace ePaperLive.Controllers
 
                     if (tableData != null)
                     {
-                        authSubcriber.FirstName = tableData.FirstOrDefault().FirstName;
-                        authSubcriber.LastName = tableData.FirstOrDefault().LastName;
+                        authSubcriber.FirstName = tableData.FirstName;
+                        authSubcriber.LastName = tableData.LastName;
 
-                        foreach (var item in tableData)
-                        {
                             //Epaper subscriptions
-                            if (item.Subscriber_Epaper.Count() > 0)
+                            if (tableData.Subscriber_Epaper.Count() > 0)
                             {
-                                foreach (var epaper in item.Subscriber_Epaper)
+                                foreach (var epaper in tableData.Subscriber_Epaper)
                                 {
                                     SubscriptionDetails subscriptionDetails = new SubscriptionDetails();
                                     subscriptionDetails.RateID = epaper.RateID;
@@ -507,13 +515,12 @@ namespace ePaperLive.Controllers
                                     subscriptionDetails.EndDate = epaper.EndDate;
                                     subscriptionDetails.RateDescription = ratesList.FirstOrDefault(X => X.Rateid == epaper.RateID).RateDescr;
                                     SubscriptionList.Add(subscriptionDetails);
-
                                 }
                             }
                             //Print Subscriptions
-                            if (item.Subscriber_Print.Count() > 0)
+                            if (tableData.Subscriber_Print.Count() > 0)
                             {
-                                foreach (var print in item.Subscriber_Print)
+                                foreach (var print in tableData.Subscriber_Print)
                                 {
                                     if (SubscriptionList.FirstOrDefault(X => X.RateID == print.RateID) == null)
                                     {
@@ -527,12 +534,11 @@ namespace ePaperLive.Controllers
 
                                 }
 
-
                             }
                             //Addresses
-                            if (item.Subscriber_Address.Count() > 0)
+                            if (tableData.Subscriber_Address.Count() > 0)
                             {
-                                foreach (var address in item.Subscriber_Address)
+                                foreach (var address in tableData.Subscriber_Address)
                                 {
                                     AddressDetails addressDetails = new AddressDetails();
                                     addressDetails.AddressLine1 = address.AddressLine1;
@@ -545,9 +551,9 @@ namespace ePaperLive.Controllers
                                 }
                             }
                             //Transactions
-                            if (item.Subscriber_Tranx.Count() > 0)
+                            if (tableData.Subscriber_Tranx.Count() > 0)
                             {
-                                foreach (var payments in item.Subscriber_Tranx)
+                                foreach (var payments in tableData.Subscriber_Tranx)
                                 {
                                     PaymentDetails paymentDetails = new PaymentDetails();
                                     paymentDetails.CardAmount = (float)payments.TranxAmount;
@@ -561,8 +567,6 @@ namespace ePaperLive.Controllers
 
                                 }
                             }
-
-                        }
 
                         authSubcriber.SubscriptionDetails = SubscriptionList;
                         authSubcriber.PaymentDetails = PaymentsList;
