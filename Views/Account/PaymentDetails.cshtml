@@ -36,16 +36,17 @@
                             @Html.AntiForgeryToken()
 
                         <div class="form-horizontal">
-                            <h4><strong>@Html.DisplayFor(model => model.SubType): </strong>@Html.DisplayFor(model => model.RateDescription) </h4> 
+                            <h4><strong>@Html.DisplayFor(model => model.SubType): </strong>@Html.DisplayFor(model => model.RateDescription) </h4>
                             <h1 style="color:forestgreen"><strong>@Html.DisplayFor(model => model.CardAmount)</strong></h1>
                             <hr />
                             @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
 
-                            <div class="form-group p-2 pb-5">
+                            <div class="form-group p-2 pb-5 col-md-5">
                                 @Html.LabelFor(model => model.PromoCode, htmlAttributes: new { @class = "control-label " })
-                                <div class="col-md-4">
+                                <div class="input-group">
                                     @Html.EditorFor(model => model.PromoCode, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.PromoCode) } })
+                                    <button type="button" class="btn btn-danger btn-promo-code">APPLY</button>
                                 </div>
                             </div>
 
@@ -62,17 +63,18 @@
 
                             </div>
                             <div class="form-group p-2">
+                                @*@Html.LabelFor(model => model.cardNumber, htmlAttributes: new { @class = "control-label " })*@
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.CardNumber, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.CardNumber) } })
+                                </div>
+                            </div>
+                            <div class="form-group p-2">
                                 @*@Html.LabelFor(model => model.cardOwner, htmlAttributes: new { @class = "control-label " })*@
                                 <div class="col-md-10">
                                     @Html.EditorFor(model => model.CardOwner, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.CardOwner) } })
                                 </div>
                             </div>
-                            <div class="form-group p-2">
-                                @*@Html.LabelFor(model => model.cardNumber, htmlAttributes: new { @class = "control-label " })*@
-                                <div class="col-md-10">
-                                    @Html.EditorFor(model => model.CardNumber, new { htmlAttributes = new { @class = "form-control", @required = "required", maxLength = 16, placeholder = Html.DisplayNameFor(model => model.CardNumber) } })
-                                </div>
-                            </div>
+
 
                             <div class="form-group">
                                 <div class="col-md-offset-2 col-md-10 pt-3">
@@ -86,7 +88,7 @@
                                         <div class="col-6">
                                             @*@Html.LabelFor(model => model.cardCVV, htmlAttributes: new { @class = "control-label " })*@
                                             <div class="col-md-10">
-                                                @Html.EditorFor(model => model.CardCVV, new { htmlAttributes = new { @class = "form-control", @required = "required", maxLength = 3, placeholder = Html.DisplayNameFor(model => model.CardCVV) } })
+                                                @Html.EditorFor(model => model.CardCVV, new { htmlAttributes = new { @class = "form-control", @required = "required", type = "password", placeholder = Html.DisplayNameFor(model => model.CardCVV) } })
                                             </div>
                                         </div>
                                     </div>
@@ -150,17 +152,42 @@
 
 @section scripts{
     <script>
+        // Needed for KeyCard
         $("#CardNumber").on("input", (e) => {
-            $("#CardNumber").val($("#CardNumber").val().replace(/\D/g, ''));
-            if (!($("#CardNumber").val().startsWith("4")
-                || $("#CardNumber").val().startsWith("5")
-                || $("#CardNumber").val().startsWith("7"))) {
-                $("#CardNumber").val("");
+            if ($("#CardNumber").val().startsWith("7")) {
+                $("input[value='KeyCard']").prop("checked", true);
+            }
+            else if ($("#CardNumber").val().length == 0) {               
+                $("input[name='CardType']").prop("checked", false);
             }
         });
 
-        $("#CardCVV").on("input", (e) => {
-            $("#CardCVV").val($("#CardCVV").val().replace(/\D/g, ''));
+        //$("#CardCVV").on("input", (e) => {
+        //    $("#CardCVV").val($("#CardCVV").val().replace(/\D/g, ''));
+        //});
+
+        let cardNumber = new Cleave('#CardNumber', {
+            creditCard: true,
+            onCreditCardTypeChanged: (type) => {
+                /*$("input[name='CardType']").prop("checked", false);*/
+                if (type == 'visa') {
+                    $("input[value='Visa']").prop("checked", true);
+                }
+                else if (type == 'mastercard') {
+                    $("input[value='Mastercard']").prop("checked", true);
+                }
+                console.log(type);
+            }
+        });
+
+        let cardCVV = new Cleave('#CardCVV', {
+            blocks: [3],
+            numericOnly: true
+        })
+
+        let expirationDate = new Cleave('#CardExp', {
+            date: true,
+            datePattern: ['m', 'y']
         });
     </script>
 }
