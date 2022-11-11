@@ -19,7 +19,7 @@ namespace ePaperLive.Models
 
         [Display(Name = "Card Number")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Enter card number")]
-        [StringLength(16, MinimumLength = 16, ErrorMessage = "Please enter a valid card number")]
+        [StringLength(19, MinimumLength = 19, ErrorMessage = "Please enter a valid card number")] // Just to accomodate mask
         public string CardNumber { get; set; }
 
         [Display(Name = "CVV")]
