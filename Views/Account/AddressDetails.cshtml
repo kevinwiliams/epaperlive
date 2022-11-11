@@ -1,7 +1,7 @@
 ﻿@model ePaperLive.Models.AddressDetails
 
 @{
-    ViewBag.Title = "AddressDetails";
+    ViewBag.Title = "Mailing Address";
 }
 
     <main id="main">
@@ -37,7 +37,7 @@
                             @Html.AntiForgeryToken()
 
                         <div class="row form-horizontal">
-                            <h4>AddressDetails</h4>
+                            <h4>Please enter your mailing address </h4>
                             <hr />
                             @Html.ValidationSummary(false, "", new { @class = "text-danger" })
                             <div class="form-group p-2">
@@ -100,6 +100,7 @@
                                     @*@Html.ValidationMessageFor(model => model.phone, "", new { @class = "text-danger" })*@
                                 </div>
                             </div>
+                            <small>Your information will be used in accordance with our <a href="#">Privacy</a>, and may be used to contact you if you do not complete your purchase to check if you need any support.</small>
 
                             <div class="form-group">
                                 <div class="col-md-offset-2 col-md-12 pt-3">

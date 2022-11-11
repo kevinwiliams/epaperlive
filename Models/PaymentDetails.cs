@@ -31,11 +31,14 @@ namespace ePaperLive.Models
         [Required(AllowEmptyStrings = false, ErrorMessage = "Enter card expiration date")]
         public string CardExp { get; set; }
         [Display(Name = "Amount")]
+        [DisplayFormat(DataFormatString = "{0:C0}", ApplyFormatInEditMode = true)]
         public float CardAmount { get; set; }
 
         [Required]
         public int RateID;
-        
+
+        [Display(Name = "Type")]
+        public string SubType { get; set; }
         [Display(Name = "Subcription")]
         public string RateDescription { get; set; }
         
