@@ -62,8 +62,8 @@
                                 <li class="dropdown">
                                     <a href="#"><span>My Account</span> <i class="bi bi-chevron-down"></i></a>
                                     <ul>
-                                        <li>@Html.ActionLink(User.Identity.Name, "Dashboard", new { controller = "Account" }, new { area = "" })</li>
-                                        <li><a class="nav-link scrollto" href="#team">Change Password</a></li>
+                                        @*<li>@Html.ActionLink(User.Identity.Name, "Dashboard", new { controller = "Account" }, new { area = "" })</li>*@
+                                        <li>@Html.ActionLink("Change Password", "changepassword", "manage")</li>
                                         <li><a class="nav-link scrollto" href="#team">Update Profile</a></li>
                                         <li><a class="nav-link scrollto" href="#testimonials">Request Refund</a></li>
                                         @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
