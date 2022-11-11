@@ -65,7 +65,7 @@ h6 {
   opacity: 1;
 }
 
-.btn-sign-in {
+.btn-sign-in, .btn-promo-code {
     font-family: "Raleway", sans-serif;
     font-weight: 600;
     font-size: 13px;
@@ -78,8 +78,11 @@ h6 {
     color: #fff;
     background: #E62B34;
 }
+.btn-promo-code {
+    padding: 8px 20px;
+}
 
-.btn-sign-in:hover {
+.btn-sign-in:hover, .btn-promo-code:hover {
     background: #000;
 }
 
@@ -109,7 +112,7 @@ h6 {
         position: relative;
     }
 
-    .loginmodal-container input[type=text], input[type=password] {
+    .loginmodal-container input[type=text], input[type=password]:not(#CardCVV) {
         height: 44px;
         font-size: 16px;
         width: 100%;
@@ -124,7 +127,7 @@ h6 {
         -moz-box-sizing: border-box;
     }
 
-        .loginmodal-container input[type=text]:hover, input[type=password]:hover {
+        .loginmodal-container input[type=text]:hover, input[type=password]:hover:not(#CardCVV) {
             border: 1px solid #b9b9b9;
             border-top: 1px solid #a0a0a0;
             -moz-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
