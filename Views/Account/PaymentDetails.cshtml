@@ -67,7 +67,7 @@
                             <div class="form-group p-2">
                                 @*@Html.LabelFor(model => model.cardNumber, htmlAttributes: new { @class = "control-label " })*@
                                 <div class="col-md-10">
-                                    @Html.EditorFor(model => model.CardNumber, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.CardNumber) } })
+                                    @Html.EditorFor(model => model.CardNumber, new { htmlAttributes = new { @class = "form-control", @required = "required", maxLength = 16, placeholder = Html.DisplayNameFor(model => model.CardNumber) } })
                                 </div>
                             </div>
 
@@ -83,7 +83,7 @@
                                         <div class="col-6">
                                             @*@Html.LabelFor(model => model.cardCVV, htmlAttributes: new { @class = "control-label " })*@
                                             <div class="col-md-10">
-                                                @Html.EditorFor(model => model.CardCVV, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.CardCVV) } })
+                                                @Html.EditorFor(model => model.CardCVV, new { htmlAttributes = new { @class = "form-control", @required = "required", maxLength = 3, placeholder = Html.DisplayNameFor(model => model.CardCVV) } })
                                             </div>
                                         </div>
                                     </div>
@@ -144,3 +144,20 @@
         })();
 
     </script>
+
+@section scripts{
+    <script>
+        $("#CardNumber").on("input", (e) => {
+            $("#CardNumber").val($("#CardNumber").val().replace(/\D/g, ''));
+            if (!($("#CardNumber").val().startsWith("4")
+                || $("#CardNumber").val().startsWith("5")
+                || $("#CardNumber").val().startsWith("7"))) {
+                $("#CardNumber").val("");
+            }
+        });
+
+        $("#CardCVV").on("input", (e) => {
+            $("#CardCVV").val($("#CardCVV").val().replace(/\D/g, ''));
+        });
+    </script>
+}
