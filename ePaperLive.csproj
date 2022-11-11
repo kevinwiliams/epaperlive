@@ -480,6 +480,7 @@
     <Content Include="Views\Account\_RatesPartial.cshtml" />
     <Content Include="Views\Account\_SubcriptionSummary.cshtml" />
     <Content Include="Views\Account\_SubscriptionInfo.cshtml" />
+    <Content Include="Views\Account\Orders.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\roslyn\" />
