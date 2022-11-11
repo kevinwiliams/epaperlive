@@ -1,7 +1,7 @@
 ﻿@model ePaperLive.Models.LoginDetails
 
 @{
-    ViewBag.Title = "LoginDetails";
+    ViewBag.Title = "Login Details";
 }
 
 <main id="main">
@@ -36,64 +36,66 @@
                     {
                         @Html.AntiForgeryToken()
 
-                        <div class="row form-horizontal">
-                            <p>LoginDetails</p>
-                            <hr />
-                            @Html.ValidationSummary(false, "", new { @class = "text-danger" })
-                            @*@System.Globalization.RegionInfo.CurrentRegion.DisplayName*@ 
-                            <div class="col-md-6 p-2">
-                                <div class="form-group">
-                                    @*@Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label" })*@
-                                    <div class="col-md-10">
-                                        @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.FirstName) } })
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 p-2">
-                                <div class="form-group">
-                                    @*@Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label" })*@
-                                    <div class="col-md-10">
-                                        @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.LastName) } })
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div class="form-group p-2">
-                                @*@Html.LabelFor(model => model.EmailAddress, htmlAttributes: new { @class = "control-label col-md-4" })*@
-                                <div class="col-md-10">
-                                    @Html.EditorFor(model => model.EmailAddress, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.EmailAddress) } })
-                                </div>
-                            </div>
-
-                            <div class="col-md-6 p-2">
-                                <div class="form-group">
-                                    @*@Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label" })*@
-                                    <div class="col-md-10">
-                                        @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.Password) } })
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 p-2">
-                                <div class="form-group">
-                                    @*@Html.LabelFor(model => model.ConfirmPassword, htmlAttributes: new { @class = "control-label" })*@
-                                    <div class="col-md-10">
-                                        @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.ConfirmPassword) } })
-                                    </div>
-                                </div>
-                            </div>
-
+                    <div class="row form-horizontal">
+                        <p>Please provide your basic information to get started.</p>
+                        <hr />
+                        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                        @*@System.Globalization.RegionInfo.CurrentRegion.DisplayName*@
+                        <div class="col-md-6 p-2">
                             <div class="form-group">
-                                <div class="col-md-offset-2 col-md-12 pt-3">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <input type="submit" value="Next" name="nextBtn" class="btn btn-sign-in bx-pull-right" />
-                                        </div>
-                                    </div>
-
+                                @*@Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label" })*@
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.FirstName) } })
                                 </div>
                             </div>
                         </div>
+                        <div class="col-md-6 p-2">
+                            <div class="form-group">
+                                @*@Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label" })*@
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.LastName) } })
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group p-2">
+                            @*@Html.LabelFor(model => model.EmailAddress, htmlAttributes: new { @class = "control-label col-md-4" })*@
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.EmailAddress, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.EmailAddress) } })
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 p-2">
+                            <div class="form-group">
+                                @*@Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label" })*@
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.Password) } })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 p-2">
+                            <div class="form-group">
+                                @*@Html.LabelFor(model => model.ConfirmPassword, htmlAttributes: new { @class = "control-label" })*@
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.ConfirmPassword) } })
+                                </div>
+                            </div>
+                        </div>
+                        <small>Your information will be used in accordance with our <a href="#">Privacy</a>, and may be used to contact you if you do not complete your purchase to check if you need any support.</small>
+                        
+
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-12 pt-3">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <input type="submit" value="Next" name="nextBtn" class="btn btn-sign-in bx-pull-right" />
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
                     }
                     <!-- end:wizrd -->
                 </div>
@@ -101,7 +103,6 @@
                     @Html.Partial("_SubcriptionSummary")
                 </div>
             </div>
-
         </div>
     </section><!-- End Wizard Section -->
 

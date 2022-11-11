@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "PaymentSuccess";
+    ViewBag.Title = "Thank you";
 }
 
 
@@ -26,7 +26,11 @@
             <div class="row gy-4">
                 <div class="col-lg-8">
                     <!-- start:wizrd -->
-                    <h2>Payment Success</h2>
+                    <h2>Thank you  for subscribing to The Jamaica Observer Digital Experience</h2>
+                    <p>A confirmation email has been sent to the supplied email address with. Please follow the below link to login to start reading the epaper</p>
+                    <p>
+                        <a href="@Url.Action("login", "account")">Login</a>
+                    </p>
                     <!-- end:wizrd -->
                 </div>
                 <div class="col-lg-4">

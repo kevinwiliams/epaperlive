@@ -25,7 +25,7 @@ namespace ePaperLive.Models
 
         [Display(Name = "Password")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Password is required")]
-        [StringLength(50, MinimumLength = 5, ErrorMessage = "Must have a minimum length of 5.")]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
@@ -33,7 +33,7 @@ namespace ePaperLive.Models
         [Required(AllowEmptyStrings = false, ErrorMessage = "Confirm Password is required")]
         [StringLength(50, MinimumLength = 5, ErrorMessage = "Must have a minimum length of 5.")]
         [DataType(DataType.Password)]
-        [Compare("Password", ErrorMessage = "Passwords do not match")]
+        [Compare("Password", ErrorMessage = "The new password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
 
         public UserLocation location { get; set; }

@@ -514,7 +514,8 @@ namespace ePaperLive.Controllers
                                     subscriptionDetails.StartDate = epaper.StartDate;
                                     subscriptionDetails.EndDate = epaper.EndDate;
                                     subscriptionDetails.RateDescription = ratesList.FirstOrDefault(X => X.Rateid == epaper.RateID).RateDescr;
-                                    SubscriptionList.Add(subscriptionDetails);
+                                    subscriptionDetails.SubType = ratesList.FirstOrDefault(X => X.Rateid == epaper.RateID).Type;
+                                SubscriptionList.Add(subscriptionDetails);
                                 }
                             }
                             //Print Subscriptions
@@ -903,7 +904,8 @@ namespace ePaperLive.Controllers
                         PaymentDetails pd = new PaymentDetails
                         {
                             RateDescription = selectedPlan.RateDescr,
-                            CardAmount = (float)selectedPlan.Rate
+                            CardAmount = (float)selectedPlan.Rate,
+                            SubType = selectedPlan.Type
                             // cardOwner = "Dwayne Mendez",
                         };
 

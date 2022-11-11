@@ -10,7 +10,7 @@ else
     {
 
         @Html.RadioButton("RateID", plans.Rateid, htmlAttributes: new { })
-        @(" " + plans.RateDescr + "  [" + plans.ETerm + " " + plans.ETermUnit + "][" + plans.PrintTerm + " " + plans.PrintTermUnit + "] : $" + plans.Rate)
+        @(" " + plans.RateDescr + "  [" + plans.PrintTerm + " " + plans.PrintTermUnit + "] : $" + plans.Rate)
         <br />
 
 
