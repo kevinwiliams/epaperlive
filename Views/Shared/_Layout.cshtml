@@ -64,7 +64,7 @@
                                     <ul>
                                         @*<li>@Html.ActionLink(User.Identity.Name, "Dashboard", new { controller = "Account" }, new { area = "" })</li>*@
                                         <li>@Html.ActionLink("Change Password", "changepassword", "manage")</li>
-                                        <li><a class="nav-link scrollto" href="#team">Update Profile</a></li>
+                                        <li>@Html.ActionLink("Update Profile", "userprofile", "account")</li>
                                         <li><a class="nav-link scrollto" href="#testimonials">Request Refund</a></li>
                                         @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
                                         {
@@ -248,12 +248,12 @@
             });
 
 
-            $('[name=rateType]').on("click", function () {
+            $('[name=RateType]').on("click", function () {
                 console.log($(this).val());
                 //$(this).closest("form").submit();
             });
 
-            $("[name=rateType]").click(function (e) {
+            $("[name=RateType]").click(function (e) {
 
                 var rateType = $(this).val();
                 e.preventDefault();
@@ -263,7 +263,7 @@
                     data: { rateType: rateType },
                     success: function (result) {
                         $("#rates-results").html(result);
-                        $("input[name=rateType][value=" + rateType + "]").prop('checked', true);
+                        $("input[name=RateType][value=" + rateType + "]").prop('checked', true);
                         //$('[name="radioSelectionName"]').removeAttr('checked');
                         //$('input[name=RateID]:first-child').attr('checked',true);
                     }

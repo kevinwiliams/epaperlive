@@ -17,6 +17,8 @@ namespace ePaperLive.Models
         public string RateDescription { get; set; }
         [Display(Name = "Type")]
         public string SubType { get; set; }
+        [MustBeTrue(ErrorMessage = "Please select rates")]
+        public string RateType { get; set; }
 
         [Display(Name = "Start Date")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Please select a start date")]
@@ -58,4 +60,5 @@ namespace ePaperLive.Models
             return value is bool && (bool)value;
         }
     }
+
 }

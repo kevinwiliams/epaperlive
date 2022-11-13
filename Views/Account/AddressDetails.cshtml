@@ -40,17 +40,17 @@
                             <h4>Please enter your mailing address </h4>
                             <hr />
                             @Html.ValidationSummary(false, "", new { @class = "text-danger" })
-                            <div class="form-group p-2">
+                            <div class="form-group">
                                 @*@Html.LabelFor(model => model.AddressLine1, htmlAttributes: new { @class = "control-label" })*@
-                                <div class="col-md-10">
+                                <div class="col-md-10 p-2">
                                     @Html.EditorFor(model => model.AddressLine1, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.AddressLine1) } })
                                     @*@Html.ValidationMessageFor(model => model.AddressLine1, "", new { @class = "text-danger" })*@
                                 </div>
                             </div>
 
-                            <div class="form-group p-2">
+                            <div class="form-group">
                                 @*@Html.LabelFor(model => model.AddressLine2, htmlAttributes: new { @class = "control-label" })*@
-                                <div class="col-md-10">
+                                <div class="col-md-10 p-2">
                                     @Html.EditorFor(model => model.AddressLine2, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.AddressLine2) } })
                                     @*@Html.ValidationMessageFor(model => model.AddressLine2, "", new { @class = "text-danger" })*@
                                 </div>
@@ -95,7 +95,7 @@
 
                             <div class="form-group p-3">
                                 @*@Html.LabelFor(model => model.phone, htmlAttributes: new { @class = "control-label " })*@
-                                <div class="col-md-10">
+                                <div class="col-md-4">
                                     @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.Phone) } })
                                     @*@Html.ValidationMessageFor(model => model.phone, "", new { @class = "text-danger" })*@
                                 </div>

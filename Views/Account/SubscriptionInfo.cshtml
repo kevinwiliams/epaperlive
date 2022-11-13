@@ -6,38 +6,38 @@
 
 
 
-    <main id="main">
+<main id="main">
 
-        <!-- ======= Breadcrumbs ======= -->
-        <section id="breadcrumbs" class="breadcrumbs">
-            <div class="container">
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+        <div class="container">
 
-                <ol>
-                    <li><a href="@Url.Action("index", "home")">Home</a></li>
-                    <li>@ViewData["Title"]</li>
-                </ol>
-                <h2>@ViewData["Title"]</h2>
+            <ol>
+                <li><a href="@Url.Action("index", "home")">Home</a></li>
+                <li>@ViewData["Title"]</li>
+            </ol>
+            <h2>@ViewData["Title"]</h2>
 
-            </div>
-        </section><!-- End Breadcrumbs -->
-        <!-- ======= Wizard Breadcrumbs ======= -->
-        <div class="container form-header d-flex mb-4 mt-4">
-            <span class="stepIndicator active">Login Details</span>
-            <span class="stepIndicator active">Mailing Address</span>
-            <span class="stepIndicator active">Subscription</span>
-            <span class="stepIndicator">Payment</span>
-        </div><!-- End Wizard Breadcrumbs -->
-        <!-- ======= Wizard Section ======= -->
-        <section id="portfolio-details" class="portfolio-details">
-            <div class="container">
+        </div>
+    </section><!-- End Breadcrumbs -->
+    <!-- ======= Wizard Breadcrumbs ======= -->
+    <div class="container form-header d-flex mb-4 mt-4">
+        <span class="stepIndicator active">Login Details</span>
+        <span class="stepIndicator active">Mailing Address</span>
+        <span class="stepIndicator active">Subscription</span>
+        <span class="stepIndicator">Payment</span>
+    </div><!-- End Wizard Breadcrumbs -->
+    <!-- ======= Wizard Section ======= -->
+    <section id="portfolio-details" class="portfolio-details">
+        <div class="container">
 
-                <div class="row gy-4">
-                    <div class="col-lg-8">
-                        
-                        <!-- start:wizrd -->
-                        @using (Html.BeginForm("SubscriptionInfo", "Account", FormMethod.Post, new { @class = "row g-3 needs-validation", novalidate = "novalidate", name="subdetails" }))
-                        {
-                            @Html.AntiForgeryToken()
+            <div class="row gy-4">
+                <div class="col-lg-8">
+
+                    <!-- start:wizrd -->
+                    @using (Html.BeginForm("SubscriptionInfo", "Account", FormMethod.Post, new { @class = "row g-3 needs-validation", novalidate = "novalidate", name = "subdetails" }))
+                    {
+                        @Html.AntiForgeryToken()
 
                         <div class="form-horizontal">
                             <h4>Choose from one of our subscription options</h4>
@@ -51,7 +51,7 @@
                                 @* @Html.Action("GetRatesList", "Account")*@
                             </div>
                             <div class="container pb-3" id="rates-results"></div>
-                           @Html.HiddenFor(m => m.RateID)
+                            @Html.HiddenFor(m => m.RateID, new { @class=".do-not-ignore" })
                             <!-- <input type="hidden" name="RateID" /> -->
 
                             <script>
@@ -88,7 +88,7 @@
 
 
                             </script>
-                           
+
 
                             <div class="form-group">
                                 @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label " })
@@ -154,21 +154,30 @@
                                 </div>
                             </div>
                         </div>
-                        }
-                        <!-- end:wizrd -->
-                    </div>
-                    <div class="col-lg-4">
-                        @Html.Partial("_SubcriptionSummary")
-                    </div>
-
-
-
-
-
+                    }
+                    <!-- end:wizrd -->
+                </div>
+                <div class="col-lg-4">
+                    @Html.Partial("_SubcriptionSummary")
                 </div>
 
-            </div>
-        </section><!-- End Wizard Section -->
 
-    </main><!-- End #main -->
-  
+
+
+
+            </div>
+
+        </div>
+    </section><!-- End Wizard Section -->
+
+</main><!-- End #main -->
+
+
+@section scripts{
+    <script>
+        //$('form[name=subdetails]').validate({
+        //    ignore: ':hidden:not(.do-not-ignore)',
+        //    // any other options and/or rules
+        //});
+    </script>
+}
