@@ -614,7 +614,33 @@ namespace ePaperLive.Controllers
 
             return View(authSubcriber);
         }
+        [HttpPost]
+        public ActionResult UserProfile(AuthSubcriber authSubcriber)
+        {
+            string authUser = User.Identity.GetUserId();
 
+            using (var context = new ApplicationDbContext()) 
+            {
+                //load data and join via foriegn keys
+                var tableData = context.subscribers.AsNoTracking()
+                    .Include(x => x.Subscriber_Address)
+                    .FirstOrDefault(u => u.SubscriberID == authUser && u.Subscriber_Address.FirstOrDefault().AddressType == "M");
+
+                if (tableData != null)
+                {
+                    tableData.FirstName = authSubcriber.FirstName;
+                    tableData.LastName = authSubcriber.LastName;
+                    tableData.Subscriber_Address.FirstOrDefault().AddressLine1 = authSubcriber.AddressDetails.FirstOrDefault().AddressLine1;
+                    tableData.Subscriber_Address.FirstOrDefault().AddressLine2 = authSubcriber.AddressDetails.FirstOrDefault().AddressLine2;
+                    tableData.Subscriber_Address.FirstOrDefault().CityTown = authSubcriber.AddressDetails.FirstOrDefault().CityTown;
+                    tableData.Subscriber_Address.FirstOrDefault().StateParish = authSubcriber.AddressDetails.FirstOrDefault().StateParish;
+                    tableData.Subscriber_Address.FirstOrDefault().ZipCode = authSubcriber.AddressDetails.FirstOrDefault().ZipCode;
+                    tableData.Subscriber_Address.FirstOrDefault().CountryCode = authSubcriber.AddressDetails.FirstOrDefault().CountryCode;
+                    context.SaveChanges();
+                }
+            }
+            return View();
+        }
        
 
         [AllowAnonymous]
