@@ -609,7 +609,9 @@ namespace ePaperLive.Controllers
         public ActionResult UserProfile()
         {
             AuthSubcriber authSubcriber = GetAuthSubscriber();
-            
+            ViewBag.plans = authSubcriber.SubscriptionDetails;
+
+
             return View(authSubcriber);
         }
 
