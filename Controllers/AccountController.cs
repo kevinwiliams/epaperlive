@@ -548,6 +548,7 @@ namespace ePaperLive.Controllers
                                     addressDetails.CityTown = address.CityTown;
                                     addressDetails.StateParish = address.StateParish;
                                     addressDetails.CountryCode = address.CountryCode;
+                                    addressDetails.ZipCode = address.ZipCode;
                                     AddressList.Add(addressDetails);
                                 }
                             }
@@ -617,6 +618,7 @@ namespace ePaperLive.Controllers
         [HttpPost]
         public ActionResult UserProfile(AuthSubcriber authSubcriber)
         {
+            //AuthSubcriber authSubcriber = GetAuthSubscriber();
             string authUser = User.Identity.GetUserId();
 
             using (var context = new ApplicationDbContext()) 
@@ -624,22 +626,35 @@ namespace ePaperLive.Controllers
                 //load data and join via foriegn keys
                 var tableData = context.subscribers.AsNoTracking()
                     .Include(x => x.Subscriber_Address)
-                    .FirstOrDefault(u => u.SubscriberID == authUser && u.Subscriber_Address.FirstOrDefault().AddressType == "M");
+                    .FirstOrDefault(u => u.SubscriberID == authUser);
+
 
                 if (tableData != null)
                 {
+                    Subscriber_Address oldAddress = tableData.Subscriber_Address.FirstOrDefault();
+                    tableData.Subscriber_Address.Remove(oldAddress);
+
+                    Subscriber_Address newAddress = new Subscriber_Address();
+                    newAddress = oldAddress;
+
+                    newAddress.AddressLine1 = authSubcriber.AddressDetails.FirstOrDefault().AddressLine1;
+                    newAddress.AddressLine2 = authSubcriber.AddressDetails.FirstOrDefault().AddressLine2;
+                    newAddress.CityTown = authSubcriber.AddressDetails.FirstOrDefault().CityTown;
+                    newAddress.StateParish = authSubcriber.AddressDetails.FirstOrDefault().StateParish;
+                    newAddress.ZipCode = authSubcriber.AddressDetails.FirstOrDefault().ZipCode;
+                    newAddress.CountryCode = authSubcriber.AddressDetails.FirstOrDefault().CountryCode;
+                    newAddress.AddressType = authSubcriber.AddressDetails.FirstOrDefault().AddressType;
+                 
+
                     tableData.FirstName = authSubcriber.FirstName;
                     tableData.LastName = authSubcriber.LastName;
-                    tableData.Subscriber_Address.FirstOrDefault().AddressLine1 = authSubcriber.AddressDetails.FirstOrDefault().AddressLine1;
-                    tableData.Subscriber_Address.FirstOrDefault().AddressLine2 = authSubcriber.AddressDetails.FirstOrDefault().AddressLine2;
-                    tableData.Subscriber_Address.FirstOrDefault().CityTown = authSubcriber.AddressDetails.FirstOrDefault().CityTown;
-                    tableData.Subscriber_Address.FirstOrDefault().StateParish = authSubcriber.AddressDetails.FirstOrDefault().StateParish;
-                    tableData.Subscriber_Address.FirstOrDefault().ZipCode = authSubcriber.AddressDetails.FirstOrDefault().ZipCode;
-                    tableData.Subscriber_Address.FirstOrDefault().CountryCode = authSubcriber.AddressDetails.FirstOrDefault().CountryCode;
+                    tableData.Subscriber_Address.Add(newAddress);
                     context.SaveChanges();
+
+                    
                 }
             }
-            return View();
+            return RedirectToAction("UserProfile");
         }
        
 
