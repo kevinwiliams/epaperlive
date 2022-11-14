@@ -3,7 +3,7 @@
 @{
     ViewBag.Title = "Payment";
 }
-    <main id="main">
+    <div id="main">
 
         <!-- ======= Breadcrumbs ======= -->
         <section id="breadcrumbs" class="breadcrumbs">
@@ -64,13 +64,13 @@
                             </div>
                             <div class="form-group p-2">
                                 @*@Html.LabelFor(model => model.cardNumber, htmlAttributes: new { @class = "control-label " })*@
-                                <div class="col-md-10">
+                                <div class="col-md-5">
                                     @Html.EditorFor(model => model.CardNumber, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.CardNumber) } })
                                 </div>
                             </div>
                             <div class="form-group p-2">
                                 @*@Html.LabelFor(model => model.cardOwner, htmlAttributes: new { @class = "control-label " })*@
-                                <div class="col-md-10">
+                                <div class="col-md-8">
                                     @Html.EditorFor(model => model.CardOwner, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.CardOwner) } })
                                 </div>
                             </div>
@@ -80,13 +80,13 @@
                                 <div class="col-md-offset-2 col-md-10 pt-3">
                                     <div class="row">
                                         <div class="col-6">
-                                            @*@Html.LabelFor(model => model.cardExp, htmlAttributes: new { @class = "control-label " })*@
+                                            @Html.LabelFor(model => model.CardExp, htmlAttributes: new { @class = "control-label " })
                                             <div class="col-md-6">
-                                                @Html.EditorFor(model => model.CardExp, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.CardExp) } })
+                                                @Html.EditorFor(model => model.CardExp, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = "MM/YY" } })
                                             </div>
                                         </div>
                                         <div class="col-6">
-                                            @*@Html.LabelFor(model => model.cardCVV, htmlAttributes: new { @class = "control-label " })*@
+                                            @Html.LabelFor(model => model.CardCVV, htmlAttributes: new { @class = "control-label " })
                                             <div class="col-md-3">
                                                 @Html.EditorFor(model => model.CardCVV, new { htmlAttributes = new { @class = "form-control", @required = "required", type = "password", placeholder = Html.DisplayNameFor(model => model.CardCVV) } })
                                             </div>
@@ -125,7 +125,7 @@
             </div>
         </section><!-- End Wizard Section -->
 
-    </main><!-- End #main -->
+    </div><!-- End #main -->
 
     <script>
         // Example starter JavaScript for disabling form submissions if there are invalid fields

@@ -17,7 +17,7 @@ namespace ePaperLive.Models
         public string RateDescription { get; set; }
         [Display(Name = "Type")]
         public string SubType { get; set; }
-        [MustBeTrue(ErrorMessage = "Please select rates")]
+        [MustBeSelected(ErrorMessage = "Please select rates")]
         public string RateType { get; set; }
 
         [Display(Name = "Start Date")]
@@ -58,6 +58,17 @@ namespace ePaperLive.Models
         public override bool IsValid(object value)
         {
             return value is bool && (bool)value;
+        }
+    }
+
+    public class MustBeSelectedAttribute : ValidationAttribute
+    {
+        public override bool IsValid(object value)
+        {
+            if (value == null)
+                return false;
+            else
+                return true;
         }
     }
 

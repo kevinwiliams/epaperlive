@@ -4,7 +4,7 @@
     ViewBag.Title = "Login Details";
 }
 
-<main id="main">
+<div id="main">
 
     <!-- ======= Breadcrumbs ======= -->
     <section id="breadcrumbs" class="breadcrumbs">
@@ -41,7 +41,7 @@
                         <hr />
                         @Html.ValidationSummary(false, "", new { @class = "text-danger" })
                         @*@System.Globalization.RegionInfo.CurrentRegion.DisplayName*@
-                        <div class="col-md-6 p-2">
+                        <div class="col-md-5 p-2">
                             <div class="form-group">
                                 @*@Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label" })*@
                                 <div class="col-md-10">
@@ -49,7 +49,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 p-2">
+                        <div class="col-md-5 p-2">
                             <div class="form-group">
                                 @*@Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label" })*@
                                 <div class="col-md-10">
@@ -61,12 +61,12 @@
 
                         <div class="form-group p-2">
                             @*@Html.LabelFor(model => model.EmailAddress, htmlAttributes: new { @class = "control-label col-md-4" })*@
-                            <div class="col-md-10">
+                            <div class="col-md-8">
                                 @Html.EditorFor(model => model.EmailAddress, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.EmailAddress) } })
                             </div>
                         </div>
 
-                        <div class="col-md-6 p-2">
+                        <div class="col-md-5 p-2">
                             <div class="form-group">
                                 @*@Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label" })*@
                                 <div class="col-md-10">
@@ -74,7 +74,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 p-2">
+                        <div class="col-md-5 p-2">
                             <div class="form-group">
                                 @*@Html.LabelFor(model => model.ConfirmPassword, htmlAttributes: new { @class = "control-label" })*@
                                 <div class="col-md-10">
@@ -82,11 +82,13 @@
                                 </div>
                             </div>
                         </div>
-                        <small>Your information will be used in accordance with our <a href="#">Privacy</a>, and may be used to contact you if you do not complete your purchase to check if you need any support.</small>
+                        <div class="col-10">
+                            <small>Your information will be used in accordance with our <a href="~/home/privacypolicy/">Privacy</a>, and may be used to contact you if you do not complete your purchase to check if you need any support.</small>
+                        </div>
                         
 
                         <div class="form-group">
-                            <div class="col-md-offset-2 col-md-12 pt-3">
+                            <div class="col-md-offset-2 col-md-10 pt-3">
                                 <div class="row">
                                     <div class="col-12">
                                         <input type="submit" value="Next" name="nextBtn" class="btn btn-sign-in bx-pull-right" />
@@ -106,7 +108,7 @@
         </div>
     </section><!-- End Wizard Section -->
 
-</main><!-- End #main -->
+</div><!-- End #main -->
 <script>
     // Example starter JavaScript for disabling form submissions if there are invalid fields
     (() => {

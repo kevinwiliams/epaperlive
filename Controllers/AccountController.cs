@@ -613,6 +613,7 @@ namespace ePaperLive.Controllers
             return View(authSubcriber);
         }
 
+       
 
         [AllowAnonymous]
         public ActionResult Subscribe(string pkgType, string term, decimal price = 0)

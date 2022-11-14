@@ -5,8 +5,7 @@
 }
 
 
-
-<main id="main">
+<div id="main">
 
     <!-- ======= Breadcrumbs ======= -->
     <section id="breadcrumbs" class="breadcrumbs">
@@ -47,7 +46,15 @@
                             @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
                             <div id="search-form">
-                                @Html.Partial("_RatesFormPartial")
+                                <div class="plans pb-3">
+                                    <div class="row">
+                                        <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.RateType, "Epaper", htmlAttributes: new { @autocomplete = "off", @id = "ePaper" })<label for="ePaper">ePaper Edition</label></div>
+                                        <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.RateType, "Print", htmlAttributes: new { @autocomplete = "off", @id = "Print" })<label for="Print">Print Edition</label></div>
+                                        <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.RateType, "Bundle", htmlAttributes: new { @autocomplete = "off", @id = "Bundle" })<label for="Bundle">Print & ePaper Bundle</label></div>
+
+                                    </div>
+
+                                </div>
                                 @* @Html.Action("GetRatesList", "Account")*@
                             </div>
                             <div class="container pb-3" id="rates-results"></div>
@@ -55,12 +62,12 @@
                             <!-- <input type="hidden" name="RateID" /> -->
 
                             <script>
-                            const ratesList = [@(Html.Raw(Json.Encode(this.Model.RatesList)))];
+                            @*const ratesList = [@(Html.Raw(Json.Encode(this.Model.RatesList)))];*@
 
-                            var epaperList = filterByProperty(ratesList, "Type", "Epaper");
-                            var printList = filterByProperty(ratesList, "Type", "Print");
-                            var bundleList = filterByProperty(ratesList, "Type", "Bundle");
-                            console.log(epaperList);
+                            //var epaperList = filterByProperty(ratesList, "Type", "Epaper");
+                            //var printList = filterByProperty(ratesList, "Type", "Print");
+                            //var bundleList = filterByProperty(ratesList, "Type", "Bundle");
+                           // console.log(epaperList);
                             //$("$ratesList").val(stringList);
                             function filterByProperty(array, prop, value)
                             {
@@ -90,9 +97,9 @@
                             </script>
 
 
-                            <div class="form-group">
+                            <div class="form-group p-2">
                                 @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label " })
-                                <div class="col-md-10">
+                                <div class="col-md-4">
                                     @Html.EditorFor(model => model.StartDate, "", new
                                     {
                                         htmlAttributes = new
@@ -104,20 +111,21 @@
 
                                 </div>
                             </div>
-
-                            <div class="form-group">
+                            <!--
+                            <div class="form-group p-2">
                                 @Html.LabelFor(model => model.NotificationEmail, htmlAttributes: new { @class = "control-label " })
                                 <div class="col-md-10">
                                     @Html.EditorFor(model => model.NotificationEmail, new { htmlAttributes = new { @class = "form-control" } })
                                 </div>
                             </div>
-
-                            <div class="form-group">
-                                @Html.LabelFor(model => model.DeliveryInstructions, htmlAttributes: new { @class = "control-label " })
-                                <div class="col-md-10">
-                                    @Html.EditorFor(model => model.DeliveryInstructions, new { htmlAttributes = new { @class = "form-control" } })
-                                </div>
+                            -->
+                        <div class="form-group p-2">
+                                @Html.LabelFor(model => model.DeliveryInstructions, htmlAttributes: new { @class = "form-label " })
+                            <div class="col-md-10">
+                                @Html.TextAreaFor(model => model.DeliveryInstructions, new { htmlAttributes = new { @class = "form-control", @rows = 5} })
                             </div>
+                        </div>
+                            <style>textarea { width: 100%} </style>
 
                             <div class="form-group">
 
@@ -170,7 +178,7 @@
         </div>
     </section><!-- End Wizard Section -->
 
-</main><!-- End #main -->
+</div><!-- End #main -->
 
 
 @section scripts{

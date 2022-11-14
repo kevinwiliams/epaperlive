@@ -78,6 +78,21 @@ namespace ePaperLive.Controllers
             return View();
         }
 
+        public ActionResult ServiceLevelAgreement()
+        {
+            return View();
+        }
+
+        public ActionResult PrivacyPolicy() 
+        {
+            return View();
+        }
+
+        public ActionResult TermsCondition()
+        {
+            return View();
+        }
+
         private UserLocation GetSubscriberLocation()
         {
             if (Session["subscriber_location"] == null)

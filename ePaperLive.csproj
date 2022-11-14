@@ -417,6 +417,7 @@
     <Content Include="ApplicationInsights.config" />
     <Content Include=".gitignore" />
     <None Include="Scripts\jquery-3.6.1.intellisense.js" />
+    <Content Include="Scripts\cleave.min.js" />
     <Content Include="Scripts\jquery-3.6.1.js" />
     <Content Include="Scripts\jquery-3.6.1.min.js" />
     <Content Include="Scripts\jquery-3.6.1.slim.js" />
@@ -482,6 +483,10 @@
     <Content Include="Views\Account\_SubcriptionSummary.cshtml" />
     <Content Include="Views\Account\_SubscriptionInfo.cshtml" />
     <Content Include="Views\Account\Orders.cshtml" />
+    <Content Include="Views\Account\UserProfile.cshtml" />
+    <Content Include="Views\Home\PrivacyPolicy.cshtml" />
+    <Content Include="Views\Home\ServiceLevelAgreement.cshtml" />
+    <Content Include="Views\Home\TermsCondition.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\roslyn\" />
