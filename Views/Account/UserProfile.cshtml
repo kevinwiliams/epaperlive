@@ -31,6 +31,8 @@
                     <div class="form-horizontal">
                         <h4>Update your information below</h4>
                         <hr />
+                        
+                        <h2 class="text-success">@ViewBag.msg</h2>
                         @Html.ValidationSummary(false, "", new { @class = "text-danger" })
                         @Html.HiddenFor(model => model.SubscriberID)
 

@@ -668,8 +668,8 @@ namespace ePaperLive.Controllers
                     };
 
                     localAuthSubcriber.AddressDetails.Add(address);
-                    
 
+                    ViewBag.msg = "Profile updated successfully";
                     
                 }
             }
