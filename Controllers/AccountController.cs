@@ -618,19 +618,21 @@ namespace ePaperLive.Controllers
         [HttpPost]
         public ActionResult UserProfile(AuthSubcriber authSubcriber)
         {
-            //AuthSubcriber authSubcriber = GetAuthSubscriber();
+
             string authUser = User.Identity.GetUserId();
 
             using (var context = new ApplicationDbContext()) 
             {
                 //load data and join via foriegn keys
-                var tableData = context.subscribers.AsNoTracking()
+                var tableData = context.subscribers
                     .Include(x => x.Subscriber_Address)
                     .FirstOrDefault(u => u.SubscriberID == authUser);
 
 
                 if (tableData != null)
                 {
+                    AuthSubcriber localAuthSubcriber = GetAuthSubscriber();
+
                     Subscriber_Address oldAddress = tableData.Subscriber_Address.FirstOrDefault();
                     tableData.Subscriber_Address.Remove(oldAddress);
 
@@ -645,11 +647,28 @@ namespace ePaperLive.Controllers
                     newAddress.CountryCode = authSubcriber.AddressDetails.FirstOrDefault().CountryCode;
                     newAddress.AddressType = authSubcriber.AddressDetails.FirstOrDefault().AddressType;
                  
-
+                    //update tables
                     tableData.FirstName = authSubcriber.FirstName;
                     tableData.LastName = authSubcriber.LastName;
                     tableData.Subscriber_Address.Add(newAddress);
                     context.SaveChanges();
+
+                    var dbAddress = localAuthSubcriber.AddressDetails.FirstOrDefault(x => x.AddressType == "M");
+                    localAuthSubcriber.AddressDetails.Remove(dbAddress);
+
+                    AddressDetails address = new AddressDetails 
+                    { 
+                        AddressLine1 = newAddress.AddressLine1,
+                        AddressLine2 = newAddress.AddressLine2,
+                        CityTown = newAddress.CityTown,
+                        StateParish = newAddress.StateParish,
+                        ZipCode = newAddress.ZipCode,
+                        CountryCode = newAddress.CountryCode,
+                        AddressType = newAddress.AddressType,
+                    };
+
+                    localAuthSubcriber.AddressDetails.Add(address);
+                    
 
                     
                 }
