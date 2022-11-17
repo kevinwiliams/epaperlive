@@ -1,7 +1,10 @@
-﻿@{ ViewBag.Title = "Home Page"; }
+﻿@using BotDetect.Web.Mvc;
+@model ePaperLive.Models.FeedbackFormModel
+
+@{ ViewBag.Title = "Home Page"; }
 
 
-    <!-- ======= Hero Section ======= -->
+<!-- ======= Hero Section ======= -->
 <section id="hero">
 
     <div class="container">
@@ -22,7 +25,7 @@
                 <img src="@String.Format("https://i.prcdn.co/img?cid=9IJ5&page=1&height=450?{0}", DateTime.Now.ToString("yyyyMMdd"))" class="img-fluid" alt="" id="frontpage" style="border: 2px solid red;">
             </div>
         </div>
-</div>
+    </div>
 
 </section>
 <!-- End Hero -->
@@ -258,3 +261,96 @@
 
     </div>
 </section><!-- End Frequently Asked Questions Section -->
+<!-- ======= Contact Section ======= -->
+<section id="contact" class="contact section-bg">
+    <div class="container">
+
+        <div class="section-title" data-aos="fade-up">
+            <h2>Contact Us</h2>
+        </div>
+
+        <div class="row">
+
+            <div class="col-lg-5 d-flex align-items-stretch" data-aos="fade-right">
+                <div class="info">
+                    <div class="address">
+                        <i class="bi bi-geo-alt"></i>
+                        <h4>Location:</h4>
+                        <p>40-42 1/2 Beechwood Avenue, Kingston 5, Jamaica, W.I.</p>
+                    </div>
+
+                    <div class="email">
+                        <i class="bi bi-envelope"></i>
+                        <h4>Email:</h4>
+                        <p>userhelp@jamaicaobserver.com</p>
+                    </div>
+
+                    <div class="phone">
+                        <i class="bi bi-phone"></i>
+                        <h4>Call:</h4>
+                        <p>+1 876 926-7655</p>
+                    </div>
+
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3794.5620444538768!2d-76.7992063488659!3d17.99910158765443!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8edb3fbc27a9c9a9%3A0x22853c11a734ac47!2sJamaica%20Observer%20Limited!5e0!3m2!1sen!2sjm!4v1668708116131!5m2!1sen!2sjm" frameborder="0" style="border:0; width: 100%; height: 290px;" allowfullscreen></iframe>
+                </div>
+
+            </div>
+
+            <div class="col-lg-7 mt-5 mt-lg-0 d-flex align-items-stretch" data-aos="fade-left">
+
+                @using (Html.BeginForm("Index", "Home", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "php-email-form", role = "form" }))
+
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            @*@Html.LabelFor(model => model.Name, new { @class = "col-md-2 control-label" })<br>*@
+                            @Html.TextBoxFor(model => model.Name, new { @class = "form-control", required = "required", placeholder = Html.DisplayNameFor(model => model.Name) })
+                            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group col-md-6 mt-3 mt-md-0">
+                            @*@Html.LabelFor(model => model.Email, new { @class = "col-md-2 control-label" })<br>*@
+                            @Html.TextBoxFor(model => model.Email, new { @class = "form-control", required = "required", placeholder = Html.DisplayNameFor(model => model.Email) })
+                            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group mt-3">
+                        @*@Html.LabelFor(model => model.Subject, new { @class = "col-md-2 control-label" })<br>*@
+                        @Html.TextBoxFor(model => model.Subject, new { @class = "form-control", required = "required", placeholder = Html.DisplayNameFor(model => model.Subject) })
+                        @Html.ValidationMessageFor(model => model.Subject, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group mt-3">
+                         @*@Html.LabelFor(model => model.Message, new { @class = "col-md-2 control-label" })<br>*@
+                        @Html.TextAreaFor(model => model.Message, new { @class = "form-control", required = "required", placeholder = Html.DisplayNameFor(model => model.Message) })
+                        @Html.ValidationMessageFor(model => model.Message, "", new { @class = "text-danger" })
+                    </div>
+                        <div>
+                            @Html.Label("CaptchaCode", "Retype the code from the picture: ")
+                            @{ MvcCaptcha feedbackCaptcha = new MvcCaptcha("FeedbackCaptcha");
+                                feedbackCaptcha.UserInputID = "CaptchaCode";}
+                            @Html.Captcha(feedbackCaptcha)
+                        </div>
+                        <div class="actions">
+                            @Html.TextBox("CaptchaCode", "",new { required = "required"})
+                            @Html.ValidationMessage("CaptchaCode")
+                            @if ((Request.HttpMethod == "POST") && ViewData.ModelState.IsValid)
+                            {
+                                <span class="correct">Correct!</span>
+                            }
+                        </div>
+                    <div class="my-3">
+                        <div class="loading">Loading</div>
+                        <div class="error-message"></div>
+                        <div class="sent-message">Your message has been sent. Thank you!</div>
+                    </div>
+                    <div class="text-center"><button type="submit">Send Message</button></div>
+                }
+
+
+            </div>
+
+        </div>
+
+    </div>
+</section><!-- End Contact Section -->

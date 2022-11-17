@@ -640,45 +640,56 @@ namespace ePaperLive.Controllers
 
                 if (tableData != null)
                 {
-                    AuthSubcriber localAuthSubcriber = GetAuthSubscriber();
 
-                    Subscriber_Address oldAddress = tableData.Subscriber_Address.FirstOrDefault();
-                    tableData.Subscriber_Address.Remove(oldAddress);
+                    try
+                    {
+                        AuthSubcriber localAuthSubcriber = GetAuthSubscriber();
 
-                    Subscriber_Address newAddress = new Subscriber_Address();
-                    newAddress = oldAddress;
+                        Subscriber_Address oldAddress = tableData.Subscriber_Address.FirstOrDefault();
+                        tableData.Subscriber_Address.Remove(oldAddress);
 
-                    newAddress.AddressLine1 = authSubcriber.AddressDetails.FirstOrDefault().AddressLine1;
-                    newAddress.AddressLine2 = authSubcriber.AddressDetails.FirstOrDefault().AddressLine2;
-                    newAddress.CityTown = authSubcriber.AddressDetails.FirstOrDefault().CityTown;
-                    newAddress.StateParish = authSubcriber.AddressDetails.FirstOrDefault().StateParish;
-                    newAddress.ZipCode = authSubcriber.AddressDetails.FirstOrDefault().ZipCode;
-                    newAddress.CountryCode = authSubcriber.AddressDetails.FirstOrDefault().CountryCode;
-                    newAddress.AddressType = authSubcriber.AddressDetails.FirstOrDefault().AddressType;
-                 
-                    //update tables
-                    tableData.FirstName = authSubcriber.FirstName;
-                    tableData.LastName = authSubcriber.LastName;
-                    tableData.Subscriber_Address.Add(newAddress);
-                    context.SaveChanges();
+                        Subscriber_Address newAddress = new Subscriber_Address();
+                        newAddress = oldAddress;
 
-                    var dbAddress = localAuthSubcriber.AddressDetails.FirstOrDefault(x => x.AddressType == "M");
-                    localAuthSubcriber.AddressDetails.Remove(dbAddress);
+                        newAddress.AddressLine1 = authSubcriber.AddressDetails.FirstOrDefault().AddressLine1;
+                        newAddress.AddressLine2 = authSubcriber.AddressDetails.FirstOrDefault().AddressLine2;
+                        newAddress.CityTown = authSubcriber.AddressDetails.FirstOrDefault().CityTown;
+                        newAddress.StateParish = authSubcriber.AddressDetails.FirstOrDefault().StateParish;
+                        newAddress.ZipCode = authSubcriber.AddressDetails.FirstOrDefault().ZipCode;
+                        newAddress.CountryCode = authSubcriber.AddressDetails.FirstOrDefault().CountryCode;
+                        newAddress.AddressType = authSubcriber.AddressDetails.FirstOrDefault().AddressType;
 
-                    AddressDetails address = new AddressDetails 
-                    { 
-                        AddressLine1 = newAddress.AddressLine1,
-                        AddressLine2 = newAddress.AddressLine2,
-                        CityTown = newAddress.CityTown,
-                        StateParish = newAddress.StateParish,
-                        ZipCode = newAddress.ZipCode,
-                        CountryCode = newAddress.CountryCode,
-                        AddressType = newAddress.AddressType,
-                    };
+                        //update tables
+                        tableData.FirstName = authSubcriber.FirstName;
+                        tableData.LastName = authSubcriber.LastName;
+                        tableData.Subscriber_Address.Add(newAddress);
+                        context.SaveChanges();
 
-                    localAuthSubcriber.AddressDetails.Add(address);
+                        var dbAddress = localAuthSubcriber.AddressDetails.FirstOrDefault(x => x.AddressType == "M");
+                        localAuthSubcriber.AddressDetails.Remove(dbAddress);
 
-                    ViewBag.msg = "Profile updated successfully";
+                        AddressDetails address = new AddressDetails
+                        {
+                            AddressLine1 = newAddress.AddressLine1,
+                            AddressLine2 = newAddress.AddressLine2,
+                            CityTown = newAddress.CityTown,
+                            StateParish = newAddress.StateParish,
+                            ZipCode = newAddress.ZipCode,
+                            CountryCode = newAddress.CountryCode,
+                            AddressType = newAddress.AddressType,
+                        };
+
+                        localAuthSubcriber.AddressDetails.Add(address);
+
+                        ViewBag.msg = "Profile updated successfully";
+                    }
+                    catch (Exception)
+                    {
+
+                        return RedirectToAction("UserProfile");
+
+                    }
+                    
                     
                 }
             }

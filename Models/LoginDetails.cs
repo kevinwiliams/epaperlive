@@ -38,4 +38,24 @@ namespace ePaperLive.Models
 
         public UserLocation location { get; set; }
     }
+
+    public class FeedbackFormModel
+    {
+        [Display(Name = "Name")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Name is required")]
+        public string Name { get; set; }
+        [Display(Name = "Email Address")]
+        [DataType(DataType.EmailAddress)]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Email address is required")]
+        public string Email { get; set; }
+        [Display(Name = "Subject")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Subject is required")]
+        public string Subject { get; set; }
+        [Display(Name = "Message")]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Message is required")]
+        public string Message { get; set; }
+        public string CaptchaCode { get; set; }
+
+
+    }
 }
