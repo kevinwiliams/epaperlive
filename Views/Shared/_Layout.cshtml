@@ -1,9 +1,11 @@
-﻿<!DOCTYPE html>
+﻿
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - Jamaica Observer</title>
+    <link href="@BotDetect.Web.CaptchaUrls.Absolute.LayoutStyleSheetUrl" rel="stylesheet" type="text/css" />
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" integrity="sha512-4uGZHpbDliNxiAv/QzZNo/yb2FtAX+qiDb7ypBWiEdJQX8Pugp8M6il5SRkN8jQrDLWsh3rrPDSXRf3DwFYM6g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -115,8 +117,6 @@
     <!-- Login Modal -->
     @{Html.RenderAction("LoginModal", "Account");}
     <!-- end: Login Modal -->
-
-
     <!-- ======= Footer ======= -->
     <footer id="footer">
         <div class="footer-top">
@@ -129,7 +129,7 @@
 
                             <p>
                                 40-42 1/2 Beechwood Avenue <br>
-                                Kingston 5, USA<br>
+                                Kingston 5,<br>
                                 Jamaica, W.I.<br><br>
                                 <strong>Phone:</strong> +1 876 926-7655<br>
                                 <strong>Email:</strong> userhelp@jamaicaobserver.com<br>
@@ -234,18 +234,13 @@
     </script>
     <script>
 
-
-    </script>
-
-    <script>
-
         //$("form[name=subdetails]").data("validator").settings.ignore = "";
 
         $(document).ready(function () {
 
             $("[name=prevBtn]").click(function (e) {
                 console.log($(this).val());
-         
+
             });
 
 

@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using ePaperLive.Filters;
+using BotDetect.Web.Mvc;
 
 namespace ePaperLive.Controllers
 {
@@ -61,8 +62,18 @@ namespace ePaperLive.Controllers
                 return RedirectToAction("Dashboard", "Account");
             }
 
-            return View(login);
+            return View();
         }
+
+        [HttpPost]
+        [CaptchaValidationActionFilter("CaptchaCode", "FeedbackCaptcha", "Incorrect!")]
+        public ActionResult Index(FeedbackFormModel model)
+        {
+            //TODO: Send Mail
+            MvcCaptcha.ResetCaptcha("FeedbackCaptcha");
+            return View(model);
+        }
+
 
         public ActionResult About()
         {
@@ -110,5 +121,7 @@ namespace ePaperLive.Controllers
             }
             return (Subscriber)Session["subscriber"];
         }
+
+        
     }
 }
