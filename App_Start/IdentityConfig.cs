@@ -11,7 +11,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using ePaperLive.Models;
-using MimeKit;
+//using MimeKit;
 using System.Net.Mail;
 using System.Net.Mime;
 using System.Net;
