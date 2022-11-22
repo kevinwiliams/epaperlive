@@ -37,7 +37,7 @@
 
                         <div class="form-horizontal">
                             <h4><strong>@Html.DisplayFor(model => model.SubType): </strong>@Html.DisplayFor(model => model.RateDescription) </h4>
-                            <h1 style="color:forestgreen"><strong>@Html.DisplayFor(model => model.CardAmount)</strong></h1>
+                            <h1 style="color:forestgreen"><strong>@Html.DisplayFor(model => model.Currency) @String.Format("{0:C}", Model.CardAmount)</strong></h1>
                             <hr />
                             @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 

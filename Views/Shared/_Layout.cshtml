@@ -250,7 +250,7 @@
             });
 
             $("[name=RateType]").click(function (e) {
-
+                $("#rates-results").show();
                 var rateType = $(this).val();
                 e.preventDefault();
                 $.ajax({

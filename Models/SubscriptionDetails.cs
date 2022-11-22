@@ -19,6 +19,7 @@ namespace ePaperLive.Models
         public string SubType { get; set; }
         [MustBeSelected(ErrorMessage = "Please select rates")]
         public string RateType { get; set; }
+        public string Market { get; set; }
 
         [Display(Name = "Start Date")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Please select a start date")]
@@ -35,7 +36,7 @@ namespace ePaperLive.Models
         public string DeliveryInstructions { get; set; }
 
         [Display(Name = "Newsletter")]
-        public bool newsletterSignUp { get; set; }
+        public bool NewsletterSignUp { get; set; }
 
 
         [Display(Name = "Terms & Conditions")]
@@ -49,7 +50,7 @@ namespace ePaperLive.Models
         [Display(Name = "Same as mailing address?")]
         public bool SameAsMailing { get; set; }
 
-        public AddressDetails deliveryAddress { get; set; }
+        public AddressDetails DeliveryAddress { get; set; }
 
     }
 

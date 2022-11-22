@@ -87,6 +87,16 @@ namespace ePaperLive.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
+                    using (var context = new ApplicationDbContext())
+                    {
+                        var subscriber = context.subscribers.FirstOrDefault(e => e.EmailAddress == model.Email);
+
+                        if (subscriber != null) {
+
+                            subscriber.LastLogin = DateTime.Now;
+                            await context.SaveChangesAsync();
+                        }
+                    }
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
@@ -830,6 +840,7 @@ namespace ePaperLive.Controllers
                         {
                             StartDate = DateTime.Now,
                             EndDate = DateTime.Now.AddDays(30),
+                            Market = market
                         };
 
 
@@ -941,7 +952,7 @@ namespace ePaperLive.Controllers
                         Subscriber_Print objPr = GetPrintDetails();
                         Subscriber_Tranx objTran = GetTransaction();
 
-                        objSub.Newsletter = data.newsletterSignUp;
+                        objSub.Newsletter = data.NewsletterSignUp;
                         objTran.RateID = data.RateID;
 
                         var selectedPlan = db.printandsubrates.FirstOrDefault(x => x.Rateid == data.RateID);
@@ -994,6 +1005,7 @@ namespace ePaperLive.Controllers
                         PaymentDetails pd = new PaymentDetails
                         {
                             RateDescription = selectedPlan.RateDescr,
+                            Currency = selectedPlan.Curr,
                             CardAmount = (float)selectedPlan.Rate,
                             SubType = selectedPlan.Type
                             // cardOwner = "Dwayne Mendez",
@@ -1040,7 +1052,7 @@ namespace ePaperLive.Controllers
                         StartDate = objEp.StartDate,
                         RateID = objEp.RateID,
                         DeliveryInstructions = objPr.DeliveryInstructions,
-                        newsletterSignUp = objSub.Newsletter ?? false,
+                        NewsletterSignUp = objSub.Newsletter ?? false,
                         NotificationEmail = objEp.NotificationEmail,
                         SubType = objEp.SubType,
                         RatesList = db.printandsubrates.Where(x => x.Market == market).Where(x => x.Active == true).ToList()

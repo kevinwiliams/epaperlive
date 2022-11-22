@@ -33,6 +33,7 @@ namespace ePaperLive.Models
         [Display(Name = "Amount")]
         [DisplayFormat(DataFormatString = "{0:C0}", ApplyFormatInEditMode = true)]
         public float CardAmount { get; set; }
+        public string Currency { get; set; }
 
         [Required]
         public int RateID;
