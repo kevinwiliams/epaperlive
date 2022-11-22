@@ -333,7 +333,7 @@
                         </div>
                         <div class="actions">
                             @Html.TextBox("CaptchaCode", "",new { required = "required"})
-                            @Html.ValidationMessage("CaptchaCode")
+                            @Html.ValidationMessage("CaptchaCode", new { @class = "text-danger" })
                             @if ((Request.HttpMethod == "POST") && ViewData.ModelState.IsValid)
                             {
                                 <span class="correct">Correct!</span>
