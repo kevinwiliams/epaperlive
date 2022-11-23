@@ -765,9 +765,20 @@ namespace ePaperLive.Controllers
                                 CountryList.Add(R.EnglishName);
                             }
 
-                            if (!countryListV2.ContainsKey(R.ThreeLetterISORegionName))
+                            // Remove World and Caribbean from list
+                            string worldIsoId = "001",
+                                   carribeanIsoId = "029";
+
+                            if (!(countryListV2.ContainsKey(R.ThreeLetterISORegionName)))
                             {
-                                countryListV2.Add(R.ThreeLetterISORegionName, R.EnglishName);
+                                if (R.ThreeLetterISORegionName != worldIsoId)
+                                {
+                                    if (R.ThreeLetterISORegionName != carribeanIsoId)
+                                    {
+                                        countryListV2.Add(R.ThreeLetterISORegionName, R.EnglishName);
+                                    }
+                                    
+                                }
                             }
                         }
                         var sortedList = countryListV2.OrderBy(x => x.Value);
