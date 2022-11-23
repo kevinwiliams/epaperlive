@@ -754,6 +754,7 @@ namespace ePaperLive.Controllers
                         user.PasswordHash = data.Password;
 
                         //Generate Country list
+                        var countryListV2 = new Dictionary<string, string>();
                         List<string> CountryList = new List<string>();
                         CultureInfo[] CInfoList = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
                         foreach (CultureInfo CInfo in CInfoList)
@@ -763,10 +764,18 @@ namespace ePaperLive.Controllers
                             {
                                 CountryList.Add(R.EnglishName);
                             }
+
+                            if (!countryListV2.ContainsKey(R.ThreeLetterISORegionName))
+                            {
+                                countryListV2.Add(R.ThreeLetterISORegionName, R.EnglishName);
+                            }
                         }
+                        var sortedList = countryListV2.OrderBy(x => x.Value);
+                        
                         CountryList.Add(" ");
                         CountryList.Sort();
                         ViewBag.CountryList = CountryList;
+                        ViewBag.CountryListV2 = sortedList;
 
                         //Test Data
                         AddressDetails ad = new AddressDetails
