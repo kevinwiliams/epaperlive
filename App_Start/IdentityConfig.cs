@@ -15,6 +15,7 @@ using ePaperLive.Models;
 using System.Net.Mail;
 using System.Net.Mime;
 using System.Net;
+using System.Web.Configuration;
 
 namespace ePaperLive
 {
@@ -25,30 +26,41 @@ namespace ePaperLive
             // Plug in your email service here to send an email.
             try
             {
-                //#region formatter
-                //string text = string.Format("Please click on this link to {0}: {1}", message.Subject, message.Body);
-                //string html = "Please confirm your account by clicking this link: <a href=\"" + message.Body + "\">link</a><br/>";
+                #region formatter
+                string text = string.Format("Please click on this link to {0}: {1}", message.Subject, message.Body);
+                string html = "Please confirm your account by clicking this link: <a href=\"" + message.Body + "\">link</a><br/>";
 
-                //html += HttpUtility.HtmlEncode(@"Or click on the copy the following link on the browser:" + message.Body);
-                //#endregion
+                html += HttpUtility.HtmlEncode(@"Or click on the copy the following link on the browser:" + message.Body);
+                #endregion
 
                 MailMessage msg = new MailMessage();
-                msg.From = new MailAddress("donotreply@jamaicaobserver.com");
+                msg.From = new MailAddress("williamskt@jamaicaobserver.com", "Jamaica Observer");
                 msg.To.Add(new MailAddress(message.Destination));
                 msg.Subject = message.Subject;
+                msg.IsBodyHtml = true;
                 msg.AlternateViews.Add(AlternateView.CreateAlternateViewFromString(message.Body, null, MediaTypeNames.Text.Plain));
                 msg.AlternateViews.Add(AlternateView.CreateAlternateViewFromString(message.Body, null, MediaTypeNames.Text.Html));
 
-                SmtpClient smtpClient = new SmtpClient("mail.jamaicaobserver.com", 587);
-                System.Net.NetworkCredential credentials = new NetworkCredential("williamskt@jamaicaobserver.com", "9Teen6ty1");
+                //SmtpClient smtpClient = new SmtpClient(WebConfigurationManager.AppSettings["MailServer"], 587);
+                SmtpClient smtpClient = new SmtpClient();
+                System.Net.NetworkCredential credentials = new NetworkCredential(WebConfigurationManager.AppSettings["SmtpServerUserName"], WebConfigurationManager.AppSettings["SmtpServerPassword"]);
+                smtpClient.DeliveryMethod = SmtpDeliveryMethod.PickupDirectoryFromIis;
                 smtpClient.Credentials = credentials;
-
+                smtpClient.UseDefaultCredentials = false;
                 smtpClient.EnableSsl = true;
-                await smtpClient.SendMailAsync(msg);
+                try
+                {
+                    await smtpClient.SendMailAsync(msg);
+                }
+                catch (Exception ex )
+                {
+                   throw ex;
+                }
+                
             }
             catch (Exception ex)
             {
-                var data = ex;
+                throw ex;
             }
 
         }
