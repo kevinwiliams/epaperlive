@@ -753,6 +753,21 @@ namespace ePaperLive.Controllers
                         user.Email = data.EmailAddress;
                         user.PasswordHash = data.Password;
 
+                        //Generate Country list
+                        List<string> CountryList = new List<string>();
+                        CultureInfo[] CInfoList = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
+                        foreach (CultureInfo CInfo in CInfoList)
+                        {
+                            RegionInfo R = new RegionInfo(CInfo.LCID);
+                            if (!(CountryList.Contains(R.EnglishName)))
+                            {
+                                CountryList.Add(R.EnglishName);
+                            }
+                        }
+                        CountryList.Add(" ");
+                        CountryList.Sort();
+                        ViewBag.CountryList = CountryList;
+
                         //Test Data
                         AddressDetails ad = new AddressDetails
                         {
