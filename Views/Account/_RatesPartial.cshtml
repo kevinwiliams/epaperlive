@@ -13,7 +13,7 @@ else
         var mainDesc = plans.RateDescr;
         if (mainDesc != currentDesc && plans.Type == "Print")
         {
-            <strong>@mainDesc</strong>
+            <span class="pt-1"><strong>@mainDesc</strong></span>
         }
         <label id="rate">
             @Html.RadioButton("RateID", plans.Rateid, htmlAttributes: new { @class = "" })
