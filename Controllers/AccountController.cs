@@ -14,7 +14,7 @@ using ePaperLive.DBModel;
 using static ePaperLive.Util;
 using System.Collections.Generic;
 using System.Data.Entity;
-
+using System.Text.RegularExpressions;
 
 namespace ePaperLive.Controllers
 {
@@ -754,43 +754,31 @@ namespace ePaperLive.Controllers
                         user.PasswordHash = data.Password;
 
                         //Generate Country list
-                        var countryListV2 = new Dictionary<string, string>();
-                        List<string> CountryList = new List<string>();
+                        //Generate Country list
+                        List<SelectListItem> CountryList = new List<SelectListItem>();
                         CultureInfo[] CInfoList = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
                         foreach (CultureInfo CInfo in CInfoList)
                         {
                             RegionInfo R = new RegionInfo(CInfo.LCID);
-                            if (!(CountryList.Contains(R.EnglishName)))
+                            var country = new SelectListItem
                             {
-                                CountryList.Add(R.EnglishName);
-                            }
+                                Value = R.ThreeLetterISORegionName.ToString(),
+                                Text = R.EnglishName
+                            };
 
-                            // Remove World and Caribbean from list
-                            string worldIsoId = "001",
-                                   carribeanIsoId = "029";
-
-                            if (!(countryListV2.ContainsKey(R.ThreeLetterISORegionName)))
+                            if (!(CountryList.Select(i => i.Value).Contains(country.Value)) && Regex.IsMatch(country.Value, @"^[a-zA-Z]+$"))
                             {
-                                if (R.ThreeLetterISORegionName != worldIsoId)
-                                {
-                                    if (R.ThreeLetterISORegionName != carribeanIsoId)
-                                    {
-                                        countryListV2.Add(R.ThreeLetterISORegionName, R.EnglishName);
-                                    }
-                                    
-                                }
+                                CountryList.Add(country);
                             }
                         }
-                        var sortedList = countryListV2.OrderBy(x => x.Value);
-                        
-                        CountryList.Add(" ");
-                        CountryList.Sort();
-                        ViewBag.CountryList = CountryList;
-                        ViewBag.CountryListV2 = sortedList;
+
+                        CountryList = CountryList.OrderBy(x => x.Text).ToList();
+                        Session["CountryList"] = CountryList;
 
                         //Test Data
                         AddressDetails ad = new AddressDetails
                         {
+                            CountryList = CountryList
                             //AddressLine1 = "Lot 876 Scheme Steet",
                             //CityTown = "Bay Town",
                             //StateParish = "Portland",

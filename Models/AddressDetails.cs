@@ -5,6 +5,7 @@ using System.Web;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using ePaperLive.DBModel;
+using System.Web.Mvc;
 
 namespace ePaperLive.Models
 {
@@ -38,8 +39,8 @@ namespace ePaperLive.Models
         public string Phone { get; set; }
         public string AddressType { get; set; }
 
+        public List<SelectListItem> CountryList { get; set; }
 
-        
     }
 
 }
