@@ -949,7 +949,8 @@ namespace ePaperLive.Controllers
                         CityTown = objAdd.CityTown,
                         StateParish = objAdd.StateParish,
                         ZipCode = objAdd.ZipCode,
-                        CountryCode = objAdd.CountryCode
+                        CountryCode = objAdd.CountryCode,
+                        CountryList = (List<SelectListItem>)Session["CountryList"]
                     };
 
                     return View("AddressDetails", ad);

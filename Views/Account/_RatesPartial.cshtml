@@ -6,12 +6,19 @@
 }
 else
 {
+    var currentDesc = "";
     foreach (var plans in Model.Rates)
     {
         var printWeeks = (plans.Type != "Epaper") ? "  [" + plans.PrintTerm + " " + plans.PrintTermUnit + "] " : "";
+        var mainDesc = plans.RateDescr;
+        if (mainDesc != currentDesc && plans.Type == "Print")
+        {
+            <strong>@mainDesc</strong>
+        }
         <label id="rate">
             @Html.RadioButton("RateID", plans.Rateid, htmlAttributes: new { @class = "" })
             <span class="value">@(" " + plans.RateDescr + printWeeks) <span style="margin-left: auto">@(plans.Curr + String.Format("{0:C}",plans.Rate)) </span></span>
         </label>
+        currentDesc = mainDesc;
     }
 }
