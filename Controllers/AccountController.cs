@@ -1079,7 +1079,8 @@ namespace ePaperLive.Controllers
                         NewsletterSignUp = objSub.Newsletter ?? false,
                         NotificationEmail = objEp.NotificationEmail,
                         SubType = objEp.SubType,
-                        RatesList = db.printandsubrates.Where(x => x.Market == market).Where(x => x.Active == true).ToList()
+                        RatesList = db.printandsubrates.Where(x => x.Market == market).Where(x => x.Active == true).ToList(),
+                        Market = market
                     };
 
                     return View("SubscriptionInfo", sd);
