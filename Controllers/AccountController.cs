@@ -469,7 +469,14 @@ namespace ePaperLive.Controllers
             return PartialView("_LoginModal");
         }
 
-        
+        [AllowAnonymous]
+        public ActionResult DelAddressModal()
+        {
+            return PartialView("_DeliveryAddressModal");
+        }
+
+
+
         public ActionResult Logout()
         {
             Session.Clear();
@@ -754,7 +761,6 @@ namespace ePaperLive.Controllers
                         user.PasswordHash = data.Password;
 
                         //Generate Country list
-                        //Generate Country list
                         List<SelectListItem> CountryList = new List<SelectListItem>();
                         CultureInfo[] CInfoList = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
                         foreach (CultureInfo CInfo in CInfoList)
@@ -859,11 +865,18 @@ namespace ePaperLive.Controllers
 
                         //load rates on the next (subscription) page
                         ApplicationDbContext db = new ApplicationDbContext();
+                        DeliveryAddress delAddressDetails = new DeliveryAddress
+                        { 
+                            CountryList = (List<SelectListItem>)Session["CountryList"]
+                        };
+
                         SubscriptionDetails subscriptionDetails = new SubscriptionDetails
                         {
                             StartDate = DateTime.Now,
                             EndDate = DateTime.Now.AddDays(30),
-                            Market = market
+                            Market = market,
+                            DeliveryAddress = delAddressDetails
+
                         };
 
 

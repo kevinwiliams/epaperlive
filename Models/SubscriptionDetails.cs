@@ -21,7 +21,7 @@ namespace ePaperLive.Models
         public string RateType { get; set; }
         public string Market { get; set; }
 
-        [Display(Name = "Start Date")]
+        [Display(Name = "Subscription Start Date")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Please select a start date")]
         [DataType(DataType.Date)]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
@@ -29,8 +29,8 @@ namespace ePaperLive.Models
         [Display(Name = "End Date")]
         public DateTime EndDate { get; set; }
 
-        [Display(Name = "Email address for promotions and updates")]
-        public string NotificationEmail { get; set; }
+        [Display(Name = "Receive email updates on upcoming promotions")]
+        public bool NotificationEmail { get; set; }
 
         [Display(Name = "Special delivery instructions")]
         public string DeliveryInstructions { get; set; }
@@ -50,7 +50,7 @@ namespace ePaperLive.Models
         [Display(Name = "Same as mailing address?")]
         public bool SameAsMailing { get; set; }
 
-        public AddressDetails DeliveryAddress { get; set; }
+        public DeliveryAddress DeliveryAddress { get; set; }
 
     }
 

@@ -47,6 +47,7 @@ namespace ePaperLive.Models
         public DateTime? TranxDate { get; set; }
         [Display(Name = "Promo Code")]
         public string PromoCode { get; set; }
+        public AddressDetails BillingAddress { get; set; }
 
     }
 

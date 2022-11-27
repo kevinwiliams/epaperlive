@@ -3,7 +3,11 @@
 @{
     ViewBag.Title = "Subscription";
 }
-
+    <style>
+        textarea {
+            width: 100%
+        }
+    </style>
 
 <div id="main">
 
@@ -38,41 +42,40 @@
                     {
                         @Html.AntiForgeryToken()
 
-                        <div class="form-horizontal">
-                            <h4>Choose from one of our subscription options</h4>
-                            <hr />
-                            @*@Html.Partial("_Rates", Model)*@
+                    <div class="form-horizontal">
+                        <h4>Choose from one of our subscription options</h4>
+                        <hr />
+                        @*@Html.Partial("_Rates", Model)*@
 
-                            @Html.ValidationSummary(false, "", new { @class = "text-danger" })
-                            <br />
-                            <div id="search-form">
-                                <div class="plans pb-3">
-                                    <div class="row justify-content-md-center">
-                                        <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.RateType, "Epaper", htmlAttributes: new { @autocomplete = "off", @id = "ePaper" })<label for="ePaper">ePaper Edition</label></div>
-                                        @if (Model.Market == "Local" || Model.Market.ToLower() == "local")
-                                        {
-                                            <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.RateType, "Print", htmlAttributes: new { @autocomplete = "off", @id = "Print" })<label for="Print">Print Edition</label></div>
-                                            <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.RateType, "Bundle", htmlAttributes: new { @autocomplete = "off", @id = "Bundle" })<label for="Bundle">Print & ePaper Bundle</label></div>
-                                        }
-                                        else
-                                        {
-                                            <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.RateType, "Print", htmlAttributes: new { @autocomplete = "off", @id = "Print", @disabled="dsiabled" })<label for="Print">Print Edition</label></div>
-                                            <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.RateType, "Bundle", htmlAttributes: new { @autocomplete = "off", @id = "Bundle", @disabled="dsiabled" })<label for="Bundle">Print & ePaper Bundle</label></div>
-                                        }
-
-                                    </div>
+                        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                        <br />
+                        <div id="search-form">
+                            <div class="plans pb-3">
+                                <div class="row justify-content-md-center">
+                                    <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.RateType, "Epaper", htmlAttributes: new { @autocomplete = "off", @id = "ePaper" })<label for="ePaper">ePaper Edition</label></div>
+                                    @if (Model.Market == "Local" || Model.Market.ToLower() == "local")
+                                    {
+                                        <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.RateType, "Print", htmlAttributes: new { @autocomplete = "off", @id = "Print" })<label for="Print">Print Edition</label></div>
+                                        <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.RateType, "Bundle", htmlAttributes: new { @autocomplete = "off", @id = "Bundle" })<label for="Bundle">Print & ePaper Bundle</label></div>
+                                    }
+                                    else
+                                    {
+                                        <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.RateType, "Print", htmlAttributes: new { @autocomplete = "off", @id = "Print", @disabled = "dsiabled" })<label for="Print">Print Edition</label></div>
+                                        <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.RateType, "Bundle", htmlAttributes: new { @autocomplete = "off", @id = "Bundle", @disabled = "dsiabled" })<label for="Bundle">Print & ePaper Bundle</label></div>
+                                    }
 
                                 </div>
-                                @* @Html.Action("GetRatesList", "Account")*@
                             </div>
-                            <div class="container pb-3" id="rates-results" style="display:none;">
-                                <p>Loading...</p>
+                            @* @Html.Action("GetRatesList", "Account")*@
+                        </div>
+                        <div class="container pb-3" id="rates-results" style="display:none;">
+                            <p>Loading...</p>
 
-                            </div>
-                            @Html.HiddenFor(m => m.RateID, new { @class=".do-not-ignore" })
-                            <!-- <input type="hidden" name="RateID" /> -->
+                        </div>
+                        @Html.HiddenFor(m => m.RateID, new { @class = ".do-not-ignore" })
+                        <!-- <input type="hidden" name="RateID" /> -->
 
-                            <script>
+                        <script>
                             @*const ratesList = [@(Html.Raw(Json.Encode(this.Model.RatesList)))];*@
 
                             //var epaperList = filterByProperty(ratesList, "Type", "Epaper");
@@ -105,77 +108,76 @@
                             }
 
 
-                            </script>
+                        </script>
 
-
-                            <div class="form-group p-2">
-                                @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label " })
-                                <div class="col-md-4">
-                                    @Html.EditorFor(model => model.StartDate, "", new
-                                    {
-                                        htmlAttributes = new
-                                        {
-                                            @class = "form-control",
-                                            maxlength = 10
-                                        }
-                                    })
-
+                        <div class="form-group p-2" id="del-address" style="display: none">
+                            <div class="row justify-content-md-center">
+                                <div class="col-lg-12">
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#delivery-address">Add delivery address</a>
+                                    <div id="del-address-details" style="display:none;"></div>
                                 </div>
                             </div>
-                            <!--
-                            <div class="form-group p-2">
-                                @Html.LabelFor(model => model.NotificationEmail, htmlAttributes: new { @class = "control-label " })
-                                <div class="col-md-10">
-                                    @Html.EditorFor(model => model.NotificationEmail, new { htmlAttributes = new { @class = "form-control" } })
-                                </div>
-                            </div>
-                            -->
-                        <div class="form-group p-2">
-                                @Html.LabelFor(model => model.DeliveryInstructions, htmlAttributes: new { @class = "form-label " })
+                        </div>
+                        <div id="deliveryAddressForm" style="display:none;">
+                            <!-- Delivery Modal -->
+                            @{Html.RenderPartial("_DeliveryAddressModal"); }
+                            <!-- end: Delivery Modal -->
+                        </div>
+                        
+                        <div class="form-group p-2" id="del-instructions" style="display: none">
+                            @Html.LabelFor(model => model.DeliveryInstructions, htmlAttributes: new { @class = "form-label " })
                             <div class="col-md-10">
-                                @Html.TextAreaFor(model => model.DeliveryInstructions, new { htmlAttributes = new { @class = "form-control", @rows = 5} })
+                                @Html.TextAreaFor(model => model.DeliveryInstructions, new { htmlAttributes = new { @class = "form-control", @rows = 5 } })
                             </div>
                         </div>
-                            <style>textarea { width: 100%} </style>
 
-                            <div class="form-group">
-
-                                <div class="col-md-10 p-3">
-                                    <div class="form-check">
-                                        @Html.EditorFor(model => model.NewsletterSignUp, new { htmlAttributes = new { @class = "form-check-input" } })
-                                        @Html.LabelFor(model => model.NewsletterSignUp, htmlAttributes: new { @class = "form-check-label" })
-
-                                    </div>
-                                </div>
+                        <div class="form-group p-2">
+                            @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label " })
+                            <div class="col-md-4">
+                                @Html.EditorFor(model => model.StartDate, "", new { htmlAttributes = new { @class = "form-control", maxlength = 10 } })
                             </div>
-
-                            <div class="form-group">
-                                <div class="col-md-10 p-3">
-                                    <div class="form-check">
-                                        @Html.EditorFor(model => model.TermsAndCon, new { htmlAttributes = new { @class = "form-check-input", @required = "required" } })
-                                        @Html.LabelFor(model => model.TermsAndCon, htmlAttributes: new { @class = "form-check-label" })<br />
-                                    </div>
-                                </div>
-                            </div>
-
-
-
-                            <div class="form-group">
-                                <div class="col-md-offset-2 col-md-10 pt-3">
-                                    <div class="row">
-                                        <div class="col-6">
-                                            <input type="submit" value="Prev" name="prevBtn" class="btn btn-sign-in bx-pull-left" />
-                                        </div>
-                                        <div class="col-6">
-                                            <input type="submit" value="Next" name="nextBtn" class="btn btn-sign-in bx-pull-right" />
-                                        </div>
-                                    </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-10 p-3">
+                                <div class="form-check">
+                                    @Html.EditorFor(model => model.NewsletterSignUp, new { htmlAttributes = new { @class = "form-check-input" } })
+                                    @Html.LabelFor(model => model.NewsletterSignUp, htmlAttributes: new { @class = "form-check-label" })
                                 </div>
                             </div>
                         </div>
-                    }
-                    <!-- end:wizrd -->
-                </div>
+                        <div class="form-group">
+                            <div class="col-md-10 p-3">
+                                <div class="form-check">
+                                    @Html.EditorFor(model => model.NotificationEmail, new { htmlAttributes = new { @class = "form-check-input" } })
+                                    @Html.LabelFor(model => model.NotificationEmail, htmlAttributes: new { @class = "form-check-label" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-10 p-3">
+                                <div class="form-check">
+                                    @Html.EditorFor(model => model.TermsAndCon, new { htmlAttributes = new { @class = "form-check-input", @required = "required" } })
+                                    @Html.LabelFor(model => model.TermsAndCon, htmlAttributes: new { @class = "form-check-label" })<br />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10 pt-3">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <input type="submit" value="Prev" name="prevBtn" class="btn btn-sign-in bx-pull-left" />
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="submit" value="Next" name="nextBtn" class="btn btn-sign-in bx-pull-right" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                        }
+                        <!-- end:wizrd -->
+                    </div>
                 <div class="col-lg-4">
                     @Html.Partial("_SubcriptionSummary")
                 </div>

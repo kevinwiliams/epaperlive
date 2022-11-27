@@ -254,6 +254,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\DeliveryAddress.cs" />
     <Compile Include="Models\AddressDetails.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\LoginDetails.cs" />
@@ -496,6 +497,7 @@
     <Content Include="Views\Home\PrivacyPolicy.cshtml" />
     <Content Include="Views\Home\ServiceLevelAgreement.cshtml" />
     <Content Include="Views\Home\TermsCondition.cshtml" />
+    <Content Include="Views\Account\_DeliveryAddressModal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\roslyn\" />

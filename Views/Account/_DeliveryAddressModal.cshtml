@@ -1,0 +1,76 @@
+﻿@model ePaperLive.Models.SubscriptionDetails
+
+<!-- start:wizrd -->
+
+    @Html.AntiForgeryToken()
+    <div class="modal fade" id="delivery-address" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"><strong>Add Delivery Address</strong></h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="row form-horizontal">
+
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                   
+                        <div class="form-group">
+                            <div class="col-md-10 p-3">
+                                <div class="form-check">
+                                    @Html.EditorFor(model => model.SameAsMailing, new { htmlAttributes = new { @class = "form-check-input" } })
+                                    @Html.LabelFor(model => model.SameAsMailing, htmlAttributes: new { @class = "form-check-label" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-10 p-2">
+                                @Html.EditorFor(model => model.DeliveryAddress.AddressLine1, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.DeliveryAddress.AddressLine1) } })
+                                @Html.ValidationMessageFor(model => model.DeliveryAddress.AddressLine1, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-10 p-2">
+                                @Html.EditorFor(model => model.DeliveryAddress.AddressLine2, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.DeliveryAddress.AddressLine2) } })
+                                @Html.ValidationMessageFor(model => model.DeliveryAddress.AddressLine2, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="form-group p-2">
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.DeliveryAddress.CityTown, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.DeliveryAddress.CityTown) } })
+                                    @Html.ValidationMessageFor(model => model.DeliveryAddress.CityTown, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group p-2">
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.DeliveryAddress.StateParish, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.DeliveryAddress.StateParish) } })
+                                    @Html.ValidationMessageFor(model => model.DeliveryAddress.StateParish, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group p-2">
+                                <div class="col-md-10">
+                                    @Html.DropDownListFor(model => model.DeliveryAddress.CountryCode, Model.DeliveryAddress.CountryList, "Select Country", new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.DeliveryAddress.CountryCode, "", new { @class = "text-danger" })
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-info">Save Address</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- end:wizrd -->

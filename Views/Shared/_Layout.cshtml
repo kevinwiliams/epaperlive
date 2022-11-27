@@ -245,7 +245,18 @@
 
 
             $('[name=RateType]').on("click", function () {
+                var rateType = $(this).val();
                 console.log($(this).val());
+                if (rateType != "Epaper") {
+                    $("#del-address").show();
+                    $("#del-instructions").show();
+                    $("#deliveryAddressForm").show();
+                } else {
+                    $("#del-address").hide();
+                    $("#del-instructions").hide();
+                    $("#deliveryAddressForm").hide();
+                }
+
                 //$(this).closest("form").submit();
             });
 

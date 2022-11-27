@@ -2,6 +2,7 @@ namespace ePaperLive.DBModel
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
@@ -21,10 +22,13 @@ namespace ePaperLive.DBModel
         [StringLength(50)]
         public string SubType { get; set; }
         public System.DateTime CreatedAt { get; set; }
-        [StringLength(50)]
-        public string NotificationEmail { get; set; }
-
+        public bool NotificationEmail { get; set; }
         [ForeignKey("SubscriberID")]
         public Subscriber Subscriber { get; set; }
+        public Subscriber_Epaper()
+        {
+            NotificationEmail = false;
+
+        }
     }
 }
