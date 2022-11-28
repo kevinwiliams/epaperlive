@@ -35,13 +35,13 @@ namespace ePaperLive.Models
         [Display(Name = "Special delivery instructions")]
         public string DeliveryInstructions { get; set; }
 
-        [Display(Name = "Newsletter")]
+        [Display(Name = "Join our newsletter")]
         public bool NewsletterSignUp { get; set; }
 
 
-        [Display(Name = "Terms & Conditions")]
+        [Display(Name = "Accept our Terms & Conditions")]
         //[Range(typeof(bool), "true", "true", ErrorMessage = "Please select terms and conditions")]
-        [MustBeTrue(ErrorMessage = "Please select terms and conditions!")]
+        //[MustBeTrue(ErrorMessage = "Please select terms and conditions!")]
         [Required(ErrorMessage = "Please select terms and conditions")]
         public bool TermsAndCon { get; set; }
 

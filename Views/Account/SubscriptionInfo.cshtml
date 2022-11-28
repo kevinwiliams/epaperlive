@@ -111,9 +111,10 @@
                         </script>
 
                         <div class="form-group p-2" id="del-address" style="display: none">
+                            <hr />
                             <div class="row justify-content-md-center">
                                 <div class="col-lg-12">
-                                    <a href="#" data-bs-toggle="modal" data-bs-target="#delivery-address">Add delivery address</a>
+                                    <button type="button" class="btn-sign-in" data-bs-toggle="modal" data-bs-target="#delivery-address">Add delivery address</button>
                                     <div id="del-address-details" style="display:none;"></div>
                                 </div>
                             </div>
@@ -129,6 +130,8 @@
                             <div class="col-md-10">
                                 @Html.TextAreaFor(model => model.DeliveryInstructions, new { htmlAttributes = new { @class = "form-control", @rows = 5 } })
                             </div>
+                            <hr />
+
                         </div>
 
                         <div class="form-group p-2">
@@ -138,20 +141,23 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <div class="col-md-10 p-3">
-                                <div class="form-check">
-                                    @Html.EditorFor(model => model.NewsletterSignUp, new { htmlAttributes = new { @class = "form-check-input" } })
-                                    @Html.LabelFor(model => model.NewsletterSignUp, htmlAttributes: new { @class = "form-check-label" })
+                            <div class="row">
+                                <div class="col-md-5 p-3">
+                                    <div class="form-check">
+                                        @Html.EditorFor(model => model.NewsletterSignUp, new { htmlAttributes = new { @class = "form-check-input" } })
+                                        @Html.LabelFor(model => model.NewsletterSignUp, htmlAttributes: new { @class = "form-check-label" })
+                                    </div>
+                                </div>
+                                <div class="col-md-5 p-3">
+                                    <div class="form-check">
+                                        @Html.EditorFor(model => model.NotificationEmail, new { htmlAttributes = new { @class = "form-check-input" } })
+                                        @Html.LabelFor(model => model.NotificationEmail, htmlAttributes: new { @class = "form-check-label" })
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
-                            <div class="col-md-10 p-3">
-                                <div class="form-check">
-                                    @Html.EditorFor(model => model.NotificationEmail, new { htmlAttributes = new { @class = "form-check-input" } })
-                                    @Html.LabelFor(model => model.NotificationEmail, htmlAttributes: new { @class = "form-check-label" })
-                                </div>
-                            </div>
+                          
                         </div>
                         <div class="form-group">
                             <div class="col-md-10 p-3">

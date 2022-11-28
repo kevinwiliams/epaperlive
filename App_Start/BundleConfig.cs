@@ -31,11 +31,13 @@ namespace ePaperLive
                       "~/assets/vendor/glightbox/js/glightbox.min.js",
                       "~/assets/vendor/isotope-layout/isotope.pkgd.min.js",
                       "~/assets/vendor/swiper/swiper-bundle.min.js",
+                      "~/Scripts/sweetalert.min.js",
                       "~/assets/js/main.js"));
 
 
             bundles.Add(new StyleBundle("~/bundles/css").Include(
                      "~/Content/bootstrap.css",
+                     "~/Styles/sweetalert.css",
                      "~/Content/Site.css",
                      "~/assets/css/style.css"));
         }

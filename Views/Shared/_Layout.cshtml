@@ -238,6 +238,22 @@
 
         $(document).ready(function () {
 
+            $('[name=subdetails]').submit(function(event){
+                if(!$('[name=RateType]').is(':checked')) {
+
+                    //alert('Please select a plan!');
+                   swal({
+                      title: "Error!",
+                       text: "Please select a subscription plan to proceed",
+                      type: "warning",
+                       //icon: "warning",
+                      dangerMode: true
+                   });
+
+                    return false;
+                }
+              });
+
             $("[name=prevBtn]").click(function (e) {
                 console.log($(this).val());
 
