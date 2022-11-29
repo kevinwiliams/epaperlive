@@ -18,7 +18,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using System.Configuration;
 using FACGatewayService;
-using FACGatewayService.FACPG;
+using FACPG;
 
 namespace ePaperLive.Controllers
 {
@@ -1147,7 +1147,7 @@ namespace ePaperLive.Controllers
                         authUser.EmailAddress = objSub.EmailAddress;
 
                         //TODO: Make Payment
-                        //var makePayment = ChargeCard(data);
+                        var makePayment = ChargeCard(data);
 
                         string SubscriberID = "";
                         int addressID = 0;
@@ -1284,8 +1284,8 @@ namespace ePaperLive.Controllers
                 Dictionary<string, object> responseData = null;
                 // Setup card processor.
                 var cardProcessor = new CardProcessor();
-                var transactionDetails = new FACGatewayService.FACPG.TransactionDetails();
-                var cardDetails = new FACGatewayService.FACPG.CardDetails();
+                var transactionDetails = new TransactionDetails();
+                var cardDetails = new CardDetails();
                 var billingDetails = new BillingDetails();
 
 
@@ -1319,7 +1319,7 @@ namespace ePaperLive.Controllers
                 billingDetails.BillToCity = paymentDetails.BillingAddress.CityTown;
 
 
-                if (!CardUtils.IsCardCharged(transactionDetails.OrderNumber))
+                if (!await CardUtils.IsCardCharged(transactionDetails.OrderNumber))
                 {
                     // Clear sensitive data and save for later retrieval.
                     paymentDetails.CardCVV = "";
@@ -1345,16 +1345,16 @@ namespace ePaperLive.Controllers
 
                         AuthSubcriber user = GetAuthSubscriber();
                         // Send Payment Gateway notification
-                        var notificationDetails = new EmailNotificationDetails()
-                        {
-                            FullName = $"{user.FirstName} {user.LastName}",
-                            AddressLine1 = billingDetails.BillToAddress,
-                            AddressLine2 = billingDetails.BillToAddress2,
-                            AddressLine3 = billingDetails.BillToCity,
-                            Email = user.EmailAddress,
-                            // Contact = clientData.Contacts.FirstOrDefault(c => c.ItemName.ToLower() == "number")?.Item
-                        };
-                        await CardUtils.SendPaymentNotification(summary, notificationDetails, new string[] { user.EmailAddress });
+                        //var notificationDetails = new EmailNotificationDetails()
+                        //{
+                        //    FullName = $"{user.FirstName} {user.LastName}",
+                        //    AddressLine1 = billingDetails.BillToAddress,
+                        //    AddressLine2 = billingDetails.BillToAddress2,
+                        //    AddressLine3 = billingDetails.BillToCity,
+                        //    Email = user.EmailAddress,
+                        //    // Contact = clientData.Contacts.FirstOrDefault(c => c.ItemName.ToLower() == "number")?.Item
+                        //};
+                        //await CardUtils.SendPaymentNotification(summary, notificationDetails, new string[] { user.EmailAddress });
 
                         var transStatus = summary.TransactionStatus;
                         switch (transStatus.Status)
@@ -1393,7 +1393,7 @@ namespace ePaperLive.Controllers
                     // Save data of previous charge to our database for later processing.
                     paymentDetails.CardCVV = "";
                     paymentDetails.CardNumber = "";
-                    var transactionResponse = cardProcessor.GetGatewayTransactionStatus(transactionDetails.OrderNumber);
+                    var transactionResponse = await cardProcessor.GetGatewayTransactionStatus(transactionDetails.OrderNumber);
                     var transSummary = cardProcessor.GetTransactionSummary(transactionResponse);
                     paymentDetails.AuthorizationCode = transSummary.AuthCode;
 

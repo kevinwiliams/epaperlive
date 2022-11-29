@@ -12,7 +12,7 @@ using System.Web.Mvc;
 using ePaperLive.Models;
 
 using FACGatewayService;
-using FACGatewayService.FACPG;
+using FACPG;
 
 using Newtonsoft.Json;
 
@@ -41,8 +41,8 @@ namespace ePaperLive.Controllers
                 Dictionary<string, object> responseData = null;
                 // Setup card processor.
                 var cardProcessor = new CardProcessor();
-                var transactionDetails = new FACGatewayService.FACPG.TransactionDetails();
-                var cardDetails = new FACGatewayService.FACPG.CardDetails();
+                var transactionDetails = new TransactionDetails();
+                var cardDetails = new CardDetails();
                 var billingDetails = new BillingDetails();
 
                
@@ -79,9 +79,8 @@ namespace ePaperLive.Controllers
                 billingDetails.BillToAddress = paymentDetails.BillingAddress.AddressLine1;
                 billingDetails.BillToAddress2 = paymentDetails.BillingAddress.AddressLine2;
                 billingDetails.BillToCity = paymentDetails.BillingAddress.CityTown;
-
-                
-                if (!CardUtils.IsCardCharged(transactionDetails.OrderNumber))
+                                
+                if (!await CardUtils.IsCardCharged(transactionDetails.OrderNumber))
                 {
                     // Clear sensitive data and save for later retrieval.
                     paymentDetails.CardCVV = "";
@@ -169,7 +168,7 @@ namespace ePaperLive.Controllers
                     // Save data of previous charge to our database for later processing.
                     paymentDetails.CardCVV = "";
                     paymentDetails.CardNumber = "";
-                    var transactionResponse = cardProcessor.GetGatewayTransactionStatus(transactionDetails.OrderNumber);
+                    var transactionResponse = await cardProcessor.GetGatewayTransactionStatus(transactionDetails.OrderNumber);
                     var transSummary = cardProcessor.GetTransactionSummary(transactionResponse);
                     paymentDetails.AuthorizationCode = transSummary.AuthCode;
                     //await Account.SaveOrderConfirmation_New(clientKey, policyKey, currentTransaction, currentPolicy, currentRisk);

@@ -64,9 +64,9 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="FACGatewayService, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="FACGateway, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\FACGatewayService.dll</HintPath>
+      <HintPath>bin\FACGateway.dll</HintPath>
     </Reference>
     <Reference Include="LiteDB, Version=5.0.11.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
       <HintPath>packages\LiteDB.5.0.11\lib\net45\LiteDB.dll</HintPath>
@@ -391,6 +391,8 @@
     <Content Include="assets\vendor\php-email-form\validate.js" />
     <Content Include="assets\vendor\swiper\swiper-bundle.min.css" />
     <Content Include="assets\vendor\swiper\swiper-bundle.min.js" />
+    <Content Include="bin\FACGateway.dll" />
+    <Content Include="bin\FACGateway.pdb" />
     <Content Include="bin\FACGatewayService.dll" />
     <Content Include="bin\FACGatewayService.pdb" />
     <Content Include="Content\bootstrap-grid.css" />
@@ -441,7 +443,6 @@
     <Content Include="assets\vendor\boxicons\fonts\boxicons.ttf" />
     <Content Include="assets\vendor\boxicons\fonts\boxicons.woff" />
     <Content Include="assets\vendor\boxicons\fonts\boxicons.woff2" />
-    <Content Include="bin\FACGatewayService.dll.config" />
     <Content Include="bin\gateway_settings.json" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
@@ -451,6 +452,8 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="ApplicationInsights.config" />
     <Content Include=".gitignore" />
+    <Content Include="bin\FACGateway.deps.json" />
+    <Content Include="bin\FACGatewayService.dll.config" />
     <None Include="Scripts\jquery-3.6.1.intellisense.js" />
     <Content Include="Scripts\cleave.min.js" />
     <Content Include="Scripts\jquery-3.6.1.js" />
