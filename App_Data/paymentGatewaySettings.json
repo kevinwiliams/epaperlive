@@ -24,10 +24,10 @@
     "captureAmount": true /* When set to true, it will also capture the amount */
   },
   "testing": {
-    "merchantId": "88801477",
+    "merchantId": "88801357",
     "acquirerId": "464748",
-    "processingPassword": "u7AAd28O",
-    "merchantResponseURL": "https://172.30.4.101:82/api/accounts/completetransaction",
+    "processingPassword": "t6S0pV5Y",
+    "merchantResponseURL": "https://localhost:44369/payments/completetransaction",
     "currencyCode": "JMD" /*Specify either JMD - Jamaican Dollars or USD - United States Dollars */,
     "numberOfZeros": "2",
     "signatureMethod": "SHA1",
@@ -36,9 +36,9 @@
     "captureAmount": true /* When set to true, it will also capture the amount */
   },
   "local": {
-    "merchantId": "88801477",
+    "merchantId": "88801357",
     "acquirerId": "464748",
-    "processingPassword": "u7AAd28O",
+    "processingPassword": "t6S0pV5Y",
     /*"merchantResponseURL": "https://localhost:4200/confirmcard",*/
     "merchantResponseURL": "https://localhost:44369/payments/completetransaction",
     //"merchantResponseURL": "https://208.163.52.236/api/accounts/completetransaction",
