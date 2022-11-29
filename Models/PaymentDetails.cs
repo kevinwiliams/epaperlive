@@ -8,6 +8,7 @@ namespace ePaperLive.Models
 {
     public class PaymentDetails
     {
+
         [Display(Name = "Name on Card")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Enter cardholder name")]
         [StringLength(50, MinimumLength = 5, ErrorMessage = "Must have a minimum length of 5.")]
@@ -32,8 +33,9 @@ namespace ePaperLive.Models
         public string CardExp { get; set; }
         [Display(Name = "Amount")]
         [DisplayFormat(DataFormatString = "{0:C0}", ApplyFormatInEditMode = true)]
-        public float CardAmount { get; set; }
+        public decimal CardAmount { get; set; }
         public string Currency { get; set; }
+        public string AuthorizationCode { get; set; }
 
         [Required]
         public int RateID;
@@ -47,6 +49,7 @@ namespace ePaperLive.Models
         public DateTime? TranxDate { get; set; }
         [Display(Name = "Promo Code")]
         public string PromoCode { get; set; }
+        public string CardNumberLastFour { get; set; }
         public AddressDetails BillingAddress { get; set; }
 
     }
