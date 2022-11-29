@@ -15,6 +15,10 @@ using static ePaperLive.Util;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
+using System.Configuration;
+using FACGatewayService;
+using FACGatewayService.FACPG;
 
 namespace ePaperLive.Controllers
 {
@@ -587,7 +591,7 @@ namespace ePaperLive.Controllers
                                 foreach (var payments in tableData.Subscriber_Tranx)
                                 {
                                     PaymentDetails paymentDetails = new PaymentDetails();
-                                    paymentDetails.CardAmount = (float)payments.TranxAmount;
+                                    paymentDetails.CardAmount = (decimal)payments.TranxAmount;
                                     paymentDetails.CardNumber = payments.CardLastFour;
                                     paymentDetails.CardExp = payments.CardExp;
                                     paymentDetails.CardOwner = payments.CardOwner;
@@ -1050,13 +1054,17 @@ namespace ePaperLive.Controllers
                             objEp.CreatedAt = DateTime.Now;
                         }
 
-                    
+                        //Country =Session["CountryList"] = 
+                        AddressDetails billingAddress = new AddressDetails { 
+                            CountryList = (List<SelectListItem>)Session["CountryList"]
+                        };
                         PaymentDetails pd = new PaymentDetails
                         {
                             RateDescription = selectedPlan.RateDescr,
                             Currency = selectedPlan.Curr,
-                            CardAmount = (float)selectedPlan.Rate,
-                            SubType = selectedPlan.Type
+                            CardAmount = (decimal)selectedPlan.Rate,
+                            SubType = selectedPlan.Type,
+                            BillingAddress = billingAddress
                             // cardOwner = "Dwayne Mendez",
                         };
 
@@ -1133,27 +1141,35 @@ namespace ePaperLive.Controllers
                         Subscriber_Tranx objTran = GetTransaction();
                         ApplicationUser user = GetAppUser();
 
+                        AuthSubcriber authUser = GetAuthSubscriber();
+                        authUser.FirstName = objSub.FirstName;
+                        authUser.LastName = objSub.LastName;
+                        authUser.EmailAddress = objSub.EmailAddress;
+
+                        //TODO: Make Payment
+                        //var makePayment = ChargeCard(data);
+
                         string SubscriberID = "";
                         int addressID = 0;
                         var rateID = objTran.RateID;
 
                         //save subscribers
                         objSub.IsActive = true;
-                        //objSub.RoleID = 9002; //SET AspNetUsersRole
-
+                        
                         var newAccount = new ApplicationUser
                         {
                             UserName = user.Email,
                             Email = user.Email,
                             Subscriber = objSub
                         };
-
+                        //create application user
                         var createAccount = await UserManager.CreateAsync(newAccount, user.PasswordHash);
                         if (createAccount.Succeeded)
                         {
                             //get Subscriber ID
                             SubscriberID = newAccount.Id;
-
+                            //assign User Role
+                            createAccount = await UserManager.AddToRoleAsync(SubscriberID, "Subscriber");
                             //save to DB
                             using (var context = new ApplicationDbContext())
                             {
@@ -1172,8 +1188,21 @@ namespace ePaperLive.Controllers
                                     result.AddressID = addressID;
                                     await context.SaveChangesAsync();
                                 }
-                                //save based on subscription
+
                                 var selectedPlan = context.printandsubrates.SingleOrDefault(b => b.Rateid == rateID);
+
+                                //save transaction
+                                objTran.EmailAddress = objSub.EmailAddress;
+                                objTran.CardType = data.CardType;
+                                objTran.CardOwner = data.CardOwner;
+                                objTran.TranxAmount = (double)data.CardAmount;
+                                objTran.TranxDate = DateTime.Now;
+                                objTran.SubscriberID = SubscriberID;
+                                objTran.IpAddress = Request.UserHostAddress;
+                                context.subscriber_tranx.Add(objTran);
+                                await context.SaveChangesAsync();
+
+                                //save based on subscription
                                 if (selectedPlan != null)
                                 {
                                     switch (selectedPlan.Type)
@@ -1210,25 +1239,14 @@ namespace ePaperLive.Controllers
                                         default:
                                             break;
                                     }
-
-                                    //save transaction
-                                    objTran.EmailAddress = objSub.EmailAddress;
-                                    objTran.CardType = data.CardType;
-                                    objTran.CardOwner = data.CardOwner;
-                                    objTran.TranxAmount = selectedPlan.Rate;
-                                    objTran.TranxDate = DateTime.Now;
-                                    objTran.SubscriberID = SubscriberID;
-                                    objTran.IpAddress = Request.UserHostAddress;
-                                    context.subscriber_tranx.Add(objTran);
-                                    await context.SaveChangesAsync();
                                 }
                             }
 
                             RemoveSubscriber();
                             return View("PaymentSuccess");
                         }
-                        AddErrors(createAccount);
 
+                        AddErrors(createAccount);
 
                     }
                     catch (Exception ex)
@@ -1251,6 +1269,176 @@ namespace ePaperLive.Controllers
             return View();
         }
 
+        public async Task<ActionResult> ChargeCard(PaymentDetails paymentDetails)
+        {
+            var websiteHost = ConfigurationManager.AppSettings["epaper_Prod"];
+            //var host = Util.SetAppEnvironment(websiteHost);
+            TransactionSummary summary = new TransactionSummary();
+            dynamic encrypted;
+
+            try
+            {
+                // var processedClientData = new JsonResponse();
+                //var host = Util.SetAppEnvironment(Request.RequestUri.Host);
+
+                Dictionary<string, object> responseData = null;
+                // Setup card processor.
+                var cardProcessor = new CardProcessor();
+                var transactionDetails = new FACGatewayService.FACPG.TransactionDetails();
+                var cardDetails = new FACGatewayService.FACPG.CardDetails();
+                var billingDetails = new BillingDetails();
+
+
+                //var paymentDetails = (PaymentDetails)Session["PaymentDetails"];
+                paymentDetails.TranxDate = DateTime.Now;
+
+
+                // Save the stripped card numbers
+                string sCardType = Util.GetCreditCardType(paymentDetails.CardNumber);
+                Dictionary<string, string> result = Util.StripCardNumber(paymentDetails.CardNumber);
+                if (result != null)
+                {
+                    paymentDetails.CardNumberLastFour = result["lastFour"];
+                }
+
+                cardDetails.CardCVV2 = paymentDetails.CardCVV;
+                cardDetails.CardNumber = paymentDetails.CardNumber;
+                var cardExpiry = paymentDetails.CardExp.Split('/');
+                cardDetails.CardExpiryDate = CardUtils.FormatExpiryDate(cardExpiry[0], cardExpiry[1]);
+
+                transactionDetails.Amount = CardUtils.ZeroPadAmount(paymentDetails.CardAmount);
+
+                //For Testing Purposes Only
+                string xxx = (DateTime.Now.Millisecond).ToString();
+                xxx = xxx.Substring(xxx.Length - 2, 2);
+                transactionDetails.OrderNumber = $"{DateTime.Now.Year}{xxx}{paymentDetails.RateID}";
+
+                // Update Billing Details
+                billingDetails.BillToAddress = paymentDetails.BillingAddress.AddressLine1;
+                billingDetails.BillToAddress2 = paymentDetails.BillingAddress.AddressLine2;
+                billingDetails.BillToCity = paymentDetails.BillingAddress.CityTown;
+
+
+                if (!CardUtils.IsCardCharged(transactionDetails.OrderNumber))
+                {
+                    // Clear sensitive data and save for later retrieval.
+                    paymentDetails.CardCVV = "";
+                    paymentDetails.CardNumber = "";
+
+                    summary = await cardProcessor.ChargeCard(cardDetails, transactionDetails, billingDetails);
+
+                    // 3D Secure (Visa/MasterCard) Flow
+                    if (!string.IsNullOrWhiteSpace(summary.Merchant3DSResponseHtml))
+                    {
+
+                        // Set to 15 minutes by default if not found
+                        //int cacheExpiryDuration = int.Parse(ConfigurationManager.AppSettings["cacheExpiryDuration"] ?? "15");
+                        //tempData.Cache.Add(transactionDetails.OrderNumber, $"{clientKey}|{policyKey}|{transactionDetails.Amount}|{clientData.Client.EmailAddress}", new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheExpiryDuration) });
+
+                        // Return the payment object.
+                        encrypted = Util.EncryptRijndaelManaged(JsonConvert.SerializeObject(summary), "E");
+                        return encrypted;
+                    }
+                    else
+                    {
+                        // KeyCard Flow
+
+                        AuthSubcriber user = GetAuthSubscriber();
+                        // Send Payment Gateway notification
+                        var notificationDetails = new EmailNotificationDetails()
+                        {
+                            FullName = $"{user.FirstName} {user.LastName}",
+                            AddressLine1 = billingDetails.BillToAddress,
+                            AddressLine2 = billingDetails.BillToAddress2,
+                            AddressLine3 = billingDetails.BillToCity,
+                            Email = user.EmailAddress,
+                            // Contact = clientData.Contacts.FirstOrDefault(c => c.ItemName.ToLower() == "number")?.Item
+                        };
+                        await CardUtils.SendPaymentNotification(summary, notificationDetails, new string[] { user.EmailAddress });
+
+                        var transStatus = summary.TransactionStatus;
+                        switch (transStatus.Status)
+                        {
+                            case PaymentStatus.Successful:
+
+                                paymentDetails.AuthorizationCode = summary.AuthCode;
+                                //paymentDetails.OrderID = long.Parse(summary.OrderId);
+                                //paymentDetails.ConfirmationNumber = summary.OrderId;
+                                // Save successful order
+
+                                
+                                responseData = new Dictionary<string, object>()
+                                {
+                                    ["summary"] = summary,
+                                    //["processedClientData"] = processedClientData
+                                };
+                                encrypted = Util.EncryptRijndaelManaged(JsonConvert.SerializeObject(responseData), "E");
+                                return encrypted;
+                            case PaymentStatus.Failed:
+                            // TODO: Add Friendly Message property to Card Processor to display to user.
+                            case PaymentStatus.GatewayError:
+                            case PaymentStatus.InternalError:
+                                //_logger.CreateLog("KeyCard payment failed", logModel, LogType.Warning, additionalFields: logDetails);
+
+                                var errMsg = ConfigurationManager.AppSettings["CreditCardError"];
+                                summary.FriendlyErrorMessages.Add(errMsg);
+                                encrypted = Util.EncryptRijndaelManaged(JsonConvert.SerializeObject(summary), "E");
+                                return encrypted;
+                        }
+                    }
+                }
+                else
+                {
+                    // Clear sensitive data and save for later retrieval.
+                    // Save data of previous charge to our database for later processing.
+                    paymentDetails.CardCVV = "";
+                    paymentDetails.CardNumber = "";
+                    var transactionResponse = cardProcessor.GetGatewayTransactionStatus(transactionDetails.OrderNumber);
+                    var transSummary = cardProcessor.GetTransactionSummary(transactionResponse);
+                    paymentDetails.AuthorizationCode = transSummary.AuthCode;
+
+                }
+
+                // DOING: Implement case for already being bought.
+                /* var appDb = new EFContext();
+                 JNGI_ECOMTransactionHistory existingTransaction = null;
+                 var existingTransactions = appDb.JNGI_ECOMTransactionsHistory
+                 .Where(e => e.PolicyKey == policyKey && e.TransactionType.ToUpper() == currentTransaction.TransactionType.ToUpper());
+
+                 if (await existingTransactions.CountAsync() > 0)
+                 {
+                     var mostRecent = await existingTransactions.MaxAsync(tr => tr.TransactionDate);
+                     existingTransaction = await existingTransactions.FirstOrDefaultAsync(tr => (!tr.IsMadeLiveSuccessful) && tr.TransactionDate == mostRecent);
+                 }
+
+                 summary.TransactionStatus = new TransactionStatus();
+                 summary.TransactionStatus.Status = PaymentStatus.Successful;
+                 // Redirect to processing
+                 // Return the payment object.
+                 dynamic processingPageInfo = new
+                 {
+                     //tid = existingTransaction?.ConfirmationNo ?? transactionDetails.OrderNumber,
+                     //oid = existingTransaction?.ID ?? 0,
+                     ck = clientData.Client.ClientKey,
+                     cc = clientData.Client.ShortName
+                 };*/
+                //responseData = new Dictionary<string, object>()
+                //{
+                //    ["summary"] = summary,
+                //    ["processedClientData"] = clientData,
+                //    //[nameof(processingPageInfo)] = processingPageInfo
+                //};
+                encrypted = Util.EncryptRijndaelManaged(JsonConvert.SerializeObject(responseData), "E");
+                return encrypted;
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            // Something went wrong to get here.
+            // return Ok();
+        }
 
         [NonAction]
         public bool IsEmailExist(string emailAddress)

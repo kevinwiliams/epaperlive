@@ -45,30 +45,10 @@ namespace ePaperLive.Controllers
                 var cardDetails = new FACGatewayService.FACPG.CardDetails();
                 var billingDetails = new BillingDetails();
 
-                var decrypted = Util.EncryptRijndaelManaged("", "D");
-                var clientData = JsonConvert.DeserializeObject(decrypted);
-
-                //var currentPolicy = clientData.Policies.FirstOrDefault();
-                //var currentRisk = clientData.Risks.FirstOrDefault();
-                //var clientKey = clientData.Client.ClientKey;
-
-                //if (currentRisk == null)
-                //{
-                //    var errMsg = ConfigurationManager.AppSettings["SystemError"];
-                //    summary.FriendlyErrorMessages.Add(errMsg);
-                //    var iresponseData = new Dictionary<string, object>()
-                //    {
-                //        ["summary"] = summary,
-                //        ["processedClientData"] = clientData
-                //    };
-                //    encrypted = Util.EncryptRijndaelManaged(JsonConvert.SerializeObject(iresponseData), "E");
-                //    return (encrypted);
-                //}
-                
+               
                 var paymentDetails = (PaymentDetails)Session["PaymentDetails"];
                 paymentDetails.TranxDate = DateTime.Now;
 
-                //clientData = await Util.SetEmailAddress(clientData);
 
                 // Save the stripped card numbers
                 string sCardType = Util.GetCreditCardType(paymentDetails.CardNumber);
@@ -78,42 +58,29 @@ namespace ePaperLive.Controllers
                     paymentDetails.CardNumberLastFour = result["lastFour"];
                 }
 
-
-
-
                 cardDetails.CardCVV2 = paymentDetails.CardCVV;
                 cardDetails.CardNumber = paymentDetails.CardNumber;
                 var cardExpiry = paymentDetails.CardExp.Split('/');
                 cardDetails.CardExpiryDate = CardUtils.FormatExpiryDate(cardExpiry[0], cardExpiry[1]);
 
-
                 transactionDetails.Amount = CardUtils.ZeroPadAmount(paymentDetails.CardAmount);
 
-                //var spParams = new Dictionary<string, object>()
-                //{
-                //    { "PolicyKey", currentPolicy.PolicyKey }
-                //};
+              
 
                 // Format: UWYEAR|TransactionType|ProductID|PolicyKey
-                transactionDetails.OrderNumber = $"{DateTime.Now.Year}";
+                //transactionDetails.OrderNumber = $"{DateTime.Now.Year}";
 
                 //For Testing Purposes Only
                 string xxx = (DateTime.Now.Millisecond).ToString();
                 xxx = xxx.Substring(xxx.Length - 2, 2);
-                transactionDetails.OrderNumber = $"{DateTime.Now.Year}{xxx}";
+                transactionDetails.OrderNumber = $"{DateTime.Now.Year}{xxx}{paymentDetails.RateID}";
 
                 // Update Billing Details
                 billingDetails.BillToAddress = paymentDetails.BillingAddress.AddressLine1;
                 billingDetails.BillToAddress2 = paymentDetails.BillingAddress.AddressLine2;
                 billingDetails.BillToCity = paymentDetails.BillingAddress.CityTown;
 
-                // Update transaction with order id
-                // Front-end is sending the clientkey
-                //currentTransaction.OrderID = long.Parse("");
-                //currentTransaction.ConfirmationNumber = transactionDetails.OrderNumber;
-                //currentTransaction.CardExpiryDate = cardDetails.CardExpiryDate;
-                //currentTransaction.CardType = System.Threading.Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(sCardType ?? currentTransaction?.CardType);
-
+                
                 if (!CardUtils.IsCardCharged(transactionDetails.OrderNumber))
                 {
                     // Clear sensitive data and save for later retrieval.
@@ -125,7 +92,6 @@ namespace ePaperLive.Controllers
                     // 3D Secure (Visa/MasterCard) Flow
                     if (!string.IsNullOrWhiteSpace(summary.Merchant3DSResponseHtml))
                     {
-
 
                         // Set to 15 minutes by default if not found
                         //int cacheExpiryDuration = int.Parse(ConfigurationManager.AppSettings["cacheExpiryDuration"] ?? "15");
@@ -498,6 +464,7 @@ namespace ePaperLive.Controllers
                 //Utilities.LogError(ex);
                 ////_logger.CreateLog("Something went wrong on the server with this request", logModel, LogType.Error, ex, additionalFields: logDetails);
                 //return InternalServerError(ex);
+                throw ex;
             }
 
             return Ok();
