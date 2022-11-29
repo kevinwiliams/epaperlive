@@ -1,0 +1,53 @@
+﻿{
+  "production": {
+    "merchantId": "33303738",
+    "acquirerId": "464748",
+    "processingPassword": "MM1fNcyA",
+    "merchantResponseURL": "https://janus.jamaicaobserver.com/account/completetransaction",
+    "currencyCode": "JMD" /*Specify either JMD - Jamaican Dollars or USD - United States Dollars */,
+    "numberOfZeros": "2",
+    "signatureMethod": "SHA1",
+    "transactionCode": "0",
+    "orderIdFormat": "yyyyMMddhhmmssfffff", /*Year, Month, Day, Minute, Seconds, Nanoseconds  */
+    "captureAmount": true /* When set to true, it will also capture the amount */
+  },
+  "staging": {
+    "merchantId": "33303738",
+    "acquirerId": "464748",
+    "processingPassword": "MM1fNcyA",
+    "merchantResponseURL": "https://208.163.52.236/api/accounts/completetransaction",
+    "currencyCode": "JMD" /*Specify either JMD - Jamaican Dollars or USD - United States Dollars */,
+    "numberOfZeros": "2",
+    "signatureMethod": "SHA1",
+    "transactionCode": "0",
+    "orderIdFormat": "yyyyMMddhhmmssfffff", /*Year, Month, Day, Minute, Seconds, Nanoseconds  */
+    "captureAmount": true /* When set to true, it will also capture the amount */
+  },
+  "testing": {
+    "merchantId": "88801477",
+    "acquirerId": "464748",
+    "processingPassword": "u7AAd28O",
+    "merchantResponseURL": "https://172.30.4.101:82/api/accounts/completetransaction",
+    "currencyCode": "JMD" /*Specify either JMD - Jamaican Dollars or USD - United States Dollars */,
+    "numberOfZeros": "2",
+    "signatureMethod": "SHA1",
+    "transactionCode": "0",
+    "orderIdFormat": "yyyyMMddhhmmssfffff", /*Year, Month, Day, Minute, Seconds, Nanoseconds  */
+    "captureAmount": true /* When set to true, it will also capture the amount */
+  },
+  "local": {
+    "merchantId": "88801477",
+    "acquirerId": "464748",
+    "processingPassword": "u7AAd28O",
+    /*"merchantResponseURL": "https://localhost:4200/confirmcard",*/
+    "merchantResponseURL": "https://localhost:44391/api/accounts/completetransaction",
+    //"merchantResponseURL": "https://208.163.52.236/api/accounts/completetransaction",
+    "currencyCode": "JMD" /*Specify either JMD - Jamaican Dollars or USD - United States Dollars */,
+    "numberOfZeros": "2",
+    "signatureMethod": "SHA1",
+    "transactionCode": "8", // 8 for auth/capture one pass
+    "orderIdFormat": "yyyyMMddhhmmssfffff", /*Year, Month, Day, Minute, Seconds, Nanoseconds  */
+    "captureAmount": true /* When set to true, it will also capture the amount */
+  },
+  "liveMode": false /* ALWAYS SET TO FALSE UNTIL SIGN OFF!! */
+}
