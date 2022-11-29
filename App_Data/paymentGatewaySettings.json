@@ -11,18 +11,6 @@
     "orderIdFormat": "yyyyMMddhhmmssfffff", /*Year, Month, Day, Minute, Seconds, Nanoseconds  */
     "captureAmount": true /* When set to true, it will also capture the amount */
   },
-  "staging": {
-    "merchantId": "33303738",
-    "acquirerId": "464748",
-    "processingPassword": "MM1fNcyA",
-    "merchantResponseURL": "https://janus.jamaicaobserver.com/payments/completetransaction",
-    "currencyCode": "JMD" /*Specify either JMD - Jamaican Dollars or USD - United States Dollars */,
-    "numberOfZeros": "2",
-    "signatureMethod": "SHA1",
-    "transactionCode": "0",
-    "orderIdFormat": "yyyyMMddhhmmssfffff", /*Year, Month, Day, Minute, Seconds, Nanoseconds  */
-    "captureAmount": true /* When set to true, it will also capture the amount */
-  },
   "testing": {
     "merchantId": "88801357",
     "acquirerId": "464748",
@@ -32,18 +20,6 @@
     "numberOfZeros": "2",
     "signatureMethod": "SHA1",
     "transactionCode": "0",
-    "orderIdFormat": "yyyyMMddhhmmssfffff", /*Year, Month, Day, Minute, Seconds, Nanoseconds  */
-    "captureAmount": true /* When set to true, it will also capture the amount */
-  },
-  "local": {
-    "merchantId": "88801357",
-    "acquirerId": "464748",
-    "processingPassword": "t6S0pV5Y",
-    "merchantResponseURL": "https://localhost:44369/payments/completetransaction",
-    "currencyCode": "JMD" /*Specify either JMD - Jamaican Dollars or USD - United States Dollars */,
-    "numberOfZeros": "2",
-    "signatureMethod": "SHA1",
-    "transactionCode": "8", // 8 for auth/capture one pass
     "orderIdFormat": "yyyyMMddhhmmssfffff", /*Year, Month, Day, Minute, Seconds, Nanoseconds  */
     "captureAmount": true /* When set to true, it will also capture the amount */
   },
