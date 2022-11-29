@@ -1292,17 +1292,17 @@ namespace ePaperLive.Controllers
                 //var paymentDetails = (PaymentDetails)Session["PaymentDetails"];
                 paymentDetails.TranxDate = DateTime.Now;
 
-
+                var cardNumber = Regex.Replace(paymentDetails.CardNumber, @"\s+", "");
                 // Save the stripped card numbers
-                string sCardType = Util.GetCreditCardType(paymentDetails.CardNumber);
-                Dictionary<string, string> result = Util.StripCardNumber(paymentDetails.CardNumber);
+                string sCardType = Util.GetCreditCardType(cardNumber);
+                Dictionary<string, string> result = Util.StripCardNumber(cardNumber);
                 if (result != null)
                 {
                     paymentDetails.CardNumberLastFour = result["lastFour"];
                 }
 
                 cardDetails.CardCVV2 = paymentDetails.CardCVV;
-                cardDetails.CardNumber = paymentDetails.CardNumber;
+                cardDetails.CardNumber = cardNumber;
                 var cardExpiry = paymentDetails.CardExp.Split('/');
                 cardDetails.CardExpiryDate = CardUtils.FormatExpiryDate(cardExpiry[0], cardExpiry[1]);
 
