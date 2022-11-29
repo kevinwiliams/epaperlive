@@ -269,8 +269,8 @@ namespace ePaperLive.Controllers
                 //JNGI_UserSession existing = new JNGI_UserSession();
                 //JsonResponse customerData = new JsonResponse();
                 // Retrieve data that was saved before 3DS processing.
-                var clientKey = 0;
-                var policyKey = 0;
+
+                await Task.FromResult(0);
                 var httpCtx = HttpContext;
                 var threedsparams = new ThreeDSParams();
                 var cardProcessor = new CardProcessor();
