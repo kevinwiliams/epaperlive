@@ -7,7 +7,7 @@
     "currencyCode": "JMD" /*Specify either JMD - Jamaican Dollars or USD - United States Dollars */,
     "numberOfZeros": "2",
     "signatureMethod": "SHA1",
-    "transactionCode": "0",
+    "transactionCode": "8",
     "orderIdFormat": "yyyyMMddhhmmssfffff", /*Year, Month, Day, Minute, Seconds, Nanoseconds  */
     "captureAmount": true /* When set to true, it will also capture the amount */
   },
@@ -19,7 +19,7 @@
     "currencyCode": "JMD" /*Specify either JMD - Jamaican Dollars or USD - United States Dollars */,
     "numberOfZeros": "2",
     "signatureMethod": "SHA1",
-    "transactionCode": "0",
+    "transactionCode": "8",
     "orderIdFormat": "yyyyMMddhhmmssfffff", /*Year, Month, Day, Minute, Seconds, Nanoseconds  */
     "captureAmount": true /* When set to true, it will also capture the amount */
   },
