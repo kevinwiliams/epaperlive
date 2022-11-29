@@ -15,7 +15,7 @@
     "merchantId": "33303738",
     "acquirerId": "464748",
     "processingPassword": "MM1fNcyA",
-    "merchantResponseURL": "https://208.163.52.236/payments/completetransaction",
+    "merchantResponseURL": "https://janus.jamaicaobserver.com/payments/completetransaction",
     "currencyCode": "JMD" /*Specify either JMD - Jamaican Dollars or USD - United States Dollars */,
     "numberOfZeros": "2",
     "signatureMethod": "SHA1",
@@ -39,9 +39,7 @@
     "merchantId": "88801357",
     "acquirerId": "464748",
     "processingPassword": "t6S0pV5Y",
-    /*"merchantResponseURL": "https://localhost:4200/confirmcard",*/
     "merchantResponseURL": "https://localhost:44369/payments/completetransaction",
-    //"merchantResponseURL": "https://208.163.52.236/api/accounts/completetransaction",
     "currencyCode": "JMD" /*Specify either JMD - Jamaican Dollars or USD - United States Dollars */,
     "numberOfZeros": "2",
     "signatureMethod": "SHA1",
