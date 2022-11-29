@@ -295,6 +295,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\MIGRATION-SCRIPT.sql" />
+    <None Include="App_Data\paymentGatewaySettings.json" />
     <Content Include="App_Data\SQL-SETUP3.sql" />
     <Content Include="assets\css\style.css" />
     <Content Include="assets\img\about.jpg" />
