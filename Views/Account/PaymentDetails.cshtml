@@ -154,7 +154,7 @@
                                 </div>
 
                             </div>
-                            @Html.HiddenFor(model => model.TransactionSummary.Merchant3DSResponseHtml)
+                            @Html.HiddenFor(model => model.TransactionSummary.Merchant3DSResponseHtml, htmlAttributes: new { @id = "TransactionSummary"})
                             @if (Model.TransactionSummary != null)
                             {
                                 <iframe id="paymentGatway"></iframe>
@@ -217,6 +217,16 @@
 
 @section scripts{
     <script>
+
+        $(document).ready(function () {
+            let routeData = $("#TransactionSummary").val();
+
+            if (routeData != null) {
+                $('#paymentGatway').contents().find('html').html(routeData);
+            }
+        });
+        
+
         // Needed for KeyCard
         $("#CardNumber").on("input", (e) => {
             if ($("#CardNumber").val().startsWith("7")) {
