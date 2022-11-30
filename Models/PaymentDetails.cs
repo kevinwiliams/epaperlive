@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FACGatewayService;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -51,6 +52,7 @@ namespace ePaperLive.Models
         public string PromoCode { get; set; }
         public string CardNumberLastFour { get; set; }
         public AddressDetails BillingAddress { get; set; }
+        public TransactionSummary TransactionSummary { get; set; }
 
     }
 

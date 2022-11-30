@@ -154,8 +154,12 @@
                                 </div>
 
                             </div>
+                            @Html.HiddenFor(model => model.TransactionSummary.Merchant3DSResponseHtml)
+                            @if (Model.TransactionSummary != null)
+                            {
+                                <iframe id="paymentGatway"></iframe>
 
-                            <iframe id="paymentGatway"></iframe>
+                            }
 
                             <div class="form-group">
                                 <div class="col-md-offset-2 col-md-10 pt-3">

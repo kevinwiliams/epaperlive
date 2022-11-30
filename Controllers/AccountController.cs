@@ -1167,25 +1167,6 @@ namespace ePaperLive.Controllers
                         //TODO: Make Payment
                         dynamic summary = await ChargeCard(data);
 
-                        if (string.IsNullOrWhiteSpace(summary.Merchant3DSResponseHtml))
-                        {
-                            var transStatus = summary.TransactionStatus;
-                            switch (transStatus.Status)
-                            {
-                                case PaymentStatus.Successful:
-                                    await SaveSubscriptionAsync();
-                                    return View("PaymentSuccess");
-
-                                case PaymentStatus.Failed:
-                                // TODO: Add Friendly Message property to Card Processor to display to user.
-                                case PaymentStatus.GatewayError:
-                                case PaymentStatus.InternalError:
-                                    break;
-                            }
-                        }
-                        
-
-
                     }
                     catch (Exception ex)
                     {
@@ -1383,15 +1364,33 @@ namespace ePaperLive.Controllers
                     {
                         // Return the payment object.
                         //encrypted = Util.EncryptRijndaelManaged(JsonConvert.SerializeObject(summary), "E");
+                        paymentDetails.TransactionSummary = summary;
                         encrypted = summary;
-                        return encrypted;
+                        //return view
+                        return View("PaymentDetails", paymentDetails);
                     }
                     else
                     {
                         // KeyCard Flow
-
+                        paymentDetails.TransactionSummary = summary;
                         encrypted = summary;
-                        return encrypted;
+
+                        var transStatus = summary.TransactionStatus;
+                        switch (transStatus.Status)
+                        {
+                            case PaymentStatus.Successful:
+                                await SaveSubscriptionAsync();
+                                return View("PaymentSuccess");
+
+                            case PaymentStatus.Failed:
+                            // TODO: Add Friendly Message property to Card Processor to display to user.
+                            case PaymentStatus.GatewayError:
+                            case PaymentStatus.InternalError:
+                                break;
+                        }
+
+                        return View("PaymentDetails", paymentDetails);
+
                     }
                 }
                 else
@@ -1404,9 +1403,10 @@ namespace ePaperLive.Controllers
                     var transSummary = cardProcessor.GetTransactionSummary(transactionResponse);
                     paymentDetails.AuthorizationCode = transSummary.AuthCode;
 
+                    return View("PaymentDetails", paymentDetails);
                 }
 
-              
+
                 encrypted = summary;
                 //encrypted = Util.EncryptRijndaelManaged(JsonConvert.SerializeObject(responseData), "E");
                 return encrypted;
@@ -1424,8 +1424,6 @@ namespace ePaperLive.Controllers
         {
             try
             {
-
-               
 
                 var websiteHost = ConfigurationManager.AppSettings["ecomm_Prod"];
                 //var host = Utilities.SetAppEnvironment(websiteHost);
