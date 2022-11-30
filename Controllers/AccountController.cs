@@ -1153,7 +1153,21 @@ namespace ePaperLive.Controllers
                         authUser.EmailAddress = objSub.EmailAddress;
 
                         //TODO: Make Payment
-                        var makePayment = ChargeCard(data);
+                        dynamic summary = ChargeCard(data);
+
+                        var transStatus = summary.TransactionStatus;
+                        switch (transStatus.Status)
+                        {
+                            case PaymentStatus.Successful:
+
+                             
+                               
+                            case PaymentStatus.Failed:
+                            // TODO: Add Friendly Message property to Card Processor to display to user.
+                            case PaymentStatus.GatewayError:
+                            case PaymentStatus.InternalError:
+                                break;
+                        }
 
                         string SubscriberID = "";
                         int addressID = 0;
@@ -1336,61 +1350,17 @@ namespace ePaperLive.Controllers
                     // 3D Secure (Visa/MasterCard) Flow
                     if (!string.IsNullOrWhiteSpace(summary.Merchant3DSResponseHtml))
                     {
-
-                        // Set to 15 minutes by default if not found
-                        //int cacheExpiryDuration = int.Parse(ConfigurationManager.AppSettings["cacheExpiryDuration"] ?? "15");
-                        //tempData.Cache.Add(transactionDetails.OrderNumber, $"{clientKey}|{policyKey}|{transactionDetails.Amount}|{clientData.Client.EmailAddress}", new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheExpiryDuration) });
-
                         // Return the payment object.
-                        encrypted = Util.EncryptRijndaelManaged(JsonConvert.SerializeObject(summary), "E");
+                        //encrypted = Util.EncryptRijndaelManaged(JsonConvert.SerializeObject(summary), "E");
+                        encrypted = summary;
                         return encrypted;
                     }
                     else
                     {
                         // KeyCard Flow
 
-                        AuthSubcriber user = GetAuthSubscriber();
-                        // Send Payment Gateway notification
-                        //var notificationDetails = new EmailNotificationDetails()
-                        //{
-                        //    FullName = $"{user.FirstName} {user.LastName}",
-                        //    AddressLine1 = billingDetails.BillToAddress,
-                        //    AddressLine2 = billingDetails.BillToAddress2,
-                        //    AddressLine3 = billingDetails.BillToCity,
-                        //    Email = user.EmailAddress,
-                        //    // Contact = clientData.Contacts.FirstOrDefault(c => c.ItemName.ToLower() == "number")?.Item
-                        //};
-                        //await CardUtils.SendPaymentNotification(summary, notificationDetails, new string[] { user.EmailAddress });
-
-                        var transStatus = summary.TransactionStatus;
-                        switch (transStatus.Status)
-                        {
-                            case PaymentStatus.Successful:
-
-                                paymentDetails.AuthorizationCode = summary.AuthCode;
-                                //paymentDetails.OrderID = long.Parse(summary.OrderId);
-                                //paymentDetails.ConfirmationNumber = summary.OrderId;
-                                // Save successful order
-
-                                
-                                responseData = new Dictionary<string, object>()
-                                {
-                                    ["summary"] = summary,
-                                    //["processedClientData"] = processedClientData
-                                };
-                                encrypted = Util.EncryptRijndaelManaged(JsonConvert.SerializeObject(responseData), "E");
-                                return encrypted;
-                            case PaymentStatus.Failed:
-                            // TODO: Add Friendly Message property to Card Processor to display to user.
-                            case PaymentStatus.GatewayError:
-                            case PaymentStatus.InternalError:
-                                //_logger.CreateLog("KeyCard payment failed", logModel, LogType.Warning, additionalFields: logDetails);
-
-                                var errMsg = ConfigurationManager.AppSettings["CreditCardError"];
-                                summary.FriendlyErrorMessages.Add(errMsg);
-                                encrypted = Util.EncryptRijndaelManaged(JsonConvert.SerializeObject(summary), "E");
-                                return encrypted;
-                        }
+                        encrypted = summary;
+                        return encrypted;
                     }
                 }
                 else
@@ -1405,36 +1375,9 @@ namespace ePaperLive.Controllers
 
                 }
 
-                // DOING: Implement case for already being bought.
-                /* var appDb = new EFContext();
-                 JNGI_ECOMTransactionHistory existingTransaction = null;
-                 var existingTransactions = appDb.JNGI_ECOMTransactionsHistory
-                 .Where(e => e.PolicyKey == policyKey && e.TransactionType.ToUpper() == currentTransaction.TransactionType.ToUpper());
-
-                 if (await existingTransactions.CountAsync() > 0)
-                 {
-                     var mostRecent = await existingTransactions.MaxAsync(tr => tr.TransactionDate);
-                     existingTransaction = await existingTransactions.FirstOrDefaultAsync(tr => (!tr.IsMadeLiveSuccessful) && tr.TransactionDate == mostRecent);
-                 }
-
-                 summary.TransactionStatus = new TransactionStatus();
-                 summary.TransactionStatus.Status = PaymentStatus.Successful;
-                 // Redirect to processing
-                 // Return the payment object.
-                 dynamic processingPageInfo = new
-                 {
-                     //tid = existingTransaction?.ConfirmationNo ?? transactionDetails.OrderNumber,
-                     //oid = existingTransaction?.ID ?? 0,
-                     ck = clientData.Client.ClientKey,
-                     cc = clientData.Client.ShortName
-                 };*/
-                //responseData = new Dictionary<string, object>()
-                //{
-                //    ["summary"] = summary,
-                //    ["processedClientData"] = clientData,
-                //    //[nameof(processingPageInfo)] = processingPageInfo
-                //};
-                encrypted = Util.EncryptRijndaelManaged(JsonConvert.SerializeObject(responseData), "E");
+              
+                encrypted = summary;
+                //encrypted = Util.EncryptRijndaelManaged(JsonConvert.SerializeObject(responseData), "E");
                 return encrypted;
 
             }
