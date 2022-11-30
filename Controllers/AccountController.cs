@@ -1083,10 +1083,22 @@ namespace ePaperLive.Controllers
         }
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult SaveDeliveryAddress(AddressDetails addressDetails)
+        public ActionResult SaveDeliveryAddress(AddressDetails data)
         {
-            
-            return View();
+            Subscriber_Address deliveryAddress = GetSubscriberDeliveryAddress();
+            deliveryAddress.AddressType = "D";
+            deliveryAddress.AddressLine1 = data.AddressLine1;
+            deliveryAddress.AddressLine2 = data.AddressLine2;
+            deliveryAddress.CityTown = data.CityTown;
+            deliveryAddress.StateParish = data.StateParish;
+            deliveryAddress.ZipCode = data.ZipCode;
+            deliveryAddress.CountryCode = data.CountryCode;
+            deliveryAddress.CreatedAt = DateTime.Now;
+
+            ViewBag["savedAddressData"] = data;
+            ViewBag["savedAddress"] = true;
+
+            return PartialView("_DeliveryAddressModal", data);
         }
 
         [HttpPost]
@@ -1141,132 +1153,38 @@ namespace ePaperLive.Controllers
                     {
                         //get all session variables
                         Subscriber objSub = GetSubscriber();
-                        Subscriber_Address objAdd = GetSubscriberAddress();
-                        Subscriber_Epaper objE = GetEpaperDetails();
-                        Subscriber_Print objP = GetPrintDetails();
                         Subscriber_Tranx objTran = GetTransaction();
-                        ApplicationUser user = GetAppUser();
-
+                        
                         AuthSubcriber authUser = GetAuthSubscriber();
                         authUser.FirstName = objSub.FirstName;
                         authUser.LastName = objSub.LastName;
                         authUser.EmailAddress = objSub.EmailAddress;
 
+                        objTran.CardType = data.CardType;
+                        objTran.CardOwner = data.CardOwner;
+                        objTran.TranxAmount = (double)data.CardAmount;
+
                         //TODO: Make Payment
-                        dynamic summary = ChargeCard(data);
+                        dynamic summary = await ChargeCard(data);
 
-                        var transStatus = summary.TransactionStatus;
-                        switch (transStatus.Status)
+                        if (string.IsNullOrWhiteSpace(summary.Merchant3DSResponseHtml))
                         {
-                            case PaymentStatus.Successful:
-
-                             
-                               
-                            case PaymentStatus.Failed:
-                            // TODO: Add Friendly Message property to Card Processor to display to user.
-                            case PaymentStatus.GatewayError:
-                            case PaymentStatus.InternalError:
-                                break;
-                        }
-
-                        string SubscriberID = "";
-                        int addressID = 0;
-                        var rateID = objTran.RateID;
-
-                        //save subscribers
-                        objSub.IsActive = true;
-                        
-                        var newAccount = new ApplicationUser
-                        {
-                            UserName = user.Email,
-                            Email = user.Email,
-                            Subscriber = objSub
-                        };
-                        //create application user
-                        var createAccount = await UserManager.CreateAsync(newAccount, user.PasswordHash);
-                        if (createAccount.Succeeded)
-                        {
-                            //get Subscriber ID
-                            SubscriberID = newAccount.Id;
-                            //assign User Role
-                            createAccount = await UserManager.AddToRoleAsync(SubscriberID, "Subscriber");
-                            //save to DB
-                            using (var context = new ApplicationDbContext())
+                            var transStatus = summary.TransactionStatus;
+                            switch (transStatus.Status)
                             {
-                                //save address
-                                objAdd.SubscriberID = SubscriberID;
-                                context.subscriber_address.Add(objAdd);
-                                await context.SaveChangesAsync();
+                                case PaymentStatus.Successful:
+                                    await SaveSubscriptionAsync();
+                                    return View("PaymentSuccess");
 
-                                //get Address ID
-                                addressID = objAdd.AddressID;
-
-                                //update subscribers table w/ address ID
-                                var result = context.subscribers.SingleOrDefault(b => b.SubscriberID == SubscriberID);
-                                if (result != null)
-                                {
-                                    result.AddressID = addressID;
-                                    await context.SaveChangesAsync();
-                                }
-
-                                var selectedPlan = context.printandsubrates.SingleOrDefault(b => b.Rateid == rateID);
-
-                                //save transaction
-                                objTran.EmailAddress = objSub.EmailAddress;
-                                objTran.CardType = data.CardType;
-                                objTran.CardOwner = data.CardOwner;
-                                objTran.TranxAmount = (double)data.CardAmount;
-                                objTran.TranxDate = DateTime.Now;
-                                objTran.SubscriberID = SubscriberID;
-                                objTran.IpAddress = Request.UserHostAddress;
-                                context.subscriber_tranx.Add(objTran);
-                                await context.SaveChangesAsync();
-
-                                //save based on subscription
-                                if (selectedPlan != null)
-                                {
-                                    switch (selectedPlan.Type)
-                                    {
-                                        case "Print":
-                                            //save print subscription
-                                            objP.AddressID = addressID;
-                                            objP.SubscriberID = SubscriberID;
-                                            context.subscriber_print.Add(objP);
-                                            await context.SaveChangesAsync();
-                                            break;
-
-                                        case "Epaper":
-                                            //save epaper subscription
-                                            objE.SubType = SubscriptionType.Paid.ToString();
-                                            objE.SubscriberID = SubscriberID;
-                                            context.subscriber_epaper.Add(objE);
-                                            await context.SaveChangesAsync();
-                                            break;
-
-                                        case "Bundle":
-                                            //save print subscription
-                                            objP.AddressID = addressID;
-                                            objP.SubscriberID = SubscriberID;
-                                            context.subscriber_print.Add(objP);
-
-                                            //save epaper subscription
-                                            objE.SubscriberID = SubscriberID;
-                                            context.subscriber_epaper.Add(objE);
-
-                                            await context.SaveChangesAsync();
-                                            break;
-
-                                        default:
-                                            break;
-                                    }
-                                }
+                                case PaymentStatus.Failed:
+                                // TODO: Add Friendly Message property to Card Processor to display to user.
+                                case PaymentStatus.GatewayError:
+                                case PaymentStatus.InternalError:
+                                    break;
                             }
-
-                            RemoveSubscriber();
-                            return View("PaymentSuccess");
                         }
+                        
 
-                        AddErrors(createAccount);
 
                     }
                     catch (Exception ex)
@@ -1278,6 +1196,119 @@ namespace ePaperLive.Controllers
                 }
             }
 
+            return View();
+        }
+
+        public async Task<ActionResult> SaveSubscriptionAsync()
+        {
+            //get all session variables
+            Subscriber objSub = GetSubscriber();
+            Subscriber_Address objAdd = GetSubscriberAddress();
+            Subscriber_Epaper objE = GetEpaperDetails();
+            Subscriber_Print objP = GetPrintDetails();
+            Subscriber_Tranx objTran = GetTransaction();
+            ApplicationUser user = GetAppUser();
+
+            AuthSubcriber authUser = GetAuthSubscriber();
+            authUser.FirstName = objSub.FirstName;
+            authUser.LastName = objSub.LastName;
+            authUser.EmailAddress = objSub.EmailAddress;
+
+            string SubscriberID = "";
+            int addressID = 0;
+            var rateID = objTran.RateID;
+
+            //save subscribers
+            objSub.IsActive = true;
+
+            var newAccount = new ApplicationUser
+            {
+                UserName = user.Email,
+                Email = user.Email,
+                Subscriber = objSub
+            };
+            //create application user
+            var createAccount = await UserManager.CreateAsync(newAccount, user.PasswordHash);
+            if (createAccount.Succeeded)
+            {
+                //get Subscriber ID
+                SubscriberID = newAccount.Id;
+                //assign User Role
+                createAccount = await UserManager.AddToRoleAsync(SubscriberID, "Subscriber");
+                //save to DB
+                using (var context = new ApplicationDbContext())
+                {
+                    //save address
+                    objAdd.SubscriberID = SubscriberID;
+                    context.subscriber_address.Add(objAdd);
+                    await context.SaveChangesAsync();
+
+                    //get Address ID
+                    addressID = objAdd.AddressID;
+
+                    //update subscribers table w/ address ID
+                    var result = context.subscribers.SingleOrDefault(b => b.SubscriberID == SubscriberID);
+                    if (result != null)
+                    {
+                        result.AddressID = addressID;
+                        await context.SaveChangesAsync();
+                    }
+
+                    var selectedPlan = context.printandsubrates.SingleOrDefault(b => b.Rateid == rateID);
+
+                    //save transaction
+                    objTran.EmailAddress = objSub.EmailAddress;
+                    objTran.TranxDate = DateTime.Now;
+                    objTran.SubscriberID = SubscriberID;
+                    objTran.IpAddress = Request.UserHostAddress;
+                    context.subscriber_tranx.Add(objTran);
+                    await context.SaveChangesAsync();
+
+                    //save based on subscription
+                    if (selectedPlan != null)
+                    {
+                        switch (selectedPlan.Type)
+                        {
+                            case "Print":
+                                //save print subscription
+                                objP.AddressID = addressID;
+                                objP.SubscriberID = SubscriberID;
+                                context.subscriber_print.Add(objP);
+                                await context.SaveChangesAsync();
+                                break;
+
+                            case "Epaper":
+                                //save epaper subscription
+                                objE.SubType = SubscriptionType.Paid.ToString();
+                                objE.SubscriberID = SubscriberID;
+                                context.subscriber_epaper.Add(objE);
+                                await context.SaveChangesAsync();
+                                break;
+
+                            case "Bundle":
+                                //save print subscription
+                                objP.AddressID = addressID;
+                                objP.SubscriberID = SubscriberID;
+                                context.subscriber_print.Add(objP);
+
+                                //save epaper subscription
+                                objE.SubscriberID = SubscriberID;
+                                context.subscriber_epaper.Add(objE);
+
+                                await context.SaveChangesAsync();
+                                break;
+
+                            default:
+                                break;
+                        }
+                    }
+                }
+
+                RemoveSubscriber();
+                return View("PaymentSuccess");
+            }
+
+            AddErrors(createAccount);
             return View();
         }
 
@@ -1304,9 +1335,9 @@ namespace ePaperLive.Controllers
                 Dictionary<string, object> responseData = null;
                 // Setup card processor.
                 var cardProcessor = new CardProcessor();
-                var transactionDetails = new FACGatewayService.FACPG.TransactionDetails();
-                var cardDetails = new FACGatewayService.FACPG.CardDetails();
-                var billingDetails = new FACGatewayService.FACPG.BillingDetails();
+                var transactionDetails = new TransactionDetails();
+                var cardDetails = new CardDetails();
+                var billingDetails = new BillingDetails();
 
 
                 //var paymentDetails = (PaymentDetails)Session["PaymentDetails"];
@@ -1388,6 +1419,107 @@ namespace ePaperLive.Controllers
             // Something went wrong to get here.
             // return Ok();
         }
+
+        public async Task<ActionResult> CompleteTransaction()
+        {
+            try
+            {
+
+               
+
+                var websiteHost = ConfigurationManager.AppSettings["ecomm_Prod"];
+                //var host = Utilities.SetAppEnvironment(websiteHost);
+
+                //var sessionRepository = new SessionRepository();
+                //JNGI_UserSession existing = new JNGI_UserSession();
+                //JsonResponse customerData = new JsonResponse();
+                // Retrieve data that was saved before 3DS processing.
+
+                await Task.FromResult(0);
+                var httpCtx = HttpContext;
+                var threedsparams = new ThreeDSParams();
+                var cardProcessor = new CardProcessor();
+
+                threedsparams.MerID = httpCtx.Request.Form["MerID"];
+                threedsparams.AcqID = httpCtx.Request.Form["AcqID"];
+                threedsparams.OrderID = httpCtx.Request.Form["OrderID"];
+                threedsparams.ResponseCode = httpCtx.Request.Form["ResponseCode"];
+                threedsparams.ReasonCode = httpCtx.Request.Form["ReasonCode"];
+                threedsparams.ReasonCodeDesc = httpCtx.Request.Form["ReasonCodeDesc"];
+                threedsparams.ReferenceNo = httpCtx.Request.Form["ReferenceNo"];
+                threedsparams.PaddedCardNo = httpCtx.Request.Form["PaddedCardNo"];
+                threedsparams.AuthCode = httpCtx.Request.Form["AuthCode"];
+                threedsparams.CVV2Result = httpCtx.Request.Form["CVV2Result"];
+                threedsparams.AuthenticationResult = httpCtx.Request.Form["AuthenticationResult"];
+                threedsparams.CAVVValue = httpCtx.Request.Form["CAVVValue"];
+                threedsparams.ECIIndicator = httpCtx.Request.Form["ECIIndicator"];
+                threedsparams.TransactionStain = httpCtx.Request.Form["TransactionStain"];
+                threedsparams.OriginalResponseCode = httpCtx.Request.Form["OriginalResponseCode"];
+                threedsparams.Signature = httpCtx.Request.Form["Signature"];
+                threedsparams.SignatureMethod = httpCtx.Request.Form["SignatureMethod"];
+
+
+                var originalAmount = CardUtils.GetAmountFromString("");
+                threedsparams.Amount = originalAmount;
+
+
+                // Free up cache
+                //tempData.Cache.Remove(threedsparams.OrderID);
+                var summary = CardProcessor.GetGateway3DSecureResponse(threedsparams);
+
+                // Send Payment Gateway notification
+                //var notificationDetails = new EmailNotificationDetails()
+                //{
+                //    FullName = fullName,
+                //    AddressLine1 = transaction.CardAddress1,
+                //    AddressLine2 = transaction.CardAddress2,
+                //    AddressLine3 = transaction.CardParish,
+                //    Email = email,
+                //    Contact = customerData?.Contacts?.FirstOrDefault(c => c.ItemName.ToLower() == "number")?.Item ?? ""
+                //};
+
+                //_logger.CreateLog("Attempting to send payment notification", logModel, LogType.Information, additionalFields: logDetails);
+
+
+                // Redirect
+                // Setup messages for failure and passes.
+                switch (summary.TransactionStatus.Status)
+                {
+                    case PaymentStatus.Successful:
+                        //save subscription
+                        await SaveSubscriptionAsync();
+                        // Set to 15 minutes by default if not found
+                        int cacheExpiryDuration = int.Parse(ConfigurationManager.AppSettings["cacheExpiryDuration"] ?? "15");
+                        // Repopulate cache for new flow.
+                        //tempData.Cache.Add(summary.OrderId, $"{email}|{policyKey}", new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheExpiryDuration) });
+                        return View("PaymentSuccess");
+                    case PaymentStatus.Failed:
+                    //_logger.CreateLog("Authorization failed", logModel, LogType.Warning, additionalFields: logDetails);
+                    //return Redirect($"{host}/payments?status=failed");
+                    case PaymentStatus.InternalError:
+                    case PaymentStatus.GatewayError:
+                        //_logger.CreateLog("Gateway/Internal failure", logModel, LogType.Warning, additionalFields: logDetails);
+                        //return Redirect($"{host}/payments?status=error");
+                        break;
+                    default:
+                        //_logger.CreateLog("Generic failure", logModel, LogType.Warning, additionalFields: logDetails);
+                        //return Redirect($"{host}/payments?status=failed");
+                        break;
+                }
+                // return Ok();
+            }
+            catch (Exception ex)
+            {
+                //Utilities.LogError(ex);
+                ////_logger.CreateLog("Something went wrong on the server with this request", logModel, LogType.Error, ex, additionalFields: logDetails);
+                //return InternalServerError(ex);
+                throw ex;
+            }
+
+            return View("PaymentDetails");
+
+        }
+
 
         [NonAction]
         public bool IsEmailExist(string emailAddress)

@@ -1,21 +1,32 @@
-﻿<div class="portfolio-info">
-    <h5><strong>The Jamaica Observer Limited</strong> </h5>
-    @if (!string.IsNullOrWhiteSpace((string)ViewData["pkgType"]))
-    {
-        <p>@ViewData["pkgType"] Plan</p><br />
-    }
-    <p><strong>What's included</strong></p>
-    <ul>
-        <li>Observer's smartphone app and tablet edition</li>
-        <li>The Sunday Observer</li>
-        <li>The Daily Observer Monday to Friday</li>
-        <li>The Saturday Observer</li>
-        <li>All supplements offered via print media</li>
-    </ul>
-    <br />
-    <p><strong>Your subscription start date</strong></p>
-    <p>Your subscription starts today: <br />@DateTime.Now.ToString("MMM d, yyyy")</p>
-</div>
+﻿
+    <div class="portfolio-info">
+        <h5><strong>The Jamaica Observer Limited</strong> </h5>
+        @if (!string.IsNullOrWhiteSpace((string)ViewData["pkgType"]))
+        {
+            <p>@ViewData["pkgType"] Plan</p><br />
+        }
+        <p><strong>What's included</strong></p>
+        <ul>
+            <li>Observer's smartphone app and tablet edition</li>
+            <li>The Sunday Observer</li>
+            <li>The Daily Observer Monday to Friday</li>
+            <li>The Saturday Observer</li>
+            <li>All supplements offered via print media</li>
+        </ul>
+        <br />
+        <p><strong>Your subscription start date</strong></p>
+        <p>Your subscription starts today: <br />@DateTime.Now.ToString("MMM d, yyyy")</p>
+
+        @if ((ePaperLive.Models.AddressDetails)ViewData["savedAddressData"] != null)
+        {
+            <p><strong>Your subscription start date</strong></p>
+
+            ePaperLive.Models.AddressDetails address = (ePaperLive.Models.AddressDetails)ViewData["savedAddressData"];
+            <p>@address.AddressLine1</p>
+        }
+
+    </div>
+<!--
 <div class="portfolio-description">
     <h5><strong>Billing information</strong></h5>
         <p><small>Your first payment of $15.00 will be taken on 2nd November 2022.</small></p>
@@ -24,4 +35,5 @@
         <p><small>>To cancel after your minimum term, please contact our Customer Services team 15 days before the end of your 13 weeks voucher book.</small></p>
         <p><small>You will shortly be sent a confirmation email.</small></p>
 </div>
+-->
             
