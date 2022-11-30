@@ -1107,6 +1107,8 @@ namespace ePaperLive.Controllers
         public async Task<ActionResult> PaymentDetails(PaymentDetails data, string prevBtn, string nextBtn)
         {
 
+            data.BillingAddress.CountryList = (List<SelectListItem>)Session["CountryList"];
+
             var cardType = data.CardType;
 
             if (prevBtn != null)
@@ -1177,7 +1179,7 @@ namespace ePaperLive.Controllers
                 }
             }
 
-            return View();
+            return View(data);
         }
 
         public async Task<ActionResult> SaveSubscriptionAsync()
@@ -1336,7 +1338,9 @@ namespace ePaperLive.Controllers
                 cardDetails.CardCVV2 = paymentDetails.CardCVV;
                 cardDetails.CardNumber = cardNumber;
                 var cardExpiry = paymentDetails.CardExp.Split('/');
-                cardDetails.CardExpiryDate = CardUtils.FormatExpiryDate(cardExpiry[0], cardExpiry[1]);
+                var Year = DateTime.Now.Year.ToString();
+                var cardExpiryYear = Year.Substring(0,2) + cardExpiry[1];
+                cardDetails.CardExpiryDate = CardUtils.FormatExpiryDate(cardExpiry[0], cardExpiryYear);
 
                 transactionDetails.Amount = CardUtils.ZeroPadAmount(paymentDetails.CardAmount);
 
@@ -1357,7 +1361,7 @@ namespace ePaperLive.Controllers
                     paymentDetails.CardCVV = "";
                     paymentDetails.CardNumber = "";
 
-                    summary = await cardProcessor.ChargeCard(cardDetails, transactionDetails, billingDetails, null, true);
+                    summary = await cardProcessor.ChargeCard(cardDetails, transactionDetails, billingDetails, null);
 
                     // 3D Secure (Visa/MasterCard) Flow
                     if (!string.IsNullOrWhiteSpace(summary.Merchant3DSResponseHtml))
