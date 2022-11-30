@@ -18,7 +18,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using System.Configuration;
 using FACGatewayService;
-using FACPG;
+using FACGatewayService.FACPG;
 
 namespace ePaperLive.Controllers
 {
@@ -1081,7 +1081,13 @@ namespace ePaperLive.Controllers
 
             return View();
         }
-
+        [HttpPost]
+        [AllowAnonymous]
+        public ActionResult SaveDeliveryAddress(AddressDetails addressDetails)
+        {
+            
+            return View();
+        }
 
         [HttpPost]
         [AllowAnonymous]
@@ -1284,9 +1290,9 @@ namespace ePaperLive.Controllers
                 Dictionary<string, object> responseData = null;
                 // Setup card processor.
                 var cardProcessor = new CardProcessor();
-                var transactionDetails = new TransactionDetails();
-                var cardDetails = new CardDetails();
-                var billingDetails = new BillingDetails();
+                var transactionDetails = new FACGatewayService.FACPG.TransactionDetails();
+                var cardDetails = new FACGatewayService.FACPG.CardDetails();
+                var billingDetails = new FACGatewayService.FACPG.BillingDetails();
 
 
                 //var paymentDetails = (PaymentDetails)Session["PaymentDetails"];
@@ -1325,7 +1331,7 @@ namespace ePaperLive.Controllers
                     paymentDetails.CardCVV = "";
                     paymentDetails.CardNumber = "";
 
-                    summary = await cardProcessor.ChargeCard(cardDetails, transactionDetails, billingDetails);
+                    summary = await cardProcessor.ChargeCard(cardDetails, transactionDetails, billingDetails, null, true);
 
                     // 3D Secure (Visa/MasterCard) Flow
                     if (!string.IsNullOrWhiteSpace(summary.Merchant3DSResponseHtml))

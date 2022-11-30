@@ -12,7 +12,7 @@ using System.Web.Mvc;
 using ePaperLive.Models;
 
 using FACGatewayService;
-using FACPG;
+using FACGatewayService.FACPG;
 
 using Newtonsoft.Json;
 

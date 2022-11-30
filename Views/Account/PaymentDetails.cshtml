@@ -40,7 +40,7 @@
                             <h1 style="color:forestgreen"><strong>@Html.DisplayFor(model => model.Currency) @String.Format("{0:C}", Model.CardAmount)</strong></h1>
                             <hr />
                             @Html.ValidationSummary(false, "", new { @class = "text-danger" })
-
+                            @Html.HiddenFor(model => model.CardAmount)
                             <div class="row form-horizontal">
                                 <strong>Please enter your billing address </strong>
                                 <div class="form-group">
