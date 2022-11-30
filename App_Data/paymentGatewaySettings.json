@@ -15,7 +15,7 @@
     "merchantId": "88803012",
     "acquirerId": "464748",
     "processingPassword": "A8wYz8l4",
-    "merchantResponseURL": "https://localhost:44369/payments/completetransaction",
+    "merchantResponseURL": "https://localhost:44369/account/completetransaction",
     "currencyCode": "JMD" /*Specify either JMD - Jamaican Dollars or USD - United States Dollars */,
     "numberOfZeros": "2",
     "signatureMethod": "SHA1",

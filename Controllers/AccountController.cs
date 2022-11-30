@@ -1419,7 +1419,7 @@ namespace ePaperLive.Controllers
             // Something went wrong to get here.
             // return Ok();
         }
-
+        [AllowAnonymous]
         public async Task<ActionResult> CompleteTransaction()
         {
             try
