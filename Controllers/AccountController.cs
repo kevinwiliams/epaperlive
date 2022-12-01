@@ -1343,6 +1343,7 @@ namespace ePaperLive.Controllers
                 cardDetails.CardExpiryDate = CardUtils.FormatExpiryDate(cardExpiry[0], cardExpiryYear);
 
                 transactionDetails.Amount = CardUtils.ZeroPadAmount(paymentDetails.CardAmount);
+                transactionDetails.Currency = paymentDetails.Currency;
 
                 //For Testing Purposes Only
                 string xxx = (DateTime.Now.Millisecond).ToString();
