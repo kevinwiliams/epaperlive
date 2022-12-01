@@ -158,12 +158,8 @@
                             @if (Model.TransactionSummary != null)
                             {
                                 @Html.Hidden("TransactionSummary", Model.TransactionSummary.Merchant3DSResponseHtml)
-                                <iframe id="paymentGatway"></iframe>
                             }
-                            else { 
-                                <input type="hidden" id="TransactionSummary" />
-                            }
-
+                            <iframe id="paymentGatway"></iframe>
 
                             <div class="form-group">
                                 <div class="col-md-offset-2 col-md-10 pt-3">
@@ -220,15 +216,27 @@
     </script>
 
 @section scripts{
-    <script defer>
-         $(document).ready(function () {
+    <script>
+        $(document).ready(function () {
             let routeData = $("#TransactionSummary").val();
-
+            let timeout;
             if (routeData.length > 0) {
-                $('#paymentGatway').contents().find('html').html(routeData.toString());
+                //routeData = $.parseHTML(routeData);
+                $('#paymentGatway').contents().find('html').html(routeData, function () {
+                //timeout = setTimeout(SubmitGateway, 2000);
                 //document.getElementById('#paymentGatway').contentDocument.location.reload(true);
+
+
+                });
+                //$('#paymentGatway').attr( 'src', function ( i, val ) { return val; });
+                //$('#paymentGatway').attr('src', 'https://ecm.firstatlanticcommerce.com/SENTRY/PaymentGateway/Application/DirectAuthLink.aspx');
             }
         });
+        
+
+        function SubmitGateway() {
+            $('#paymentGatway').contents().find('form').submit();
+        }
     </script>
     <script>
 
