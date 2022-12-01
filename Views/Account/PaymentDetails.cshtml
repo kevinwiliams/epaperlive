@@ -220,17 +220,17 @@
     </script>
 
 @section scripts{
-    <script>
-
-        $(document).ready(function () {
+    <script defer>
+         $(document).ready(function () {
             let routeData = $("#TransactionSummary").val();
 
             if (routeData.length > 0) {
-                $('#paymentGatway').contents().find('html').html(routeData);
-                document.getElementById('#paymentGatway').contentDocument.location.reload(true);
+                $('#paymentGatway').contents().find('html').html(routeData.toString());
+                //document.getElementById('#paymentGatway').contentDocument.location.reload(true);
             }
         });
-        
+    </script>
+    <script>
 
         // Needed for KeyCard
         $("#CardNumber").on("input", (e) => {
