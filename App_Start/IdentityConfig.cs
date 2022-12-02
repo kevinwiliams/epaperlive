@@ -16,6 +16,8 @@ using System.Net.Mail;
 using System.Net.Mime;
 using System.Net;
 using System.Web.Configuration;
+using System.IO;
+using Newtonsoft.Json.Linq;
 
 namespace ePaperLive
 {
@@ -23,44 +25,51 @@ namespace ePaperLive
     {
         public async Task SendAsync(IdentityMessage message)
         {
-            // Plug in your email service here to send an email.
+            await configSendEmailAsync(message);
+        }
+
+        private async Task configSendEmailAsync(IdentityMessage msg)
+        {
             try
             {
-                #region formatter
-                string text = string.Format("Please click on this link to {0}: {1}", message.Subject, message.Body);
-                string html = "Please confirm your account by clicking this link: <a href=\"" + message.Body + "\">link</a><br/>";
+                var jsonFile = File.ReadAllText(HttpContext.Current.Server.MapPath("~/App_Data/email_settings.json"));
+                var settings = JObject.Parse(jsonFile);
+                // Credentials
+                string userName = (string)settings["email_address_username"],
+                    sentFrom = (string)settings["email_address"],
+                    displayName = (string)settings["email_address_from"],
+                    pwd = (string)settings["email_password"],
+                    smtp_host = (string)settings["smtp_host"],
+                    ssl_enabled = (string)settings["ssl_enabled"],
+                    password = (string)settings["email_password"],
+                    domain = (string)settings["email_address_domain"],
+                    portNumber = (string)settings["email_port_number"];
 
-                html += HttpUtility.HtmlEncode(@"Or click on the copy the following link on the browser:" + message.Body);
-                #endregion
+                int port;
 
-                MailMessage msg = new MailMessage();
-                msg.From = new MailAddress("williamskt@jamaicaobserver.com", "Jamaica Observer");
-                msg.To.Add(new MailAddress(message.Destination));
-                msg.Subject = message.Subject;
-                msg.IsBodyHtml = true;
-                msg.AlternateViews.Add(AlternateView.CreateAlternateViewFromString(message.Body, null, MediaTypeNames.Text.Plain));
-                msg.AlternateViews.Add(AlternateView.CreateAlternateViewFromString(message.Body, null, MediaTypeNames.Text.Html));
+                // Configure the client:
+                SmtpClient client = new SmtpClient();
+                client.Host = smtp_host;
+                client.Port = (int.TryParse(portNumber, out port) ? port : 25);
+                client.DeliveryMethod = SmtpDeliveryMethod.Network;
+                client.UseDefaultCredentials = false;
 
-                //SmtpClient smtpClient = new SmtpClient(WebConfigurationManager.AppSettings["MailServer"], 587);
-                SmtpClient smtpClient = new SmtpClient();
-                System.Net.NetworkCredential credentials = new NetworkCredential(WebConfigurationManager.AppSettings["SmtpServerUserName"], WebConfigurationManager.AppSettings["SmtpServerPassword"]);
-                smtpClient.DeliveryMethod = SmtpDeliveryMethod.PickupDirectoryFromIis;
-                smtpClient.Credentials = credentials;
-                smtpClient.UseDefaultCredentials = false;
-                smtpClient.EnableSsl = true;
-                try
-                {
-                    await smtpClient.SendMailAsync(msg);
-                }
-                catch (Exception ex )
-                {
-                   throw ex;
-                }
-                
+                var newMsg = new MailMessage();
+                newMsg.To.Add(msg.Destination);
+                newMsg.From = new MailAddress(sentFrom, displayName);
+                newMsg.Subject = msg.Subject;
+                newMsg.Body = msg.Body;
+
+                var credentials = new NetworkCredential(userName, pwd);
+                client.Credentials = credentials;
+                client.EnableSsl = bool.Parse(ssl_enabled);
+
+                // Send
+                await client.SendMailAsync(newMsg);
             }
             catch (Exception ex)
             {
-                throw ex;
+                Util.LogError(ex);
             }
 
         }

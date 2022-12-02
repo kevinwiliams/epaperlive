@@ -491,15 +491,6 @@ namespace ePaperLive.Controllers
             return PartialView("_DeliveryAddressModal");
         }
 
-
-
-        public ActionResult Logout()
-        {
-            Session.Clear();
-            FormsAuthentication.SignOut();
-            return RedirectToAction("Index", "Home");
-        }
-
         public ActionResult Dashboard()
         {
 
@@ -729,7 +720,6 @@ namespace ePaperLive.Controllers
             return RedirectToAction("UserProfile");
         }
        
-
         [AllowAnonymous]
         public ActionResult Subscribe(string pkgType, string term, decimal price = 0)
         {
@@ -739,9 +729,9 @@ namespace ePaperLive.Controllers
             //Test Data
             LoginDetails ld = new LoginDetails
             {
-                //FirstName = "Dwayne",
-                //LastName = "Mendez",
-                //EmailAddress = "dwayne.mendez@live.net",
+                FirstName = "Dwayne",
+                LastName = "Mendez",
+                EmailAddress = "dwayne.mendez@live.net",
             };
             return View("LoginDetails", ld);
         }
@@ -800,13 +790,13 @@ namespace ePaperLive.Controllers
                         //Test Data
                         AddressDetails ad = new AddressDetails
                         {
-                            CountryList = CountryList
-                            //AddressLine1 = "Lot 876 Scheme Steet",
-                            //CityTown = "Bay Town",
-                            //StateParish = "Portland",
-                            //country = "Jamaica",
-                            //ZipCode = "JAMWI",
-                            //phone = "876-875-8651"
+                            CountryList = CountryList,
+                            AddressLine1 = "Lot 876 Scheme Steet",
+                            CityTown = "Bay Town",
+                            StateParish = "Portland",
+                            CountryCode = "JAM",
+                            ZipCode = "JAMWI",
+                            Phone = "876-875-8651"
                         };
 
                         return View("AddressDetails", ad);
@@ -1055,17 +1045,28 @@ namespace ePaperLive.Controllers
                         }
 
                         //Country =Session["CountryList"] = 
-                        AddressDetails billingAddress = new AddressDetails { 
+                        AddressDetails billingAddress = new AddressDetails {
+                            //Test data
+                            AddressLine1 = "Lot 876 Scheme Steet",
+                            CityTown = "Bay Town",
+                            StateParish = "Portland",
+                            CountryCode = "JAM",
+                            ZipCode = "JAMWI",
+                            //end 
                             CountryList = (List<SelectListItem>)Session["CountryList"]
                         };
+
+                        
                         PaymentDetails pd = new PaymentDetails
                         {
+                            RateID = selectedPlan.Rateid,
                             RateDescription = selectedPlan.RateDescr,
                             Currency = selectedPlan.Curr,
                             CardAmount = (decimal)selectedPlan.Rate,
                             SubType = selectedPlan.Type,
-                            BillingAddress = billingAddress
-                            // cardOwner = "Dwayne Mendez",
+                            BillingAddress = billingAddress,
+                            //test data
+                            CardOwner = "Dwayne Mendez",
                         };
 
                         return View("PaymentDetails", pd);
@@ -1297,7 +1298,6 @@ namespace ePaperLive.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
         public ActionResult PaymentSuccess()
         {
             return View();
@@ -1315,7 +1315,7 @@ namespace ePaperLive.Controllers
                 // var processedClientData = new JsonResponse();
                 //var host = Util.SetAppEnvironment(Request.RequestUri.Host);
 
-                Dictionary<string, object> responseData = null;
+                //Dictionary<string, object> responseData = null;
                 // Setup card processor.
                 var cardProcessor = new CardProcessor();
                 var transactionDetails = new TransactionDetails();
@@ -1348,7 +1348,7 @@ namespace ePaperLive.Controllers
                 //For Testing Purposes Only
                 string xxx = (DateTime.Now.Millisecond).ToString();
                 xxx = xxx.Substring(xxx.Length - 2, 2);
-                transactionDetails.OrderNumber = $"{DateTime.Now.Year}{xxx}{paymentDetails.RateID}";
+                transactionDetails.OrderNumber = $"{DateTime.Now.Year}{xxx}{paymentDetails.Currency}{"0000"}{paymentDetails.RateID}{paymentDetails.SubType}";
 
                 // Update Billing Details
                 billingDetails.BillToAddress = paymentDetails.BillingAddress.AddressLine1;
@@ -1412,9 +1412,9 @@ namespace ePaperLive.Controllers
                 }
 
 
-                encrypted = summary;
+                //encrypted = summary;
                 //encrypted = Util.EncryptRijndaelManaged(JsonConvert.SerializeObject(responseData), "E");
-                return encrypted;
+                //return encrypted;
 
             }
             catch (Exception ex)
@@ -1424,15 +1424,27 @@ namespace ePaperLive.Controllers
             // Something went wrong to get here.
             // return Ok();
         }
+
+        [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult> CompleteTransaction()
+        public async Task<ActionResult> CompleteTransaction1(FormContext context)
+        {
+            await CompleteTransaction1(context);
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> CompleteTransaction(String MerID, String AcqID, String OrderID, String ResponseCode, 
+            String ReasonCode, String ReasonCodeDesc, String ReferenceNo, String PaddedCardNo, String AuthCode, String CVV2Result, 
+            String AuthenticationResult, String CAVVValue, String ECIIndicator, String TransactionStain, String OriginalResponseCode, String Signature, String SignatureMethod)
         {
             try
             {
 
                 var websiteHost = ConfigurationManager.AppSettings["ecomm_Prod"];
                 //var host = Utilities.SetAppEnvironment(websiteHost);
-
+                //var formData = form;
                 //var sessionRepository = new SessionRepository();
                 //JNGI_UserSession existing = new JNGI_UserSession();
                 //JsonResponse customerData = new JsonResponse();
@@ -1519,6 +1531,7 @@ namespace ePaperLive.Controllers
                 throw ex;
             }
 
+           // return new RedirectResult("/Account/PaymentDetails", true);
             return View("PaymentDetails");
 
         }

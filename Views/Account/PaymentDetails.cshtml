@@ -42,6 +42,7 @@
                             @Html.ValidationSummary(false, "", new { @class = "text-danger" })
                             @Html.HiddenFor(model => model.CardAmount)
                             @Html.HiddenFor(model => model.Currency)
+                            @Html.HiddenFor(model => model.RateID)
                             <div class="row form-horizontal">
                                 <strong>Please enter your billing address </strong>
                                 <div class="form-group">
@@ -159,7 +160,7 @@
                             {
                                 @Html.Hidden("TransactionSummary", Model.TransactionSummary.Merchant3DSResponseHtml)
                             }
-                            <iframe id="paymentGatway"></iframe>
+                            <section id="paymentGatway"></section>
 
                             <div class="form-group">
                                 <div class="col-md-offset-2 col-md-10 pt-3">
@@ -221,22 +222,18 @@
             let routeData = $("#TransactionSummary").val();
             let timeout;
             if (routeData.length > 0) {
-                //routeData = $.parseHTML(routeData);
-                $('#paymentGatway').contents().find('html').html(routeData, function () {
-                //timeout = setTimeout(SubmitGateway, 2000);
-                //document.getElementById('#paymentGatway').contentDocument.location.reload(true);
-
-
-                });
-                //$('#paymentGatway').attr( 'src', function ( i, val ) { return val; });
-                //$('#paymentGatway').attr('src', 'https://ecm.firstatlanticcommerce.com/SENTRY/PaymentGateway/Application/DirectAuthLink.aspx');
+                routeData = $.parseHTML(routeData);
+                $('#paymentGatway').html(routeData);
+                
+                setTimeout(
+                   submitForm, 100
+                );
             }
         });
-        
 
-        function SubmitGateway() {
-            $('#paymentGatway').contents().find('form').submit();
-        }
+        function submitForm() {
+            $('#paymentGatway').find('form input[name=submit]').click();
+        }
     </script>
     <script>
 
