@@ -1,14 +1,14 @@
 ﻿{
-  "email_address_from": "Jamaica Observer <ramblemediacorporation@emai.com>",
+  "email_address_from": "Jamaica Observer <caribbusinessreport@gmail.com>",
   "smtp_host": "smtp.gmail.com",
   "ssl_enabled": "True",
-  "email_password": "#insurance1",
-  "email_address": "ramblemediacorporation@gmail.com",
-  "email_address_username": "ramblemediacorporation",
+  "email_password": "1234pass",
+  "email_address": "caribbusinessreport@gmail.com",
+  "email_address_username": "caribbusinessreport",
   "email_address_domain": "jamobsvr.com",
   "email_port_number": "587",
   "paymentInbox": {
-    "testing": "ramblemediacorporation@gmail.com",
-    "production": "payments@jngijamaica.com"
+    "testing": "caribbusinessreport@gmail.com",
+    "production": "payments@jamaicaobserver.com.com"
   }
 }
