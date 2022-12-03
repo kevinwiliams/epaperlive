@@ -321,6 +321,7 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\PaymentsController.cs" />
     <Compile Include="Controllers\ReaderController.cs" />
+    <Compile Include="DBModel\log_errors.cs" />
     <Compile Include="DBModel\printandsubrate.cs" />
     <Compile Include="DBModel\promo_codes.cs" />
     <Compile Include="DBModel\subscriber.cs" />
@@ -349,6 +350,7 @@
     <Compile Include="Models\Reader.cs" />
     <Compile Include="Models\AuthSubcriber.cs" />
     <Compile Include="Models\SubscriptionDetails.cs" />
+    <Compile Include="Models\TempData.cs" />
     <Compile Include="Models\UserLocation.cs" />
     <Compile Include="Models\UserLogin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

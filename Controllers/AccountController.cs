@@ -1435,43 +1435,40 @@ namespace ePaperLive.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> CompleteTransaction(String MerID, String AcqID, String OrderID, String ResponseCode, 
-            String ReasonCode, String ReasonCodeDesc, String ReferenceNo, String PaddedCardNo, String AuthCode, String CVV2Result, 
-            String AuthenticationResult, String CAVVValue, String ECIIndicator, String TransactionStain, String OriginalResponseCode, String Signature, String SignatureMethod)
+        public async Task<ActionResult> CompleteTransaction(FormCollection form)
         {
             try
             {
 
                 var websiteHost = ConfigurationManager.AppSettings["ecomm_Prod"];
                 //var host = Utilities.SetAppEnvironment(websiteHost);
-                //var formData = form;
+                
                 //var sessionRepository = new SessionRepository();
                 //JNGI_UserSession existing = new JNGI_UserSession();
                 //JsonResponse customerData = new JsonResponse();
                 // Retrieve data that was saved before 3DS processing.
 
                 await Task.FromResult(0);
-                var httpCtx = HttpContext;
                 var threedsparams = new ThreeDSParams();
                 var cardProcessor = new CardProcessor();
 
-                threedsparams.MerID = httpCtx.Request.Form["MerID"];
-                threedsparams.AcqID = httpCtx.Request.Form["AcqID"];
-                threedsparams.OrderID = httpCtx.Request.Form["OrderID"];
-                threedsparams.ResponseCode = httpCtx.Request.Form["ResponseCode"];
-                threedsparams.ReasonCode = httpCtx.Request.Form["ReasonCode"];
-                threedsparams.ReasonCodeDesc = httpCtx.Request.Form["ReasonCodeDesc"];
-                threedsparams.ReferenceNo = httpCtx.Request.Form["ReferenceNo"];
-                threedsparams.PaddedCardNo = httpCtx.Request.Form["PaddedCardNo"];
-                threedsparams.AuthCode = httpCtx.Request.Form["AuthCode"];
-                threedsparams.CVV2Result = httpCtx.Request.Form["CVV2Result"];
-                threedsparams.AuthenticationResult = httpCtx.Request.Form["AuthenticationResult"];
-                threedsparams.CAVVValue = httpCtx.Request.Form["CAVVValue"];
-                threedsparams.ECIIndicator = httpCtx.Request.Form["ECIIndicator"];
-                threedsparams.TransactionStain = httpCtx.Request.Form["TransactionStain"];
-                threedsparams.OriginalResponseCode = httpCtx.Request.Form["OriginalResponseCode"];
-                threedsparams.Signature = httpCtx.Request.Form["Signature"];
-                threedsparams.SignatureMethod = httpCtx.Request.Form["SignatureMethod"];
+                threedsparams.MerID = form["MerID"];
+                threedsparams.AcqID = form["AcqID"];
+                threedsparams.OrderID = form["OrderID"];
+                threedsparams.ResponseCode = form["ResponseCode"];
+                threedsparams.ReasonCode = form["ReasonCode"];
+                threedsparams.ReasonCodeDesc = form["ReasonCodeDesc"];
+                threedsparams.ReferenceNo = form["ReferenceNo"];
+                threedsparams.PaddedCardNo = form["PaddedCardNo"];
+                threedsparams.AuthCode = form["AuthCode"];
+                threedsparams.CVV2Result = form["CVV2Result"];
+                threedsparams.AuthenticationResult = form["AuthenticationResult"];
+                threedsparams.CAVVValue = form["CAVVValue"];
+                threedsparams.ECIIndicator = form["ECIIndicator"];
+                threedsparams.TransactionStain = form["TransactionStain"];
+                threedsparams.OriginalResponseCode = form["OriginalResponseCode"];
+                threedsparams.Signature = form["Signature"];
+                threedsparams.SignatureMethod = form["SignatureMethod"];
 
 
                 var originalAmount = CardUtils.GetAmountFromString("");

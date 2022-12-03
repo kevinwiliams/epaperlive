@@ -48,6 +48,7 @@ namespace ePaperLive.Models
         public DbSet<Subscriber_Epaper> subscriber_epaper { get; set; }
         public DbSet<Subscriber_Print> subscriber_print { get; set; }
         public DbSet<Subscriber_Tranx> subscriber_tranx { get; set; }
+        public DbSet<log_errors> log_errors { get; set; }
 
     }
 }

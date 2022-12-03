@@ -4,7 +4,7 @@
   "ssl_enabled": "True",
   "email_password": "1234pass",
   "email_address": "caribbusinessreport@gmail.com",
-  "email_address_username": "caribbusinessreport",
+  "email_address_username": "caribbusinessreport@gmail.com",
   "email_address_domain": "jamobsvr.com",
   "email_port_number": "587",
   "paymentInbox": {

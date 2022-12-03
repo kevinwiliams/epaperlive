@@ -80,7 +80,7 @@ namespace ePaperLive
         public static bool LogError(Exception exc)
         {
             SqlCommand cmd = new SqlCommand();
-            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DBLIVE"].ConnectionString);
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DBEntities"].ConnectionString);
             bool result = false;
 
             try

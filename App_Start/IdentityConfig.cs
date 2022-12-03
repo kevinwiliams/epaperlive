@@ -48,11 +48,11 @@ namespace ePaperLive
                 int port;
 
                 // Configure the client:
-                SmtpClient client = new SmtpClient();
-                client.Host = smtp_host;
-                client.Port = (int.TryParse(portNumber, out port) ? port : 25);
-                client.DeliveryMethod = SmtpDeliveryMethod.Network;
-                client.UseDefaultCredentials = false;
+                SmtpClient smtp = new SmtpClient();
+                smtp.Host = smtp_host;
+                smtp.Port = (int.TryParse(portNumber, out port) ? port : 25);
+                smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                smtp.UseDefaultCredentials = true;
 
                 var newMsg = new MailMessage();
                 newMsg.To.Add(msg.Destination);
@@ -61,11 +61,11 @@ namespace ePaperLive
                 newMsg.Body = msg.Body;
 
                 var credentials = new NetworkCredential(userName, pwd);
-                client.Credentials = credentials;
-                client.EnableSsl = bool.Parse(ssl_enabled);
+                smtp.Credentials = credentials;
+                smtp.EnableSsl = bool.Parse(ssl_enabled);
 
                 // Send
-                await client.SendMailAsync(newMsg);
+                await smtp.SendMailAsync(newMsg);
             }
             catch (Exception ex)
             {
