@@ -40,12 +40,13 @@ namespace ePaperLive.Models
 
         [Required]
         public int RateID;
+        public int OrderID;
 
         [Display(Name = "Type")]
         public string SubType { get; set; }
         [Display(Name = "Subcription")]
         public string RateDescription { get; set; }
-        
+
         [Display(Name = "Transaction Date")]
         public DateTime? TranxDate { get; set; }
         [Display(Name = "Promo Code")]
@@ -53,7 +54,11 @@ namespace ePaperLive.Models
         public string CardNumberLastFour { get; set; }
         public AddressDetails BillingAddress { get; set; }
         public TransactionSummary TransactionSummary { get; set; }
-
+        public bool EnrolledIn3DSecure { get; set; }
+        public bool IsMadeLiveSuccessful { get; set; }
+        public string EmailAddress { get; set; }
+        public string ConfirmationNumber { get; set; }
+        public string OrderNumber { get; set; }
     }
 
     public enum PaymentMethod

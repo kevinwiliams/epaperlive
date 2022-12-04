@@ -49,6 +49,8 @@ namespace ePaperLive.Models
         public DbSet<Subscriber_Print> subscriber_print { get; set; }
         public DbSet<Subscriber_Tranx> subscriber_tranx { get; set; }
         public DbSet<log_errors> log_errors { get; set; }
+        public DbSet<JOL_UserSession> JOL_UserSession { get; set; }
+        public DbSet<ClientSnapShot> ClientSnapShot { get; set; }
 
     }
 }

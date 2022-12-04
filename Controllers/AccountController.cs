@@ -19,6 +19,7 @@ using Newtonsoft.Json;
 using System.Configuration;
 using FACGatewayService;
 using FACGatewayService.FACPG;
+using System.Runtime.Caching;
 
 namespace ePaperLive.Controllers
 {
@@ -29,6 +30,11 @@ namespace ePaperLive.Controllers
         private ApplicationUserManager _userManager;
         private ApplicationRoleManager _roleManager;
         private ApplicationDbContext _db;
+
+        private static SessionRepository sessionRepository = new SessionRepository();
+        private readonly ObjectCache cache = MemoryCache.Default;
+        private readonly CacheItemPolicy cachePolicy = new CacheItemPolicy() { AbsoluteExpiration = DateTimeOffset.Now.AddSeconds(120) };
+        private readonly TempData tempData = new TempData();
 
         public AccountController()
         {
@@ -753,12 +759,14 @@ namespace ePaperLive.Controllers
                             ModelState.AddModelError("EmailExist", "Email address is already assigned. Please use forget password option to log in");
                             return View(data);
                         }
-
+                        AuthSubcriber authUser = GetAuthSubscriber();
                         Subscriber obj = GetSubscriber();
                         ApplicationUser user = GetAppUser();
-                        obj.FirstName = data.FirstName;
-                        obj.LastName = data.LastName;
-                        obj.EmailAddress = data.EmailAddress;
+
+
+                        authUser.FirstName = obj.FirstName = data.FirstName;
+                        authUser.LastName = obj.LastName = data.LastName;
+                        authUser.EmailAddress = obj.EmailAddress = data.EmailAddress;
                         //obj.passwordHash = PasswordHash(data.Password);
                         obj.CreatedAt = DateTime.Now;
                         obj.IpAddress = Request.UserHostAddress;
@@ -851,7 +859,8 @@ namespace ePaperLive.Controllers
                         Subscriber_Address objAdd = GetSubscriberAddress();
                         UserLocation objLoc = GetSubscriberLocation();
                         ApplicationUser user = GetAppUser();
-
+                        AuthSubcriber authUser = GetAuthSubscriber();
+                        List<AddressDetails> AddressList = new List<AddressDetails>();
 
                         var market = (objLoc.Country_Code == "JM") ? "Local" : "International";
 
@@ -868,7 +877,8 @@ namespace ePaperLive.Controllers
                         objAdd.ZipCode = data.ZipCode;
                         objAdd.CountryCode = data.CountryCode;
                         objAdd.CreatedAt = DateTime.Now;
-
+                        AddressList.Add(data);
+                        authUser.AddressDetails = AddressList;
                         //load rates on the next (subscription) page
                         ApplicationDbContext db = new ApplicationDbContext();
                         DeliveryAddress delAddressDetails = new DeliveryAddress
@@ -991,9 +1001,14 @@ namespace ePaperLive.Controllers
                     try
                     {
                         Subscriber objSub = GetSubscriber();
+                        Subscriber_Address objDelv = GetSubscriberDeliveryAddress();
                         Subscriber_Epaper objEp = GetEpaperDetails();
                         Subscriber_Print objPr = GetPrintDetails();
                         Subscriber_Tranx objTran = GetTransaction();
+                        AuthSubcriber authUser = GetAuthSubscriber();
+                        List<SubscriptionDetails> subscriptionDetails = new List<SubscriptionDetails>();
+
+
 
                         objSub.Newsletter = data.NewsletterSignUp;
                         objTran.RateID = data.RateID;
@@ -1010,6 +1025,22 @@ namespace ePaperLive.Controllers
                             objPr.DeliveryInstructions = data.DeliveryInstructions;
                             objPr.CreatedAt = DateTime.Now;
 
+                            subscriptionDetails.Add(data);
+                            authUser.SubscriptionDetails = subscriptionDetails;
+
+
+
+                            AddressDetails deliveryAddress = new AddressDetails 
+                            {
+                                AddressLine1 = data.DeliveryAddress.AddressLine1,
+                                AddressLine2 = data.DeliveryAddress.AddressLine2,
+                                AddressType = "D",
+                                CityTown = data.DeliveryAddress.CityTown,
+                                StateParish = data.DeliveryAddress.StateParish,
+                                ZipCode = data.DeliveryAddress.ZipCode
+                            };
+                            authUser.AddressDetails.Add(deliveryAddress);
+
                         }
                         if (selectedPlan.Type == "Epaper")
                         {
@@ -1021,6 +1052,10 @@ namespace ePaperLive.Controllers
                             objEp.EmailAddress = objSub.EmailAddress;
                             objEp.NotificationEmail = data.NotificationEmail;
                             objEp.CreatedAt = DateTime.Now;
+
+                            subscriptionDetails.Add(data);
+                            authUser.SubscriptionDetails = subscriptionDetails;
+
                         }
                         if (selectedPlan.Type == "Bundle")
                         {
@@ -1042,6 +1077,20 @@ namespace ePaperLive.Controllers
                             objEp.EmailAddress = objSub.EmailAddress;
                             objEp.NotificationEmail = data.NotificationEmail;
                             objEp.CreatedAt = DateTime.Now;
+
+                            authUser.SubscriptionDetails.Add(data);
+
+
+                            AddressDetails deliveryAddress = new AddressDetails
+                            {
+                                AddressLine1 = data.DeliveryAddress.AddressLine1,
+                                AddressLine2 = data.DeliveryAddress.AddressLine2,
+                                AddressType = "D",
+                                CityTown = data.DeliveryAddress.CityTown,
+                                StateParish = data.DeliveryAddress.StateParish,
+                                ZipCode = data.DeliveryAddress.ZipCode
+                            };
+                            authUser.AddressDetails.Add(deliveryAddress);
                         }
 
                         //Country =Session["CountryList"] = 
@@ -1155,13 +1204,14 @@ namespace ePaperLive.Controllers
                     try
                     {
                         //get all session variables
-                        Subscriber objSub = GetSubscriber();
-                        Subscriber_Tranx objTran = GetTransaction();
-                        
                         AuthSubcriber authUser = GetAuthSubscriber();
-                        authUser.FirstName = objSub.FirstName;
-                        authUser.LastName = objSub.LastName;
-                        authUser.EmailAddress = objSub.EmailAddress;
+                        Subscriber objSub = GetSubscriber();
+                        Subscriber_Address objAdd = GetSubscriberAddress();
+                        Subscriber_Epaper objE = GetEpaperDetails();
+                        Subscriber_Print objP = GetPrintDetails();
+                        Subscriber_Tranx objTran = GetTransaction();
+                        ApplicationUser user = GetAppUser();
+                        
 
                         objTran.CardType = data.CardType;
                         objTran.CardOwner = data.CardOwner;
@@ -1183,8 +1233,9 @@ namespace ePaperLive.Controllers
             return View(data);
         }
 
-        public async Task<ActionResult> SaveSubscriptionAsync()
+        public async Task<ActionResult> SaveSubscriptionAsync(PaymentDetails paymentDetails)
         {
+           
             //get all session variables
             Subscriber objSub = GetSubscriber();
             Subscriber_Address objAdd = GetSubscriberAddress();
@@ -1244,9 +1295,26 @@ namespace ePaperLive.Controllers
                     objTran.EmailAddress = objSub.EmailAddress;
                     objTran.TranxDate = DateTime.Now;
                     objTran.SubscriberID = SubscriberID;
+                    objTran.RateID = rateID;
                     objTran.IpAddress = Request.UserHostAddress;
+                    //from gateway
+                    objTran.CardOwner = paymentDetails.CardOwner;
+                    objTran.CardType = paymentDetails.CardType;
+                    objTran.CardExp = paymentDetails.CardExp;
+                    objTran.CardLastFour = paymentDetails.CardNumberLastFour;
+                    objTran.TranxAmount = (double)paymentDetails.CardAmount;
+                    objTran.OrderID = paymentDetails.OrderNumber;
+                    objTran.PromoCode = paymentDetails.CardOwner;
+                    objTran.EnrolledIn3DSecure = paymentDetails.EnrolledIn3DSecure;
                     context.subscriber_tranx.Add(objTran);
                     await context.SaveChangesAsync();
+
+                    //disable subscription unti 3ds process is complete
+                    if (paymentDetails.EnrolledIn3DSecure)
+                    {
+                        objP.IsActive = false;
+                        objE.IsActive = false;
+                    }
 
                     //save based on subscription
                     if (selectedPlan != null)
@@ -1285,15 +1353,24 @@ namespace ePaperLive.Controllers
                             default:
                                 break;
                         }
+                        }
                     }
-                }
 
-                RemoveSubscriber();
-                return View("PaymentSuccess");
+                    if (paymentDetails.EnrolledIn3DSecure)
+                    {
+                        return View("PaymentDetails", paymentDetails);
+
+                    }
+                    else
+                    {
+                        return View("PaymentSuccess");
+
+                    }
+                    //RemoveSubscriber();
             }
 
             AddErrors(createAccount);
-            return View();
+            return View("PaymentDetails", paymentDetails);
         }
 
         [HttpPost]
@@ -1312,7 +1389,15 @@ namespace ePaperLive.Controllers
 
             try
             {
-                // var processedClientData = new JsonResponse();
+                AuthSubcriber clientData = GetAuthSubscriber(); //pull exisiting data
+
+                var processedClientData = new AuthSubcriber();
+
+                List<PaymentDetails> paymentDetailsList = new List<PaymentDetails>();
+                paymentDetailsList.Add(paymentDetails);
+                processedClientData.PaymentDetails = paymentDetailsList;
+
+
                 //var host = Util.SetAppEnvironment(Request.RequestUri.Host);
 
                 //Dictionary<string, object> responseData = null;
@@ -1323,7 +1408,6 @@ namespace ePaperLive.Controllers
                 var billingDetails = new BillingDetails();
 
 
-                //var paymentDetails = (PaymentDetails)Session["PaymentDetails"];
                 paymentDetails.TranxDate = DateTime.Now;
 
                 var cardNumber = Regex.Replace(paymentDetails.CardNumber, @"\s+", "");
@@ -1362,6 +1446,11 @@ namespace ePaperLive.Controllers
                     paymentDetails.CardCVV = "";
                     paymentDetails.CardNumber = "";
 
+                    JOL_UserSession session;
+                    var sessionRepository = new SessionRepository();
+                    session = sessionRepository.CreateObject(clientData);
+                    var isSaved = await sessionRepository.AddOrUpdate(transactionDetails.OrderNumber, session, 0, clientData);
+
                     summary = await cardProcessor.ChargeCard(cardDetails, transactionDetails, billingDetails, null);
 
                     // 3D Secure (Visa/MasterCard) Flow
@@ -1369,10 +1458,15 @@ namespace ePaperLive.Controllers
                     {
                         // Return the payment object.
                         //encrypted = Util.EncryptRijndaelManaged(JsonConvert.SerializeObject(summary), "E");
+                        paymentDetails.EnrolledIn3DSecure = true;
                         paymentDetails.TransactionSummary = summary;
+
+                        int cacheExpiryDuration = int.Parse(ConfigurationManager.AppSettings["cacheExpiryDuration"] ?? "15");
+                        tempData.Cache.Add(transactionDetails.OrderNumber, $"{clientData.SubscriberID}|{paymentDetails.RateID}|{transactionDetails.Amount}|{clientData.EmailAddress}", new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheExpiryDuration) });
+
                         encrypted = summary;
                         //return view
-                        return View("PaymentDetails", paymentDetails);
+                        return await SaveSubscriptionAsync(paymentDetails);
                     }
                     else
                     {
@@ -1384,7 +1478,9 @@ namespace ePaperLive.Controllers
                         switch (transStatus.Status)
                         {
                             case PaymentStatus.Successful:
-                                await SaveSubscriptionAsync();
+                                //await SaveSubscriptionAsync();
+                                await SaveSubscriptionAsync(paymentDetails);
+
                                 return View("PaymentSuccess");
 
                             case PaymentStatus.Failed:
@@ -1394,7 +1490,7 @@ namespace ePaperLive.Controllers
                                 break;
                         }
 
-                        return View("PaymentDetails", paymentDetails);
+                        return await SaveSubscriptionAsync(paymentDetails);
 
                     }
                 }
@@ -1407,8 +1503,8 @@ namespace ePaperLive.Controllers
                     var transactionResponse = await cardProcessor.GetGatewayTransactionStatus(transactionDetails.OrderNumber);
                     var transSummary = cardProcessor.GetTransactionSummary(transactionResponse);
                     paymentDetails.AuthorizationCode = transSummary.AuthCode;
-
-                    return View("PaymentDetails", paymentDetails);
+                    //TODO: Not sure if 
+                    return await SaveSubscriptionAsync(paymentDetails);
                 }
 
 
@@ -1427,10 +1523,63 @@ namespace ePaperLive.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult> CompleteTransaction1(FormContext context)
+        public async Task<ActionResult> CompleteTransactionProcess(int rateID, string orderID, string emailAddress)
         {
-            await CompleteTransaction1(context);
-            return View();
+            var appDbOther = new ApplicationDbContext();
+
+            var savedTransaction = await appDbOther.subscriber_tranx.FirstOrDefaultAsync(t => t.OrderID == orderID);
+
+            if (savedTransaction != null)
+            {
+                if (!savedTransaction.IsMadeLiveSuccessful)
+                {
+                    string email = emailAddress;
+                    var processedClientData = new AuthSubcriber();
+
+                    // Retrieve data that was saved before 3DS processing.
+                    var sessionRepository = new SessionRepository();
+                    var existing = await sessionRepository.Get(email);
+                    var customerData = JsonConvert.DeserializeObject<AuthSubcriber>(existing.RootObject);
+                    var currentPolicy = customerData.SubscriptionDetails.FirstOrDefault(p => p.RateID == rateID);
+
+                    PaymentDetails currentTransaction = null;
+                    var previousTransactions = customerData.PaymentDetails.Where(p => p.RateID == rateID);
+                    if (previousTransactions.Any())
+                    {
+                        var mostRecent = previousTransactions.Max(tr => tr.TranxDate);
+                        currentTransaction = previousTransactions.FirstOrDefault(t => t.TranxDate == mostRecent);
+                    }
+                    else
+                    {
+                        currentTransaction = new PaymentDetails();
+                    }
+                    currentTransaction.ConfirmationNumber = savedTransaction.ConfirmationNo;
+                    //currentTransaction.OrderID = orderID;
+                    currentTransaction.AuthorizationCode = savedTransaction.AuthCode;
+
+                    using (var context = new ApplicationDbContext()) 
+                    {
+                        //load data and join via foriegn keys
+                        var clientData = context.subscribers.AsNoTracking()
+                            .Include(x => x.Subscriber_Address)
+                            .Include(x => x.Subscriber_Epaper)
+                            .Include(x => x.Subscriber_Print)
+                            .Include(x => x.Subscriber_Tranx)
+                            .FirstOrDefault(u => u.EmailAddress == emailAddress);
+                        Subscriber_Epaper epaper = new Subscriber_Epaper();
+                        Subscriber_Print print = new Subscriber_Print();
+                        epaper = clientData.Subscriber_Epaper.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID);
+                        epaper.IsActive = true;
+
+                        print = clientData.Subscriber_Print.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID);
+                        print.IsActive = true;
+
+                        await context.SaveChangesAsync();
+                    }
+                }
+            }
+
+            return View("PaymentSuccess");
         }
 
         [HttpPost]
@@ -1442,13 +1591,15 @@ namespace ePaperLive.Controllers
 
                 var websiteHost = ConfigurationManager.AppSettings["ecomm_Prod"];
                 //var host = Utilities.SetAppEnvironment(websiteHost);
-                
-                //var sessionRepository = new SessionRepository();
-                //JNGI_UserSession existing = new JNGI_UserSession();
-                //JsonResponse customerData = new JsonResponse();
+
+                var sessionRepository = new SessionRepository();
+                JOL_UserSession existing = new JOL_UserSession();
+                AuthSubcriber customerData = new AuthSubcriber();
                 // Retrieve data that was saved before 3DS processing.
 
                 await Task.FromResult(0);
+                var clientKey = "";
+                var policyKey = "";
                 var threedsparams = new ThreeDSParams();
                 var cardProcessor = new CardProcessor();
 
@@ -1470,13 +1621,21 @@ namespace ePaperLive.Controllers
                 threedsparams.Signature = form["Signature"];
                 threedsparams.SignatureMethod = form["SignatureMethod"];
 
+                var savedKeys = tempData.Cache.Get(threedsparams.OrderID);
 
-                var originalAmount = CardUtils.GetAmountFromString("");
+
+                string[] keys = savedKeys.ToString().Split('|');
+                clientKey = (keys[0]);
+                policyKey = (keys[1]);
+                var email = keys[3];
+
+
+                var originalAmount = CardUtils.GetAmountFromString(keys[2]);
                 threedsparams.Amount = originalAmount;
 
 
                 // Free up cache
-                //tempData.Cache.Remove(threedsparams.OrderID);
+                tempData.Cache.Remove(threedsparams.OrderID);
                 var summary = CardProcessor.GetGateway3DSecureResponse(threedsparams);
 
                 // Send Payment Gateway notification
@@ -1499,11 +1658,11 @@ namespace ePaperLive.Controllers
                 {
                     case PaymentStatus.Successful:
                         //save subscription
-                        await SaveSubscriptionAsync();
+                        //await SaveSubscriptionAsync();
                         // Set to 15 minutes by default if not found
                         int cacheExpiryDuration = int.Parse(ConfigurationManager.AppSettings["cacheExpiryDuration"] ?? "15");
                         // Repopulate cache for new flow.
-                        //tempData.Cache.Add(summary.OrderId, $"{email}|{policyKey}", new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheExpiryDuration) });
+                        tempData.Cache.Add(summary.OrderId, $"{email}|{policyKey}", new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheExpiryDuration) });
                         return View("PaymentSuccess");
                     case PaymentStatus.Failed:
                     //_logger.CreateLog("Authorization failed", logModel, LogType.Warning, additionalFields: logDetails);

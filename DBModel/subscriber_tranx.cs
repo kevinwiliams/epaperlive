@@ -34,6 +34,12 @@ namespace ePaperLive.DBModel
         public string TranxNotes { get; set; }
         [StringLength(50)]
         public string IpAddress { get; set; }
+        public bool IsMadeLiveSuccessful { get; set; } = false;
+        public bool EnrolledIn3DSecure { get; set; } = false;
+        [StringLength(50)]
+        public string AuthCode { get; set; }
+        [StringLength(50)]
+        public string ConfirmationNo { get; set; }
 
         [ForeignKey("SubscriberID")]
         public virtual Subscriber Subscriber { get; set; }

@@ -19,6 +19,7 @@ namespace ePaperLive.Models
         public string LastName { get; set; }
         [Display(Name = "Email")]
         public string EmailAddress { get; set; }
+        public string LastPageVisited { get; set; }
         public List<SubscriptionDetails> SubscriptionDetails { get; set; }
         public List<AddressDetails> AddressDetails { get; set; }
         public List<PaymentDetails> PaymentDetails { get; set; }
