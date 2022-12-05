@@ -390,6 +390,7 @@
     <Content Include="assets\img\hero-newspaper-only.png" />
     <Content Include="assets\img\hero-newspaper.png" />
     <Content Include="assets\img\jol-logo-sm.png" />
+    <Content Include="assets\img\Keycard.png" />
     <Content Include="assets\img\master.png" />
     <Content Include="assets\img\portfolio-details-1.jpg" />
     <Content Include="assets\img\portfolio-details-2.jpg" />

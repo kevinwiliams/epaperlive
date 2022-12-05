@@ -3,6 +3,7 @@
 @{
     ViewBag.Title = "Payment";
 }
+
     <div id="main">
 
         <!-- ======= Breadcrumbs ======= -->
@@ -119,14 +120,13 @@
                             </div>
                             <hr />
 
-                            <div class="form-group p-2">
-                                @Html.LabelFor(model => model.CardType, htmlAttributes: new { @class = "control-label " }) <br />
+                            <div class="form-group p-2 cc-selector">
+                                @*@Html.LabelFor(model => model.CardType, htmlAttributes: new { @class = "control-label " }) <br />*@
                                 @foreach (var method in @ePaperLive.Util.GetEnumSelectList<ePaperLive.Models.PaymentMethod>())
                                 {
-                                    <div class="form-check form-check-inline">
-                                        @Html.RadioButtonFor(model => model.CardType, method.Text, new { @class = "form-check-input", @required = "required" })
-                                        @Html.LabelFor(model => model.CardType, method.Text, htmlAttributes: new { @class = "form-check-label " })
-                                    </div>
+                                    var newClass = String.Format("{0} {1}", "usercard-cc", method.Text);
+                                        @Html.RadioButtonFor(model => model.CardType, method.Text, new { @required = "required" })
+                                        @Html.LabelFor(model => model.CardType, method.Text, htmlAttributes: new { @class = newClass  })
                                 }
                                 @Html.HiddenFor(m => m.CardType)
 
@@ -227,6 +227,9 @@
 @section scripts{
     <script>
         $(document).ready(function () {
+            //remove labels
+            $(".usercard-cc").html("");
+
             let routeData = $("#TransactionSummary").val();
             let timeout;
             if (routeData) {

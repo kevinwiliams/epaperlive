@@ -183,4 +183,59 @@
             background: #fff;
         }
 
+        .cc-selector input[type="radio"] {
+            margin: 0;
+            padding: 5px;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            display: none;
+        }
+
+
+        .Visa {
+            background-image: url(https://i.imgur.com/lXzJ1eB.png);
+        }
+
+        .Mastercard {
+            background-image: url(https://i.imgur.com/SJbRQF7.png);
+        }
+
+        .KeyCard {
+            background-image: url("/assets/img/Keycard.png");
+        }
+
+        .cc-selector input:active + .usercard-cc {
+            opacity: .5;
+        }
+
+        .cc-selector input:checked + .usercard-cc {
+            -webkit-filter: none;
+            -moz-filter: none;
+            filter: none;
+        }
+
+        .usercard-cc {
+            cursor: pointer;
+            background-size: contain;
+            background-repeat: no-repeat;
+            display: inline-block;
+            width: 60px;
+            height: 40px;
+            padding: 1em;
+            margin-right: 1em;
+            -webkit-transition: all 100ms ease-in;
+            -moz-transition: all 100ms ease-in;
+            transition: all 100ms ease-in;
+            -webkit-filter: brightness(1.8) grayscale(1) opacity(.7);
+            -moz-filter: brightness(1.8) grayscale(1) opacity(.7);
+            filter: brightness(1.8) grayscale(1) opacity(.7);
+        }
+
+            .usercard-cc:hover {
+                -webkit-filter: brightness(1.2) grayscale(.5) opacity(.9);
+                -moz-filter: brightness(1.2) grayscale(.5) opacity(.9);
+                filter: brightness(1.2) grayscale(.5) opacity(.9);
+            }
+
 
