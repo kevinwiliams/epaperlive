@@ -40,13 +40,16 @@
                             <h1 style="color:forestgreen"><strong>@Html.DisplayFor(model => model.Currency) @String.Format("{0:C}", Model.CardAmount)</strong></h1>
                             <hr />
                             @Html.ValidationSummary(false, "", new { @class = "text-danger" })
-                            @Html.HiddenFor(model => model.CardAmount)
+
+                            @Html.Hidden("RateID", Model.RateID)
+                            @Html.Hidden("CardAmount", Model.CardAmount)
+
                             @Html.HiddenFor(model => model.Currency)
                             @Html.HiddenFor(model => model.SubType)
                             @Html.HiddenFor(model => model.RateDescription)
 
                             <!-- rate id needs to fix-->
-                            @Html.Hidden("RateID")
+                            @*@Html.Hidden("RateID")*@
 
                             <div class="row form-horizontal">
                                 <strong>Please enter your billing address </strong>

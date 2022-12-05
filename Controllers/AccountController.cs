@@ -1408,8 +1408,7 @@ namespace ePaperLive.Controllers
                 var processedClientData = new AuthSubcriber();
 
                 List<PaymentDetails> paymentDetailsList = new List<PaymentDetails>();
-                paymentDetailsList.Add(paymentDetails);
-                processedClientData.PaymentDetails = paymentDetailsList;
+               
 
 
                 //var host = Util.SetAppEnvironment(Request.RequestUri.Host);
@@ -1446,13 +1445,18 @@ namespace ePaperLive.Controllers
                 //For Testing Purposes Only
                 string xxx = (DateTime.Now.Millisecond).ToString();
                 xxx = xxx.Substring(xxx.Length - 2, 2);
+
                 transactionDetails.OrderNumber = $"{DateTime.Now.Year}{xxx}{paymentDetails.Currency}{"-"}{paymentDetails.SubType.ToUpper()}{"-"}{CardUtils.ZeroPadAmount(paymentDetails.RateID)}";
+
+                paymentDetails.OrderNumber = transactionDetails.OrderNumber;
+                paymentDetailsList.Add(paymentDetails);
+                processedClientData.PaymentDetails = paymentDetailsList;
+                clientData.PaymentDetails = paymentDetailsList;
 
                 // Update Billing Details
                 billingDetails.BillToAddress = paymentDetails.BillingAddress.AddressLine1;
                 billingDetails.BillToAddress2 = paymentDetails.BillingAddress.AddressLine2;
                 billingDetails.BillToCity = paymentDetails.BillingAddress.CityTown;
-
 
                 if (!await CardUtils.IsCardCharged(transactionDetails.OrderNumber))
                 {
@@ -1480,8 +1484,8 @@ namespace ePaperLive.Controllers
                         encrypted = summary;
                         //return view
                         paymentDetails.TransactionSummary = summary;
+
                         await SaveSubscriptionAsync(paymentDetails);
-                        paymentDetails.TransactionSummary = encrypted;
                         return View("PaymentDetails", paymentDetails);
                     }
                     else
@@ -1494,8 +1498,8 @@ namespace ePaperLive.Controllers
                         {
                             case PaymentStatus.Successful:
                                 //await SaveSubscriptionAsync();
+                                paymentDetails.OrderNumber = transactionDetails.OrderNumber;
                                 await SaveSubscriptionAsync(paymentDetails);
-
                                 return View("PaymentSuccess");
 
                             case PaymentStatus.Failed:
@@ -1506,9 +1510,7 @@ namespace ePaperLive.Controllers
                         }
 
                         paymentDetails.TransactionSummary = summary;
-                        paymentDetails.TransactionSummary = summary;
                         await SaveSubscriptionAsync(paymentDetails);
-                        paymentDetails.TransactionSummary = encrypted;
                         return View("PaymentDetails", paymentDetails);
 
                     }
@@ -1547,6 +1549,7 @@ namespace ePaperLive.Controllers
         public async Task<ActionResult> CompleteTransactionProcess(int rateID, string orderNumber, string emailAddress)
         {
             var appDbOther = new ApplicationDbContext();
+            var cardProcessor = new CardProcessor();
 
             var savedTransaction = await appDbOther.subscriber_tranx.FirstOrDefaultAsync(t => t.OrderID == orderNumber);
 
@@ -1564,7 +1567,7 @@ namespace ePaperLive.Controllers
                     var currentPolicy = customerData.SubscriptionDetails.FirstOrDefault(p => p.RateID == rateID);
 
                     PaymentDetails currentTransaction = null;
-                    var previousTransactions = customerData.PaymentDetails.Where(p => p.RateID == rateID);
+                    var previousTransactions = customerData.PaymentDetails.Where(p => p.RateID == rateID && p.OrderNumber == orderNumber);
                     if (previousTransactions.Any())
                     {
                         var mostRecent = previousTransactions.Max(tr => tr.TranxDate);
@@ -1574,26 +1577,32 @@ namespace ePaperLive.Controllers
                     {
                         currentTransaction = new PaymentDetails();
                     }
+
+                    var transactionResponse = await cardProcessor.GetGatewayTransactionStatus(orderNumber);
+                    var transSummary = cardProcessor.GetTransactionSummary(transactionResponse);
+
                     currentTransaction.ConfirmationNumber = savedTransaction.ConfirmationNo;
                     //currentTransaction.OrderID = orderID;
                     currentTransaction.AuthorizationCode = savedTransaction.AuthCode;
-
                     using (var context = new ApplicationDbContext()) 
                     {
                         //load data and join via foriegn keys
                         var clientData = context.subscribers.AsNoTracking()
-                            .Include(x => x.Subscriber_Address)
                             .Include(x => x.Subscriber_Epaper)
                             .Include(x => x.Subscriber_Print)
                             .Include(x => x.Subscriber_Tranx)
                             .FirstOrDefault(u => u.EmailAddress == emailAddress);
-                        Subscriber_Epaper epaper = new Subscriber_Epaper();
-                        Subscriber_Print print = new Subscriber_Print();
-                        epaper = clientData.Subscriber_Epaper.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID);
-                        epaper.IsActive = true;
 
-                        print = clientData.Subscriber_Print.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID);
-                        print.IsActive = true;
+                        //update transaction table with authcode and confirmation no.
+                        clientData.Subscriber_Tranx.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID).AuthCode = transSummary.AuthCode;
+                        clientData.Subscriber_Tranx.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID).ConfirmationNo = transSummary.ReferenceNo;
+
+                        //make subscription active
+                        if (currentTransaction.SubType == "Epaper" || currentTransaction.SubType == "Bundle")
+                            clientData.Subscriber_Epaper.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID).IsActive = true;
+
+                        if (currentTransaction.SubType == "Print" || currentTransaction.SubType == "Bundle")
+                            clientData.Subscriber_Print.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID).IsActive = true;
 
                         await context.SaveChangesAsync();
                     }
@@ -1825,6 +1834,9 @@ namespace ePaperLive.Controllers
             Session.Remove("subscriber_epaper");
             Session.Remove("subscriber_print");
             Session.Remove("subscriber_tranx");
+
+            //Session.Clear();
+            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
         }
 
         #region Helpers

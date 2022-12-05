@@ -53,7 +53,7 @@
                                 <div class="plans pb-3">
                                     <div class="row justify-content-md-center">
                                         <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.RateType, "Epaper", htmlAttributes: new { @autocomplete = "off", @id = "ePaper" })<label for="ePaper">ePaper Edition</label></div>
-                                        @if (Model.Market != null)
+                                        @if (Model != null)
                                         {
                                             if (Model.Market == "Local" || Model.Market.ToLower() == "local")
                                             {

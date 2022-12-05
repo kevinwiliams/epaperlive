@@ -39,8 +39,8 @@ namespace ePaperLive.Models
         public string AuthorizationCode { get; set; }
 
         [Required]
-        public int RateID;
-        public int OrderID;
+        public int RateID { get; set; }
+        public int OrderID { get; set; }
 
         [Display(Name = "Type")]
         public string SubType { get; set; }
