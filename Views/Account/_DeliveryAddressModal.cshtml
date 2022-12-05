@@ -1,5 +1,5 @@
 ﻿@model ePaperLive.Models.SubscriptionDetails
-
+<form name="deliveryAddressForm">
 <!-- start:wizrd -->
 
     @Html.AntiForgeryToken()
@@ -69,11 +69,11 @@
                     <button type="button" class="btn btn-info" data-bs-dismiss="modal">Close</button>
                     @if (ViewData["savedAddress"] != null)
                     {
-                        <button type="submit" class="btn btn-primary">Save Address</button>
+                        <button type="submit" class="btn btn-primary" name="saveAddress">Save Address</button>
                     }
                     else
                     {
-                        <button type="submit" class="btn btn-primary">Update Address</button>
+                        <button type="submit" class="btn btn-primary"  name="saveAddress">Update Address</button>
                     }
                 </div>
             </div>
@@ -81,3 +81,4 @@
     </div>
 
 <!-- end:wizrd -->
+</form>

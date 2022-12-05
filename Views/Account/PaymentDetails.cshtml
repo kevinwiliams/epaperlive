@@ -42,7 +42,12 @@
                             @Html.ValidationSummary(false, "", new { @class = "text-danger" })
                             @Html.HiddenFor(model => model.CardAmount)
                             @Html.HiddenFor(model => model.Currency)
-                            @Html.HiddenFor(model => model.RateID)
+                            @Html.HiddenFor(model => model.SubType)
+                            @Html.HiddenFor(model => model.RateDescription)
+
+
+                            @Html.Hidden("RateID", Model.RateID)
+
                             <div class="row form-horizontal">
                                 <strong>Please enter your billing address </strong>
                                 <div class="form-group">
@@ -160,7 +165,7 @@
                             {
                                 @Html.Hidden("TransactionSummary", Model.TransactionSummary.Merchant3DSResponseHtml)
                             }
-                            <section id="paymentGatway"></section>
+                            <section id="paymentGatway" style="display:none"></section>
 
                             <div class="form-group">
                                 <div class="col-md-offset-2 col-md-10 pt-3">
@@ -221,18 +226,20 @@
         $(document).ready(function () {
             let routeData = $("#TransactionSummary").val();
             let timeout;
-            if (routeData.length > 0) {
+            if (routeData) {
+                //$('#paymentGatway').show();
                 routeData = $.parseHTML(routeData);
                 $('#paymentGatway').html(routeData);
                 
                 setTimeout(
-                   submitForm, 100
+                   submitForm, 50
                 );
             }
         });
 
         function submitForm() {
-            $('#paymentGatway').find('form input[name=submit]').click();
+            //$('#paymentGatway').find('form input[name=submit]').click();
+            $('#paymentGatway').find('form').submit();
         }
     </script>
     <script>

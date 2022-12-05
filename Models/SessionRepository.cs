@@ -13,7 +13,7 @@ namespace ePaperLive.Models
     public class SessionRepository
     {
         private ApplicationDbContext appUsersDB = new ApplicationDbContext();
-        public async Task<bool> AddOrUpdate(string policyKey, JOL_UserSession newSession, long orderID = 0, AuthSubcriber data = null)
+        public async Task<bool> AddOrUpdate(string orderNumber, JOL_UserSession newSession, long rateID = 0, AuthSubcriber data = null)
         {
             bool success = false;
             try
@@ -46,22 +46,22 @@ namespace ePaperLive.Models
                         var newTransactionData = new AuthSubcriber();
                         // Check if flexi and if 3D secure
                         // Flexi 2 transactions
-                        if (orderID > 0)
+                        if (rateID > 0)
                         {
 
                             // One transaction at a time
-                            var currentTransaction = currentTransactionData.PaymentDetails.FirstOrDefault(t => t.OrderID == orderID);
+                            var currentTransaction = currentTransactionData.PaymentDetails.FirstOrDefault(t => t.RateID == rateID && t.OrderNumber == orderNumber);
 
                             if (currentTransaction.EnrolledIn3DSecure)
                             {
-                                if (!existingTransactionData.PaymentDetails.Any(c => c.OrderID == orderID))
+                                if (!existingTransactionData.PaymentDetails.Any(c => c.OrderNumber == orderNumber))
                                 {
                                     existingTransactionData.PaymentDetails.Add(currentTransaction);
                                 }
                                 else
                                 {
                                     // Remove and re add
-                                    var index = existingTransactionData.PaymentDetails.FindIndex(t => t.OrderID == orderID);
+                                    var index = existingTransactionData.PaymentDetails.FindIndex(t => t.OrderID == rateID);
                                     existingTransactionData.PaymentDetails.RemoveAt(index);
                                     existingTransactionData.PaymentDetails.Add(currentTransaction);
                                 }
@@ -71,7 +71,7 @@ namespace ePaperLive.Models
                         {
                             // Add new transaction for non-3D secure.
 
-                            var transaction = currentTransactionData.PaymentDetails.FirstOrDefault(t => t.OrderNumber == policyKey);
+                            var transaction = currentTransactionData.PaymentDetails.FirstOrDefault(t => t.OrderNumber == orderNumber);
                             if (transaction != null)
                             {
                                 existingTransactionData.PaymentDetails.Add(transaction);

@@ -72,7 +72,6 @@
                                 <p>Loading...</p>
 
                             </div>
-                            @Html.HiddenFor(m => m.RateID, new { @class = ".do-not-ignore" })
                             <!-- <input type="hidden" name="RateID" /> -->
 
                             <script>
@@ -124,6 +123,15 @@
                                 @{Html.RenderPartial("_DeliveryAddressModal"); }
                                 <!-- end: Delivery Modal -->
                             </div>
+                            <div id="delAddressDetails">
+                                @if (ViewData["savedAddressData"] != null)
+                                {
+                                    ePaperLive.Models.AddressDetails address = (ePaperLive.Models.AddressDetails)ViewData["savedAddressData"];
+                                    @Html.Label(address.AddressLine1)
+
+                               }
+
+                                </div>
 
                             <div class="form-group p-2" id="del-instructions" style="display: none">
                                 @Html.LabelFor(model => model.DeliveryInstructions, htmlAttributes: new { @class = "form-label " })
@@ -236,9 +244,7 @@
 
             $("[name=prevBtn]").click(function (e) {
                 console.log($(this).val());
-
             });
-
 
             $('[name=RateType]').on("click", function () {
                 var rateType = $(this).val();
@@ -273,6 +279,28 @@
                         //$('input[name=RateID]:first-child').attr('checked',true);
                     }
                 });
+            });
+
+            $("[name=saveAddress]").click(function (e) {
+
+                if ($("form #deliveryAddressForm").valid()) {
+                    //Serialize the form datas.   
+                    var addressData = $("form #deliveryAddressForm").serialize();
+                    e.preventDefault();
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("SaveDeliveryAddress","Account")',
+                        dataType: 'json',
+                        data: addressData,
+                        success: function (result) {
+                            $("#delAddressDetails").html(result);
+                            //$("input[name=RateType][value=" + rateType + "]").prop('checked', true);
+                            //$('[name="radioSelectionName"]').removeAttr('checked');
+                            //$('input[name=RateID]:first-child').attr('checked',true);
+                        }
+                    });
+                }
+
             });
         });
         //});

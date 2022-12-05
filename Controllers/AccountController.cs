@@ -1108,7 +1108,7 @@ namespace ePaperLive.Controllers
                         
                         PaymentDetails pd = new PaymentDetails
                         {
-                            RateID = selectedPlan.Rateid,
+                            RateID = data.RateID,
                             RateDescription = selectedPlan.RateDescr,
                             Currency = selectedPlan.Curr,
                             CardAmount = (decimal)selectedPlan.Rate,
@@ -1233,7 +1233,7 @@ namespace ePaperLive.Controllers
             return View(data);
         }
 
-        public async Task<ActionResult> SaveSubscriptionAsync(PaymentDetails paymentDetails)
+        public async Task<bool> SaveSubscriptionAsync(PaymentDetails paymentDetails)
         {
            
             //get all session variables
@@ -1358,25 +1358,26 @@ namespace ePaperLive.Controllers
 
                     if (paymentDetails.EnrolledIn3DSecure)
                     {
-                        return View("PaymentDetails", paymentDetails);
+                        return true;
 
                     }
                     else
                     {
-                        return View("PaymentSuccess");
+                        return false;
 
                     }
                     //RemoveSubscriber();
             }
 
             AddErrors(createAccount);
-            return View("PaymentDetails", paymentDetails);
+            return false;
         }
 
         [HttpPost]
         [AllowAnonymous]
         public ActionResult PaymentSuccess()
         {
+            RemoveSubscriber();
             return View();
         }
 
@@ -1385,7 +1386,7 @@ namespace ePaperLive.Controllers
             var websiteHost = ConfigurationManager.AppSettings["epaper_Prod"];
             //var host = Util.SetAppEnvironment(websiteHost);
             TransactionSummary summary = new TransactionSummary();
-            dynamic encrypted;
+            TransactionSummary encrypted = new TransactionSummary();
 
             try
             {
@@ -1432,7 +1433,7 @@ namespace ePaperLive.Controllers
                 //For Testing Purposes Only
                 string xxx = (DateTime.Now.Millisecond).ToString();
                 xxx = xxx.Substring(xxx.Length - 2, 2);
-                transactionDetails.OrderNumber = $"{DateTime.Now.Year}{xxx}{paymentDetails.Currency}{"0000"}{paymentDetails.RateID}{paymentDetails.SubType}";
+                transactionDetails.OrderNumber = $"{DateTime.Now.Year}{xxx}{paymentDetails.Currency}{"-"}{paymentDetails.SubType.ToUpper()}{"-"}{CardUtils.ZeroPadAmount(paymentDetails.RateID)}";
 
                 // Update Billing Details
                 billingDetails.BillToAddress = paymentDetails.BillingAddress.AddressLine1;
@@ -1449,7 +1450,7 @@ namespace ePaperLive.Controllers
                     JOL_UserSession session;
                     var sessionRepository = new SessionRepository();
                     session = sessionRepository.CreateObject(clientData);
-                    var isSaved = await sessionRepository.AddOrUpdate(transactionDetails.OrderNumber, session, 0, clientData);
+                    var isSaved = await sessionRepository.AddOrUpdate(transactionDetails.OrderNumber, session, paymentDetails.RateID, clientData);
 
                     summary = await cardProcessor.ChargeCard(cardDetails, transactionDetails, billingDetails, null);
 
@@ -1459,22 +1460,23 @@ namespace ePaperLive.Controllers
                         // Return the payment object.
                         //encrypted = Util.EncryptRijndaelManaged(JsonConvert.SerializeObject(summary), "E");
                         paymentDetails.EnrolledIn3DSecure = true;
-                        paymentDetails.TransactionSummary = summary;
 
                         int cacheExpiryDuration = int.Parse(ConfigurationManager.AppSettings["cacheExpiryDuration"] ?? "15");
                         tempData.Cache.Add(transactionDetails.OrderNumber, $"{clientData.SubscriberID}|{paymentDetails.RateID}|{transactionDetails.Amount}|{clientData.EmailAddress}", new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheExpiryDuration) });
 
                         encrypted = summary;
                         //return view
-                        return await SaveSubscriptionAsync(paymentDetails);
+                        paymentDetails.TransactionSummary = summary;
+                        await SaveSubscriptionAsync(paymentDetails);
+                        paymentDetails.TransactionSummary = encrypted;
+                        return View("PaymentDetails", paymentDetails);
                     }
                     else
                     {
                         // KeyCard Flow
-                        paymentDetails.TransactionSummary = summary;
                         encrypted = summary;
 
-                        var transStatus = summary.TransactionStatus;
+                        var transStatus = encrypted.TransactionStatus;
                         switch (transStatus.Status)
                         {
                             case PaymentStatus.Successful:
@@ -1490,7 +1492,11 @@ namespace ePaperLive.Controllers
                                 break;
                         }
 
-                        return await SaveSubscriptionAsync(paymentDetails);
+                        paymentDetails.TransactionSummary = summary;
+                        paymentDetails.TransactionSummary = summary;
+                        await SaveSubscriptionAsync(paymentDetails);
+                        paymentDetails.TransactionSummary = encrypted;
+                        return View("PaymentDetails", paymentDetails);
 
                     }
                 }
@@ -1504,7 +1510,9 @@ namespace ePaperLive.Controllers
                     var transSummary = cardProcessor.GetTransactionSummary(transactionResponse);
                     paymentDetails.AuthorizationCode = transSummary.AuthCode;
                     //TODO: Not sure if 
-                    return await SaveSubscriptionAsync(paymentDetails);
+                    paymentDetails.TransactionSummary = summary;
+                    await SaveSubscriptionAsync(paymentDetails);
+                    return View("PaymentDetails", paymentDetails);
                 }
 
 
@@ -1523,11 +1531,11 @@ namespace ePaperLive.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult> CompleteTransactionProcess(int rateID, string orderID, string emailAddress)
+        public async Task<ActionResult> CompleteTransactionProcess(int rateID, string orderNumber, string emailAddress)
         {
             var appDbOther = new ApplicationDbContext();
 
-            var savedTransaction = await appDbOther.subscriber_tranx.FirstOrDefaultAsync(t => t.OrderID == orderID);
+            var savedTransaction = await appDbOther.subscriber_tranx.FirstOrDefaultAsync(t => t.OrderID == orderNumber);
 
             if (savedTransaction != null)
             {
@@ -1598,8 +1606,9 @@ namespace ePaperLive.Controllers
                 // Retrieve data that was saved before 3DS processing.
 
                 await Task.FromResult(0);
-                var clientKey = "";
-                var policyKey = "";
+                var subscriberID = "";
+                var rateID = "";
+                //var 
                 var threedsparams = new ThreeDSParams();
                 var cardProcessor = new CardProcessor();
 
@@ -1625,8 +1634,8 @@ namespace ePaperLive.Controllers
 
 
                 string[] keys = savedKeys.ToString().Split('|');
-                clientKey = (keys[0]);
-                policyKey = (keys[1]);
+                subscriberID = (keys[0]);
+                rateID = (keys[1]);
                 var email = keys[3];
 
 
@@ -1662,7 +1671,10 @@ namespace ePaperLive.Controllers
                         // Set to 15 minutes by default if not found
                         int cacheExpiryDuration = int.Parse(ConfigurationManager.AppSettings["cacheExpiryDuration"] ?? "15");
                         // Repopulate cache for new flow.
-                        tempData.Cache.Add(summary.OrderId, $"{email}|{policyKey}", new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheExpiryDuration) });
+                        tempData.Cache.Add(summary.OrderId, $"{email}|{rateID}", new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheExpiryDuration) });
+                        
+                        await CompleteTransactionProcess(int.Parse(rateID), threedsparams.OrderID, email);
+                        
                         return View("PaymentSuccess");
                     case PaymentStatus.Failed:
                     //_logger.CreateLog("Authorization failed", logModel, LogType.Warning, additionalFields: logDetails);
@@ -1681,10 +1693,9 @@ namespace ePaperLive.Controllers
             }
             catch (Exception ex)
             {
-                //Utilities.LogError(ex);
+                Util.LogError(ex);
                 ////_logger.CreateLog("Something went wrong on the server with this request", logModel, LogType.Error, ex, additionalFields: logDetails);
                 //return InternalServerError(ex);
-                throw ex;
             }
 
            // return new RedirectResult("/Account/PaymentDetails", true);
