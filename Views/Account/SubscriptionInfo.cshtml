@@ -53,10 +53,14 @@
                                 <div class="plans pb-3">
                                     <div class="row justify-content-md-center">
                                         <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.RateType, "Epaper", htmlAttributes: new { @autocomplete = "off", @id = "ePaper" })<label for="ePaper">ePaper Edition</label></div>
-                                        @if (Model.Market == "Local" || Model.Market.ToLower() == "local")
+                                        @if (Model.Market != null)
                                         {
-                                            <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.RateType, "Print", htmlAttributes: new { @autocomplete = "off", @id = "Print" })<label for="Print">Print Edition</label></div>
-                                            <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.RateType, "Bundle", htmlAttributes: new { @autocomplete = "off", @id = "Bundle" })<label for="Bundle">Print & ePaper Bundle</label></div>
+                                            if (Model.Market == "Local" || Model.Market.ToLower() == "local")
+                                            {
+                                                <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.RateType, "Print", htmlAttributes: new { @autocomplete = "off", @id = "Print" })<label for="Print">Print Edition</label></div>
+                                                <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.RateType, "Bundle", htmlAttributes: new { @autocomplete = "off", @id = "Bundle" })<label for="Bundle">Print & ePaper Bundle</label></div>
+                                            }
+
                                         }
                                         else
                                         {
@@ -156,7 +160,7 @@
                                             @Html.LabelFor(model => model.NewsletterSignUp, htmlAttributes: new { @class = "form-check-label" })
                                         </div>
                                     </div>
-                                    <div class="col-md-6 p-3">
+                                    <div class="col-md-5 p-3">
                                         <div class="form-check">
                                             @Html.EditorFor(model => model.NotificationEmail, new { htmlAttributes = new { @class = "form-check-input" } })
                                             @Html.LabelFor(model => model.NotificationEmail, htmlAttributes: new { @class = "form-check-label" })
