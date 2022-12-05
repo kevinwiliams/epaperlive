@@ -1133,22 +1133,35 @@ namespace ePaperLive.Controllers
         }
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult SaveDeliveryAddress(AddressDetails data)
+        public ActionResult SaveDeliveryAddress(FormCollection form)
         {
             Subscriber_Address deliveryAddress = GetSubscriberDeliveryAddress();
             deliveryAddress.AddressType = "D";
-            deliveryAddress.AddressLine1 = data.AddressLine1;
-            deliveryAddress.AddressLine2 = data.AddressLine2;
-            deliveryAddress.CityTown = data.CityTown;
-            deliveryAddress.StateParish = data.StateParish;
-            deliveryAddress.ZipCode = data.ZipCode;
-            deliveryAddress.CountryCode = data.CountryCode;
             deliveryAddress.CreatedAt = DateTime.Now;
 
-            ViewBag["savedAddressData"] = data;
-            ViewBag["savedAddress"] = true;
 
-            return PartialView("_DeliveryAddressModal", data);
+            if (!(bool.Parse(form["SameAsMailing"].Split(',').FirstOrDefault())))
+            {
+                deliveryAddress.AddressLine1 = form["DeliveryAddress.AddressLine1"];
+                deliveryAddress.AddressLine2 = form["DeliveryAddress.AddressLine2"];
+                deliveryAddress.CityTown = form["DeliveryAddress.CityTown"];
+                deliveryAddress.StateParish = form["DeliveryAddress.StateParish"];
+                deliveryAddress.CountryCode = form["DeliveryAddress.CountryCode"];
+            }
+            else 
+            {
+                Subscriber_Address mailingAddress = GetSubscriberAddress();
+                deliveryAddress.AddressLine1 = mailingAddress.AddressLine1;
+                deliveryAddress.AddressLine2 = mailingAddress.AddressLine2;
+                deliveryAddress.CityTown = mailingAddress.CityTown;
+                deliveryAddress.StateParish = mailingAddress.StateParish;
+                deliveryAddress.CountryCode = mailingAddress.CountryCode;
+            }
+
+            ViewData["savedAddressData"] = deliveryAddress;
+            ViewData["savedAddress"] = true;
+
+            return PartialView("_DeliveryAddressModal", form);
         }
 
         [HttpPost]

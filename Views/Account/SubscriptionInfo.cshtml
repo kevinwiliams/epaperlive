@@ -130,7 +130,7 @@
                             <div id="delAddressDetails">
                                 @if (ViewData["savedAddressData"] != null)
                                 {
-                                    ePaperLive.Models.AddressDetails address = (ePaperLive.Models.AddressDetails)ViewData["savedAddressData"];
+                                    ePaperLive.DBModel.Subscriber_Address address = (ePaperLive.DBModel.Subscriber_Address)ViewData["savedAddressData"];
                                     @Html.Label(address.AddressLine1)
 
                                }
@@ -286,10 +286,11 @@
             });
 
             $("[name=saveAddress]").click(function (e) {
-
-                if ($("form #deliveryAddressForm").valid()) {
+                console.log(e);
+                var formData = $("form #deliveryAddressForm").validate().valid();
+                if (formData) {
                     //Serialize the form datas.   
-                    var addressData = $("form #deliveryAddressForm").serialize();
+                    var addressData = $("form #deliveryAddressForm :input").serialize();
                     e.preventDefault();
                     $.ajax({
                         type: "POST",
@@ -297,6 +298,7 @@
                         dataType: 'json',
                         data: addressData,
                         success: function (result) {
+                            alert(result);
                             $("#delAddressDetails").html(result);
                             //$("input[name=RateType][value=" + rateType + "]").prop('checked', true);
                             //$('[name="radioSelectionName"]').removeAttr('checked');
