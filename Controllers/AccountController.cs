@@ -1499,6 +1499,7 @@ namespace ePaperLive.Controllers
                             case PaymentStatus.Successful:
                                 //await SaveSubscriptionAsync();
                                 paymentDetails.OrderNumber = transactionDetails.OrderNumber;
+                                paymentDetails.IsMadeLiveSuccessful = true;
                                 await SaveSubscriptionAsync(paymentDetails);
                                 return View("PaymentSuccess");
 
@@ -1551,63 +1552,77 @@ namespace ePaperLive.Controllers
             var appDbOther = new ApplicationDbContext();
             var cardProcessor = new CardProcessor();
 
-            var savedTransaction = await appDbOther.subscriber_tranx.FirstOrDefaultAsync(t => t.OrderID == orderNumber);
-
-            if (savedTransaction != null)
+            try
             {
-                if (!savedTransaction.IsMadeLiveSuccessful)
+                var savedTransaction = await appDbOther.subscriber_tranx.FirstOrDefaultAsync(t => t.OrderID == orderNumber);
+
+                if (savedTransaction != null)
                 {
-                    string email = emailAddress;
-                    var processedClientData = new AuthSubcriber();
-
-                    // Retrieve data that was saved before 3DS processing.
-                    var sessionRepository = new SessionRepository();
-                    var existing = await sessionRepository.Get(email);
-                    var customerData = JsonConvert.DeserializeObject<AuthSubcriber>(existing.RootObject);
-                    var currentPolicy = customerData.SubscriptionDetails.FirstOrDefault(p => p.RateID == rateID);
-
-                    PaymentDetails currentTransaction = null;
-                    var previousTransactions = customerData.PaymentDetails.Where(p => p.RateID == rateID && p.OrderNumber == orderNumber);
-                    if (previousTransactions.Any())
+                    if (!savedTransaction.IsMadeLiveSuccessful)
                     {
-                        var mostRecent = previousTransactions.Max(tr => tr.TranxDate);
-                        currentTransaction = previousTransactions.FirstOrDefault(t => t.TranxDate == mostRecent);
-                    }
-                    else
-                    {
-                        currentTransaction = new PaymentDetails();
-                    }
+                        string email = emailAddress;
+                        var processedClientData = new AuthSubcriber();
 
-                    var transactionResponse = await cardProcessor.GetGatewayTransactionStatus(orderNumber);
-                    var transSummary = cardProcessor.GetTransactionSummary(transactionResponse);
+                        // Retrieve data that was saved before 3DS processing.
+                        var sessionRepository = new SessionRepository();
+                        var existing = await sessionRepository.Get(email);
+                        var customerData = JsonConvert.DeserializeObject<AuthSubcriber>(existing.RootObject);
+                        var currentPolicy = customerData.SubscriptionDetails.FirstOrDefault(p => p.RateID == rateID);
 
-                    currentTransaction.ConfirmationNumber = savedTransaction.ConfirmationNo;
-                    //currentTransaction.OrderID = orderID;
-                    currentTransaction.AuthorizationCode = savedTransaction.AuthCode;
-                    using (var context = new ApplicationDbContext()) 
-                    {
-                        //load data and join via foriegn keys
-                        var clientData = context.subscribers.AsNoTracking()
-                            .Include(x => x.Subscriber_Epaper)
-                            .Include(x => x.Subscriber_Print)
-                            .Include(x => x.Subscriber_Tranx)
-                            .FirstOrDefault(u => u.EmailAddress == emailAddress);
+                        PaymentDetails currentTransaction = null;
+                        var previousTransactions = customerData.PaymentDetails.Where(p => p.RateID == rateID && p.OrderNumber == orderNumber);
+                        if (previousTransactions.Any())
+                        {
+                            var mostRecent = previousTransactions.Max(tr => tr.TranxDate);
+                            currentTransaction = previousTransactions.FirstOrDefault(t => t.TranxDate == mostRecent);
+                        }
+                        else
+                        {
+                            currentTransaction = new PaymentDetails();
+                        }
 
-                        //update transaction table with authcode and confirmation no.
-                        clientData.Subscriber_Tranx.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID).AuthCode = transSummary.AuthCode;
-                        clientData.Subscriber_Tranx.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID).ConfirmationNo = transSummary.ReferenceNo;
+                        var transactionResponse = await cardProcessor.GetGatewayTransactionStatus(orderNumber);
+                        var transSummary = cardProcessor.GetTransactionSummary(transactionResponse);
 
-                        //make subscription active
-                        if (currentTransaction.SubType == "Epaper" || currentTransaction.SubType == "Bundle")
-                            clientData.Subscriber_Epaper.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID).IsActive = true;
+                        currentTransaction.ConfirmationNumber = savedTransaction.ConfirmationNo;
+                        //currentTransaction.OrderID = orderID;
+                        currentTransaction.AuthorizationCode = savedTransaction.AuthCode;
+                        using (var context = new ApplicationDbContext())
+                        {
+                            //load data and join via foriegn keys
+                            var clientData = context.subscribers
+                                .Include(x => x.Subscriber_Epaper)
+                                .Include(x => x.Subscriber_Print)
+                                .Include(x => x.Subscriber_Tranx)
+                                .FirstOrDefault(u => u.EmailAddress == emailAddress);
 
-                        if (currentTransaction.SubType == "Print" || currentTransaction.SubType == "Bundle")
-                            clientData.Subscriber_Print.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID).IsActive = true;
+                            if (clientData != null)
+                            {
+                                //update transaction table with authcode and confirmation no.
+                                clientData.Subscriber_Tranx.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID).AuthCode = transSummary.AuthCode;
+                                clientData.Subscriber_Tranx.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID).ConfirmationNo = transSummary.ReferenceNo;
+                                clientData.Subscriber_Tranx.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID).IsMadeLiveSuccessful = true;
 
-                        await context.SaveChangesAsync();
+                                //make subscription active
+                                if (currentTransaction.SubType == "Epaper" || currentTransaction.SubType == "Bundle")
+                                    clientData.Subscriber_Epaper.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID).IsActive = true;
+
+                                if (currentTransaction.SubType == "Print" || currentTransaction.SubType == "Bundle")
+                                    clientData.Subscriber_Print.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID).IsActive = true;
+                            }
+
+                            await context.SaveChangesAsync();
+                        }
                     }
                 }
             }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+           
 
             return View("PaymentSuccess");
         }
