@@ -1486,6 +1486,7 @@ namespace ePaperLive.Controllers
                         paymentDetails.TransactionSummary = summary;
 
                         await SaveSubscriptionAsync(paymentDetails);
+                        paymentDetails.TransactionSummary = encrypted;
                         return View("PaymentDetails", paymentDetails);
                     }
                     else
@@ -1501,10 +1502,12 @@ namespace ePaperLive.Controllers
                                 paymentDetails.OrderNumber = transactionDetails.OrderNumber;
                                 paymentDetails.IsMadeLiveSuccessful = true;
                                 await SaveSubscriptionAsync(paymentDetails);
+                                paymentDetails.TransactionSummary = encrypted;
                                 return View("PaymentSuccess");
 
                             case PaymentStatus.Failed:
-                            // TODO: Add Friendly Message property to Card Processor to display to user.
+                                // TODO: Add Friendly Message property to Card Processor to display to user.
+                                return View("PaymentDetails", paymentDetails);
                             case PaymentStatus.GatewayError:
                             case PaymentStatus.InternalError:
                                 break;
@@ -1512,6 +1515,7 @@ namespace ePaperLive.Controllers
 
                         paymentDetails.TransactionSummary = summary;
                         await SaveSubscriptionAsync(paymentDetails);
+                        paymentDetails.TransactionSummary = encrypted;
                         return View("PaymentDetails", paymentDetails);
 
                     }
