@@ -229,7 +229,7 @@
     </script>
     <script>
         $(document).ready(function () {
-
+            let rateType;
             $('[name=subdetails]').submit(function(event){
                 if(!$('[name=RateType]').is(':checked')) {
 
@@ -251,7 +251,7 @@
             });
 
             $('[name=RateType]').on("click", function () {
-                var rateType = $(this).val();
+                rateType = $(this).val();
                 console.log($(this).val());
                 if (rateType != "Epaper") {
                     $("#del-address").show();
@@ -308,6 +308,7 @@
                 }
 
             });
+
         });
         //});
     </script>

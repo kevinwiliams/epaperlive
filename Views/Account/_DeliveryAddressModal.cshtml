@@ -56,12 +56,14 @@
                         <div class="col-md-6">
                             <div class="form-group p-2">
                                 <div class="col-md-10">
-                                    @if (Model.DeliveryAddress.CountryList != null)
+                                    @if (Model.DeliveryAddress != null)
                                     {
-                                        @Html.DropDownListFor(model => model.DeliveryAddress.CountryCode, Model.DeliveryAddress.CountryList, "Select Country", new { @class = "form-control" })
-                                        @Html.ValidationMessageFor(model => model.DeliveryAddress.CountryCode, "", new { @class = "text-danger" })
+                                        if (Model.DeliveryAddress.CountryList != null)
+                                        {
+                                            @Html.DropDownListFor(model => model.DeliveryAddress.CountryCode, Model.DeliveryAddress.CountryList, "Select Country", new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(model => model.DeliveryAddress.CountryCode, "", new { @class = "text-danger" })
+                                        }
                                     }
-
                                 </div>
                             </div>
                         </div>
