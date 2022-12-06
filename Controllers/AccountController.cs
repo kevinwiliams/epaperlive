@@ -884,6 +884,7 @@ namespace ePaperLive.Controllers
                         objAdd.ZipCode = data.ZipCode;
                         objAdd.CountryCode = data.CountryCode;
                         objAdd.CreatedAt = DateTime.Now;
+
                         AddressList.Add(data);
                         authUser.AddressDetails = AddressList;
                         //load rates on the next (subscription) page
@@ -1008,14 +1009,13 @@ namespace ePaperLive.Controllers
                     try
                     {
                         Subscriber objSub = GetSubscriber();
-                        Subscriber_Address objDelv = GetSubscriberDeliveryAddress();
+                        DeliveryAddress objDelv = GetSubscriberDeliveryAddress();
                         Subscriber_Epaper objEp = GetEpaperDetails();
                         Subscriber_Print objPr = GetPrintDetails();
                         Subscriber_Tranx objTran = GetTransaction();
                         AuthSubcriber authUser = GetAuthSubscriber();
                         List<SubscriptionDetails> subscriptionDetails = new List<SubscriptionDetails>();
-
-
+                        //List<AddressDetails> addressDetails = new List<AddressDetails>();
 
                         objSub.Newsletter = data.NewsletterSignUp;
                         objTran.RateID = data.RateID;
@@ -1025,27 +1025,26 @@ namespace ePaperLive.Controllers
                         if (selectedPlan.Type == "Print")
                         {
                             var endDate = data.EndDate = data.StartDate.AddDays((double)selectedPlan.PrintTerm * 7);
-                            objPr.StartDate = data.StartDate;
-                            objPr.EndDate = endDate;
-                            objPr.RateID = data.RateID;
-                            objPr.IsActive = true;
-                            objPr.EmailAddress = objSub.EmailAddress;
-                            objPr.DeliveryInstructions = data.DeliveryInstructions;
-                            objPr.CreatedAt = DateTime.Now;
+                            SubscriptionDetails printSubscription = new SubscriptionDetails
+                            {
+                                StartDate = data.StartDate,
+                                EndDate = endDate,
+                                RateID = data.RateID,
+                                DeliveryInstructions = data.DeliveryInstructions,
+                                RateType = selectedPlan.Type
+                            };
 
-                            subscriptionDetails.Add(data);
+                            subscriptionDetails.Add(printSubscription);
                             authUser.SubscriptionDetails = subscriptionDetails;
-
-
 
                             AddressDetails deliveryAddress = new AddressDetails 
                             {
-                                AddressLine1 = data.DeliveryAddress.AddressLine1,
-                                AddressLine2 = data.DeliveryAddress.AddressLine2,
+                                AddressLine1 = objDelv.AddressLine1,
+                                AddressLine2 = objDelv.AddressLine2,
                                 AddressType = "D",
-                                CityTown = data.DeliveryAddress.CityTown,
-                                StateParish = data.DeliveryAddress.StateParish,
-                                ZipCode = data.DeliveryAddress.ZipCode
+                                CityTown = objDelv.CityTown,
+                                StateParish = objDelv.StateParish,
+                                CountryCode = objDelv.CountryCode
                             };
                             authUser.AddressDetails.Add(deliveryAddress);
 
@@ -1053,56 +1052,64 @@ namespace ePaperLive.Controllers
                         if (selectedPlan.Type == "Epaper")
                         {
                             var endDate = data.EndDate = data.StartDate.AddDays((double)selectedPlan.ETerm);
-                            objEp.StartDate = data.StartDate;
-                            objEp.EndDate = endDate;
-                            objEp.RateID = data.RateID;
-                            objEp.SubType = data.SubType;
-                            objEp.IsActive = true;
-                            objEp.EmailAddress = objSub.EmailAddress;
-                            objEp.NotificationEmail = data.NotificationEmail;
-                            objEp.CreatedAt = DateTime.Now;
 
-                            subscriptionDetails.Add(data);
+                            SubscriptionDetails epaperSubscription = new SubscriptionDetails
+                            {
+                                StartDate = data.StartDate,
+                                EndDate = endDate,
+                                RateID = data.RateID,
+                                SubType = data.SubType,
+                                NotificationEmail = data.NotificationEmail,
+                                RateType = selectedPlan.Type
+                            };
+
+                            subscriptionDetails.Add(epaperSubscription);
                             authUser.SubscriptionDetails = subscriptionDetails;
 
                         }
                         if (selectedPlan.Type == "Bundle")
-                        {   
+                        {
                             var pEndDate = data.EndDate = data.StartDate.AddDays(30);
+                            SubscriptionDetails printSubscription = new SubscriptionDetails
+                            {
+                                StartDate = data.StartDate,
+                                EndDate = pEndDate,
+                                RateID = data.RateID,
+                                DeliveryInstructions = data.DeliveryInstructions,
+                            };
                             //print subscription
-                            objPr.StartDate = data.StartDate;
-                            objPr.EndDate = pEndDate;
-                            objPr.RateID = data.RateID;
-                            objPr.IsActive = true;
-                            objPr.EmailAddress = objSub.EmailAddress;
-                            objPr.DeliveryInstructions = data.DeliveryInstructions;
-                            objPr.CreatedAt = DateTime.Now;
+                            subscriptionDetails.Add(printSubscription);
 
                             var eEndDate = data.EndDate = data.StartDate.AddDays((double)selectedPlan.PrintTerm * 7);
-                            //Epaper subscription
-                            objEp.StartDate = data.StartDate;
-                            objEp.EndDate = eEndDate;
-                            objEp.RateID = data.RateID;
-                            objEp.SubType = data.SubType;
-                            objEp.IsActive = true;
-                            objEp.EmailAddress = objSub.EmailAddress;
-                            objEp.NotificationEmail = data.NotificationEmail;
-                            objEp.CreatedAt = DateTime.Now;
+                            SubscriptionDetails epaperSubscription = new SubscriptionDetails
+                            {
+                                StartDate = data.StartDate,
+                                EndDate = eEndDate,
+                                RateID = data.RateID,
+                                SubType = data.SubType,
+                                NotificationEmail = data.NotificationEmail,
+                                RateType = selectedPlan.Type
 
-                            authUser.SubscriptionDetails.Add(data);
+                            };
+                            //Epaper subscription
+                            subscriptionDetails.Add(epaperSubscription);
+
+                            authUser.SubscriptionDetails = subscriptionDetails;
 
 
                             AddressDetails deliveryAddress = new AddressDetails
                             {
-                                AddressLine1 = data.DeliveryAddress.AddressLine1,
-                                AddressLine2 = data.DeliveryAddress.AddressLine2,
+                                AddressLine1 = objDelv.AddressLine1,
+                                AddressLine2 = objDelv.AddressLine2,
                                 AddressType = "D",
-                                CityTown = data.DeliveryAddress.CityTown,
-                                StateParish = data.DeliveryAddress.StateParish,
-                                ZipCode = data.DeliveryAddress.ZipCode
+                                CityTown = objDelv.CityTown,
+                                StateParish = objDelv.StateParish,
+                                CountryCode= objDelv.CountryCode
                             };
+
                             authUser.AddressDetails.Add(deliveryAddress);
                         }
+
 
                         //Country =Session["CountryList"] = 
                         AddressDetails billingAddress = new AddressDetails {
@@ -1146,10 +1153,10 @@ namespace ePaperLive.Controllers
         [AllowAnonymous]
         public ActionResult SaveDeliveryAddress(FormCollection form)
         {
-            Subscriber_Address deliveryAddress = GetSubscriberDeliveryAddress();
+            DeliveryAddress deliveryAddress = GetSubscriberDeliveryAddress();
 
             deliveryAddress.AddressType = "D";
-            deliveryAddress.CreatedAt = DateTime.Now;
+            //deliveryAddress.CreatedAt = DateTime.Now;
 
 
             if (!(bool.Parse(form["SameAsMailing"].Split(',').FirstOrDefault())))
@@ -1567,6 +1574,7 @@ namespace ePaperLive.Controllers
                                 context.subscriber_print.Add(objP);
 
                                 //save epaper subscription
+                                objE.SubType = SubscriptionType.Paid.ToString();
                                 objE.SubscriberID = SubscriberID;
                                 context.subscriber_epaper.Add(objE);
 
@@ -1988,13 +1996,13 @@ namespace ePaperLive.Controllers
             return (Subscriber_Address)Session["subscriber_address"];
         }
 
-        private Subscriber_Address GetSubscriberDeliveryAddress()
+        private DeliveryAddress GetSubscriberDeliveryAddress()
         {
             if (Session["subscriber_del_address"] == null)
             {
-                Session["subscriber_del_address"] = new Subscriber_Address();
+                Session["subscriber_del_address"] = new DeliveryAddress();
             }
-            return (Subscriber_Address)Session["subscriber_del_address"];
+            return (DeliveryAddress)Session["subscriber_del_address"];
         }
 
         private Subscriber_Epaper GetEpaperDetails()
