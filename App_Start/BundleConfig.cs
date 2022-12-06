@@ -23,29 +23,29 @@ namespace ePaperLive
             //bundles.Add(new Bundle("~/bundles/modernizr").Include(
             //            "~/Scripts/modernizr-*"));
 
-            bundles.Add(new Bundle("~/bundles/bootstrap").Include(
+            bundles.Add(new Bundle("~/Scripts/bootstrap").Include(
                       "~/Scripts/bootstrap.js"));
 
-            bundles.Add(new Bundle("~/bundles/js").Include(
-                      "~/assets/vendor/aos/aos.js",
-                      "~/assets/vendor/glightbox/js/glightbox.min.js",
-                      "~/assets/vendor/isotope-layout/isotope.pkgd.min.js",
-                      "~/assets/vendor/swiper/swiper-bundle.min.js",
+            bundles.Add(new Bundle("~/Scripts/js").Include(
+                      "~/Content/aos/aos.js",
+                      "~/Content/glightbox/js/glightbox.min.js",
+                      "~/Scripts/isotope-layout/isotope.pkgd.min.js",
+                      "~/Content/swiper/swiper-bundle.min.js",
                       "~/Scripts/sweetalert.min.js",
-                      "~/assets/js/main.js"));
+                      "~/Scripts/main.js"));
 
-            bundles.Add(new StyleBundle("~/bundles/vendor").Include(
-                     "~/assets/vendor/aos/aos.css",
-                     "~/assets/vendor/bootstrap-icons/bootstrap-icons.css",
-                     "~/assets/vendor/boxicons/css/boxicons.min.css",
-                     "~/assets/vendor/glightbox/css/glightbox.min.css",
-                     "~/vendor/swiper/swiper-bundle.min.css"));
+            bundles.Add(new StyleBundle("~/Content/vendor").Include(
+                     "~/Content/aos/aos.css",
+                     "~/Content/bootstrap-icons/bootstrap-icons.css",
+                     "~/Content/boxicons/css/boxicons.min.css",
+                     "~/Content/glightbox/css/glightbox.min.css",
+                     "~/Content/swiper/swiper-bundle.min.css"));
 
-            bundles.Add(new StyleBundle("~/bundles/css").Include(
+            bundles.Add(new StyleBundle("~/Content/css").Include(
                      "~/Content/bootstrap.css",
                      "~/Styles/sweetalert.css",
                      "~/Content/Site.css",
-                     "~/assets/css/style.css"));
+                     "~/Content/style.css"));
 
             BundleTable.EnableOptimizations = true;
         }

@@ -9,9 +9,9 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" integrity="sha512-4uGZHpbDliNxiAv/QzZNo/yb2FtAX+qiDb7ypBWiEdJQX8Pugp8M6il5SRkN8jQrDLWsh3rrPDSXRf3DwFYM6g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    @Styles.Render("~/bundles/css")
+    @Styles.Render("~/Content/css")
     <!-- Vendor CSS Files -->
-    @Styles.Render("~/bundles/vendor")
+    @Styles.Render("~/Content/vendor")
 </head>
 <body>
     <!-- ======= Header ======= -->
@@ -33,10 +33,11 @@
                             {
                                 <!-- <li>@Html.ActionLink("Home", "index", "home")</li> -->
                                 <li><a class="nav-link scrollto" href="~/">Home</a></li>
-                                <li><a class="nav-link scrollto" href="~/#pricing">Packages</a></li>
-                                <li><a class="nav-link scrollto" href="~/#cta">ePaper</a></li>
-                                <li><a class="nav-link scrollto" href="~/#faq">FAQ</a></li>
-                                <li><a class="nav-link scrollto" href="~/#contact">Contact</a></li>
+                                <li><a class="nav-link scrollto" href="~/#features">Subscriptions</a></li>
+                                <li><a class="nav-link scrollto" href="~/#pricing">Featured Packages</a></li>
+                                <li><a class="nav-link scrollto" href="~/#cta">ePaper App</a></li>
+                                <li><a class="nav-link scrollto" href="~/#faq">FAQs</a></li>
+                                <li><a class="nav-link scrollto" href="~/#contact">Contact Us</a></li>
                             }
                         }
                         catch (Exception)
@@ -188,8 +189,8 @@
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/jqueryval")
-    @Scripts.Render("~/bundles/js")
-    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/Scripts/js")
+    @Scripts.Render("~/Scripts/bootstrap")
     @RenderSection("scripts", required: false)
 
     <script>
