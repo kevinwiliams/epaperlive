@@ -34,12 +34,20 @@ namespace ePaperLive
                       "~/Scripts/sweetalert.min.js",
                       "~/assets/js/main.js"));
 
+            bundles.Add(new StyleBundle("~/bundles/vendor").Include(
+                     "~/assets/vendor/aos/aos.css",
+                     "~/assets/vendor/bootstrap-icons/bootstrap-icons.css",
+                     "~/assets/vendor/boxicons/css/boxicons.min.css",
+                     "~/assets/vendor/glightbox/css/glightbox.min.css",
+                     "~/vendor/swiper/swiper-bundle.min.css"));
 
             bundles.Add(new StyleBundle("~/bundles/css").Include(
                      "~/Content/bootstrap.css",
                      "~/Styles/sweetalert.css",
                      "~/Content/Site.css",
                      "~/assets/css/style.css"));
+
+            BundleTable.EnableOptimizations = true;
         }
     }
 }
