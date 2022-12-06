@@ -52,7 +52,7 @@
                             <!-- rate id needs to fix-->
                             @*@Html.Hidden("RateID")*@
 
-                            <div class="row form-horizontal">
+                            <div class="offset-md-1 row form-horizontal">
                                 <strong>Please enter your billing address </strong>
                                 <div class="form-group">
                                     @*@Html.LabelFor(model => model.AddressLine1, htmlAttributes: new { @class = "control-label" })*@
@@ -111,7 +111,7 @@
                             </div>
                             <hr />
 
-                            <div class="form-group p-2 pb-5 col-md-5">
+                            <div class="offset-md-1 form-group p-2 pb-5 col-md-5">
                                 @Html.LabelFor(model => model.PromoCode, htmlAttributes: new { @class = "control-label " })
                                 <div class="input-group">
                                     @Html.EditorFor(model => model.PromoCode, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.PromoCode) } })
@@ -120,28 +120,32 @@
                             </div>
                             <hr />
 
-                            <div class="form-group p-2 cc-selector">
+                            <div class="offset-md-1 p-3 form-group p-2 cc-selector">
+                                <div class="pb-2">
+                                    <strong>Please enter your credit card details below </strong>
+
+                                </div>
                                 @*@Html.LabelFor(model => model.CardType, htmlAttributes: new { @class = "control-label " }) <br />*@
-                                @{ 
+                                @{
                                     var paymentMethods = ePaperLive.Util.GetEnumSelectList<ePaperLive.Models.PaymentMethod>().ToList();
                                 }
                                 @foreach (var method in paymentMethods)
                                 {
                                     var index = paymentMethods.IndexOf(method);
                                     var newClass = String.Format("{0} {1}", "usercard-cc", method.Text);
-                                        @Html.RadioButtonFor(model => model.CardType, method.Text, new { @required = "required", id = $"CardType{index}" })
-                                        @Html.LabelFor(model => model.CardType, method.Text, htmlAttributes: new { @class = newClass, @for = $"CardType{index}" })
+                                    @Html.RadioButtonFor(model => model.CardType, method.Text, new { @required = "required", id = $"CardType{index}" })
+                                    @Html.LabelFor(model => model.CardType, method.Text, htmlAttributes: new { @class = newClass, @for = $"CardType{index}" })
                                 }
                                 @Html.HiddenFor(m => m.CardType)
 
                             </div>
-                            <div class="form-group p-2">
+                            <div class="offset-md-1 form-group p-2">
                                 @*@Html.LabelFor(model => model.cardNumber, htmlAttributes: new { @class = "control-label " })*@
                                 <div class="col-md-5">
                                     @Html.EditorFor(model => model.CardNumber, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.CardNumber) } })
                                 </div>
                             </div>
-                            <div class="form-group p-2">
+                            <div class=" offset-md-1 form-group p-2">
                                 @*@Html.LabelFor(model => model.cardOwner, htmlAttributes: new { @class = "control-label " })*@
                                 <div class="col-md-8">
                                     @Html.EditorFor(model => model.CardOwner, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.CardOwner) } })
@@ -149,8 +153,8 @@
                             </div>
 
 
-                            <div class="form-group p-2">
-                                <div class="col-md-offset-2 col-md-10 pt-3">
+                            <div class="offset-md-1 form-group p-2">
+                                <div class="col-md-offset-2 col-md-12 pt-3">
                                     <div class="row">
                                         <div class="col-6">
                                             @Html.LabelFor(model => model.CardExp, htmlAttributes: new { @class = "control-label " })
@@ -174,8 +178,8 @@
                             }
                             <section id="paymentGatway" style="display:none"></section>
 
-                            <div class="form-group">
-                                <div class="col-md-offset-2 col-md-10 pt-3">
+                            <div class="form-group pt-3">
+                                <div class="col-md-offset-2 col-md-12 pt-3">
                                     <div class="row">
                                         <div class="col-6">
                                             <input type="submit" value="Prev" name="prevBtn" class="btn btn-sign-in bx-pull-left" />
