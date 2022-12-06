@@ -238,13 +238,13 @@
                 $('#paymentGatway').html(routeData);
                 
                 setTimeout(
-                   submitForm, 50
+                   submitForm, 100
                 );
             }
         });
 
         function submitForm() {
-            //$('#paymentGatway').find('form input[name=submit]').click();
+            $('#paymentGatway').find('form input[name=submit]').click();
             $('#paymentGatway').find('form').submit();
         }
     </script>

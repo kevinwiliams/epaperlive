@@ -1397,6 +1397,7 @@ namespace ePaperLive.Controllers
         public ActionResult PaymentSuccess()
         {
             RemoveSubscriber();
+            
             return View();
         }
 
@@ -1722,6 +1723,8 @@ namespace ePaperLive.Controllers
                         
                         await CompleteTransactionProcess(int.Parse(rateID), threedsparams.OrderID, email);
                         
+                        RemoveSubscriber();
+
                         return View("PaymentSuccess");
                     case PaymentStatus.Failed:
                     //_logger.CreateLog("Authorization failed", logModel, LogType.Warning, additionalFields: logDetails);
@@ -1859,9 +1862,16 @@ namespace ePaperLive.Controllers
             Session.Remove("subscriber_epaper");
             Session.Remove("subscriber_print");
             Session.Remove("subscriber_tranx");
+            Session.Clear();
+            //AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
 
-            //Session.Clear();
-            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            string[] myCookies = Request.Cookies.AllKeys;
+            foreach (string cookie in myCookies)
+            {
+                Response.Cookies[cookie].Expires = DateTime.Now.AddDays(-1);
+            }
+
+            Dispose(true);
         }
 
         #region Helpers
