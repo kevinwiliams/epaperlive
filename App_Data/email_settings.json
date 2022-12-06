@@ -1,8 +1,8 @@
 ﻿{
-  "email_address_from": "Jamaica Observer <caribbusinessreport@gmail.com>",
+  "email_address_from": "Jamaica Observer",
   "smtp_host": "smtp.gmail.com",
   "ssl_enabled": "True",
-  "email_password": "1234pass",
+  "email_password": "kdwolloddanxtwje", /*Using App Password*/
   "email_address": "caribbusinessreport@gmail.com",
   "email_address_username": "caribbusinessreport@gmail.com",
   "email_address_domain": "jamobsvr.com",
