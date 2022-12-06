@@ -1434,9 +1434,11 @@ namespace ePaperLive.Controllers
                 };
 
                 AddressDetails deliveryAddress = authUser.AddressDetails.FirstOrDefault(x => x.AddressType == "D");
+                Subscriber_Address objDelAdd = new Subscriber_Address();
+
                 if (deliveryAddress != null)
                 {
-                    Subscriber_Address objDelAdd = new Subscriber_Address
+                    objDelAdd = new Subscriber_Address
                     {
                         EmailAddress = emailAddress,
                         //address type M - Mailing --- B - Billing
@@ -1528,6 +1530,13 @@ namespace ePaperLive.Controllers
                         objAdd.SubscriberID = SubscriberID;
                         context.subscriber_address.Add(objAdd);
                         await context.SaveChangesAsync();
+
+                        //save delivery address
+                        if (deliveryAddress != null) {
+                            objDelAdd.SubscriberID = SubscriberID;
+                            context.subscriber_address.Add(objDelAdd);
+                            await context.SaveChangesAsync();
+                        }
 
                         //get Address ID
                         addressID = objAdd.AddressID;
