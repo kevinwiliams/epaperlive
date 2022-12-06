@@ -2,6 +2,14 @@
 
 @{
     ViewBag.Title = "Subscription";
+    ePaperLive.DBModel.Subscriber_Address address = null;
+    if (ViewData["savedAddressData"] != null)
+    {
+        address = (ePaperLive.DBModel.Subscriber_Address)ViewData["savedAddressData"];
+        @Html.Label(address.AddressLine1)
+    }
+
+
 }
 <style>
     textarea {
@@ -128,14 +136,8 @@
                                 <!-- end: Delivery Modal -->
                             </div>
                             <div id="delAddressDetails">
-                                @if (ViewData["savedAddressData"] != null)
-                                {
-                                    ePaperLive.DBModel.Subscriber_Address address = (ePaperLive.DBModel.Subscriber_Address)ViewData["savedAddressData"];
-                                    @Html.Label(address.AddressLine1)
 
-                               }
-
-                                </div>
+                            </div>
 
                             <div class="form-group p-2" id="del-instructions" style="display: none">
                                 @Html.LabelFor(model => model.DeliveryInstructions, htmlAttributes: new { @class = "form-label " })
@@ -298,8 +300,14 @@
                         dataType: 'json',
                         data: addressData,
                         success: function (result) {
-                            alert(result);
-                            $("#delAddressDetails").html(result);
+                            sessionStorage.setItem("delAddress", JSON.stringify(result));
+                            var addressLine2 = result.AddressLine2 ? `${result.AddressLine2}<br>` : '';
+                            var html = `<p>${result.AddressLine1}<br>
+                                            ${addressLine2}
+                                            ${result.CityTown}<br>
+                                            ${result.StateParish}<br>
+                                        </p>`
+                            $("#delAddressDetails").html(html);
                             //$("input[name=RateType][value=" + rateType + "]").prop('checked', true);
                             //$('[name="radioSelectionName"]').removeAttr('checked');
                             //$('input[name=RateID]:first-child').attr('checked',true);
@@ -310,6 +318,35 @@
             });
 
         });
+
+
+        $("#SameAsMailing").click(() => {            
+            if ($("#SameAsMailing").is(":checked")) {
+                $("#DeliveryAddress_AddressLine1").prop("disabled", true);
+                $("#DeliveryAddress_AddressLine2").prop("disabled", true);
+                $("#DeliveryAddress_CityTown").prop("disabled", true);
+                $("#DeliveryAddress_StateParish").prop("disabled", true);
+
+                if (sessionStorage.getItem("delAddress")) {
+                    let address = JSON.parse(sessionStorage.getItem("delAddress"));
+                    $("#DeliveryAddress_AddressLine1").val(address.AddressLine1)
+                    $("#DeliveryAddress_AddressLine2").val(address.AddressLine2)
+                    $("#DeliveryAddress_CityTown").val(address.CityTown)
+                    $("#DeliveryAddress_StateParish").val(address.StateParish)
+                }
+            }
+            else {
+                $("#DeliveryAddress_AddressLine1").prop("disabled", false);
+                $("#DeliveryAddress_AddressLine2").prop("disabled", false);
+                $("#DeliveryAddress_CityTown").prop("disabled", false);
+                $("#DeliveryAddress_StateParish").prop("disabled", false);
+ 
+                $("#DeliveryAddress_AddressLine1").val("");
+                $("#DeliveryAddress_AddressLine2").val("");
+                $("#DeliveryAddress_CityTown").val("");
+                $("#DeliveryAddress_StateParish").val("");
+            }
+            })
         //});
     </script>
 }
