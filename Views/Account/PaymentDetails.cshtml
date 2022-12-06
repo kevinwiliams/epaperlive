@@ -122,11 +122,15 @@
 
                             <div class="form-group p-2 cc-selector">
                                 @*@Html.LabelFor(model => model.CardType, htmlAttributes: new { @class = "control-label " }) <br />*@
-                                @foreach (var method in @ePaperLive.Util.GetEnumSelectList<ePaperLive.Models.PaymentMethod>())
+                                @{ 
+                                    var paymentMethods = ePaperLive.Util.GetEnumSelectList<ePaperLive.Models.PaymentMethod>().ToList();
+                                }
+                                @foreach (var method in paymentMethods)
                                 {
+                                    var index = paymentMethods.IndexOf(method);
                                     var newClass = String.Format("{0} {1}", "usercard-cc", method.Text);
-                                        @Html.RadioButtonFor(model => model.CardType, method.Text, new { @required = "required" })
-                                        @Html.LabelFor(model => model.CardType, method.Text, htmlAttributes: new { @class = newClass  })
+                                        @Html.RadioButtonFor(model => model.CardType, method.Text, new { @required = "required", id = $"CardType{index}" })
+                                        @Html.LabelFor(model => model.CardType, method.Text, htmlAttributes: new { @class = newClass, @for = $"CardType{index}" })
                                 }
                                 @Html.HiddenFor(m => m.CardType)
 
@@ -229,7 +233,7 @@
         $(document).ready(function () {
             //remove labels
             $(".usercard-cc").html("");
-
+            $("input[name='CardType']").click((e) => e.preventDefault());
             let routeData = $("#TransactionSummary").val();
             let timeout;
             if (routeData) {
@@ -274,7 +278,7 @@
                 else if (type == 'mastercard') {
                     $("input[value='Mastercard']").prop("checked", true);
                 }
-                console.log(type);
+                //console.log(type);
             }
         });
 
