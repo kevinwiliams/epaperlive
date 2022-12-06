@@ -773,6 +773,7 @@ namespace ePaperLive.Controllers
                         authUser.FirstName = obj.FirstName = data.FirstName;
                         authUser.LastName = obj.LastName = data.LastName;
                         authUser.EmailAddress = obj.EmailAddress = data.EmailAddress;
+                        authUser.PasswordKey = data.Password;
                         //obj.passwordHash = PasswordHash(data.Password);
                         obj.CreatedAt = DateTime.Now;
                         obj.IpAddress = Request.UserHostAddress;
@@ -875,7 +876,7 @@ namespace ePaperLive.Controllers
                         //add email from subscriber
                         objAdd.EmailAddress = objSub.EmailAddress;
                         //address type M - Mailing --- B - Billing
-                        objAdd.AddressType = "M";
+                        objAdd.AddressType = data.AddressType = "M";
                         objAdd.AddressLine1 = data.AddressLine1;
                         objAdd.AddressLine2 = data.AddressLine2;
                         objAdd.CityTown = data.CityTown;
@@ -1023,8 +1024,9 @@ namespace ePaperLive.Controllers
 
                         if (selectedPlan.Type == "Print")
                         {
+                            var endDate = data.EndDate = data.StartDate.AddDays((double)selectedPlan.PrintTerm * 7);
                             objPr.StartDate = data.StartDate;
-                            objPr.EndDate = data.StartDate.AddDays((double)selectedPlan.PrintTerm * 7);
+                            objPr.EndDate = endDate;
                             objPr.RateID = data.RateID;
                             objPr.IsActive = true;
                             objPr.EmailAddress = objSub.EmailAddress;
@@ -1050,8 +1052,9 @@ namespace ePaperLive.Controllers
                         }
                         if (selectedPlan.Type == "Epaper")
                         {
+                            var endDate = data.EndDate = data.StartDate.AddDays((double)selectedPlan.ETerm);
                             objEp.StartDate = data.StartDate;
-                            objEp.EndDate = data.StartDate.AddDays((double)selectedPlan.ETerm);
+                            objEp.EndDate = endDate;
                             objEp.RateID = data.RateID;
                             objEp.SubType = data.SubType;
                             objEp.IsActive = true;
@@ -1064,19 +1067,21 @@ namespace ePaperLive.Controllers
 
                         }
                         if (selectedPlan.Type == "Bundle")
-                        {
+                        {   
+                            var pEndDate = data.EndDate = data.StartDate.AddDays(30);
                             //print subscription
                             objPr.StartDate = data.StartDate;
-                            objPr.EndDate = data.StartDate.AddDays(30);
+                            objPr.EndDate = pEndDate;
                             objPr.RateID = data.RateID;
                             objPr.IsActive = true;
                             objPr.EmailAddress = objSub.EmailAddress;
                             objPr.DeliveryInstructions = data.DeliveryInstructions;
                             objPr.CreatedAt = DateTime.Now;
 
+                            var eEndDate = data.EndDate = data.StartDate.AddDays((double)selectedPlan.PrintTerm * 7);
                             //Epaper subscription
                             objEp.StartDate = data.StartDate;
-                            objEp.EndDate = data.StartDate.AddDays((double)selectedPlan.PrintTerm * 7);
+                            objEp.EndDate = eEndDate;
                             objEp.RateID = data.RateID;
                             objEp.SubType = data.SubType;
                             objEp.IsActive = true;
@@ -1392,6 +1397,197 @@ namespace ePaperLive.Controllers
             return false;
         }
 
+        public async Task<bool> SaveSubscriptionInfoAsync(AuthSubcriber authUser)
+        {
+
+            //AuthSubcriber authUser = new AuthSubcriber();
+            var emailAddress = authUser.EmailAddress;
+            //get all session variables
+            Subscriber objSub = new Subscriber { 
+                FirstName = authUser.FirstName,
+                LastName = authUser.LastName,
+                EmailAddress = emailAddress,
+                CreatedAt = DateTime.Now,
+                IpAddress = Request.UserHostAddress,
+                IsActive = true
+            };
+
+            AddressDetails mailingAddress = authUser.AddressDetails.FirstOrDefault(x => x.AddressType == "M");
+            Subscriber_Address objAdd = new Subscriber_Address{
+                EmailAddress = emailAddress,
+                //address type M - Mailing --- B - Billing
+                AddressType = "M",
+                AddressLine1 = mailingAddress.AddressLine1,
+                AddressLine2 = mailingAddress.AddressLine2,
+                CityTown = mailingAddress.CityTown,
+                StateParish = mailingAddress.StateParish,
+                ZipCode = mailingAddress.ZipCode,
+                CountryCode = mailingAddress.CountryCode,
+                CreatedAt = DateTime.Now
+            };
+
+            AddressDetails deliveryAddress = authUser.AddressDetails.FirstOrDefault(x => x.AddressType == "D");
+            if (deliveryAddress != null) {
+                Subscriber_Address objDelAdd = new Subscriber_Address
+                {
+                    EmailAddress = emailAddress,
+                    //address type M - Mailing --- B - Billing
+                    AddressType = "D",
+                    AddressLine1 = deliveryAddress.AddressLine1,
+                    AddressLine2 = deliveryAddress.AddressLine2,
+                    CityTown = deliveryAddress.CityTown,
+                    StateParish = deliveryAddress.StateParish,
+                    CountryCode = deliveryAddress.CountryCode,
+                    CreatedAt = DateTime.Now
+                };
+            }
+
+            SubscriptionDetails epaperSub = authUser.SubscriptionDetails.FirstOrDefault(x => x.RateType == "Epaper" || x.RateType == "Bundle");
+            Subscriber_Epaper objE = new Subscriber_Epaper();
+            if (epaperSub != null) {
+                objE = new Subscriber_Epaper
+                {
+                    CreatedAt = DateTime.Now,
+                    StartDate = epaperSub.StartDate,
+                    EndDate = epaperSub.EndDate,
+                    RateID = epaperSub.RateID,
+                    SubType = epaperSub.SubType,
+                    IsActive = false,
+                    EmailAddress = emailAddress,
+                    NotificationEmail = epaperSub.NotificationEmail
+                };
+            }
+
+            SubscriptionDetails printSub = authUser.SubscriptionDetails.FirstOrDefault(x => x.RateType == "Print" || x.RateType == "Bundle");
+            Subscriber_Print objP = new Subscriber_Print();
+            if (printSub != null)
+            {
+                objP = new Subscriber_Print
+                {
+                    StartDate = printSub.StartDate,
+                    EndDate = printSub.EndDate,
+                    RateID = printSub.RateID,
+                    IsActive = false,
+                    EmailAddress = emailAddress,
+                    DeliveryInstructions = printSub.DeliveryInstructions,
+                    CreatedAt = DateTime.Now,
+                };
+            }
+
+            PaymentDetails trxDetails = authUser.PaymentDetails.FirstOrDefault();
+            Subscriber_Tranx objTran = new Subscriber_Tranx{
+                //save transaction
+                EmailAddress = emailAddress,
+                TranxDate = DateTime.Now,
+                RateID = trxDetails.RateID,
+                IpAddress = Request.UserHostAddress,
+                CardOwner = trxDetails.CardOwner,
+                CardType = trxDetails.CardType,
+                CardExp = trxDetails.CardExp,
+                CardLastFour = trxDetails.CardNumberLastFour,
+                TranxAmount = (double)trxDetails.CardAmount,
+                OrderID = trxDetails.OrderNumber,
+                EnrolledIn3DSecure = true
+            };
+           
+
+            string SubscriberID = "";
+            int addressID = 0;
+            var rateID = objTran.RateID;
+
+            //save subscribers
+
+            var newAccount = new ApplicationUser
+            {
+                UserName = emailAddress,
+                Email = emailAddress,
+                Subscriber = objSub
+            };
+            //create application user
+            var createAccount = await UserManager.CreateAsync(newAccount, authUser.PasswordKey);
+            if (createAccount.Succeeded)
+            {
+                //get Subscriber ID
+                SubscriberID = newAccount.Id;
+                //assign User Role
+                createAccount = await UserManager.AddToRoleAsync(SubscriberID, "Subscriber");
+                //save to DB
+                using (var context = new ApplicationDbContext())
+                {
+                    //save address
+                    objAdd.SubscriberID = SubscriberID;
+                    context.subscriber_address.Add(objAdd);
+                    await context.SaveChangesAsync();
+
+                    //get Address ID
+                    addressID = objAdd.AddressID;
+
+                    //update subscribers table w/ address ID
+                    var result = context.subscribers.SingleOrDefault(b => b.SubscriberID == SubscriberID);
+                    if (result != null)
+                    {
+                        result.AddressID = addressID;
+                        await context.SaveChangesAsync();
+                    }
+
+                    var selectedPlan = context.printandsubrates.SingleOrDefault(b => b.Rateid == rateID);
+
+                    objTran.SubscriberID = SubscriberID;
+                    context.subscriber_tranx.Add(objTran);
+                    await context.SaveChangesAsync();
+
+
+                    //save based on subscription
+                    if (selectedPlan != null)
+                    {
+                        switch (selectedPlan.Type)
+                        {
+                            case "Print":
+                                //save print subscription
+                                objP.AddressID = addressID;
+                                objP.SubscriberID = SubscriberID;
+                                context.subscriber_print.Add(objP);
+                                await context.SaveChangesAsync();
+                                break;
+
+                            case "Epaper":
+                                //save epaper subscription
+                                objE.SubType = SubscriptionType.Paid.ToString();
+                                objE.SubscriberID = SubscriberID;
+                                context.subscriber_epaper.Add(objE);
+                                await context.SaveChangesAsync();
+                                break;
+
+                            case "Bundle":
+                                //save print subscription
+                                objP.AddressID = addressID;
+                                objP.SubscriberID = SubscriberID;
+                                context.subscriber_print.Add(objP);
+
+                                //save epaper subscription
+                                objE.SubscriberID = SubscriberID;
+                                context.subscriber_epaper.Add(objE);
+
+                                await context.SaveChangesAsync();
+                                break;
+
+                            default:
+                                break;
+                        }
+                    }
+                }
+
+                await CompleteTransactionProcess(int.Parse(rateID.ToString()), objTran.OrderID, emailAddress);
+
+
+                return true;
+                //RemoveSubscriber();
+            }
+
+            AddErrors(createAccount);
+            return false;
+        }
+
         [HttpPost]
         [AllowAnonymous]
         public ActionResult PaymentSuccess()
@@ -1403,24 +1599,15 @@ namespace ePaperLive.Controllers
 
         public async Task<ActionResult> ChargeCard(PaymentDetails paymentDetails)
         {
-            var websiteHost = ConfigurationManager.AppSettings["epaper_Prod"];
-            //var host = Util.SetAppEnvironment(websiteHost);
             TransactionSummary summary = new TransactionSummary();
             TransactionSummary encrypted = new TransactionSummary();
 
             try
             {
                 AuthSubcriber clientData = GetAuthSubscriber(); //pull exisiting data
-
                 var processedClientData = new AuthSubcriber();
-
                 List<PaymentDetails> paymentDetailsList = new List<PaymentDetails>();
                
-
-
-                //var host = Util.SetAppEnvironment(Request.RequestUri.Host);
-
-                //Dictionary<string, object> responseData = null;
                 // Setup card processor.
                 var cardProcessor = new CardProcessor();
                 var transactionDetails = new TransactionDetails();
@@ -1483,17 +1670,13 @@ namespace ePaperLive.Controllers
                     {
                         // Return the payment object.
                         //encrypted = Util.EncryptRijndaelManaged(JsonConvert.SerializeObject(summary), "E");
-                        paymentDetails.EnrolledIn3DSecure = true;
-
                         int cacheExpiryDuration = int.Parse(ConfigurationManager.AppSettings["cacheExpiryDuration"] ?? "15");
                         tempData.Cache.Add(transactionDetails.OrderNumber, $"{clientData.SubscriberID}|{paymentDetails.RateID}|{transactionDetails.Amount}|{clientData.EmailAddress}", new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheExpiryDuration) });
 
                         encrypted = summary;
                         //return view
                         paymentDetails.TransactionSummary = summary;
-
-                        await SaveSubscriptionAsync(paymentDetails);
-                        paymentDetails.TransactionSummary = encrypted;
+                        // await SaveSubscriptionAsync(paymentDetails);
                         return View("PaymentDetails", paymentDetails);
                     }
                     else
@@ -1506,10 +1689,15 @@ namespace ePaperLive.Controllers
                         {
                             case PaymentStatus.Successful:
                                 //await SaveSubscriptionAsync();
-                                paymentDetails.OrderNumber = transactionDetails.OrderNumber;
                                 paymentDetails.IsMadeLiveSuccessful = true;
+                                paymentDetails.TransactionSummary = summary;
+                                paymentDetails.OrderNumber = transactionDetails.OrderNumber;
+                                paymentDetails.ConfirmationNumber = summary.ReferenceNo;
+                                paymentDetails.AuthorizationCode = summary.AuthCode;
+                                paymentDetails.IsMadeLiveSuccessful = true;
+
                                 await SaveSubscriptionAsync(paymentDetails);
-                                paymentDetails.TransactionSummary = encrypted;
+                                RemoveSubscriber();
                                 return View("PaymentSuccess");
 
                             case PaymentStatus.Failed:
@@ -1519,10 +1707,11 @@ namespace ePaperLive.Controllers
                             case PaymentStatus.InternalError:
                                 break;
                         }
+                        //TODO: Remove only cookies?
+                        RemoveSubscriber();
 
                         paymentDetails.TransactionSummary = summary;
                         await SaveSubscriptionAsync(paymentDetails);
-                        paymentDetails.TransactionSummary = encrypted;
                         return View("PaymentDetails", paymentDetails);
 
                     }
@@ -1536,6 +1725,7 @@ namespace ePaperLive.Controllers
                     var transactionResponse = await cardProcessor.GetGatewayTransactionStatus(transactionDetails.OrderNumber);
                     var transSummary = cardProcessor.GetTransactionSummary(transactionResponse);
                     paymentDetails.AuthorizationCode = transSummary.AuthCode;
+                    paymentDetails.ConfirmationNumber = transSummary.ReferenceNo;
                     //TODO: Not sure if 
                     paymentDetails.TransactionSummary = summary;
                     await SaveSubscriptionAsync(paymentDetails);
@@ -1633,8 +1823,8 @@ namespace ePaperLive.Controllers
                 throw ex;
             }
 
-           
 
+            RemoveSubscriber();
             return View("PaymentSuccess");
         }
 
@@ -1650,7 +1840,7 @@ namespace ePaperLive.Controllers
 
                 var sessionRepository = new SessionRepository();
                 JOL_UserSession existing = new JOL_UserSession();
-                AuthSubcriber customerData = new AuthSubcriber();
+                //AuthSubcriber customerData = new AuthSubcriber();
                 // Retrieve data that was saved before 3DS processing.
 
                 await Task.FromResult(0);
@@ -1715,13 +1905,17 @@ namespace ePaperLive.Controllers
                 {
                     case PaymentStatus.Successful:
                         //save subscription
+                        var existingSession = await sessionRepository.Get(email);
+                        var customerData = JsonConvert.DeserializeObject<AuthSubcriber>(existingSession.RootObject);
                         //await SaveSubscriptionAsync();
+                        await SaveSubscriptionInfoAsync(customerData);
+
                         // Set to 15 minutes by default if not found
                         int cacheExpiryDuration = int.Parse(ConfigurationManager.AppSettings["cacheExpiryDuration"] ?? "15");
                         // Repopulate cache for new flow.
                         tempData.Cache.Add(summary.OrderId, $"{email}|{rateID}", new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheExpiryDuration) });
-                        
-                        await CompleteTransactionProcess(int.Parse(rateID), threedsparams.OrderID, email);
+
+                        //await CompleteTransactionProcess(int.Parse(rateID), threedsparams.OrderID, email);
                         
                         RemoveSubscriber();
 
