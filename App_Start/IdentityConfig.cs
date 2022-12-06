@@ -59,6 +59,7 @@ namespace ePaperLive
                 newMsg.From = new MailAddress(sentFrom, displayName);
                 newMsg.Subject = msg.Subject;
                 newMsg.Body = msg.Body;
+                newMsg.IsBodyHtml = true;
 
                 var credentials = new NetworkCredential(userName, pwd);
                 smtp.Credentials = credentials;
