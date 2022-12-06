@@ -1142,6 +1142,7 @@ namespace ePaperLive.Controllers
         public ActionResult SaveDeliveryAddress(FormCollection form)
         {
             Subscriber_Address deliveryAddress = GetSubscriberDeliveryAddress();
+
             deliveryAddress.AddressType = "D";
             deliveryAddress.CreatedAt = DateTime.Now;
 
@@ -1166,8 +1167,9 @@ namespace ePaperLive.Controllers
 
             ViewData["savedAddressData"] = deliveryAddress;
             ViewData["savedAddress"] = true;
-
-            return PartialView("_DeliveryAddressModal", form);
+            var result = new JsonResult();
+            result.Data = deliveryAddress;
+            return result;
         }
 
         [HttpPost]
