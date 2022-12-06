@@ -1,40 +1,90 @@
 ﻿﻿@model ePaperLive.Models.LoginViewModel
 
+<style>
+    
+.modal-header .close {
+	 margin-top: -1.5rem;
+}
+ .form-title {
+	 margin: -2rem 0rem 2rem;
+}
+ .btn-round {
+	 border-radius: 3rem;
+}
+ .delimiter {
+	 padding: 1rem;
+}
+ .social-buttons .btn {
+	 margin: 0 0.5rem 1rem;
+}
+ .signup-section {
+	 padding: 0.3rem 0rem;
+}
+</style>
 
 
-@using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-{
-    @Html.AntiForgeryToken()
-
-    <div class="modal fade" id="login-modal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content loginmodal-container">
-                <h1>Login to Your Account</h1><br>
-                <div class="form-horizontal">
-                    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
-                    <div class="form-group p-2">
-                        <div class="col-md-12">
-                            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", placeholder = @Html.DisplayNameFor(m => m.Email) } })
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="col-md-12 p-2">
-                            @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", placeholder = @Html.DisplayNameFor(m => m.Password) } })
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-md-offset-2 col-md-12">
-                            <input type="submit" name="login" class="login loginmodal-submit" value="Login">
-                        </div>
-                    </div>
+<div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <button type="button" class="close btn-round" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fa fa-times-circle"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-title text-center">
+                    <h4>Login to Your Account</h4>
                 </div>
+                <div class="d-flex flex-column ">
 
-                <div class="login-help">
-                    <a href="#">Forgot Password?</a>
+                    @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                    {
+                        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+                        @Html.AntiForgeryToken()
+                        <div class="form-group p-2">
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", placeholder = @Html.DisplayNameFor(m => m.Email) } })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-12 p-2">
+                                @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", placeholder = @Html.DisplayNameFor(m => m.Password) } })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-12">
+                                <div class="checkbox">
+                                    @Html.CheckBoxFor(m => m.RememberMe)
+                                    @Html.LabelFor(m => m.RememberMe)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group p-2">
+                            <div class="col-md-offset-2 col-md-12 text-md-center">
+                                <input type="submit" value="Log in" class="btn btn-sign-in" />
+                            </div>
+                        </div>
+                    }
+                    <!--
+                    <div class="text-center text-muted delimiter">or use a social network</div>
+                    <div class="d-flex justify-content-center social-buttons">
+                        <button type="button" class="btn btn-secondary btn-round" data-toggle="tooltip" data-placement="top" title="Twitter">
+                            <i class="fa fa-twitter"></i>
+                        </button>
+                        <button type="button" class="btn btn-secondary btn-round" data-toggle="tooltip" data-placement="top" title="Facebook">
+                            <i class="fa fa-facebook"></i>
+                        </button>
+                        <button type="button" class="btn btn-secondary btn-round" data-toggle="tooltip" data-placement="top" title="Linkedin">
+                            <i class="fa fa-linkedin"></i>
+                        </button>
+                    </div>
+                    -->
                 </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <div class="signup-section">Not a subscriber yet? @Html.ActionLink("Subscribe Now", "subscribe", "account").</div>
             </div>
         </div>
     </div>
-
-}
+</div>
