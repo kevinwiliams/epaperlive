@@ -11,7 +11,8 @@ namespace ePaperLive
             bundles.Add(new Bundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-{version}.js",
                         "~/Scripts/moment.min.js",
-                        "~/Scripts/cleave.min.js"));
+                        "~/Scripts/cleave.min.js",
+                        "~/Scripts/cleave-phone.i18n.js"));
 
             bundles.Add(new Bundle("~/bundles/jqueryval").Include(
                       "~/Scripts/jquery.validate.min.js",

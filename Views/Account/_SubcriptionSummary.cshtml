@@ -1,25 +1,38 @@
 ﻿
-    <div class="portfolio-info">
-        <h5><strong>The Jamaica Observer Limited</strong> </h5>
+    <style>
+        .summary-links ul i {
+            padding-right: 2px;
+            color: #E62B34;
+            font-size: 18px;
+            line-height: 1;
+            margin-left: -5px;
+        }
+    </style>
+
+    <div class="portfolio-info summary-links">
+        @*<h5><strong>The Jamaica Observer Limited</strong> </h5>*@
+        <div class="text-center">
+            <a href="https://wwww.jamaicaobserver.com/" class="text-center"><img src="@Url.Content("~/assets/img/jol-logo-sm.png")" alt="" width="235" class="img-fluid"></a>
+        </div>
         @if (!string.IsNullOrWhiteSpace((string)ViewData["pkgType"]))
         {
             <p>@ViewData["pkgType"] Plan</p><br />
         }
-        <p><strong>What's included</strong></p>
+        <p class="text-center"><strong>What's included?</strong></p>
         <ul>
-            <li>Observer's smartphone app and tablet edition</li>
-            <li>The Sunday Observer</li>
-            <li>The Daily Observer Monday to Friday</li>
-            <li>The Saturday Observer</li>
-            <li>All supplements offered via print media</li>
+            <li><i class="bx bx-chevron-right"></i>Observer's smartphone app and tablet edition</li>
+            <li><i class="bx bx-chevron-right"></i>The Sunday Observer</li>
+            <li><i class="bx bx-chevron-right"></i>The Daily Observer Monday to Friday</li>
+            <li><i class="bx bx-chevron-right"></i>The Saturday Observer</li>
+            <li><i class="bx bx-chevron-right"></i>All supplements offered via print media</li>
         </ul>
         <br />
-        <p><strong>Your subscription start date</strong></p>
+        <p class="text-center"><strong>Your subscription start date</strong></p>
         <p>Your subscription starts today: <br />@DateTime.Now.ToString("MMM d, yyyy")</p>
 
         @if ((ePaperLive.Models.AddressDetails)ViewData["savedAddressData"] != null)
         {
-            <p><strong>Your subscription start date</strong></p>
+            <p class="text-center"><strong>Your subscription start date</strong></p>
 
             ePaperLive.Models.AddressDetails address = (ePaperLive.Models.AddressDetails)ViewData["savedAddressData"];
             <p>@address.AddressLine1</p>
