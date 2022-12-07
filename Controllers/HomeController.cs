@@ -94,6 +94,36 @@ namespace ePaperLive.Controllers
                 List<printandsubrate> ratesList = db.printandsubrates.AsNoTracking()
                                     .Where(x => x.Market == market)
                                     .Where(x => x.Active == true).ToList();
+                //ar pattrns = ratesList.Where(x => x.PrintDayPattern != "")
+                var daysOfWeek = new Dictionary<string, string>();
+                daysOfWeek.Add("SUN", "1");
+                daysOfWeek.Add("MON", "1");
+                daysOfWeek.Add("TUE", "1");
+                daysOfWeek.Add("WED", "1");
+                daysOfWeek.Add("THU", "1");
+                daysOfWeek.Add("FRI", "1");
+                daysOfWeek.Add("SAT", "1");
+
+                var newFrequency = "";
+                char[] charsToTrim = { ',', '.', ' ' };
+                foreach (var item in ratesList.Where(x => x.PrintDayPattern != null))
+                {
+                    var pattern = item.PrintDayPattern;
+                    for (int i = 0; i < pattern.Length; i++)
+                    {
+                        var day = pattern[i].ToString();
+                        var dayListItem = daysOfWeek.Values.ElementAt(i);
+                        if (day == dayListItem) {
+                            newFrequency += daysOfWeek.Keys.ElementAt(i) + ", ";
+                        }
+
+
+                        Console.WriteLine(newFrequency);
+                    }
+                    item.PrintDayPattern = newFrequency.TrimEnd(charsToTrim);
+                    newFrequency = "";
+                }
+
 
                 model.Rates = ratesList;
 
