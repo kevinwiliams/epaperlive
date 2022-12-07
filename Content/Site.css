@@ -202,7 +202,7 @@
         }
 
         .KeyCard {
-            background-image: url("/assets/img/Keycard.png");
+            background-image: url("../assets/img/Keycard.png");
         }
 
         .cc-selector input:active + .usercard-cc {
