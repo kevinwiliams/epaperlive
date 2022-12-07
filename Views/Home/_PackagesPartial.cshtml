@@ -33,14 +33,20 @@ else
         <div class="col-lg-8 order-1 order-lg-2" data-aos="zoom-in">
             <div class="tab-content">
                 <div class="tab-pane active show" id="tab-1">
-                    @foreach (var plans in Model.Rates.Where(x => x.Type == "Epaper"))
-                    {
-                        <span class="value">@(" " + plans.RateDescr ) <span style="margin-left: auto">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span></span><br />
-                    }
+                    <div class="row">
+                        <div class=" col-7 float-left">
+                            @foreach (var plans in Model.Rates.Where(x => x.Type == "Epaper"))
+                            {
+                                <div class="value p-2">@(" " + plans.RateDescr)<br /> <span class="m-auto fw-bold">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span></div>
+                            }
 
-                    <figure>
-                        <img src="assets/img/features-1.png" alt="" class="img-fluid">
-                    </figure>
+                        </div>
+                        <div class="col-5">
+                            <figure>
+                                <img src="assets/img/features-1.png" alt="" class="img-fluid">
+                            </figure>
+                        </div>
+                    </div>
                 </div>
                 <div class="tab-pane" id="tab-2">
                     @foreach (var plans in Model.Rates.Where(x => x.Type == "Print"))
@@ -54,13 +60,20 @@ else
                     </figure>
                 </div>
                 <div class="tab-pane" id="tab-3">
-                    @foreach (var plans in Model.Rates.Where(x => x.Type == "Bundle"))
-                    {
-                        <span class="value">@(" " + plans.RateDescr) <span style="margin-left: auto">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span></span> <br />
-                    }
-                    <figure>
-                        <img src="assets/img/features-3.png" alt="" class="img-fluid">
-                    </figure>
+                    <div class="row">
+                        <div class=" col-7 float-left">
+                            @foreach (var plans in Model.Rates.Where(x => x.Type == "Bundle"))
+                            {
+                                <div class="value p-2">@(" " + plans.RateDescr)<br /> <span class="m-auto fw-bold">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span></div>
+                            }
+
+                        </div>
+                        <div class="col-5">
+                            <figure>
+                                <img src="assets/img/features-3.png" alt="" class="img-fluid">
+                            </figure>
+                        </div>
+                    </div>
                 </div>
 
             </div>
