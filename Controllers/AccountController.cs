@@ -738,6 +738,7 @@ namespace ePaperLive.Controllers
             ViewData["pkgType"] = pkgType;
             ViewData["price"] = price;
             ViewData["term"] = term;
+            ViewData["preloadSub"] = GetPreloadSub();
             //Test Data
             LoginDetails ld = new LoginDetails
             {
@@ -753,6 +754,8 @@ namespace ePaperLive.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult LoginDetails(LoginDetails data, string nextBtn)
         {
+            ViewData["preloadSub"] = GetPreloadSub();
+
             if (nextBtn != null)
             {
                 if (ModelState.IsValid)
@@ -833,6 +836,7 @@ namespace ePaperLive.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult AddressDetails(AddressDetails data, string prevBtn, string nextBtn)
         {
+            ViewData["preloadSub"] = GetPreloadSub();
 
             if (prevBtn != null)
             {
@@ -972,6 +976,8 @@ namespace ePaperLive.Controllers
         [AllowAnonymous]
         public ActionResult SubscriptionInfo(SubscriptionDetails data, string prevBtn, string nextBtn)
         {
+            ViewData["preloadSub"] = GetPreloadSub();
+
             ApplicationDbContext db = new ApplicationDbContext();
 
             if (prevBtn != null)
@@ -1188,6 +1194,7 @@ namespace ePaperLive.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> PaymentDetails(PaymentDetails data, string prevBtn, string nextBtn)
         {
+            ViewData["preloadSub"] = GetPreloadSub();
 
             data.BillingAddress.CountryList = (List<SelectListItem>)Session["CountryList"];
 
@@ -2076,6 +2083,14 @@ namespace ePaperLive.Controllers
                 Session["auth_subscriber"] = new AuthSubcriber();
             }
             return (AuthSubcriber)Session["auth_subscriber"];
+        }
+        private Dictionary<string, int> GetPreloadSub()
+        {
+            if (Session["preloadSub"] == null)
+            {
+                Session["preloadSub"] = new Dictionary<string, int>();
+            }
+            return (Dictionary<string, int>)Session["preloadSub"];
         }
 
         private void RemoveSubscriber()

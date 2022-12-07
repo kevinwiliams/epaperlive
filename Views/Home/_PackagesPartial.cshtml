@@ -48,7 +48,7 @@ else
                             @foreach (var plans in Model.Rates.Where(x => x.Type == "Epaper"))
                             {
                                 <div class="value p-2">
-                                    <button class="btn-link" name="subscribeNow" data-sub-id="@(plans.Rateid)" data-rate-type="@(plans.Type)" data-bs-toggle="tooltip" data-bs-placement="top" title="Subscribe now">
+                                    <button class="btn btn-link" name="subscribeNow" data-sub-id="@(plans.Rateid)" data-rate-type="@(plans.Type)" data-bs-toggle="tooltip" data-bs-placement="top" title="Subscribe now">
                                         @(" " + plans.RateDescr)
                                     </button>
                                     <br />
@@ -106,10 +106,16 @@ else
                                     }
                                     <!-- start: rates-->
                                     <div class="value p-2">
-                                        @(" " + printWeeks)<br />
-                                        <span class="text-muted">@(" " + plans.PrintDayPattern)<br /></span>
-                                        <span class="m-auto fw-bold">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span>
-                                    </div>
+                                        <span class="text-muted">Delivey Frequency: @(" " + plans.PrintDayPattern)</span><br>
+
+                                        <button class="btn btn-link" name="subscribeNow" data-sub-id="@(plans.Rateid)" data-rate-type="@(plans.Type)" data-bs-toggle="tooltip" data-bs-placement="top" title="Subscribe now">
+                                            @(" " + printWeeks)<br />
+                                        </button>
+
+
+                                    <br />
+                                    <span class="m-auto fw-bold">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span>
+                                </div>	
                                     <!-- end: rates-->
 
                                     currentDesc = mainDesc;
@@ -144,7 +150,13 @@ else
                         <div class=" col-7 float-left">
                             @foreach (var plans in Model.Rates.Where(x => x.Type == "Bundle"))
                             {
-                                <div class="value p-2">@(" " + plans.RateDescr)<br /> <span class="m-auto fw-bold">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span></div>
+                                <div class="value p-2">
+                                    <button class="btn btn-link" name="subscribeNow" data-sub-id="@(plans.Rateid)" data-rate-type="@(plans.Type)" data-bs-toggle="tooltip" data-bs-placement="top" title="Subscribe now">
+                                        @(" " + plans.RateDescr)
+                                    </button>
+                                    <br />
+                                    <span class="m-auto fw-bold">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span>
+                                </div>
                             }
 
                         </div>

@@ -109,6 +109,21 @@ namespace ePaperLive.Controllers
             return model;
         }
 
+        public ActionResult PreloadSubscription(string rateType, int rateID) 
+        {
+            Dictionary<string, int> preloadSub = GetPreloadSub();
+            preloadSub.Clear();
+            preloadSub.Add(rateType, rateID);
+            
+            var responseData = new Dictionary<string, object>()
+            {
+                ["saved"] = true,
+                ["data"] = preloadSub
+            };
+
+            return Json(responseData);
+        }
+
         public ActionResult About()
         {
             ViewData["Message"] = "Your application description page.";
@@ -156,6 +171,15 @@ namespace ePaperLive.Controllers
             return (Subscriber)Session["subscriber"];
         }
 
-        
+        private Dictionary<string, int> GetPreloadSub()
+        {
+            if (Session["preloadSub"] == null)
+            {
+                Session["preloadSub"] = new Dictionary<string, int>();
+            }
+            return (Dictionary<string, int>)Session["preloadSub"];
+        }
+
+
     }
 }

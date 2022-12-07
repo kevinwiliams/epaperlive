@@ -18,7 +18,26 @@
         {
             <p>@ViewData["pkgType"] Plan</p><br />
         }
+
+        @if ((Dictionary<string, int>)ViewData["preloadSub"] != null)
+        {
+            var preloadSub = (Dictionary<string, int>)ViewData["preloadSub"];
+            <div class="text-center pb-4">
+            @foreach (var plans in preloadSub)
+            {
+                <strong>@plans.Key.Split('|')[0].ToUpper() SUBSCRIPTION</strong>
+                <br />
+                @plans.Key.Split('|')[1];
+            }
+            </div>
+        }
+        <p class="text-center"><strong>Your subscription start date</strong></p>
+        <small><p class="text-center">Your subscription starts today: @DateTime.Now.ToString("d/MM/yyyy")</p></small>
+
+        
+        <br />
         <p class="text-center"><strong>What's included?</strong></p>
+        
         <ul>
             <li><i class="bx bx-chevron-right"></i>Observer's smartphone app and tablet edition</li>
             <li><i class="bx bx-chevron-right"></i>The Sunday Observer</li>
@@ -27,16 +46,7 @@
             <li><i class="bx bx-chevron-right"></i>All supplements offered via print media</li>
         </ul>
         <br />
-        <p class="text-center"><strong>Your subscription start date</strong></p>
-        <p>Your subscription starts today: <br />@DateTime.Now.ToString("MMM d, yyyy")</p>
 
-        @if ((ePaperLive.Models.AddressDetails)ViewData["savedAddressData"] != null)
-        {
-            <p class="text-center"><strong>Your subscription start date</strong></p>
-
-            ePaperLive.Models.AddressDetails address = (ePaperLive.Models.AddressDetails)ViewData["savedAddressData"];
-            <p>@address.AddressLine1</p>
-        }
 
     </div>
 <!--

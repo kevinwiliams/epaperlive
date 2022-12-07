@@ -391,9 +391,22 @@
             });
 
             $("[name=subscribeNow]").on("click", function (e) {
-                 var plan = e.target.dataset;
-                console.log(plan.rateType);
-                console.log(plan.subId);
+                let plan = e.target.dataset;
+                let rateType = plan.rateType + '|' + e.target.innerText;
+                let rateId = plan.subId;
+                console.log(rateType);
+                //console.log(rateType);
+                //console.log(rateId);
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("PreloadSubscription","Home")',
+                    data: { rateType: rateType, rateId : rateId },
+                    success: function (result) {
+                        console.log(result['data']);
+                        window.location.href = '/account/subscribe/';
+                    }
+                });
             });
 
         });
