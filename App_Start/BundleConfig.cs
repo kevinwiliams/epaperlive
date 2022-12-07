@@ -25,7 +25,7 @@ namespace ePaperLive
             //            "~/Scripts/modernizr-*"));
 
             bundles.Add(new Bundle("~/Scripts/bootstrap").Include(
-                      "~/Scripts/bootstrap.js"));
+                      "~/Scripts/bootstrap.bundle.js"));
 
             bundles.Add(new Bundle("~/Scripts/js").Include(
                       "~/Content/aos/aos.js",

@@ -9,12 +9,13 @@ else
     <style>
         .accordion-button:not(.collapsed) {
             color: red;
-            background-color:#cccccc5c;
+            background-color: #cccccc5c;
         }
+
         .accordion-button:focus {
             box-shadow: none;
         }
-        </style>
+    </style>
     <div class="row">
         <div class="col-lg-4 mt-2 mb-tg-0 order-2 order-lg-1">
             <ul class="nav nav-tabs flex-column">
@@ -46,7 +47,13 @@ else
                         <div class=" col-7 float-left">
                             @foreach (var plans in Model.Rates.Where(x => x.Type == "Epaper"))
                             {
-                                <div class="value p-2">@(" " + plans.RateDescr)<br /> <span class="m-auto fw-bold">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span></div>
+                                <div class="value p-2">
+                                    <button class="btn-link" name="subscribeNow" data-sub-id="@(plans.Rateid)" data-rate-type="@(plans.Type)" data-bs-toggle="tooltip" data-bs-placement="top" title="Subscribe now">
+                                        @(" " + plans.RateDescr)
+                                    </button>
+                                    <br />
+                                    <span class="m-auto fw-bold">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span>
+                                </div>
                             }
 
                         </div>
@@ -66,7 +73,7 @@ else
                                 <!-- start: accordion-->
                                 @{
                                     var currentDesc = "";
-                                    var showTab = "show";
+                                    var showTab = "";
                                     var printSubs = Model.Rates.Where(x => x.Type == "Print");
                                 }
                                 @foreach (var plans in printSubs)
@@ -77,47 +84,47 @@ else
                                     if (mainDesc != currentDesc && currentDesc != "")
                                     {
                                         <!-- start:last tag -->
-                                            @:</div>
-                                        @:</div>
-                                            @:</div>
-                                    <!-- end:last tag -->
+                                    @:</div>
+                                @:</div>
+                            @:</div>
+ <!-- end:last tag -->
+                        }
+                        if (mainDesc != currentDesc)
+                        {
+
+                            <!-- start: top -->
+                            @:<div class="accordion-item">
+                                <h2 class="accordion-header" id="@(mainDesc.Replace(" ", "").Replace("&", "") + "Head")">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#@mainDesc.Replace(" ", "").Replace("&", "")" aria-expanded="true" aria-controls="@mainDesc.Replace(" ", "").Replace("&", "")">
+                                        @mainDesc
+                                    </button>
+                                </h2>
+
+                                @:<div id="@mainDesc.Replace(" ", "").Replace("&", "")" class="accordion-collapse collapse @showTab" aria-labelledby="@(mainDesc.Replace(" ", "").Replace("&", "") + "Head")" data-bs-parent="#printAccordion">
+                                    @:<div class="accordion-body">
+ <!-- end: top-->
                                     }
-                                if (mainDesc != currentDesc)
-                                {
-
-                                    <!-- start: top -->
-                                    @:<div class="accordion-item">
-                                        <h2 class="accordion-header" id="@(mainDesc.Replace(" ", "").Replace("&", "") + "Head")">
-                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#@mainDesc.Replace(" ", "").Replace("&", "")" aria-expanded="true" aria-controls="@mainDesc.Replace(" ", "").Replace("&", "")">
-                                                @mainDesc
-                                            </button>
-                                        </h2>
-
-                                        @:<div id="@mainDesc.Replace(" ", "").Replace("&", "")" class="accordion-collapse collapse @showTab" aria-labelledby="@(mainDesc.Replace(" ", "").Replace("&", "") + "Head")" data-bs-parent="#printAccordion">
-                                            @:<div class="accordion-body">
-                                        <!-- end: top-->
-                                }
                                     <!-- start: rates-->
                                     <div class="value p-2">
-                                        @(" " +  printWeeks)<br />
-                                                                             <span class="text-muted">@(" " + plans.PrintDayPattern)<br /></span>
+                                        @(" " + printWeeks)<br />
+                                        <span class="text-muted">@(" " + plans.PrintDayPattern)<br /></span>
                                         <span class="m-auto fw-bold">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span>
                                     </div>
                                     <!-- end: rates-->
-                                   
+
                                     currentDesc = mainDesc;
                                     showTab = "";
 
                                     if (plans == printSubs.Last())
                                     {
                                         <!-- start:last tag -->
-                                            @:</div>
-                                        @:</div>
-                                            @:</div>
-                                    <!-- end:last tag -->
-                                    }
+                                    @:</div>
+                                @:</div>
+                            @:</div>
+ <!-- end:last tag -->
+                        }
 
-                                   
+
 
                     }
 
@@ -149,8 +156,9 @@ else
                     </div>
                 </div>
 
-             </div>
-         </div>
-    </div>
-    
-}
+                </div>
+                </div>
+                </div>
+
+            }
+
