@@ -74,6 +74,40 @@ namespace ePaperLive.Controllers
             return View(model);
         }
 
+        public ActionResult GetPackages() 
+        {
+            PrintSubRates model = GetRatesList();
+
+            return PartialView("_PackagesPartial", model);
+        }
+
+        public PrintSubRates GetRatesList()
+        {
+            PrintSubRates model = new PrintSubRates();
+         
+            try
+            {
+                UserLocation objLoc = GetSubscriberLocation();
+                var market = (objLoc.Country_Code == "JM") ? "Local" : "International";
+
+                ApplicationDbContext db = new ApplicationDbContext();
+                List<printandsubrate> ratesList = db.printandsubrates.AsNoTracking()
+                                    .Where(x => x.Market == market)
+                                    .Where(x => x.Active == true).ToList();
+
+                model.Rates = ratesList;
+
+                return model;
+            }
+            catch (Exception e)
+            {
+                //handle exception
+                Util.LogError(e);
+            }
+         
+
+            return model;
+        }
 
         public ActionResult About()
         {

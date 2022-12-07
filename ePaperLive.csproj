@@ -590,6 +590,7 @@
     <Content Include="Views\Home\ServiceLevelAgreement.cshtml" />
     <Content Include="Views\Home\TermsCondition.cshtml" />
     <Content Include="Views\Account\_DeliveryAddressModal.cshtml" />
+    <Content Include="Views\Home\_PackagesPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\roslyn\" />

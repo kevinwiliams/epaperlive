@@ -13,7 +13,6 @@ else
         var printWeeks = (plans.Type != "Epaper") ? "  [" + plans.PrintTerm + " " + plans.PrintTermUnit + "] " : "";
 
         var mainDesc = plans.RateDescr;
-        var closeDiv = true;
 
         if (currentDesc != mainDesc && currentDesc !="" && plans.Type == "Print")
         {
@@ -22,7 +21,6 @@ else
 
         if (mainDesc != currentDesc && plans.Type == "Print")
         {
-            closeDiv = false;
             <span class="pt-1 pb-1">
                 <strong>
                     <a href="#@mainDesc.Replace(" ","").Replace("&","")" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="@mainDesc.Replace(" ","").Replace("&","")">@mainDesc</a>
