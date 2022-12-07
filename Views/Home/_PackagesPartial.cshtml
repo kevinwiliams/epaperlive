@@ -6,6 +6,12 @@
 }
 else
 {
+    <style>
+        .accordion-button:not(.collapsed) {
+            color: red;
+            background-color:#cccccc5c;
+        }
+        </style>
     <div class="row">
         <div class="col-lg-4 mt-2 mb-tg-0 order-2 order-lg-1">
             <ul class="nav nav-tabs flex-column">
@@ -48,17 +54,81 @@ else
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane" id="tab-2">
-                    @foreach (var plans in Model.Rates.Where(x => x.Type == "Print"))
-                    {
-                        var printWeeks ="  [" + plans.PrintTerm + " " + plans.PrintTermUnit + "] ";
 
-                        <span class="value">@(" " + plans.RateDescr + printWeeks) <span style="margin-left: auto">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span></span><br />
+                <div class="tab-pane" id="tab-2">
+                    <div class="row">
+                        <div class=" col-7 float-left">
+
+                            <div class="accordion" id="printAccordion">
+                                <!-- start: accordion-->
+                                @{
+                                    var currentDesc = "";
+                                    var showTab = "show";
+                                    var printSubs = Model.Rates.Where(x => x.Type == "Print");
+                                }
+                                @foreach (var plans in printSubs)
+                                {
+                                    var printWeeks = "  [" + plans.PrintTerm + " " + plans.PrintTermUnit + "] ";
+
+                                    var mainDesc = plans.RateDescr;
+                                    if (mainDesc != currentDesc && currentDesc != "")
+                                    {
+                                        <!-- start:last tag -->
+                                            @:</div>
+                                        @:</div>
+                                            @:</div>
+                                    <!-- end:last tag -->
+                                    }
+                                if (mainDesc != currentDesc)
+                                {
+
+                                    <!-- start: top -->
+                                    @:<div class="accordion-item">
+                                        <h2 class="accordion-header" id="@(mainDesc.Replace(" ", "").Replace("&", "") + "Head")">
+                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#@mainDesc.Replace(" ", "").Replace("&", "")" aria-expanded="true" aria-controls="@mainDesc.Replace(" ", "").Replace("&", "")">
+                                                @mainDesc
+                                            </button>
+                                        </h2>
+
+                                        @:<div id="@mainDesc.Replace(" ", "").Replace("&", "")" class="accordion-collapse collapse @showTab" aria-labelledby="@(mainDesc.Replace(" ", "").Replace("&", "") + "Head")" data-bs-parent="#printAccordion">
+                                            @:<div class="accordion-body">
+                                        <!-- end: top-->
+                                }
+                                    <!-- start: rates-->
+                                    <div class="value p-2">
+                                        @(" " +  printWeeks)<br />
+                                                                             <span class="text-muted">@(" " + plans.PrintDayPattern)<br /></span>
+                                        <span class="m-auto fw-bold">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span>
+                                    </div>
+                                    <!-- end: rates-->
+                                   
+                                    currentDesc = mainDesc;
+                                    showTab = "";
+
+                                    if (plans == printSubs.Last())
+                                    {
+                                        <!-- start:last tag -->
+                                            @:</div>
+                                        @:</div>
+                                            @:</div>
+                                    <!-- end:last tag -->
+                                    }
+
+                                   
+
                     }
-                    <figure>
-                        <img src="assets/img/features-2.png" alt="" class="img-fluid">
-                    </figure>
+
+                                <!-- end: accordion-->
+                            </div>
+                        </div>
+                        <div class="col-5">
+                            <figure>
+                                <img src="assets/img/features-2.png" alt="" class="img-fluid">
+                            </figure>
+                        </div>
+                    </div>
                 </div>
+
                 <div class="tab-pane" id="tab-3">
                     <div class="row">
                         <div class=" col-7 float-left">
@@ -76,8 +146,8 @@ else
                     </div>
                 </div>
 
-            </div>
-        </div>
+             </div>
+         </div>
     </div>
-
+    
 }
