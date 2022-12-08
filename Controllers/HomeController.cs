@@ -84,7 +84,10 @@ namespace ePaperLive.Controllers
         public PrintSubRates GetRatesList()
         {
             PrintSubRates model = new PrintSubRates();
-         
+
+            Dictionary<string, int> preloadSub = GetPreloadSub();
+            preloadSub.Clear();
+
             try
             {
                 UserLocation objLoc = GetSubscriberLocation();
