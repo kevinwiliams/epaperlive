@@ -17,7 +17,7 @@ else
         }
     </style>
     <div class="row">
-        <div class="col-lg-4 mt-2 mb-tg-0 order-2 order-lg-1">
+        <div class="col-lg-4 mt-2 mb-tg-0 order-1 order-lg-1">
             <ul class="nav nav-tabs flex-column">
                 <li class="nav-item" data-aos="fade-up">
                     <a class="nav-link active show" data-bs-toggle="tab" href="#tab-1">
@@ -40,11 +40,11 @@ else
 
             </ul>
         </div>
-        <div class="col-lg-8 order-1 order-lg-2" data-aos="zoom-in">
+        <div class="col-lg-8 order-2 order-lg-2" data-aos="zoom-in">
             <div class="tab-content">
                 <div class="tab-pane active show" id="tab-1">
                     <div class="row">
-                        <div class=" col-7 float-left">
+                        <div class=" col-md-7 col-sm-12 float-left">
                             @foreach (var plans in Model.Rates.Where(x => x.Type == "Epaper"))
                             {
                                 <div class="value p-2">
@@ -63,9 +63,9 @@ else
                             }
 
                         </div>
-                        <div class="col-5">
+                        <div class="col-5  d-none d-md-block">
                             <figure>
-                                <img src="assets/img/features-1.png" alt="" class="img-fluid">
+                                <img src="../assets/img/features-1.png" alt="" class="img-fluid">
                             </figure>
                         </div>
                     </div>
@@ -73,7 +73,7 @@ else
 
                 <div class="tab-pane" id="tab-2">
                     <div class="row">
-                        <div class=" col-7 float-left">
+                        <div class="col-md-7 col-sm-12 float-left">
 
                             <div class="accordion" id="printAccordion">
                                 <!-- start: accordion-->
@@ -148,9 +148,9 @@ else
                                 <!-- end: accordion-->
                             </div>
                         </div>
-                        <div class="col-5">
+                        <div class="col-5  d-none d-md-block">
                             <figure>
-                                <img src="assets/img/features-2.png" alt="" class="img-fluid">
+                                <img src="../assets/img/features-2.png" alt="" class="img-fluid">
                             </figure>
                         </div>
                     </div>
@@ -158,7 +158,7 @@ else
 
                 <div class="tab-pane" id="tab-3">
                     <div class="row">
-                        <div class=" col-7 float-left">
+                        <div class=" col-md-7 col-sm-12 float-left">
                             @foreach (var plans in Model.Rates.Where(x => x.Type == "Bundle"))
                             {
                                 <div class="value p-2">
@@ -175,9 +175,9 @@ else
                             }
 
                         </div>
-                        <div class="col-5">
+                        <div class="col-5  d-none d-md-block">
                             <figure>
-                                <img src="assets/img/features-3.png" alt="" class="img-fluid">
+                                <img src="../assets/img/features-3.png" alt="" class="img-fluid">
                             </figure>
                         </div>
                     </div>

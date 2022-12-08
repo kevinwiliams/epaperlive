@@ -29,9 +29,14 @@
 
 </section>
 <!-- End Hero -->
-<div id="adspot" class="p-5 text-center">
+<!-- start: adspot -->
+<div id="adspot" class="p-5 text-center d-none d-md-block">
     <img src="https://via.placeholder.com/970x90.png">
 </div>
+<div id="adspot" class="p-3 text-center d-block d-sm-none">
+    <img src="https://via.placeholder.com/300x250.png">
+</div>
+<!-- end: adspot -->
 <!-- ======= Pricing Section ======= -->
 <section id="pricing" class="pricing section-bg">
     <div class="container">
@@ -116,8 +121,12 @@
 
     </div>
 
-    <div id="adspot" class="p-5 text-center">
+    <!-- start: adspot -->
+    <div id="adspot" class="p-5 text-center d-none d-md-block">
         <img src="https://via.placeholder.com/970x90.png">
+    </div>
+    <div id="adspot" class="p-3 text-center d-block d-sm-none">
+        <img src="https://via.placeholder.com/300x250.png">
     </div>
 </section>
 <!-- End Pricing Section -->
@@ -161,9 +170,12 @@
 
     </div>
 </section><!-- End Cta Section -->
-
-<div id="adspot" class="p-5 text-center">
+<!-- start: adspot -->
+<div id="adspot" class="p-5 text-center d-none d-md-block">
     <img src="https://via.placeholder.com/970x90.png">
+</div>
+<div id="adspot" class="p-3 text-center d-block d-sm-none">
+    <img src="https://via.placeholder.com/300x250.png">
 </div>
 <!-- ======= Features Section ======= -->
 <section id="features" class="services section-bg">
@@ -398,7 +410,7 @@
                 //console.log(rateType);
                 //console.log(rateId);
                 //console.log(e);
-                
+
                 $.ajax({
                     type: "POST",
                     url: '@Url.Action("PreloadSubscription","Home")',

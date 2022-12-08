@@ -500,7 +500,7 @@ h6 {
 --------------------------------------------------------------*/
 #hero {
   width: 100%;
-  background-image: url("/assets/img/hero-bg-devices.png?v=2");
+  background-image: url("../assets/img/hero-bg-devices.png?v=2");
   background-repeat: no-repeat;
   background-size: contain;
   background-position: right top;
