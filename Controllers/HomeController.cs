@@ -126,8 +126,11 @@ namespace ePaperLive.Controllers
 
                     newFrequency = newFrequency.TrimEnd(charsToTrim);
 
-                    if (newFrequency.Split(',').Count() < 2)
+                    if (newFrequency.Split(',').Count() <= 2) 
+                    { 
                         newFrequency += " ONLY";
+                        newFrequency = newFrequency.Replace(",", " &");
+                    }
 
                     item.PrintDayPattern = newFrequency;
                     newFrequency = "";
