@@ -97,7 +97,7 @@ namespace ePaperLive.Controllers
                 List<printandsubrate> ratesList = db.printandsubrates.AsNoTracking()
                                     .Where(x => x.Market == market)
                                     .Where(x => x.Active == true).ToList();
-                //ar pattrns = ratesList.Where(x => x.PrintDayPattern != "")
+                
                 var daysOfWeek = new Dictionary<string, string>()
                 {
                     ["SUN"] = "1",
@@ -108,23 +108,6 @@ namespace ePaperLive.Controllers
                     ["FRI"] = "1",
                     ["SAT"] = "1"
                 };
-                var daysOfWeek2 = new Dictionary<string, string>()
-                {
-                    { "SUN", "1" },
-                    { "MON", "1"},
-                    { "TUE", "1"},
-                    { "WED", "1"},
-                    { "THU", "1"},
-                    { "FRI", "1"},
-                    { "SAT", "1"}
-                };
-                //daysOfWeek.Add("SUN", "1");
-                //daysOfWeek.Add("MON", "1");
-                //daysOfWeek.Add("TUE", "1");
-                //daysOfWeek.Add("WED", "1");
-                //daysOfWeek.Add("THU", "1");
-                //daysOfWeek.Add("FRI", "1");
-                //daysOfWeek.Add("SAT", "1");
 
                 var newFrequency = "";
                 char[] charsToTrim = { ',', '.', ' ' };
@@ -138,9 +121,6 @@ namespace ePaperLive.Controllers
                         if (day == dayListItem) {
                             newFrequency += daysOfWeek.Keys.ElementAt(i) + ", ";
                         }
-
-
-                        Console.WriteLine(newFrequency);
                     }
                     item.PrintDayPattern = newFrequency.TrimEnd(charsToTrim);
                     newFrequency = "";
