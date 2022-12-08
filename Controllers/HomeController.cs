@@ -121,8 +121,15 @@ namespace ePaperLive.Controllers
                         if (day == dayListItem) {
                             newFrequency += daysOfWeek.Keys.ElementAt(i) + ", ";
                         }
+                        
                     }
-                    item.PrintDayPattern = newFrequency.TrimEnd(charsToTrim);
+
+                    newFrequency = newFrequency.TrimEnd(charsToTrim);
+
+                    if (newFrequency.Split(',').Count() < 2)
+                        newFrequency += " ONLY";
+
+                    item.PrintDayPattern = newFrequency;
                     newFrequency = "";
                 }
 
