@@ -391,20 +391,20 @@
             });
 
             $("[name=subscribeNow]").on("click", function (e) {
+                var freq = $(this).parent().children(".small").html();
                 let plan = e.target.dataset;
-                let rateType = plan.rateType + '|' + e.target.innerText + '|' + plan.rateDesc;
+                let rateType = plan.rateType + '|' + e.target.innerText + '|' + plan.rateDesc + '|' + plan.ratePrice + '|' + freq;
                 let rateId = plan.subId;
-                console.log(rateType);
                 //console.log(rateType);
                 //console.log(rateId);
-                console.log(e);
-
+                //console.log(e);
+                
                 $.ajax({
                     type: "POST",
                     url: '@Url.Action("PreloadSubscription","Home")',
                     data: { rateType: rateType, rateId: rateId },
                     success: function (result) {
-                        console.log(result['data']);
+                        //console.log(result['data']);
                         window.location.href = '@Url.Action("Subscribe", "Account")';
                     }
                 });

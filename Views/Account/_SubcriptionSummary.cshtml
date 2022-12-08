@@ -25,14 +25,19 @@
             <div class="text-center pb-4">
             @foreach (var plans in preloadSub)
             {
-                <strong>@plans.Key.Split('|')[0].ToUpper() SUBSCRIPTION</strong>
-                <br />
-                @plans.Key.Split('|')[1];
+                var freq = plans.Key.Split('|')[4];
+                freq = (freq != "undefined" && freq != null) ? freq.Split(':')[0] + "<br>" + freq.Split(':')[1] : String.Empty;
+               
+                <strong>@plans.Key.Split('|')[0].ToUpper() SUBSCRIPTION</strong><br />
+                @plans.Key.Split('|')[1];<br />
+                <small>@Html.Raw(freq)</small>
+                <p class="pt-1 text-success fw-semibold fs-3">@plans.Key.Split('|')[3]</p>
+
             }
             </div>
         }
         <p class="text-center"><strong>Your subscription start date</strong></p>
-        <small><p class="text-center">Your subscription starts today: @DateTime.Now.ToString("d/MM/yyyy")</p></small>
+        <p class="text-center fs-6">Your subscription starts today: @DateTime.Now.ToString("d/MM/yyyy")</p>
 
         
         <br />

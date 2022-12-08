@@ -48,7 +48,13 @@ else
                             @foreach (var plans in Model.Rates.Where(x => x.Type == "Epaper"))
                             {
                                 <div class="value p-2">
-                                    <button class="btn btn-link" name="subscribeNow" data-sub-id="@(plans.Rateid)" data-rate-type="@(plans.Type)" data-bs-toggle="tooltip" data-bs-placement="top" title="Subscribe now">
+                                    <button class="btn btn-link" name="subscribeNow" 
+                                            data-sub-id="@(plans.Rateid)" 
+                                            data-rate-type="@(plans.Type)" 
+                                            data-rate-price="@(plans.Curr + " " + String.Format("{0:C}", plans.Rate))" 
+                                            data-bs-toggle="tooltip" 
+                                            data-bs-placement="top" 
+                                            title="Subscribe now">
                                         @(" " + plans.RateDescr)
                                     </button>
                                     <br />
@@ -108,7 +114,12 @@ else
                                     <div class="value p-2">
                                         <span class="text-muted small">Delivery Frequency: @(" " + plans.PrintDayPattern)</span><br>
 
-                                        <button class="btn btn-link" name="subscribeNow" data-sub-id="@(plans.Rateid)" data-rate-type="@(plans.Type)" data-rate-desc="@mainDesc.Replace(" ", "").Replace("&", "")" data-bs-toggle="tooltip" data-bs-placement="top" title="Subscribe now">
+                                        <button class="btn btn-link" name="subscribeNow" 
+                                                data-sub-id="@(plans.Rateid)" 
+                                                data-rate-type="@(plans.Type)" 
+                                                data-rate-price="@(plans.Curr + " " + String.Format("{0:C}", plans.Rate))" 
+                                                data-rate-desc="@mainDesc.Replace(" ", "").Replace("&", "")" 
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Subscribe now">
                                             @(" " + printWeeks)<br />
                                         </button>
 
@@ -151,7 +162,11 @@ else
                             @foreach (var plans in Model.Rates.Where(x => x.Type == "Bundle"))
                             {
                                 <div class="value p-2">
-                                    <button class="btn btn-link" name="subscribeNow" data-sub-id="@(plans.Rateid)" data-rate-type="@(plans.Type)" data-bs-toggle="tooltip" data-bs-placement="top" title="Subscribe now">
+                                    <button class="btn btn-link" name="subscribeNow" 
+                                            data-sub-id="@(plans.Rateid)" 
+                                            data-rate-type="@(plans.Type)" 
+                                            data-rate-price="@(plans.Curr + " " + String.Format("{0:C}", plans.Rate))" 
+                                            data-bs-toggle="tooltip" data-bs-placement="top" title="Subscribe now">
                                         @(" " + plans.RateDescr)
                                     </button>
                                     <br />
