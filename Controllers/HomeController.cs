@@ -98,44 +98,11 @@ namespace ePaperLive.Controllers
                                     .Where(x => x.Market == market)
                                     .Where(x => x.Active == true).ToList();
                 
-                var daysOfWeek = new Dictionary<string, string>()
-                {
-                    ["SUN"] = "1",
-                    ["MON"] = "1",
-                    ["TUE"] = "1",
-                    ["WED"] = "1",
-                    ["THU"] = "1",
-                    ["FRI"] = "1",
-                    ["SAT"] = "1"
-                };
-
-                var newFrequency = "";
-                char[] charsToTrim = { ',', '.', ' ' };
+                //update frequency pattern to text
                 foreach (var item in ratesList.Where(x => x.PrintDayPattern != null))
                 {
-                    var pattern = item.PrintDayPattern;
-                    for (int i = 0; i < pattern.Length; i++)
-                    {
-                        var day = pattern[i].ToString();
-                        var dayListItem = daysOfWeek.Values.ElementAt(i);
-                        if (day == dayListItem) {
-                            newFrequency += daysOfWeek.Keys.ElementAt(i) + ", ";
-                        }
-                        
-                    }
-
-                    newFrequency = newFrequency.TrimEnd(charsToTrim);
-
-                    if (newFrequency.Split(',').Count() <= 2) 
-                    { 
-                        newFrequency += " ONLY";
-                        newFrequency = newFrequency.Replace(",", " &");
-                    }
-
-                    item.PrintDayPattern = newFrequency;
-                    newFrequency = "";
+                    item.PrintDayPattern = Util.DeliveryFreqToDate(item.PrintDayPattern);
                 }
-
 
                 model.Rates = ratesList;
 

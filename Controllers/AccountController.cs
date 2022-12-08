@@ -951,12 +951,12 @@ namespace ePaperLive.Controllers
 
 
                     var nratesList = (rateType != null) ? ratesList.Where(x => x.Type == rateType).ToList() : ratesList;
+     
+                    foreach (var item in nratesList.Where(x => x.PrintDayPattern != null))
+                    {
+                        item.PrintDayPattern = DeliveryFreqToDate(item.PrintDayPattern);
+                    }
 
-                    //PrintSubRates model = new PrintSubRates
-                    //    {
-                    //        Rates = nratesList,
-                    //        RateType = rateType
-                    //    };
                     model.Rates = nratesList;
                     model.RateType = rateType;
 

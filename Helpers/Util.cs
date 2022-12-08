@@ -172,6 +172,45 @@ namespace ePaperLive
             }
             return result;//string.Join("", content.Where(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c)));
         }
+
+        public static string DeliveryFreqToDate(string dayPattern)
+        {
+            var daysOfWeek = new Dictionary<string, string>()
+            {
+                ["SUN"] = "1",
+                ["MON"] = "1",
+                ["TUE"] = "1",
+                ["WED"] = "1",
+                ["THU"] = "1",
+                ["FRI"] = "1",
+                ["SAT"] = "1"
+            };
+            char[] charsToTrim = { ',', '.', ' ' };
+            var newFrequency = "";
+
+            var pattern = dayPattern;
+            for (int i = 0; i < pattern.Length; i++)
+            {
+                var day = pattern[i].ToString();
+                var dayListItem = daysOfWeek.Values.ElementAt(i);
+                if (day == dayListItem)
+                {
+                    newFrequency += daysOfWeek.Keys.ElementAt(i) + ", ";
+                }
+            }
+
+            newFrequency = newFrequency.TrimEnd(charsToTrim);
+
+            if (newFrequency.Split(',').Count() <= 2)
+            {
+                newFrequency += " ONLY";
+                newFrequency = newFrequency.Replace(",", " &");
+            }
+
+            dayPattern = newFrequency;
+            return dayPattern;
+        }
+
         public static bool IsCreditCardValid(string cardnumber)
         {
 
