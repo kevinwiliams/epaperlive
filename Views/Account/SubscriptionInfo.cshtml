@@ -246,7 +246,9 @@
 
         function selectRate() {
             if (preRateDesc) {
-                $('div[id=' + preRateDesc + ']').addClass('show');
+                if (prePlan == "Print") {
+                     $('div[id=' + preRateDesc + ']').addClass('show');
+                }
                 console.log(preRateDesc);
             }
 
