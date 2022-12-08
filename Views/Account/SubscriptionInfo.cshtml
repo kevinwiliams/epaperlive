@@ -345,7 +345,7 @@
                         success: function (result) {
                             sessionStorage.setItem("delAddress", JSON.stringify(result));
                             var addressLine2 = result.AddressLine2 ? `${result.AddressLine2}<br>` : '';
-                            var html = `<p>${result.AddressLine1}<br>
+                            var html = `<p class="p-3">${result.AddressLine1}<br>
                                             ${addressLine2}
                                             ${result.CityTown}<br>
                                             ${result.StateParish}<br>
@@ -359,6 +359,28 @@
                 }
 
             });
+
+           //TODO: Capture RateID click/change event
+            $("[name=RateID]").on("click", function (e) {
+                alert('click');
+                var freq = $(this).parent().children(".small").html();
+                let plan = e.target.dataset;
+                let rateType = plan.rateType + '|' + e.target.innerText + '|' + plan.rateDesc + '|' + plan.ratePrice + '|' + freq;
+                let rateId = plan.subId;
+                console.log(rateType);
+                console.log(rateId);
+                //console.log(e);
+                
+                $@*.ajax({
+                    type: "POST",
+                    url: '@Url.Action("PreloadSubscription","Home")',
+                    data: { rateType: rateType, rateId: rateId },
+                    success: function (result) {
+                        //console.log(result['data']);
+                    }
+                });*@
+            });
+
 
         });
 

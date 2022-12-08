@@ -30,8 +30,14 @@ else
 
         }
             <label id="rate">
-                @Html.RadioButton("RateID", plans.Rateid, htmlAttributes: new { @class = "" })
-                <span class="value">@(" " + plans.RateDescr + printWeeks) <span style="margin-left: auto">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span></span>
+                @Html.RadioButton("RateID", plans.Rateid, 
+                                    htmlAttributes: new { 
+                                        @class = "",  
+                                        @data_sub_id = plans.Rateid,  
+                                        @data_rate_type = plans.Rate, 
+                                        @data_rate_price = plans.Curr + " " + String.Format("{0:C}", plans.Rate), 
+                                        @data_rate_desc = mainDesc.Replace(" ", "").Replace("&", "")})
+                <span class="value" id="rateLine">@(" " + plans.RateDescr + printWeeks) <span style="margin-left: auto">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span></span>
             </label>
 
             currentDesc = mainDesc;
