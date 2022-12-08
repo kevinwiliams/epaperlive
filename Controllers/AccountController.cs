@@ -784,37 +784,16 @@ namespace ePaperLive.Controllers
                         user.Email = data.EmailAddress;
                         user.PasswordHash = data.Password;
 
-                        //Generate Country list
-                        List<SelectListItem> CountryList = new List<SelectListItem>();
-                        CultureInfo[] CInfoList = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
-                        foreach (CultureInfo CInfo in CInfoList)
-                        {
-                            RegionInfo R = new RegionInfo(CInfo.LCID);
-                            var country = new SelectListItem
-                            {
-                                Value = R.ThreeLetterISORegionName.ToString(),
-                                Text = R.EnglishName
-                            };
-
-                            if (!(CountryList.Select(i => i.Value).Contains(country.Value)) && Regex.IsMatch(country.Value, @"^[a-zA-Z]+$"))
-                            {
-                                CountryList.Add(country);
-                            }
-                        }
-
-                        CountryList = CountryList.OrderBy(x => x.Text).ToList();
-                        Session["CountryList"] = CountryList;
-
                         //Test Data
                         AddressDetails ad = new AddressDetails
                         {
-                            CountryList = CountryList,
                             AddressLine1 = "Lot 876 Scheme Steet",
                             CityTown = "Bay Town",
                             StateParish = "Portland",
                             CountryCode = "JAM",
                             ZipCode = "JAMWI",
                             Phone = "876-875-8651"
+                            CountryList = GetCountryList(),
                         };
 
                         return View("AddressDetails", ad);
@@ -895,7 +874,7 @@ namespace ePaperLive.Controllers
                         ApplicationDbContext db = new ApplicationDbContext();
                         DeliveryAddress delAddressDetails = new DeliveryAddress
                         { 
-                            CountryList = (List<SelectListItem>)Session["CountryList"]
+                            CountryList = GetCountryList()
                         };
 
                         SubscriptionDetails subscriptionDetails = new SubscriptionDetails
@@ -993,7 +972,7 @@ namespace ePaperLive.Controllers
                         StateParish = objAdd.StateParish,
                         ZipCode = objAdd.ZipCode,
                         CountryCode = objAdd.CountryCode,
-                        CountryList = (List<SelectListItem>)Session["CountryList"]
+                        CountryList = GetCountryList()
                     };
 
                     return View("AddressDetails", ad);
@@ -1125,7 +1104,7 @@ namespace ePaperLive.Controllers
                             CountryCode = "JAM",
                             ZipCode = "JAMWI",
                             //end 
-                            CountryList = (List<SelectListItem>)Session["CountryList"]
+                            CountryList = GetCountryList()
                         };
 
                         
@@ -1196,7 +1175,7 @@ namespace ePaperLive.Controllers
         {
             ViewData["preloadSub"] = GetPreloadSub();
 
-            data.BillingAddress.CountryList = (List<SelectListItem>)Session["CountryList"];
+            data.BillingAddress.CountryList = GetCountryList();
 
             var cardType = data.CardType;
 
@@ -2062,7 +2041,7 @@ namespace ePaperLive.Controllers
         {
             if (Session["subscriber_location"] == null)
             {
-                Session["subscriber_location"] = new UserLocation();
+                Session["subscriber_location"] = Util.GetUserLocation();
             }
             return (UserLocation)Session["subscriber_location"];
         }
@@ -2093,6 +2072,36 @@ namespace ePaperLive.Controllers
             return (Dictionary<string, int>)Session["preloadSub"];
         }
 
+        private List<SelectListItem> GetCountryList()
+        {
+       
+            if (Session["CountryList"] == null)
+            {
+                //Generate Country list
+                List<SelectListItem> CountryList = new List<SelectListItem>();
+                CultureInfo[] CInfoList = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
+                foreach (CultureInfo CInfo in CInfoList)
+                {
+                    RegionInfo R = new RegionInfo(CInfo.LCID);
+                    var country = new SelectListItem
+                    {
+                        Value = R.ThreeLetterISORegionName.ToString(),
+                        Text = R.EnglishName
+                    };
+
+                    if (!(CountryList.Select(i => i.Value).Contains(country.Value)) && Regex.IsMatch(country.Value, @"^[a-zA-Z]+$"))
+                    {
+                        CountryList.Add(country);
+                    }
+                }
+
+                CountryList = CountryList.OrderBy(x => x.Text).ToList();
+
+                Session["CountryList"] = CountryList;
+            }
+
+            return (List<SelectListItem>)Session["CountryList"];
+        }
         private void RemoveSubscriber()
         {
             Session.Remove("subscriber");

@@ -16,49 +16,13 @@ namespace ePaperLive.Controllers
     {
         public ActionResult Index()
         {
-            string ipAddress = Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
-
-            if (string.IsNullOrEmpty(ipAddress))
-            {
-                ipAddress = Request.ServerVariables["REMOTE_ADDR"];
-            }
-
-            if (string.IsNullOrEmpty(ipAddress.Split(':').FirstOrDefault()))
-            {
-                IPHostEntry Host = default;
-                string Hostname = null;
-                Hostname = System.Environment.MachineName;
-                Host = Dns.GetHostEntry(Hostname);
-                foreach (IPAddress IP in Host.AddressList)
-                {
-                    if (IP.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-                    {
-                        ipAddress = Convert.ToString(IP);
-                    }
-                }
-            }
-
-            UserLocation location = new UserLocation();
-            string url = string.Format("https://api.ip2location.io/?ip={0}&key={1}", ipAddress, "0d4f60641cd9b95ff5ac9b4d866a0655");
-            using (WebClient client = new WebClient())
-            {
-                string json = client.DownloadString(url);
-                location = new JavaScriptSerializer().Deserialize<UserLocation>(json);
-
-                if (Util.IsLocaIP(location.IP))
-                {
-                    location.Country_Code = "JM";
-                }
-            }
-
+           
             LoginDetails login = new LoginDetails
             {
-                location = location
+                location = GetSubscriberLocation()
             };
 
-            Session["subscriber_location"] = location;
-
-            if(Request.IsAuthenticated) {
+            if (Request.IsAuthenticated) {
                 return RedirectToAction("Dashboard", "Account");
             }
 
@@ -166,7 +130,7 @@ namespace ePaperLive.Controllers
         {
             if (Session["subscriber_location"] == null)
             {
-                Session["subscriber_location"] = new UserLocation();
+                Session["subscriber_location"] = Util.GetUserLocation();
             }
             return (UserLocation)Session["subscriber_location"];
         }

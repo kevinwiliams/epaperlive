@@ -17,6 +17,8 @@ using System.Security.Cryptography;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using DeviceDetectorNET;
+using ePaperLive.Models;
+using System.Web.Script.Serialization;
 
 namespace ePaperLive
 {
@@ -437,6 +439,52 @@ namespace ePaperLive
 
 
             return ipAddress;
+        }
+
+        public static UserLocation GetUserLocation()
+        {
+            var req = HttpContext.Current.Request;
+            string ipList = req.ServerVariables["HTTP_X_FORWARDED_FOR"];
+            string ipHeader = req.ServerVariables["REMOTE_ADDR"];
+
+            string ipAddress = req.ServerVariables["HTTP_X_FORWARDED_FOR"];
+
+            if (string.IsNullOrEmpty(ipAddress))
+            {
+                ipAddress = req.ServerVariables["REMOTE_ADDR"];
+            }
+
+            if (string.IsNullOrEmpty(ipAddress.Split(':').FirstOrDefault()))
+            {
+                IPHostEntry Host = default;
+                string Hostname = null;
+                Hostname = Environment.MachineName;
+                Host = Dns.GetHostEntry(Hostname);
+                foreach (IPAddress IP in Host.AddressList)
+                {
+                    if (IP.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                    {
+                        ipAddress = Convert.ToString(IP);
+                    }
+                }
+            }
+            UserLocation location = new UserLocation();
+
+            if (Util.IsLocaIP(ipAddress))
+            {
+                location.Country_Code = "JM";
+            }
+            else
+            {
+                string url = string.Format("https://api.ip2location.io/?ip={0}&key={1}", ipAddress, "0d4f60641cd9b95ff5ac9b4d866a0655");
+                using (WebClient client = new WebClient())
+                {
+                    string json = client.DownloadString(url);
+                    location = new JavaScriptSerializer().Deserialize<UserLocation>(json);
+                }
+            }
+
+            return location;
         }
         public static bool isLocal()
         {
