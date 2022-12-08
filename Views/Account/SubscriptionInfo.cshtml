@@ -84,7 +84,7 @@
                                 <p>Loading...</p>
 
                             </div>
-                            @Html.HiddenFor(m => m.RateID, new { @class=".do-not-ignore" })
+                            @Html.HiddenFor(m => m.RateID, new { @class = ".do-not-ignore" })
                             <!-- <input type="hidden" name="RateID" /> -->
 
                             <script>
@@ -175,15 +175,15 @@
 
                             </div>
                             <!--
-                            <div class="offset-md-1 form-group">
-                                <div class="col-md-10 p-3">
-                                    <div class="form-check">
-                                        @Html.EditorFor(model => model.TermsAndCon, new { htmlAttributes = new { @class = "form-check-input", @required = "required" } })
-                                        @Html.LabelFor(model => model.TermsAndCon, htmlAttributes: new { @class = "form-check-label" })<br />
-                                    </div>
-                                </div>
-                            </div>
-                            -->
+                <div class="offset-md-1 form-group">
+                    <div class="col-md-10 p-3">
+                        <div class="form-check">
+                            @Html.EditorFor(model => model.TermsAndCon, new { htmlAttributes = new { @class = "form-check-input", @required = "required" } })
+                            @Html.LabelFor(model => model.TermsAndCon, htmlAttributes: new { @class = "form-check-label" })<br />
+                        </div>
+                    </div>
+                </div>
+                -->
                             <div class="form-group">
                                 <div class="col-md-offset-2 col-md-12 pt-3">
                                     <div class="row">
@@ -205,8 +205,17 @@
                 </div>
 
 
-
-
+                @if ((Dictionary<string, int>)ViewData["preloadSub"] != null)
+                {
+                    var preloadSub = (Dictionary<string, int>)ViewData["preloadSub"];
+                    foreach (var plans in preloadSub)
+                    {
+                        @Html.Hidden("preloadPlan", plans.Key.Split('|')[0])
+                        @Html.Hidden("preloadRate", plans.Value)
+                        @Html.Hidden("preloadRateDesc", plans.Key.Split('|')[2])
+                     
+                    }
+                }
 
             </div>
 
@@ -231,7 +240,32 @@
         }
     </script>
     <script>
+        let prePlan = $("#preloadPlan").val();
+        let preRate = $("#preloadRate").val();
+        let preRateDesc = $("#preloadRateDesc").val();
+
+        function selectRate() {
+            if (preRateDesc) {
+                $('div[id=' + preRateDesc + ']').addClass('show');
+                console.log(preRateDesc);
+            }
+
+            $('[name=RateID][value=' + preRate + ']').click();
+        }
+
+        function selectPlan() {
+            $('[name=RateType][value=' + prePlan + ']').click();
+        }
+
         $(document).ready(function () {
+
+            if (prePlan) {
+                //select preloaded plan
+                setTimeout(
+                selectPlan
+                , 500);
+            }
+
             let rateType;
             $('[name=subdetails]').submit(function(event){
                 if(!$('[name=RateType]').is(':checked')) {
@@ -282,6 +316,12 @@
                     success: function (result) {
                         $("#rates-results").html(result);
                         $("input[name=RateType][value=" + rateType + "]").prop('checked', true);
+
+                        if (preRate) {
+                            setTimeout(
+                                selectRate
+                                , 500);
+                        }
                         //$('[name="radioSelectionName"]').removeAttr('checked');
                         //$('input[name=RateID]:first-child').attr('checked',true);
                     }
