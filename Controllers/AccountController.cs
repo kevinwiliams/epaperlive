@@ -792,7 +792,7 @@ namespace ePaperLive.Controllers
                             StateParish = "Portland",
                             CountryCode = "JAM",
                             ZipCode = "JAMWI",
-                            Phone = "876-875-8651"
+                            Phone = "876-875-8651",
                             CountryList = GetCountryList(),
                         };
 
