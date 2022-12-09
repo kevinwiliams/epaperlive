@@ -22,7 +22,7 @@
         @if ((Dictionary<string, int>)ViewData["preloadSub"] != null)
         {
             var preloadSub = (Dictionary<string, int>)ViewData["preloadSub"];
-            <div class="text-center pb-4">
+            <div id="subSummary" class="text-center pb-4">
             @foreach (var plans in preloadSub)
             {
                 var freq = plans.Key.Split('|')[4];

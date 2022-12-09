@@ -249,7 +249,7 @@
                 if (prePlan == "Print") {
                      $('div[id=' + preRateDesc + ']').addClass('show');
                 }
-                console.log(preRateDesc);
+                //console.log(preRateDesc);
             }
 
             $('[name=RateID][value=' + preRate + ']').click();
@@ -291,7 +291,7 @@
 
             $('[name=RateType]').on("click", function () {
                 rateType = $(this).val();
-                console.log($(this).val());
+                //console.log($(this).val());
                 if (rateType != "Epaper") {
                     $("#del-address").show();
                     $("#del-instructions").show();
@@ -313,10 +313,10 @@
                 e.preventDefault();
                 $.ajax({
                     type: "POST",
-                    url: '@Url.Action("GetRatesList","Account")',
+                    url: '@Url.Action("GetRatesList", "Account")',
                     data: { rateType: rateType },
                     success: function (result) {
-                        console.log(result);
+                        //console.log(result);
                         $("#rates-results").html(result);
                         $("input[name=RateType][value=" + rateType + "]").prop('checked', true);
 
@@ -332,7 +332,7 @@
             });
 
             $("[name=saveAddress]").click(function (e) {
-                console.log(e);
+                //console.log(e);
                 var formData = $("form #deliveryAddressForm").validate().valid();
                 if (formData) {
                     //Serialize the form datas.   
@@ -340,7 +340,7 @@
                     e.preventDefault();
                     $.ajax({
                         type: "POST",
-                        url: '@Url.Action("SaveDeliveryAddress","Account")',
+                        url: '@Url.Action("SaveDeliveryAddress", "Account")',
                         dataType: 'json',
                         data: addressData,
                         success: function (result) {
@@ -361,10 +361,9 @@
 
             });
 
-           //TODO: Capture RateID click/change event
             // Event delegation, waits until the elements are loaded on the page
             $("#rates-results").on("click", "[name=RateID]", function (e) {
-                alert('click');
+                //alert('click');
                 var freq = $(this).parent().children(".small").html();
                 let plan = e.target.dataset;
                 let rateType = plan.rateType + '|' + e.target.innerText + '|' + plan.rateDesc + '|' + plan.ratePrice + '|' + freq;
@@ -375,7 +374,7 @@
                 
                 $.ajax({
                     type: "POST",
-                    url: '@Url.Action("PreloadSubscription","Home")',
+                    url: '@Url.Action("PreloadSubscription", "Home")',
                     data: { rateType: rateType, rateId: rateId },
                     success: function (result) {
                         console.log(result['data']);

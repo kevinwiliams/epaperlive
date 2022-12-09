@@ -35,7 +35,7 @@ else
                                     htmlAttributes: new { 
                                         @class = "",  
                                         @data_sub_id = plans.Rateid,  
-                                        @data_rate_type = plans.Rate, 
+                                        @data_rate_type = plans.Type, 
                                         @data_rate_price = plans.Curr + " " + String.Format("{0:C}", plans.Rate), 
                                         @data_rate_desc = mainDesc.Replace(" ", "").Replace("&", ""),
                                         id = $"RateID{rates.IndexOf(plans)}"})
