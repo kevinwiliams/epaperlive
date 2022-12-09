@@ -133,7 +133,7 @@
             border-color: red;
         }
 
-        label#rate {
+        label.rate {
             display: flex;
             align-items: center;
             /*margin: 15px 20px;*/
@@ -141,11 +141,11 @@
             font-size: 15px;
         }
 
-        #rate input[type="radio"] {
+        .rate input[type="radio"] {
             opacity: 0;
         }
 
-        #rate .value {
+        .rate .value {
             position: relative;
             display: flex;
             align-items: center;
@@ -154,11 +154,11 @@
             width: 100%
         }
 
-        #rate .value:hover {
+        .rate .value:hover {
             background: rgba(20, 19, 20, 0.1);
         }
 
-        #rate .value::before {
+        .rate .value::before {
             content: "";
             position: absolute;
             left: 15px;
@@ -170,7 +170,7 @@
             transition: 0.4s;
         }
 
-        #rate input[type="radio"]:checked ~ .value {
+        .rate input[type="radio"]:checked ~ .value {
         /*color: #a90a9c;*/
         border-width: 5px;
         background: rgba(20, 19, 20, 0.2);
@@ -178,7 +178,7 @@
         font-weight: 700;
     }
 
-        #rate input[type="radio"]:checked ~ .value::before {
+        .rate input[type="radio"]:checked ~ .value::before {
             outline-width: 5px;
             background: #fff;
         }
