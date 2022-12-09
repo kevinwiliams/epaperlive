@@ -12,6 +12,7 @@ else
     foreach (var plans in rates)
     {
         var printWeeks = (plans.Type != "Epaper") ? "  [" + plans.PrintTerm + " " + plans.PrintTermUnit + "] " : "";
+        var frequency = "Delivery Freq.: " + plans.PrintDayPattern;
 
         var mainDesc = plans.RateDescr;
 
@@ -24,7 +25,10 @@ else
         {
             <span class="pt-1 pb-1">
                 <strong>
-                    <a href="#@mainDesc.Replace(" ","").Replace("&","")"  alt="@mainDesc.Replace(" ","").Replace("&","")" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="@mainDesc.Replace(" ","").Replace("&","")">@mainDesc</a>
+                    <a href="#@mainDesc.Replace(" ","").Replace("&","")" alt="@mainDesc.Replace(" ","").Replace("&","")" role="button" data-bs-toggle="collapse" aria-expanded="false"
+                       aria-controls="@mainDesc.Replace(" ","").Replace("&","")">
+                        @mainDesc
+                    </a>
                 </strong>
             </span>
             @:<div id="@mainDesc.Replace(" ","").Replace("&","")" class="collapse">
@@ -39,7 +43,20 @@ else
                                         @data_rate_price = plans.Curr + " " + String.Format("{0:C}", plans.Rate), 
                                         @data_rate_desc = mainDesc.Replace(" ", "").Replace("&", ""),
                                         id = $"RateID{rates.IndexOf(plans)}"})
-                <span class="value rateLine">@(" " + plans.RateDescr + printWeeks) <span style="margin-left: auto">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span></span>
+                <span class="value rateLine">
+                    <span id="rateDesc">
+                        @if (plans.Type != "Print")
+                        {
+                            @(" " + plans.RateDescr)
+                        }
+                        else 
+                        { 
+                        @(" " + printWeeks) <span> | </span><small> @(frequency)</small>
+                            
+                        }
+                    </span> 
+                    <span style="margin-left: auto">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span>
+                </span>
             </label>
 
             currentDesc = mainDesc;

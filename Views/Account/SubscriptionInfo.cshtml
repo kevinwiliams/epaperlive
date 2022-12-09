@@ -55,7 +55,6 @@
                             <hr />
                             @*@Html.Partial("_Rates", Model)*@
 
-                            @Html.ValidationSummary(false, "", new { @class = "text-danger" })
                             <br />
                             <div id="search-form">
                                 <div class="plans pb-3">
@@ -150,7 +149,7 @@
                             </div>
 
                             <div class="form-group p-2">
-                                @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label " })
+                                @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label fw-bold" })
                                 <div class="col-md-4">
                                     @Html.EditorFor(model => model.StartDate, "", new { htmlAttributes = new { @class = "form-control", maxlength = 10 } })
                                 </div>
@@ -184,6 +183,8 @@
                     </div>
                 </div>
                 -->
+                            @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
                             <div class="form-group">
                                 <div class="col-md-offset-2 col-md-12 pt-3">
                                     <div class="row">
@@ -350,7 +351,7 @@
                                             ${addressLine2}
                                             ${result.CityTown}<br>
                                             ${result.StateParish}<br>
-                                        </p>`
+                                        </p>`;
                             $("#delAddressDetails").html(html);
                             //$("input[name=RateType][value=" + rateType + "]").prop('checked', true);
                             //$('[name="radioSelectionName"]').removeAttr('checked');
@@ -368,8 +369,9 @@
                 let plan = e.target.dataset;
                 let rateType = plan.rateType + '|' + e.target.innerText + '|' + plan.rateDesc + '|' + plan.ratePrice + '|' + freq;
                 let rateId = plan.subId;
-                console.log(rateType);
-                console.log(rateId);
+                let rateDesc = $(this).parent().children().children().first().html();
+                //console.log(rateType);
+                //console.log(rateId);
                 //console.log(e);
                 
                 $.ajax({
@@ -377,7 +379,12 @@
                     url: '@Url.Action("PreloadSubscription", "Home")',
                     data: { rateType: rateType, rateId: rateId },
                     success: function (result) {
-                        console.log(result['data']);
+                        //var frequency = freq ? '<small>' + freq + '</small>' : '';
+                        var desc = rateDesc.split("|")[0];
+                        var frequency = rateDesc.split("|")[1] ? '<small>' + rateDesc.split("|")[1] + '</small>' : '';
+
+                        var html = '<strong>' + plan.rateType.toUpperCase() + ' SUBSCRIPTION</strong><br />' + desc + '<br />' + frequency + '<p class="pt-1 text-success fw-semibold fs-3">' + plan.ratePrice + '</p>';
+                        $("#subSummary").html(html);
                     }
                 });
             });
