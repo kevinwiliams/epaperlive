@@ -8,7 +8,8 @@ else
 {
 
     var currentDesc = "";
-    foreach (var plans in Model.Rates)
+    var rates = Model.Rates.ToList();
+    foreach (var plans in rates)
     {
         var printWeeks = (plans.Type != "Epaper") ? "  [" + plans.PrintTerm + " " + plans.PrintTermUnit + "] " : "";
 
@@ -29,15 +30,16 @@ else
             @:<div id="@mainDesc.Replace(" ","").Replace("&","")" class="collapse">
 
         }
-            <label id="rate">
+            <label class="rate">
                 @Html.RadioButton("RateID", plans.Rateid, 
                                     htmlAttributes: new { 
                                         @class = "",  
                                         @data_sub_id = plans.Rateid,  
                                         @data_rate_type = plans.Rate, 
                                         @data_rate_price = plans.Curr + " " + String.Format("{0:C}", plans.Rate), 
-                                        @data_rate_desc = mainDesc.Replace(" ", "").Replace("&", "")})
-                <span class="value" id="rateLine">@(" " + plans.RateDescr + printWeeks) <span style="margin-left: auto">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span></span>
+                                        @data_rate_desc = mainDesc.Replace(" ", "").Replace("&", ""),
+                                        id = $"RateID{rates.IndexOf(plans)}"})
+                <span class="value rateLine">@(" " + plans.RateDescr + printWeeks) <span style="margin-left: auto">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span></span>
             </label>
 
             currentDesc = mainDesc;
