@@ -316,6 +316,7 @@
                     url: '@Url.Action("GetRatesList","Account")',
                     data: { rateType: rateType },
                     success: function (result) {
+                        console.log(result);
                         $("#rates-results").html(result);
                         $("input[name=RateType][value=" + rateType + "]").prop('checked', true);
 
@@ -361,7 +362,8 @@
             });
 
            //TODO: Capture RateID click/change event
-            $("[name=RateID]").on("click", function (e) {
+            // Event delegation, waits until the elements are loaded on the page
+            $("#rates-results").on("click", "[name=RateID]", function (e) {
                 alert('click');
                 var freq = $(this).parent().children(".small").html();
                 let plan = e.target.dataset;
@@ -371,14 +373,14 @@
                 console.log(rateId);
                 //console.log(e);
                 
-                $@*.ajax({
+                $.ajax({
                     type: "POST",
                     url: '@Url.Action("PreloadSubscription","Home")',
                     data: { rateType: rateType, rateId: rateId },
                     success: function (result) {
-                        //console.log(result['data']);
+                        console.log(result['data']);
                     }
-                });*@
+                });
             });
 
 
