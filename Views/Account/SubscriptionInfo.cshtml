@@ -364,25 +364,21 @@
 
             // Event delegation, waits until the elements are loaded on the page
             $("#rates-results").on("click", "[name=RateID]", function (e) {
-                //alert('click');
-                var freq = $(this).parent().children(".small").html();
+                let rateDesc = $(this).parent().children().children().first().text();
                 let plan = e.target.dataset;
+                var desc = rateDesc.split("|")[0];
+                var freq = rateDesc.split("|")[1];
+
+                var frequency = rateDesc.split("|")[1] ? '<small>' + rateDesc.split("|")[1] + '</small>' : '';
                 let rateType = plan.rateType + '|' + e.target.innerText + '|' + plan.rateDesc + '|' + plan.ratePrice + '|' + freq;
                 let rateId = plan.subId;
-                let rateDesc = $(this).parent().children().children().first().html();
-                //console.log(rateType);
-                //console.log(rateId);
-                //console.log(e);
+
                 
                 $.ajax({
                     type: "POST",
                     url: '@Url.Action("PreloadSubscription", "Home")',
                     data: { rateType: rateType, rateId: rateId },
                     success: function (result) {
-                        //var frequency = freq ? '<small>' + freq + '</small>' : '';
-                        var desc = rateDesc.split("|")[0];
-                        var frequency = rateDesc.split("|")[1] ? '<small>' + rateDesc.split("|")[1] + '</small>' : '';
-
                         var html = '<strong>' + plan.rateType.toUpperCase() + ' SUBSCRIPTION</strong><br />' + desc + '<br />' + frequency + '<p class="pt-1 text-success fw-semibold fs-3">' + plan.ratePrice + '</p>';
                         $("#subSummary").html(html);
                     }
