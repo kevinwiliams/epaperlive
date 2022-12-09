@@ -6,18 +6,18 @@
 }
 else
 {
-
-    var currentDesc = "";
-    var rates = Model.Rates.ToList();
-    foreach (var plans in rates)
-    {
-        var printWeeks = (plans.Type != "Epaper") ? "  [" + plans.PrintTerm + " " + plans.PrintTermUnit + "] " : "";
-        var frequency = "Delivery Freq.: " + plans.PrintDayPattern;
-
-        var mainDesc = plans.RateDescr;
-
-        if (currentDesc != mainDesc && currentDesc !="" && plans.Type == "Print")
+    @:<div id="planSelection">
+        var currentDesc = "";
+        var rates = Model.Rates.ToList();
+        foreach (var plans in rates)
         {
+            var printWeeks = (plans.Type != "Epaper") ? "  [" + plans.PrintTerm + " " + plans.PrintTermUnit + "] " : "";
+            var frequency = "Delivery Freq.: " + plans.PrintDayPattern;
+
+            var mainDesc = plans.RateDescr;
+
+            if (currentDesc != mainDesc && currentDesc != "" && plans.Type == "Print")
+            {
             @:</div> <br /><br />
         }
 
@@ -25,41 +25,43 @@ else
         {
             <span class="pt-1 pb-1">
                 <strong>
-                    <a href="#@mainDesc.Replace(" ","").Replace("&","")" alt="@mainDesc.Replace(" ","").Replace("&","")" role="button" data-bs-toggle="collapse" aria-expanded="false"
-                       aria-controls="@mainDesc.Replace(" ","").Replace("&","")">
+                    <a href="#@mainDesc.Replace(" ","").Replace("&","")" alt="@mainDesc.Replace(" ","").Replace("&","")" data-bs-toggle="collapse" role="tabpanel" aria-expanded="false" >
                         @mainDesc
                     </a>
                 </strong>
             </span>
-            @:<div id="@mainDesc.Replace(" ","").Replace("&","")" class="collapse">
+            @:<div class="collapse" id="@mainDesc.Replace(" ","").Replace("&","")"  data-bs-parent="#planSelection">
 
-        }
+            }
             <label class="rate">
-                @Html.RadioButton("RateID", plans.Rateid, 
-                                    htmlAttributes: new { 
-                                        @class = "",  
-                                        @data_sub_id = plans.Rateid,  
-                                        @data_rate_type = plans.Type, 
-                                        @data_rate_price = plans.Curr + " " + String.Format("{0:C}", plans.Rate), 
+                @Html.RadioButton("RateID", plans.Rateid,
+                                    htmlAttributes: new
+                                         {
+                                        @class = "",
+                                        @data_sub_id = plans.Rateid,
+                                        @data_rate_type = plans.Type,
+                                        @data_rate_price = plans.Curr + " " + String.Format("{0:C}", plans.Rate),
                                         @data_rate_desc = mainDesc.Replace(" ", "").Replace("&", ""),
-                                        id = $"RateID{rates.IndexOf(plans)}"})
+                                        id = $"RateID{rates.IndexOf(plans)}"
+                                         })
                 <span class="value rateLine">
                     <span id="rateDesc">
                         @if (plans.Type != "Print")
                         {
                             @(" " + plans.RateDescr)
                         }
-                        else 
-                        { 
-                        @(" " + printWeeks) <span> | </span><small> @(frequency)</small>
-                            
+                        else
+                        {
+                            @(" " + printWeeks) <span> | </span><small> @(frequency)</small>
+
                         }
-                    </span> 
+                    </span>
                     <span style="margin-left: auto">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span>
                 </span>
             </label>
 
             currentDesc = mainDesc;
-
         }
-    }
+
+    @:</div>
+}
