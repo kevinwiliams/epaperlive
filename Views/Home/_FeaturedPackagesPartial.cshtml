@@ -1,16 +1,18 @@
 ﻿@model ePaperLive.Models.PrintSubRates
 
 @{
-        var tabClass = "";
-        int delay = 0;
-        foreach (var plans in Model.Rates.Where(x => x.IsFeatured == true))
-        {
+    var tabClass = "";
+    int delay = 0;
+    foreach (var plans in Model.Rates.Where(x => x.IsFeatured == true))
+    {
         var isCTA = (plans.IsCTA == true) ? "featured" : "";
         var featureList = plans.FeatureList.Split(',');
         // var printDuration = plans.
-         var printWeeks = (plans.Type != "Epaper") ? "  " + plans.PrintTerm + " " + plans.PrintTermUnit + " " : "";
-         var epaperWeeks = (plans.Type == "Epaper") ? "  " + plans.ETerm + " " + plans.ETermUnit + " " : "";
+        var printWeeks = (plans.Type != "Epaper") ? "  " + plans.PrintTerm + " " + plans.PrintTermUnit + " " : "";
+        var epaperWeeks = (plans.Type == "Epaper") ? "  " + plans.ETerm + " " + plans.ETermUnit + " " : "";
         var duration = (plans.Type != "Epaper") ? printWeeks : epaperWeeks;
+        string featureText = "";
+        string rateFreq = "";
 
         <div class="col-lg-3 col-md-6 @tabClass">
             <div class="box @isCTA" data-aos="zoom-in" data-aos-delay="@delay">
@@ -19,37 +21,46 @@
                     <span class="advanced">Best Deal</span>
                 }
                 <h3>@plans.Type</h3>
-                <h4><sup>$</sup>@String.Format("{0:n}", plans.Rate)
-                <!--    <span> / month</span> -->
+                <h4>
+                    <sup>$</sup>@String.Format("{0:n}", plans.Rate)
+                    <!--    <span> / month</span> -->
                 </h4>
                 <ul>
                     <p>Duration: @duration</p>
                     @foreach (var item in featureList)
                     {
                         var fieldValue = item.Split('[', ']');
-                        string featureText = fieldValue[0];
-                        featureText = (System.Text.RegularExpressions.Regex.IsMatch(featureText, @"[0-9]+$")) ? ePaperLive.Util.DeliveryFreqToDate(featureText.Trim()) : featureText;
+                        featureText = fieldValue[0];
+
+                        if (System.Text.RegularExpressions.Regex.IsMatch(featureText, @"[0-9]+$"))
+                        {
+                            featureText = ePaperLive.Util.DeliveryFreqToDate(featureText.Trim());
+                            rateFreq = featureText;
+                        }
                         var cssClass = (item.EndsWith("]")) ? fieldValue[1] : "";
 
                         <li><span class="@cssClass">@featureText</span></li>
                     }
                 </ul>
                 <div class="btn-wrap">
-                    <a href="" class="btn-buy" 
-                       name="subscribeNow" 
-                        data-sub-id="@(plans.Rateid)" 
-                        data-rate-type="@(plans.Type)" 
-                        data-rate-price="@(plans.Curr + " " + String.Format("{0:C}", plans.Rate))" 
-                        data-bs-toggle="tooltip" 
-                        data-bs-placement="top" 
-                        title="Subscribe now"
-                       
-                       >Subscribe</a>
+                    <a href="" class="btn-buy"
+                       name="subscribeNow"
+                       data-del-freq="@("Delivery Frequency: " + rateFreq)"
+                       data-is-feature="true"
+                       data-sub-id="@(plans.Rateid)"
+                       data-rate-desc="@plans.RateDescr.Replace(" ", "").Replace("&", "")"
+                       data-rate-type="@(plans.Type)"
+                       data-rate-price="@(plans.Curr + " " + String.Format("{0:C}", plans.Rate))"
+                       data-bs-toggle="tooltip"
+                       data-bs-placement="top"
+                       title="Subscribe now">Subscribe</a>
                 </div>
+                <input type="hidden" name="rateText" value="@plans.RateDescr" />
             </div>
         </div>
         tabClass = "mt-4 mt-md-0";
         delay += 100;
+        rateFreq = "";
     }
 
 
