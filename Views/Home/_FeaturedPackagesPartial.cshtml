@@ -35,7 +35,16 @@
                     }
                 </ul>
                 <div class="btn-wrap">
-                    <a href="@Url.Action("Subscribe", "Account", new { pkgType = "EPaper", price = 15, term = "month"})" class="btn-buy">Subscribe</a>
+                    <a href="" class="btn-buy" 
+                       name="subscribeNow" 
+                        data-sub-id="@(plans.Rateid)" 
+                        data-rate-type="@(plans.Type)" 
+                        data-rate-price="@(plans.Curr + " " + String.Format("{0:C}", plans.Rate))" 
+                        data-bs-toggle="tooltip" 
+                        data-bs-placement="top" 
+                        title="Subscribe now"
+                       
+                       >Subscribe</a>
                 </div>
             </div>
         </div>

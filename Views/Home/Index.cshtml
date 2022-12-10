@@ -407,6 +407,7 @@
             });
 
             $("[name=subscribeNow]").on("click", function (e) {
+                e.preventDefault();
                 var freq = $(this).parent().children(".small").html();
                 let plan = e.target.dataset;
                 let rateType = plan.rateType + '|' + e.target.innerText + '|' + plan.rateDesc + '|' + plan.ratePrice + '|' + freq;
