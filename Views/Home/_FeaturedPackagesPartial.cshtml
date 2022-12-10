@@ -7,6 +7,10 @@
         {
         var isCTA = (plans.IsCTA == true) ? "featured" : "";
         var featureList = plans.FeatureList.Split(',');
+        // var printDuration = plans.
+         var printWeeks = (plans.Type != "Epaper") ? "  " + plans.PrintTerm + " " + plans.PrintTermUnit + " " : "";
+         var epaperWeeks = (plans.Type == "Epaper") ? "  " + plans.ETerm + " " + plans.ETermUnit + " " : "";
+        var duration = (plans.Type != "Epaper") ? printWeeks : epaperWeeks;
 
         <div class="col-lg-3 col-md-6 @tabClass">
             <div class="box @isCTA" data-aos="zoom-in" data-aos-delay="@delay">
@@ -15,14 +19,16 @@
                     <span class="advanced">Best Deal</span>
                 }
                 <h3>@plans.Type</h3>
-                <h4><sup>$</sup>@String.Format("{0:n}", plans.Rate)<span> / month</span></h4>
-
+                <h4><sup>$</sup>@String.Format("{0:n}", plans.Rate)
+                <!--    <span> / month</span> -->
+                </h4>
                 <ul>
+                    <p>Duration: @duration</p>
                     @foreach (var item in featureList)
                     {
                         var fieldValue = item.Split('[', ']');
                         string featureText = fieldValue[0];
-
+                        featureText = (System.Text.RegularExpressions.Regex.IsMatch(featureText, @"[0-9]+$")) ? ePaperLive.Util.DeliveryFreqToDate(featureText.Trim()) : featureText;
                         var cssClass = (item.EndsWith("]")) ? fieldValue[1] : "";
 
                         <li><span class="@cssClass">@featureText</span></li>
