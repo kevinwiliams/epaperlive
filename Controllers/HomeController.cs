@@ -45,6 +45,13 @@ namespace ePaperLive.Controllers
             return PartialView("_PackagesPartial", model);
         }
 
+        public ActionResult GetFeaturedPackages()
+        {
+            PrintSubRates model = GetRatesList();
+
+            return PartialView("_FeaturedPackagesPartial", model);
+        }
+
         public PrintSubRates GetRatesList()
         {
             PrintSubRates model = new PrintSubRates();

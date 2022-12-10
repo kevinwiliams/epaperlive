@@ -29,5 +29,13 @@ namespace ePaperLive.DBModel
         public Nullable<double> Rate { get; set; }
         public Nullable<int> SortOrder { get; set; }
         public Nullable<bool> Active { get; set; }
+        public double IntroRate { get; set; } = 0;
+        public bool OfferIntroRate { get; set; } = false;
+        public bool IsFeatured { get; set; } = false;
+        public bool IsCTA { get; set; } = false;
+        public string FeatureList { get; set; }
+        public bool BestDealFlag { get; set; } = false;
+
+
     }
 }

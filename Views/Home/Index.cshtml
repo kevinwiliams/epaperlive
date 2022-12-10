@@ -45,9 +45,14 @@
             <p>Subscribe to trusted, insightful journalism and enjoy unlimited access online or offline</p>
         </div>
 
-        <div class="row">
+        <div class="row justify-content-md-center">
 
-            <div class="col-lg-3 col-md-6">
+            <!-- featured packages-->
+            @Html.Action("GetFeaturedPackages", "Home")
+
+            <!-- end featured packages-->
+
+            @*<div class="col-lg-3 col-md-6">
                 <div class="box" data-aos="zoom-in">
                     <h3>ePaper</h3>
                     <h4><sup>$</sup>15<span> / month</span></h4>
@@ -114,7 +119,7 @@
                         <a href="@Url.Action("Subscribe", "Account", new { pkgType = "Print/EPaper", price = 180, term = "year"})" class="btn-buy">Subscribe</a>
                     </div>
                 </div>
-            </div>
+            </div>*@
 
         </div>
 

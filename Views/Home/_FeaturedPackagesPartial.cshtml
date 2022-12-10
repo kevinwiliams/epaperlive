@@ -1,0 +1,42 @@
+﻿@model ePaperLive.Models.PrintSubRates
+
+@{
+        var tabClass = "";
+        int delay = 0;
+        foreach (var plans in Model.Rates.Where(x => x.IsFeatured == true))
+        {
+        var isCTA = (plans.IsCTA == true) ? "featured" : "";
+        var featureList = plans.FeatureList.Split(',');
+
+        <div class="col-lg-3 col-md-6 @tabClass">
+            <div class="box @isCTA" data-aos="zoom-in" data-aos-delay="@delay">
+                @if (plans.BestDealFlag == true)
+                {
+                    <span class="advanced">Best Deal</span>
+                }
+                <h3>@plans.Type</h3>
+                <h4><sup>$</sup>@String.Format("{0:n}", plans.Rate)<span> / month</span></h4>
+
+                <ul>
+                    @foreach (var item in featureList)
+                    {
+                        var fieldValue = item.Split('[', ']');
+                        string featureText = fieldValue[0];
+
+                        var cssClass = (item.EndsWith("]")) ? fieldValue[1] : "";
+
+                        <li><span class="@cssClass">@featureText</span></li>
+                    }
+                </ul>
+                <div class="btn-wrap">
+                    <a href="@Url.Action("Subscribe", "Account", new { pkgType = "EPaper", price = 15, term = "month"})" class="btn-buy">Subscribe</a>
+                </div>
+            </div>
+        </div>
+        tabClass = "mt-4 mt-md-0";
+        delay += 100;
+    }
+
+
+}
+
