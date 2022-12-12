@@ -249,6 +249,24 @@
                    submitForm, 100
                 );
             }
+
+
+            $(".btn-promo-code").on('click', function (e) {
+                e.preventDefault();
+                var promoCode = $("[name=PromoCode]").val();
+                if (promoCode != "") {
+                     $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("CheckPromoCode", "Account")',
+                    data: { promoCode: promoCode},
+                    success: function (result) {
+                        console.log(result['CardAmount']);
+                    }
+                });
+                }
+
+
+            });
         });
 
         function submitForm() {

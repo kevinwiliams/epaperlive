@@ -367,6 +367,8 @@
     <Content Include="assets\img\apple-touch-icon.png" />
     <Content Include="assets\img\appstore-apple.png" />
     <Content Include="assets\img\appstore-google.png" />
+    <Content Include="assets\img\bundle.jpg" />
+    <Content Include="assets\img\bundle.png" />
     <Content Include="assets\img\clients\client-1.png" />
     <Content Include="assets\img\clients\client-2.png" />
     <Content Include="assets\img\clients\client-3.png" />
@@ -406,6 +408,7 @@
     <Content Include="assets\img\portfolio\portfolio-7.jpg" />
     <Content Include="assets\img\portfolio\portfolio-8.jpg" />
     <Content Include="assets\img\portfolio\portfolio-9.jpg" />
+    <Content Include="assets\img\print.png" />
     <Content Include="assets\img\team-bg.jpg" />
     <Content Include="assets\img\team\team-1.jpg" />
     <Content Include="assets\img\team\team-2.jpg" />

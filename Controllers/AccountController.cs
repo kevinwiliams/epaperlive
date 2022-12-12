@@ -1000,6 +1000,7 @@ namespace ePaperLive.Controllers
                         Subscriber_Tranx objTran = GetTransaction();
                         AuthSubcriber authUser = GetAuthSubscriber();
                         List<SubscriptionDetails> subscriptionDetails = new List<SubscriptionDetails>();
+                        List<PaymentDetails> paymentDetailsList = new List<PaymentDetails>();
                         //List<AddressDetails> addressDetails = new List<AddressDetails>();
 
                         objSub.Newsletter = data.NewsletterSignUp;
@@ -1119,6 +1120,9 @@ namespace ePaperLive.Controllers
                             //test data
                             CardOwner = "Dwayne Mendez",
                         };
+
+                        paymentDetailsList.Add(pd);
+                        authUser.PaymentDetails = paymentDetailsList;
 
                         return View("PaymentDetails", pd);
                     }
@@ -1761,88 +1765,6 @@ namespace ePaperLive.Controllers
             // return Ok();
         }
 
-        [HttpGet]
-        [AllowAnonymous]
-        public async Task<ActionResult> CompleteTransactionProcess(int rateID, string orderNumber, string emailAddress)
-        {
-            var appDbOther = new ApplicationDbContext();
-            var cardProcessor = new CardProcessor();
-
-            try
-            {
-                var savedTransaction = await appDbOther.subscriber_tranx.FirstOrDefaultAsync(t => t.OrderID == orderNumber);
-
-                if (savedTransaction != null)
-                {
-                    if (!savedTransaction.IsMadeLiveSuccessful)
-                    {
-                        string email = emailAddress;
-                        var processedClientData = new AuthSubcriber();
-
-                        // Retrieve data that was saved before 3DS processing.
-                        var sessionRepository = new SessionRepository();
-                        var existing = await sessionRepository.Get(email);
-                        var customerData = JsonConvert.DeserializeObject<AuthSubcriber>(existing.RootObject);
-                        var currentPolicy = customerData.SubscriptionDetails.FirstOrDefault(p => p.RateID == rateID);
-
-                        PaymentDetails currentTransaction = null;
-                        var previousTransactions = customerData.PaymentDetails.Where(p => p.RateID == rateID && p.OrderNumber == orderNumber);
-                        if (previousTransactions.Any())
-                        {
-                            var mostRecent = previousTransactions.Max(tr => tr.TranxDate);
-                            currentTransaction = previousTransactions.FirstOrDefault(t => t.TranxDate == mostRecent);
-                        }
-                        else
-                        {
-                            currentTransaction = new PaymentDetails();
-                        }
-
-                        var transactionResponse = await cardProcessor.GetGatewayTransactionStatus(orderNumber);
-                        var transSummary = cardProcessor.GetTransactionSummary(transactionResponse);
-
-                        currentTransaction.ConfirmationNumber = savedTransaction.ConfirmationNo;
-                        //currentTransaction.OrderID = orderID;
-                        currentTransaction.AuthorizationCode = savedTransaction.AuthCode;
-                        using (var context = new ApplicationDbContext())
-                        {
-                            //load data and join via foriegn keys
-                            var clientData = context.subscribers
-                                .Include(x => x.Subscriber_Epaper)
-                                .Include(x => x.Subscriber_Print)
-                                .Include(x => x.Subscriber_Tranx)
-                                .FirstOrDefault(u => u.EmailAddress == emailAddress);
-
-                            if (clientData != null)
-                            {
-                                //update transaction table with authcode and confirmation no.
-                                clientData.Subscriber_Tranx.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID).AuthCode = transSummary.AuthCode;
-                                clientData.Subscriber_Tranx.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID).ConfirmationNo = transSummary.ReferenceNo;
-                                clientData.Subscriber_Tranx.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID).IsMadeLiveSuccessful = true;
-
-                                //make subscription active
-                                if (currentTransaction.SubType == "Epaper" || currentTransaction.SubType == "Bundle")
-                                    clientData.Subscriber_Epaper.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID).IsActive = true;
-
-                                if (currentTransaction.SubType == "Print" || currentTransaction.SubType == "Bundle")
-                                    clientData.Subscriber_Print.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID).IsActive = true;
-                            }
-
-                            await context.SaveChangesAsync();
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-
-                LogError(ex);
-            }
-
-
-            RemoveSubscriber();
-            return View("PaymentSuccess");
-        }
-
         [HttpPost]
         [AllowAnonymous]
         public async Task<ActionResult> CompleteTransaction(FormCollection form)
@@ -1931,7 +1853,7 @@ namespace ePaperLive.Controllers
                         tempData.Cache.Add(summary.OrderId, $"{email}|{rateID}", new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheExpiryDuration) });
 
                         //await CompleteTransactionProcess(int.Parse(rateID), threedsparams.OrderID, email);
-                        
+
                         RemoveSubscriber();
 
                         return View("PaymentSuccess");
@@ -1957,9 +1879,121 @@ namespace ePaperLive.Controllers
                 //return InternalServerError(ex);
             }
 
-           // return new RedirectResult("/Account/PaymentDetails", true);
+            // return new RedirectResult("/Account/PaymentDetails", true);
             return View("PaymentDetails");
 
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<ActionResult> CompleteTransactionProcess(int rateID, string orderNumber, string emailAddress)
+        {
+            var appDbOther = new ApplicationDbContext();
+            var cardProcessor = new CardProcessor();
+
+            try
+            {
+                var savedTransaction = await appDbOther.subscriber_tranx.FirstOrDefaultAsync(t => t.OrderID == orderNumber);
+
+                if (savedTransaction != null)
+                {
+                    if (!savedTransaction.IsMadeLiveSuccessful)
+                    {
+                        string email = emailAddress;
+                        var processedClientData = new AuthSubcriber();
+
+                        // Retrieve data that was saved before 3DS processing.
+                        var sessionRepository = new SessionRepository();
+                        var existing = await sessionRepository.Get(email);
+                        var customerData = JsonConvert.DeserializeObject<AuthSubcriber>(existing.RootObject);
+                        var currentPolicy = customerData.SubscriptionDetails.FirstOrDefault(p => p.RateID == rateID);
+
+                        PaymentDetails currentTransaction = null;
+                        var previousTransactions = customerData.PaymentDetails.Where(p => p.RateID == rateID && p.OrderNumber == orderNumber);
+                        if (previousTransactions.Any())
+                        {
+                            var mostRecent = previousTransactions.Max(tr => tr.TranxDate);
+                            currentTransaction = previousTransactions.FirstOrDefault(t => t.TranxDate == mostRecent);
+                        }
+                        else
+                        {
+                            currentTransaction = new PaymentDetails();
+                        }
+
+                        var transactionResponse = await cardProcessor.GetGatewayTransactionStatus(orderNumber);
+                        var transSummary = cardProcessor.GetTransactionSummary(transactionResponse);
+
+                        currentTransaction.ConfirmationNumber = savedTransaction.ConfirmationNo;
+                        //currentTransaction.OrderID = orderID;
+                        currentTransaction.AuthorizationCode = savedTransaction.AuthCode;
+                        using (var context = new ApplicationDbContext())
+                        {
+                            //load data and join via foriegn keys
+                            var clientData = context.subscribers
+                                .Include(x => x.Subscriber_Epaper)
+                                .Include(x => x.Subscriber_Print)
+                                .Include(x => x.Subscriber_Tranx)
+                                .FirstOrDefault(u => u.EmailAddress == emailAddress);
+
+                            if (clientData != null)
+                            {
+                                //update transaction table with authcode and confirmation no.
+                                clientData.Subscriber_Tranx.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID).AuthCode = transSummary.AuthCode;
+                                clientData.Subscriber_Tranx.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID).ConfirmationNo = transSummary.ReferenceNo;
+                                clientData.Subscriber_Tranx.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID).IsMadeLiveSuccessful = true;
+
+                                //make subscription active
+                                if (currentTransaction.SubType == "Epaper" || currentTransaction.SubType == "Bundle")
+                                    clientData.Subscriber_Epaper.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID).IsActive = true;
+
+                                if (currentTransaction.SubType == "Print" || currentTransaction.SubType == "Bundle")
+                                    clientData.Subscriber_Print.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID).IsActive = true;
+                            }
+
+                            await context.SaveChangesAsync();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+                LogError(ex);
+            }
+
+
+            RemoveSubscriber();
+            return View("PaymentSuccess");
+        }
+        [HttpPost]
+        [AllowAnonymous]
+        public ActionResult CheckPromoCode(string promoCode)
+        {
+            var code = promoCode.ToUpper();
+
+            AuthSubcriber authUser = GetAuthSubscriber();
+            PaymentDetails paymentDetails = authUser.PaymentDetails.FirstOrDefault();
+            decimal originalAmount = paymentDetails.CardAmount;
+
+            if (code != paymentDetails.PromoCode) 
+            {
+                using (var context = new ApplicationDbContext())
+                {
+                    var discount = context.promocodes.FirstOrDefault(q => q.PromoCode == promoCode.ToUpper());
+
+                    if (discount != null)
+                    {
+                        originalAmount *= (1 * (decimal)discount.Discount);
+                        paymentDetails.PromoCode = discount.PromoCode;
+                    }
+                    paymentDetails.CardAmount = originalAmount;
+                }
+            }
+
+            var result = new JsonResult();
+            result.Data = paymentDetails;
+            return result;
+            //return RedirectToAction("PaymentDetails", paymentDetails);
         }
 
 
