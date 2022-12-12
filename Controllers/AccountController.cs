@@ -1983,7 +1983,7 @@ namespace ePaperLive.Controllers
 
                     if (discount != null)
                     {
-                        originalAmount *= (1 * (decimal)discount.Discount);
+                        originalAmount -= (originalAmount * (decimal)discount.Discount);
                         paymentDetails.PromoCode = discount.PromoCode;
                     }
                     paymentDetails.CardAmount = originalAmount;
