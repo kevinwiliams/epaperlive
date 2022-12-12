@@ -15,6 +15,13 @@ else
         .accordion-button:focus {
             box-shadow: none;
         }
+        .btn-link {
+            text-decoration: none;
+            color: #E62B34;
+        }
+        .btn-link:hover{
+            color: #1eb4ff;
+        }
     </style>
     <div class="row">
         <div class="col-lg-4 mt-2 mb-tg-0 order-1 order-lg-1">
@@ -114,17 +121,19 @@ else
                                     <!-- start: rates-->
                                     <div class="value p-2">
                                         <span class="text-muted small">Delivery Frequency: @(" " + plans.PrintDayPattern)</span><br>
-                                        <button class="btn btn-link" name="subscribeNow" 
-                                                data-sub-id="@(plans.Rateid)" 
-                                                data-rate-type="@(plans.Type)" 
-                                                data-rate-price="@(plans.Curr + " " + String.Format("{0:C}", plans.Rate))" 
-                                                data-rate-desc="@mainDesc.Replace(" ", "").Replace("&", "")" 
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Subscribe now">
-                                            @(" " + printWeeks)<br />
-                                        </button>
-                                    <br />
-                                    <span class="m-auto fw-bold">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span>
-                                </div>	
+                                        <div class="d-flex flex-row justify-content-end">
+                                            <button class="btn btn-link" name="subscribeNow" 
+                                                    data-sub-id="@(plans.Rateid)" 
+                                                    data-rate-type="@(plans.Type)" 
+                                                    data-rate-price="@(plans.Curr + " " + String.Format("{0:C}", plans.Rate))" 
+                                                    data-rate-desc="@mainDesc.Replace(" ", "").Replace("&", "")" 
+                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Subscribe now">
+                                                @(" " + printWeeks)<br />
+                                            </button>
+                                            <br />
+                                            <span class="my-3 fw-bold">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span>
+                                        </div>
+                                    </div>	
                                     <!-- end: rates-->
 
                                     currentDesc = mainDesc;
