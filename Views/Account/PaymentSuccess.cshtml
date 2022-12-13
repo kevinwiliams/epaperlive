@@ -1,4 +1,5 @@
-﻿
+﻿@model ePaperLive.Models.AuthSubcriber
+
 @{
     ViewBag.Title = "Thank you";
 }
@@ -26,8 +27,8 @@
             <div class="row gy-4">
                 <div class="col-lg-8">
                     <!-- start:wizrd -->
-                    <h2>Thank you  for subscribing to The Jamaica Observer Digital Experience</h2>
-                    <p>A confirmation email has been sent to the supplied email address with. Please follow the below link to login to start reading the epaper</p>
+                    <h2>Thank you  for @Model.FirstName for subscribing to<br /> The Jamaica Observer Digital Experience</h2>
+                    <p>A confirmation email has been sent to the supplied email address with. Please follow the below link to login to start reading the epaper or keep track of your delivery dates.</p>
                     <p>
                         <a href="@Url.Action("login", "account")">Login</a>
                     </p>
@@ -37,10 +38,11 @@
                     <div class="portfolio-info">
                         <h3>Summary</h3>
                         <ul>
-                            <li><strong>Plan</strong>: 1 Month (30 Days) - Free</li>
-                            <li><strong>Client</strong>: ASU Company</li>
-                            <li><strong>Project date</strong>: 01 March, 2020</li>
-                            <li><strong>Project URL</strong>: <a href="#">www.example.com</a></li>
+                            <li><strong>Order Number:</strong>: <a href="#">@Model.PaymentDetails.FirstOrDefault().OrderNumber</a></li>
+                            <li><strong>@Model.SubscriptionDetails.FirstOrDefault().RateType Plan</strong>: @Model.PaymentDetails.FirstOrDefault().RateDescription</li>
+                            <li><strong>Subscriber</strong>: @(Model.LastName + ", " + Model.FirstName)</li>
+                            <li><strong>Subscription Period</strong>:<br /> @Model.SubscriptionDetails.FirstOrDefault().StartDate - @Model.SubscriptionDetails.FirstOrDefault().EndDate</li>
+                            <li><strong>Email</strong>: <a href="#">@Model.EmailAddress</a></li>
                         </ul>
                     </div>
                     <!--

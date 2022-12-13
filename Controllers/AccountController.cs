@@ -1852,11 +1852,9 @@ namespace ePaperLive.Controllers
                         // Repopulate cache for new flow.
                         tempData.Cache.Add(summary.OrderId, $"{email}|{rateID}", new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheExpiryDuration) });
 
-                        //await CompleteTransactionProcess(int.Parse(rateID), threedsparams.OrderID, email);
-
                         RemoveSubscriber();
 
-                        return View("PaymentSuccess");
+                        return View("PaymentSuccess", customerData);
                     case PaymentStatus.Failed:
                     //_logger.CreateLog("Authorization failed", logModel, LogType.Warning, additionalFields: logDetails);
                     //return Redirect($"{host}/payments?status=failed");
