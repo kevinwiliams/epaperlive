@@ -23,8 +23,10 @@
         {
             var preloadSub = (Dictionary<string, int>)ViewData["preloadSub"];
             <div id="subSummary" class="text-center pb-4">
+                @{  }
             @foreach (var plans in preloadSub)
             {
+                ViewData["rateType"] = plans.Key.Split('|')[0];
                 var freq = plans.Key.Split('|')[4];
                 freq = (freq != "undefined" && freq != null) ? freq.Split(':')[0] + "<br>" + freq.Split(':')[1] : String.Empty;
                
@@ -44,11 +46,44 @@
         <p class="text-center"><strong>What's included?</strong></p>
         
         <ul>
-            <li><i class="bx bx-chevron-right"></i>Observer's smartphone app and tablet edition</li>
-            <li><i class="bx bx-chevron-right"></i>The Sunday Observer</li>
-            <li><i class="bx bx-chevron-right"></i>The Daily Observer Monday to Friday</li>
-            <li><i class="bx bx-chevron-right"></i>The Saturday Observer</li>
-            <li><i class="bx bx-chevron-right"></i>All supplements offered via print media</li>
+            @if (ViewData["rateType"] != null)
+            {
+                var rateType = ViewData["rateType"];
+
+                switch (rateType)
+                {
+                    case "Epaper":
+                        <li><i class="bx bx-chevron-right"></i>Observer's smartphone app and tablet edition</li>
+                        <li><i class="bx bx-chevron-right"></i>Digital editions of all print media</li>
+                        <li><i class="bx bx-chevron-right"></i>Full access to articles and premium content</li>
+                        <li><i class="bx bx-chevron-right"></i>Less ads, no surveys, faster site!</li>
+                        break;
+                    case "Print":
+                        <li><i class="bx bx-chevron-right"></i>Delivery of all printed editions *</li>
+                        <li><i class="bx bx-chevron-right"></i>All supplements offered via print media</li>
+                        break;
+                    case "Bundle":
+                        <li><i class="bx bx-chevron-right"></i>Delivery of all printed editions *</li>
+                        <li><i class="bx bx-chevron-right"></i>All supplements offered via print media</li>
+                        <li><i class="bx bx-chevron-right"></i>Digital editions of all print media</li>
+                        <li><i class="bx bx-chevron-right"></i>The Sunday Observer</li>
+                        <li><i class="bx bx-chevron-right"></i>The Daily Observer</li>
+                        <li><i class="bx bx-chevron-right"></i>The Saturday Observer</li>
+                        break;
+                    default:
+
+                        break;
+                }
+            }
+            else
+            {
+                <li><i class="bx bx-chevron-right"></i>Observer's smartphone app and tablet edition</li>
+                <li><i class="bx bx-chevron-right"></i>Digital editions of all print media</li>
+                <li><i class="bx bx-chevron-right"></i>Full access to articles and premium content</li>
+                <li><i class="bx bx-chevron-right"></i>Less ads, no surveys, faster site!</li>
+                <li><i class="bx bx-chevron-right"></i>Delivery of all printed editions *</li>
+                <li><i class="bx bx-chevron-right"></i>All supplements offered via print media</li>
+            }
         </ul>
         <br />
 
