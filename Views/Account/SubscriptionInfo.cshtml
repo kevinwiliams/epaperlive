@@ -214,7 +214,7 @@
                         @Html.Hidden("preloadPlan", plans.Key.Split('|')[0])
                         @Html.Hidden("preloadRate", plans.Value)
                         @Html.Hidden("preloadRateDesc", plans.Key.Split('|')[2])
-                     
+
                     }
                 }
 
@@ -227,6 +227,8 @@
 
 
 @section scripts{
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
     <script>
         // extend range validator method to treat checkboxes differently
         var defaultRangeValidator = $.validator.methods.range;
@@ -373,7 +375,7 @@
                 let rateType = plan.rateType + '|' + e.target.innerText + '|' + plan.rateDesc + '|' + plan.ratePrice + '|' + freq;
                 let rateId = plan.subId;
 
-                
+
                 $.ajax({
                     type: "POST",
                     url: '@Url.Action("PreloadSubscription", "Home")',
@@ -389,7 +391,7 @@
         });
 
 
-        $("#SameAsMailing").click(() => {            
+        $("#SameAsMailing").click(() => {
             if ($("#SameAsMailing").is(":checked")) {
                 $("#DeliveryAddress_AddressLine1").prop("disabled", true);
                 $("#DeliveryAddress_AddressLine2").prop("disabled", true);
@@ -398,10 +400,10 @@
 
                 if (sessionStorage.getItem("delAddress")) {
                     let address = JSON.parse(sessionStorage.getItem("delAddress"));
-                    $("#DeliveryAddress_AddressLine1").val(address.AddressLine1)
-                    $("#DeliveryAddress_AddressLine2").val(address.AddressLine2)
-                    $("#DeliveryAddress_CityTown").val(address.CityTown)
-                    $("#DeliveryAddress_StateParish").val(address.StateParish)
+                    $("#DeliveryAddress_AddressLine1").val(address.AddressLine1);
+                    $("#DeliveryAddress_AddressLine2").val(address.AddressLine2);
+                    $("#DeliveryAddress_CityTown").val(address.CityTown).change();
+                    $("#DeliveryAddress_StateParish").val(address.StateParish);
                 }
             }
             else {

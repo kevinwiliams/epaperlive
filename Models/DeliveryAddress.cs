@@ -43,4 +43,33 @@ namespace ePaperLive.Models
 
     }
 
+    public class District
+    {
+        public string ParishName { get; set; }
+        public string TownName { get; set; }
+        public static IQueryable<District> GetDistrict()
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                var result = context.delivery_zones.Where(x => x.IsActive == true);
+
+                if (result != null)
+                {
+                    List<District> TownParish = new List<District>();
+                    foreach (var district in result)
+                    {
+                        TownParish.Add( new District { 
+                                    ParishName = district.Parish, 
+                                    TownName = district.Town 
+                            });
+                    }
+                   
+                    return TownParish.AsQueryable();
+                }
+            }
+
+            return new List<District> { }.AsQueryable();
+        }
+    }
+
 }

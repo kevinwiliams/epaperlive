@@ -23,7 +23,6 @@
         {
             var preloadSub = (Dictionary<string, int>)ViewData["preloadSub"];
             <div id="subSummary" class="text-center pb-4">
-                @{  }
             @foreach (var plans in preloadSub)
             {
                 ViewData["rateType"] = plans.Key.Split('|')[0];

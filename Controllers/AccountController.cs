@@ -871,7 +871,10 @@ namespace ePaperLive.Controllers
                         AddressList.Add(data);
                         authUser.AddressDetails = AddressList;
                         //load rates on the next (subscription) page
-                        ApplicationDbContext db = new ApplicationDbContext();
+                        //GetParishes();
+                        List<SelectListItem> parishes = GetParishes();
+                        ViewBag.Parishes = new SelectList(parishes, "Value", "Text");
+
                         DeliveryAddress delAddressDetails = new DeliveryAddress
                         { 
                             CountryList = GetCountryList()
@@ -898,6 +901,17 @@ namespace ePaperLive.Controllers
                 }
             }
             return View();
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public JsonResult DistrictList(string Id)
+        {
+            var parish = Id.Replace("-", ". ").Replace("_", " & ");
+            var district = from s in District.GetDistrict()
+                           where s.ParishName == parish
+                           select s;
+            return Json(new SelectList(district.ToArray(), "ParishName", "TownName"), JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
@@ -1151,8 +1165,8 @@ namespace ePaperLive.Controllers
             {
                 deliveryAddress.AddressLine1 = form["DeliveryAddress.AddressLine1"];
                 deliveryAddress.AddressLine2 = form["DeliveryAddress.AddressLine2"];
-                deliveryAddress.CityTown = form["DeliveryAddress.CityTown"];
-                deliveryAddress.StateParish = form["DeliveryAddress.StateParish"];
+                deliveryAddress.CityTown = form["DeliveryAddress.CityTown"].Replace("-", ". ").Replace("_", " & ");
+                deliveryAddress.StateParish = form["DeliveryAddress.StateParish"].Replace("-", ". ").Replace("_", " & ");
                 deliveryAddress.CountryCode = form["DeliveryAddress.CountryCode"];
             }
             else 
@@ -2133,6 +2147,33 @@ namespace ePaperLive.Controllers
             }
 
             return (List<SelectListItem>)Session["CountryList"];
+        }
+
+        public List<SelectListItem> GetParishes()
+        {
+            if(Session["Parishes"] == null) 
+            {
+                var parishes = new List<SelectListItem>();
+                var parishList = new List<SelectListItem>();
+
+                using (var context = new ApplicationDbContext())
+                {
+                    var result = context.delivery_zones.Select(x => x.Parish).Distinct();
+
+                    if (result != null)
+                    {
+                        foreach (var parish in result)
+                        {
+                            parishes.Add(new SelectListItem { Text = parish, Value = parish.Replace(". ", "-").Replace(" & ", "_") });
+                        }
+
+                        Session["Parishes"] = parishes;
+
+                    }
+                }
+            }
+
+            return (List<SelectListItem>)Session["Parishes"]; ;
         }
         private void RemoveSubscriber()
         {

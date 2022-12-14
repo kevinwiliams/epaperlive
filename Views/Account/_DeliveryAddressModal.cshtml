@@ -1,10 +1,24 @@
 ﻿@model ePaperLive.Models.SubscriptionDetails
 @using ePaperLive.DBModel
+<style>
+    #select2-DeliveryAddress_CityTown-container {
+        border: 1px solid #ced4da !important;
+        display: block;
+        /*width: 100%;*/
+        width: 215px;
+        padding: .475rem 1rem .375rem .75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        border-radius: .375rem;
+    }
+
+</style>
 <form name="deliveryAddressForm">
     <!-- start:wizrd -->
 
     @Html.AntiForgeryToken()
-    <div class="modal fade" id="delivery-address" tabindex="-1">
+    <div class="modal fade" id="delivery-address" >
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -24,50 +38,57 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="form-group p-2">
+                                <div class="col-md-12">
+                                    @*@Html.EditorFor(model => model.DeliveryAddress.StateParish, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.DeliveryAddress.StateParish) } })*@
+                                    @Html.DropDownList("DeliveryAddress.StateParish", ViewBag.Parishes as SelectList, "Select a parish", new { @class = "form-control", id = "DeliveryAddress_StateParish" })
+                                    @Html.ValidationMessageFor(model => model.DeliveryAddress.StateParish, "", new { @class = "text-danger" })
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5 px-0">
+                            <div class="form-group p-2">
+                                <div class="col-md-12">
+                                    @*@Html.EditorFor(model => model.DeliveryAddress.CityTown, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.DeliveryAddress.CityTown) } })*@
+                                    <select id="DeliveryAddress_CityTown" class="form-control" name="DeliveryAddress.CityTown" aria-label="Default select example">
+                                        <option>Select a District</option>>
+                                    </select>
+                                    @Html.ValidationMessageFor(model => model.DeliveryAddress.CityTown, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            
+                        </div>
                         <div class="form-group">
-                            <div class="col-md-10 p-2">
+                            <div class="col-md-12 p-2">
                                 @Html.EditorFor(model => model.DeliveryAddress.AddressLine1, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.DeliveryAddress.AddressLine1) } })
                                 @Html.ValidationMessageFor(model => model.DeliveryAddress.AddressLine1, "", new { @class = "text-danger" })
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <div class="col-md-10 p-2">
+                            <div class="col-md-12 p-2">
                                 @Html.EditorFor(model => model.DeliveryAddress.AddressLine2, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.DeliveryAddress.AddressLine2) } })
                                 @Html.ValidationMessageFor(model => model.DeliveryAddress.AddressLine2, "", new { @class = "text-danger" })
                             </div>
                         </div>
-                        <div class="col-md-5">
-                            <div class="form-group p-2">
-                                <div class="col-md-10">
-                                    @Html.EditorFor(model => model.DeliveryAddress.CityTown, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.DeliveryAddress.CityTown) } })
-                                    @Html.ValidationMessageFor(model => model.DeliveryAddress.CityTown, "", new { @class = "text-danger" })
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group p-2">
-                                <div class="col-md-10">
-                                    @Html.EditorFor(model => model.DeliveryAddress.StateParish, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.DeliveryAddress.StateParish) } })
-                                    @Html.ValidationMessageFor(model => model.DeliveryAddress.StateParish, "", new { @class = "text-danger" })
-                                </div>
-                            </div>
-                        </div>
+
 
                         @*<div class="col-md-6">
-                            <div class="form-group p-2">
-                                <div class="col-md-10">
-                                    @if (Model != null)
-                                    {
-                                        if (Model.DeliveryAddress.CountryList != null)
-                                        {
-                                            @Html.DropDownListFor(model => model.DeliveryAddress.CountryCode, Model.DeliveryAddress.CountryList, "Select Country", new { @class = "form-control" })
-                                            @Html.ValidationMessageFor(model => model.DeliveryAddress.CountryCode, "", new { @class = "text-danger" })
-                                        }
-                                    }
-                                </div>
-                            </div>
-                        </div>*@
+            <div class="form-group p-2">
+                <div class="col-md-10">
+                    @if (Model != null)
+                    {
+                        if (Model.DeliveryAddress.CountryList != null)
+                        {
+                            @Html.DropDownListFor(model => model.DeliveryAddress.CountryCode, Model.DeliveryAddress.CountryList, "Select Country", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.DeliveryAddress.CountryCode, "", new { @class = "text-danger" })
+                        }
+                    }
+                </div>
+            </div>
+        </div>*@
                     </div>
 
                 </div>
@@ -89,13 +110,29 @@
     <!-- end:wizrd -->
 </form>
 
-@section Scripts {
-    @if (Model != null)
-{
-    
-        <script>
+@Scripts.Render("~/bundles/jquery")
+<script type="text/jscript">
+    $(function () {
 
-        </script>
-    }
+        $('#DeliveryAddress_CityTown').select2({ 
+             theme: "bootstrap-5",
+            dropdownParent: $("#delivery-address"),
+        }).addClass("form-control");
 
-}
+        $('#DeliveryAddress_StateParish').change(function () {
+            let parish = $('#DeliveryAddress_StateParish').val();
+                var items = '<option>Select a District</option>';
+
+            if (parish) {
+                $.getJSON('/Account/DistrictList/' + parish, function (data) {
+                    $.each(data, function (i, district) {
+                        items += '<option value="' + (district.Text) + '">' + district.Text + '</option>';
+                    });
+                    $('#DeliveryAddress_CityTown').html(items);
+                });
+            } else { $('#DeliveryAddress_CityTown').html(items); }
+
+           
+        });
+    });
+</script> 

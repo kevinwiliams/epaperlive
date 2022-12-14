@@ -51,6 +51,7 @@ namespace ePaperLive.Models
         public DbSet<log_errors> log_errors { get; set; }
         public DbSet<JOL_UserSession> JOL_UserSession { get; set; }
         public DbSet<ClientSnapShot> ClientSnapShot { get; set; }
+        public DbSet<Delivery_Zones> delivery_zones { get; set; }
 
     }
 }
