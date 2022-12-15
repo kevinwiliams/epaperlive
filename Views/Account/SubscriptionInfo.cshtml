@@ -134,7 +134,7 @@
                             <div class="form-group p-2">
                                 @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label fw-bold" })
                                 <div class="col-md-4">
-                                    @Html.EditorFor(model => model.StartDate, "", new { htmlAttributes = new { @class = "form-control", maxlength = 10 } })
+                                    @Html.EditorFor(model => model.StartDate, "", new { htmlAttributes = new { @class = "form-control", maxlength = 10 , @required = "required"} })
                                 </div>
                             </div>
                             <div class="form-group">
@@ -274,8 +274,31 @@
                 }
               });
 
-            $("[name=prevBtn]").click(function (e) {
-                console.log($(this).val());
+            $("[name=StartDate]").on('change', function (e) {
+
+                let givenDate = $(this).val();
+                givenDate = moment(givenDate);
+                let currentDate = new moment().format('YYYY-MM-DD');
+
+                if (givenDate.isBefore(currentDate)) {
+                    swal({
+                        title: "Error!",
+                        text: "Please select a subscription date in the future or today",
+                        type: "warning",
+                        //icon: "warning",
+                        dangerMode: true
+                    });
+
+                    $(this).val(currentDate);
+
+                    return false;
+                } else {
+                    let splitDate = $(this).val().split('-');
+                    let newDate = splitDate[2] + '/' + splitDate[1] + '/' + splitDate[0];
+                    let summaryDateText = ': ' + givenDate.format('DD/MM/yyyy');
+                    $("#subStartDate").html(summaryDateText);
+                }
+                    
             });
 
             $('[name=RateType]').on("click", function () {
