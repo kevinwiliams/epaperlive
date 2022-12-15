@@ -970,6 +970,8 @@ namespace ePaperLive.Controllers
         public ActionResult SubscriptionInfo(SubscriptionDetails data, string prevBtn, string nextBtn)
         {
             ViewData["preloadSub"] = GetPreloadSub();
+            List<SelectListItem> parishes = GetParishes();
+            ViewBag.Parishes = new SelectList(parishes, "Value", "Text");
 
             ApplicationDbContext db = new ApplicationDbContext();
 

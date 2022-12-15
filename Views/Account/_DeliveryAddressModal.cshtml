@@ -12,18 +12,20 @@
         line-height: 1.5;
         border-radius: .375rem;
     }
-
 </style>
-<form name="deliveryAddressForm">
-    <!-- start:wizrd -->
 
-    @Html.AntiForgeryToken()
-    <div class="modal fade" id="delivery-address" >
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title"><strong>Add Delivery Address</strong></h4>
-                </div>
+<!-- start:wizrd -->
+
+@Html.AntiForgeryToken()
+<div class="modal fade" id="delivery-address">
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"><strong>Add Delivery Address</strong></h4>
+            </div>
+            <form name="deliveryAddressForm" id="deliveryAddressForm" class="row g-3 needs-validation">
+
                 <div class="modal-body">
 
                     <div class="row form-horizontal">
@@ -58,7 +60,7 @@
                                     @Html.ValidationMessageFor(model => model.DeliveryAddress.CityTown, "", new { @class = "text-danger" })
                                 </div>
                             </div>
-                            
+
                         </div>
                         <div class="form-group">
                             <div class="col-md-12 p-2">
@@ -74,21 +76,6 @@
                             </div>
                         </div>
 
-
-                        @*<div class="col-md-6">
-            <div class="form-group p-2">
-                <div class="col-md-10">
-                    @if (Model != null)
-                    {
-                        if (Model.DeliveryAddress.CountryList != null)
-                        {
-                            @Html.DropDownListFor(model => model.DeliveryAddress.CountryCode, Model.DeliveryAddress.CountryList, "Select Country", new { @class = "form-control" })
-                            @Html.ValidationMessageFor(model => model.DeliveryAddress.CountryCode, "", new { @class = "text-danger" })
-                        }
-                    }
-                </div>
-            </div>
-        </div>*@
                     </div>
 
                 </div>
@@ -96,32 +83,57 @@
                     <button type="button" class="btn btn-info" data-bs-dismiss="modal">Close</button>
                     @if (ViewData["savedAddress"] != null)
                     {
-                        <button type="button" class="btn btn-primary" name="saveAddress">Save Address</button>
+                        <button type="submit" class="btn btn-primary" name="saveAddress">Save Address</button>
                     }
                     else
                     {
-                        <button type="button" class="btn btn-primary" name="saveAddress">Update Address</button>
+                        <button type="submit" class="btn btn-primary" name="saveAddress">Update Address</button>
                     }
                 </div>
-            </div>
+            </form>
+
+
         </div>
+
+
     </div>
+</div>
 
-    <!-- end:wizrd -->
-</form>
+<!-- end:wizrd -->
+<script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+    (() => {
+        'use strict'
 
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        const forms = document.querySelectorAll('.needs-validation')
+
+        // Loop over them and prevent submission
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })();
+
+</script>
 @Scripts.Render("~/bundles/jquery")
 <script type="text/jscript">
     $(function () {
 
-        $('#DeliveryAddress_CityTown').select2({ 
-             theme: "bootstrap-5",
+        $('#DeliveryAddress_CityTown').select2({
+            theme: "bootstrap-5",
             dropdownParent: $("#delivery-address"),
         }).addClass("form-control");
 
         $('#DeliveryAddress_StateParish').change(function () {
             let parish = $('#DeliveryAddress_StateParish').val();
-                var items = '<option>Select a District</option>';
+            var items = '<option>Select a District</option>';
 
             if (parish) {
                 $.getJSON('/Account/DistrictList/' + parish, function (data) {
@@ -132,7 +144,7 @@
                 });
             } else { $('#DeliveryAddress_CityTown').html(items); }
 
-           
+
         });
     });
 </script> 

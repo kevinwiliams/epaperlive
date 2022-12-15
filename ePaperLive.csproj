@@ -322,6 +322,7 @@
     <Compile Include="Controllers\PaymentsController.cs" />
     <Compile Include="Controllers\ReaderController.cs" />
     <Compile Include="DBModel\ClientSnapShot.cs" />
+    <Compile Include="DBModel\delivery_zones.cs" />
     <Compile Include="DBModel\JOL_UserSession.cs" />
     <Compile Include="DBModel\log_errors.cs" />
     <Compile Include="DBModel\printandsubrate.cs" />

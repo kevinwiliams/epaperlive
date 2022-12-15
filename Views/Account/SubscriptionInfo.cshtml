@@ -130,11 +130,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div id="deliveryAddressForm" style="display:none;">
-                                <!-- Delivery Modal -->
-                                @{Html.RenderPartial("_DeliveryAddressModal"); }
-                                <!-- end: Delivery Modal -->
-                            </div>
+
                             <div id="delAddressDetails">
 
                             </div>
@@ -174,15 +170,15 @@
 
                             </div>
                             <!--
-                <div class="offset-md-1 form-group">
-                    <div class="col-md-10 p-3">
-                        <div class="form-check">
-                            @Html.EditorFor(model => model.TermsAndCon, new { htmlAttributes = new { @class = "form-check-input", @required = "required" } })
-                            @Html.LabelFor(model => model.TermsAndCon, htmlAttributes: new { @class = "form-check-label" })<br />
-                        </div>
+            <div class="offset-md-1 form-group">
+                <div class="col-md-10 p-3">
+                    <div class="form-check">
+                        @Html.EditorFor(model => model.TermsAndCon, new { htmlAttributes = new { @class = "form-check-input", @required = "required" } })
+                        @Html.LabelFor(model => model.TermsAndCon, htmlAttributes: new { @class = "form-check-label" })<br />
                     </div>
                 </div>
-                -->
+            </div>
+            -->
                             @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
                             <div class="form-group">
@@ -200,6 +196,9 @@
                         </div>
                     }
                     <!-- end:wizrd -->
+                    <!-- Delivery Modal -->
+                    @{Html.RenderPartial("_DeliveryAddressModal"); }
+                    <!-- end: Delivery Modal -->
                 </div>
                 <div class="col-lg-4">
                     @Html.Partial("_SubcriptionSummary")
@@ -334,13 +333,16 @@
                 });
             });
 
-            $("[name=saveAddress]").click(function (e) {
+            $("[name=deliveryAddressForm]").on('submit', function (e) {
                 //console.log(e);
-                var formData = $("form #deliveryAddressForm").validate().valid();
+                //alert('submit');
+                e.preventDefault();
+                let formData = $("[name=deliveryAddressForm]").valid();
+
                 if (formData) {
                     //Serialize the form datas.   
-                    var addressData = $("form #deliveryAddressForm :input").serialize();
-                    e.preventDefault();
+                    var addressData = $("[name=deliveryAddressForm] :input").serialize();
+                    //e.preventDefault();
                     $.ajax({
                         type: "POST",
                         url: '@Url.Action("SaveDeliveryAddress", "Account")',
