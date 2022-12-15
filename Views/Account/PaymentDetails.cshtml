@@ -2,40 +2,46 @@
 
 @{
     ViewBag.Title = "Payment";
+
+    ePaperLive.DBModel.Subscriber_Address address = null;
+    if (ViewData["savedAddressData"] != null)
+    {
+        @Html.Hidden("mailingAddress",  ViewData["savedAddressData"].ToString())
+    }
 }
 
     <div id="main">
 
-        <!-- ======= Breadcrumbs ======= -->
-        <section id="breadcrumbs" class="breadcrumbs">
-            <div class="container">
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+        <div class="container">
 
-                <ol>
-                    <li><a href="@Url.Action("index", "home")">Home</a></li>
-                    <li>@ViewData["Title"]</li>
-                </ol>
-                <h2> @ViewData["Title"]</h2>
+            <ol>
+                <li><a href="@Url.Action("index", "home")">Home</a></li>
+                <li>@ViewData["Title"]</li>
+            </ol>
+            <h2> @ViewData["Title"]</h2>
 
-            </div>
-        </section><!-- End Breadcrumbs -->
-        <!-- ======= Wizard Breadcrumbs ======= -->
-        <div class="container form-header d-flex mb-4 mt-4">
-            <span class="stepIndicator active">Login Details</span>
-            <span class="stepIndicator active">Mailing Address</span>
-            <span class="stepIndicator active">Subscription</span>
-            <span class="stepIndicator active">Payment</span>
-        </div><!-- End Wizard Breadcrumbs -->
-        <!-- ======= Wizard Section ======= -->
-        <section id="portfolio-details" class="portfolio-details">
-            <div class="container">
+        </div>
+    </section><!-- End Breadcrumbs -->
+    <!-- ======= Wizard Breadcrumbs ======= -->
+    <div class="container form-header d-flex mb-4 mt-4">
+        <span class="stepIndicator active">Login Details</span>
+        <span class="stepIndicator active">Mailing Address</span>
+        <span class="stepIndicator active">Subscription</span>
+        <span class="stepIndicator active">Payment</span>
+    </div><!-- End Wizard Breadcrumbs -->
+    <!-- ======= Wizard Section ======= -->
+    <section id="portfolio-details" class="portfolio-details">
+        <div class="container">
 
-                <div class="row gy-4">
-                    <div class="col-lg-8">
-                        <!-- start:wizrd -->
-                        @using (Html.BeginForm("PaymentDetails", "Account", FormMethod.Post, new { @class = "row g-3 needs-validation", novalidate = "novalidate" }))
-                        {
-                            @Html.AntiForgeryToken()
-                            
+            <div class="row gy-4">
+                <div class="col-lg-8">
+                    <!-- start:wizrd -->
+                    @using (Html.BeginForm("PaymentDetails", "Account", FormMethod.Post, new { @class = "row g-3 needs-validation", novalidate = "novalidate" }))
+                    {
+                        @Html.AntiForgeryToken()
+
                         <div class="form-horizontal">
                             <h4><strong>@Html.DisplayFor(model => model.SubType): </strong>@Html.DisplayFor(model => model.RateDescription) </h4>
                             <h1 style="color:forestgreen"><strong>@Html.DisplayFor(model => model.Currency) @String.Format("{0:C}", Model.CardAmount)</strong></h1>
@@ -52,63 +58,73 @@
                             <!-- rate id needs to fix-->
                             @*@Html.Hidden("RateID")*@
 
-                            <div class="offset-md-1 row form-horizontal">
-                                <strong>Please enter your billing address </strong>
-                                <div class="form-group">
-                                    @*@Html.LabelFor(model => model.AddressLine1, htmlAttributes: new { @class = "control-label" })*@
-                                    <div class="col-md-10 p-2">
-                                        @Html.EditorFor(model => model.BillingAddress.AddressLine1, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.BillingAddress.AddressLine1) } })
-                                        @*@Html.ValidationMessageFor(model => model.AddressLine1, "", new { @class = "text-danger" })*@
+                        <div class="offset-md-1 row form-horizontal">
+                            <strong>Please enter your billing address </strong>
+                            <div class="form-group">
+                                <div class="col-md-10 p-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="" id="SameAsMailing">
+                                        <label class="form-check-label" for="SameAsMailing">
+                                            Same as mailing address?
+                                        </label>
                                     </div>
                                 </div>
-
-                                <div class="form-group">
-                                    @*@Html.LabelFor(model => model.AddressLine2, htmlAttributes: new { @class = "control-label" })*@
-                                    <div class="col-md-10 p-2">
-                                        @Html.EditorFor(model => model.BillingAddress.AddressLine2, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.BillingAddress.AddressLine2) } })
-                                        @*@Html.ValidationMessageFor(model => model.AddressLine2, "", new { @class = "text-danger" })*@
-                                    </div>
-                                </div>
-                                <div class="col-md-5">
-                                    <div class="form-group p-2">
-                                        @*@Html.LabelFor(model => model.CityTown, htmlAttributes: new { @class = "control-label " })*@
-                                        <div class="col-md-10">
-                                            @Html.EditorFor(model => model.BillingAddress.CityTown, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.BillingAddress.CityTown) } })
-                                            @*@Html.ValidationMessageFor(model => model.CityTown, "", new { @class = "text-danger" })*@
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group p-2">
-                                        @*@Html.LabelFor(model => model.StateParish, htmlAttributes: new { @class = "control-label " })*@
-                                        <div class="col-md-10">
-                                            @Html.EditorFor(model => model.BillingAddress.StateParish, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.BillingAddress.StateParish) } })
-                                            @*@Html.ValidationMessageFor(model => model.StateParish, "", new { @class = "text-danger" })*@
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-5">
-                                    <div class="form-group p-2">
-                                        @*@Html.LabelFor(model => model.ZipCode, htmlAttributes: new { @class = "control-label " })*@
-                                        <div class="col-md-10">
-                                            @Html.EditorFor(model => model.BillingAddress.ZipCode, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.BillingAddress.ZipCode) } })
-                                            @*@Html.ValidationMessageFor(model => model.ZipCode, "", new { @class = "text-danger" })*@
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group p-2">
-                                        @*@Html.LabelFor(model => model.CountryCode, htmlAttributes: new { @class = "control-label " })*@
-                                        <div class="col-md-10">
-                                            @*@Html.EditorFor(model => model.CountryCode, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.CountryCode) } })*@
-                                            @*@Html.ValidationMessageFor(model => model.CountryCode, "", new { @class = "text-danger" })*@
-                                            @Html.DropDownListFor(model => model.BillingAddress.CountryCode, Model.BillingAddress.CountryList, "Select Country", new { @class = "form-control", @required = "required" })
-                                        </div>
-                                    </div>
-                                </div>
-
                             </div>
+                            <div class="form-group">
+                                @*@Html.LabelFor(model => model.AddressLine1, htmlAttributes: new { @class = "control-label" })*@
+                                <div class="col-md-10 p-2">
+                                    @Html.EditorFor(model => model.BillingAddress.AddressLine1, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.BillingAddress.AddressLine1) } })
+                                    @*@Html.ValidationMessageFor(model => model.AddressLine1, "", new { @class = "text-danger" })*@
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @*@Html.LabelFor(model => model.AddressLine2, htmlAttributes: new { @class = "control-label" })*@
+                                <div class="col-md-10 p-2">
+                                    @Html.EditorFor(model => model.BillingAddress.AddressLine2, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.BillingAddress.AddressLine2) } })
+                                    @*@Html.ValidationMessageFor(model => model.AddressLine2, "", new { @class = "text-danger" })*@
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group p-2">
+                                    @*@Html.LabelFor(model => model.CityTown, htmlAttributes: new { @class = "control-label " })*@
+                                    <div class="col-md-10">
+                                        @Html.EditorFor(model => model.BillingAddress.CityTown, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.BillingAddress.CityTown) } })
+                                        @*@Html.ValidationMessageFor(model => model.CityTown, "", new { @class = "text-danger" })*@
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group p-2">
+                                    @*@Html.LabelFor(model => model.StateParish, htmlAttributes: new { @class = "control-label " })*@
+                                    <div class="col-md-10">
+                                        @Html.EditorFor(model => model.BillingAddress.StateParish, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.BillingAddress.StateParish) } })
+                                        @*@Html.ValidationMessageFor(model => model.StateParish, "", new { @class = "text-danger" })*@
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-5">
+                                <div class="form-group p-2">
+                                    @*@Html.LabelFor(model => model.ZipCode, htmlAttributes: new { @class = "control-label " })*@
+                                    <div class="col-md-10">
+                                        @Html.EditorFor(model => model.BillingAddress.ZipCode, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.BillingAddress.ZipCode) } })
+                                        @*@Html.ValidationMessageFor(model => model.ZipCode, "", new { @class = "text-danger" })*@
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group p-2">
+                                    @*@Html.LabelFor(model => model.CountryCode, htmlAttributes: new { @class = "control-label " })*@
+                                    <div class="col-md-10">
+                                        @*@Html.EditorFor(model => model.CountryCode, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.CountryCode) } })*@
+                                        @*@Html.ValidationMessageFor(model => model.CountryCode, "", new { @class = "text-danger" })*@
+                                        @Html.DropDownListFor(model => model.BillingAddress.CountryCode, Model.BillingAddress.CountryList, "Select Country", new { @class = "form-control", @required = "required" })
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
                             <hr />
 
                             <div class="offset-md-1 form-group p-2 pb-5 col-md-5">
@@ -191,50 +207,96 @@
                                 </div>
                             </div>
                         </div>
-                        }
-                        <!-- end:wizrd -->
-                    </div>
-                    <div class="col-lg-4">
-                        @Html.Partial("_SubcriptionSummary")
-                    </div>
-
-
-
-
-
+                    }
+                    <!-- end:wizrd -->
+                </div>
+                <div class="col-lg-4">
+                    @Html.Partial("_SubcriptionSummary")
                 </div>
 
+
+
+
+
             </div>
-        </section><!-- End Wizard Section -->
 
-    </div><!-- End #main -->
+        </div>
+    </section><!-- End Wizard Section -->
 
-    <script>
-        // Example starter JavaScript for disabling form submissions if there are invalid fields
-        (() => {
-            'use strict'
+</div><!-- End #main -->
 
-            // Fetch all the forms we want to apply custom Bootstrap validation styles to
-            const forms = document.querySelectorAll('.needs-validation')
+<script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+    (() => {
+        'use strict'
 
-            // Loop over them and prevent submission
-            Array.from(forms).forEach(form => {
-                form.addEventListener('submit', event => {
-                    if (!form.checkValidity()) {
-                        event.preventDefault()
-                        event.stopPropagation()
-                    }
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        const forms = document.querySelectorAll('.needs-validation')
 
-                    form.classList.add('was-validated')
-                }, false)
-            })
-        })();
+        // Loop over them and prevent submission
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
 
-    </script>
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })();
+
+</script>
 
 @section scripts{
     <script>
+          let address = JSON.parse($('#mailingAddress').val());
+        console.log(address);
+
+         $("#SameAsMailing").click(() => {
+                alert('click');
+            if ($("#SameAsMailing").is(":checked")) {
+                $("#BillingAddress_AddressLine1").prop("disabled", true);
+                $("#BillingAddress_AddressLine2").prop("disabled", true);
+                $("#BillingAddress_CityTown").prop("disabled", true);
+                $("#BillingAddress_StateParish").prop("disabled", true);
+                $("#BillingAddress_ZipCode").prop("disabled", true);
+                $("#BillingAddress_CountryCode").prop("disabled", true);
+
+                if ($('#mailingAddress').val()) {
+                    let address = JSON.parse(sessionStorage.getItem("delAddress"));
+                    $("#BillingAddress_AddressLine1").val(address.AddressLine1);
+                    $("#BillingAddress_AddressLine2").val(address.AddressLine2);
+                    $("#BillingAddress_CityTown").val(address.CityTown).change();
+                    $("#BillingAddress_StateParish").val(address.StateParish);
+                    $("#BillingAddress_ZipCode").val(address.ZipCode);
+                    $("#BillingAddress_CountryCode").val(address.CountryCode);
+                }
+            }
+            else {
+                $("#BillingAddress_AddressLine1").prop("disabled", false);
+                $("#BillingAddress_AddressLine2").prop("disabled", false);
+                $("#BillingAddress_CityTown").prop("disabled", false);
+                $("#BillingAddress_StateParish").prop("disabled", false);
+                $("#BillingAddress_ZipCode").prop("disabled", false);
+                $("#BillingAddress_CountryCode").prop("disabled", false);
+ 
+                $("#BillingAddress_AddressLine1").val("");
+                $("#BillingAddress_AddressLine2").val("");
+                $("#BillingAddress_CityTown").val("");
+                $("#BillingAddress_StateParish").val("");
+                $("#BillingAddress_ZipCode").val("");
+                $("#BillingAddress_CountryCode").val("");
+            }
+         })
+
         $(document).ready(function () {
+
+          
+
+           
+
+
             //remove labels
             $(".usercard-cc").html("");
             $("input[name='CardType']").click((e) => e.preventDefault());
@@ -244,7 +306,7 @@
                 //$('#paymentGatway').show();
                 routeData = $.parseHTML(routeData);
                 $('#paymentGatway').html(routeData);
-                
+
                 setTimeout(
                    submitForm, 100
                 );
@@ -272,7 +334,8 @@
         function submitForm() {
             $('#paymentGatway').find('form input[name=submit]').click();
             $('#paymentGatway').find('form').submit();
-        }
+        }
+
     </script>
     <script>
 
@@ -281,7 +344,7 @@
             if ($("#CardNumber").val().startsWith("7")) {
                 $("input[value='KeyCard']").prop("checked", true);
             }
-            else if ($("#CardNumber").val().length == 0) {               
+            else if ($("#CardNumber").val().length == 0) {
                 $("input[name='CardType']").prop("checked", false);
             }
         });

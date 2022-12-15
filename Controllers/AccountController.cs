@@ -1140,6 +1140,10 @@ namespace ePaperLive.Controllers
                         paymentDetailsList.Add(pd);
                         authUser.PaymentDetails = paymentDetailsList;
 
+                        Subscriber_Address mailingAddress = GetSubscriberAddress();
+                        ViewData["savedAddress"] = true;
+                        ViewData["savedAddressData"] = JsonConvert.SerializeObject(mailingAddress);
+
                         return View("PaymentDetails", pd);
                     }
                     catch (Exception ex)

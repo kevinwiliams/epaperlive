@@ -238,7 +238,6 @@
                 if (prePlan == "Print") {
                      $('div[id=' + preRateDesc + ']').addClass('show');
                 }
-                //console.log(preRateDesc);
             }
 
             $('[name=RateID][value=' + preRate + ']').click();
@@ -261,12 +260,10 @@
             $('[name=subdetails]').submit(function(event){
                 if(!$('[name=RateType]').is(':checked')) {
 
-                    //alert('Please select a plan!');
                    swal({
                       title: "Error!",
                        text: "Please select a subscription plan to proceed",
                       type: "warning",
-                       //icon: "warning",
                       dangerMode: true
                    });
 
@@ -285,7 +282,6 @@
                         title: "Error!",
                         text: "Please select a subscription date in the future or today",
                         type: "warning",
-                        //icon: "warning",
                         dangerMode: true
                     });
 
@@ -337,22 +333,17 @@
                                 selectRate
                                 , 500);
                         }
-                        //$('[name="radioSelectionName"]').removeAttr('checked');
-                        //$('input[name=RateID]:first-child').attr('checked',true);
                     }
                 });
             });
 
             $("[name=deliveryAddressForm]").on('submit', function (e) {
-                //console.log(e);
-                //alert('submit');
                 e.preventDefault();
                 let formData = $("[name=deliveryAddressForm]").valid();
 
                 if (formData) {
                     //Serialize the form datas.   
                     var addressData = $("[name=deliveryAddressForm] :input").serialize();
-                    //e.preventDefault();
                     $.ajax({
                         type: "POST",
                         url: '@Url.Action("SaveDeliveryAddress", "Account")',
@@ -367,9 +358,6 @@
                                             ${result.StateParish}<br>
                                         </p>`;
                             $("#delAddressDetails").html(html);
-                            //$("input[name=RateType][value=" + rateType + "]").prop('checked', true);
-                            //$('[name="radioSelectionName"]').removeAttr('checked');
-                            //$('input[name=RateID]:first-child').attr('checked',true);
                         }
                     });
                 }
