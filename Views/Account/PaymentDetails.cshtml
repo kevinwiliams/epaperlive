@@ -44,7 +44,7 @@
 
                         <div class="form-horizontal">
                             <h4><strong>@Html.DisplayFor(model => model.SubType): </strong>@Html.DisplayFor(model => model.RateDescription) </h4>
-                            <h1 style="color:forestgreen"><strong>@Html.DisplayFor(model => model.Currency) @String.Format("{0:C}", Model.CardAmount)</strong></h1>
+                            <h1 style="color:forestgreen"><strong><span id="currency">@Html.DisplayFor(model => model.Currency)</span> <span id="cardAmount">@String.Format("{0:C}", Model.CardAmount)</span></strong></h1>
                             <hr />
                             @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
@@ -133,6 +133,8 @@
                                     @Html.EditorFor(model => model.PromoCode, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.PromoCode) } })
                                     <button type="button" class="btn btn-danger btn-promo-code">APPLY</button>
                                 </div>
+                                <label id="promoAlert" class="text-danger" for="PromoCode"></label>
+
                             </div>
                             <hr />
 
@@ -161,7 +163,7 @@
                                     @Html.EditorFor(model => model.CardNumber, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.CardNumber) } })
                                 </div>
                             </div>
-                            <div class=" offset-md-1 form-group p-2">
+                            <div class="offset-md-1 form-group p-2">
                                 @*@Html.LabelFor(model => model.cardOwner, htmlAttributes: new { @class = "control-label " })*@
                                 <div class="col-md-8">
                                     @Html.EditorFor(model => model.CardOwner, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.CardOwner) } })
@@ -292,11 +294,6 @@
 
         $(document).ready(function () {
 
-          
-
-           
-
-
             //remove labels
             $(".usercard-cc").html("");
             $("input[name='CardType']").click((e) => e.preventDefault());
@@ -322,7 +319,8 @@
                     url: '@Url.Action("CheckPromoCode", "Account")',
                     data: { promoCode: promoCode},
                     success: function (result) {
-                        console.log(result['CardAmount']);
+                        console.log(result);
+                        $('#promoAlert').html(result.msg);
                     }
                 });
                 }

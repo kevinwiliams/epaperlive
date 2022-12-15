@@ -1985,9 +1985,10 @@ namespace ePaperLive.Controllers
         }
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult CheckPromoCode(string promoCode)
+        public JsonResult CheckPromoCode(string promoCode)
         {
             var code = promoCode.ToUpper();
+            var result = new Dictionary<string, object>();
 
             AuthSubcriber authUser = GetAuthSubscriber();
             PaymentDetails paymentDetails = authUser.PaymentDetails.FirstOrDefault();
@@ -2003,14 +2004,30 @@ namespace ePaperLive.Controllers
                     {
                         originalAmount -= (originalAmount * (decimal)discount.Discount);
                         paymentDetails.PromoCode = discount.PromoCode;
+                        paymentDetails.CardAmount = originalAmount;
+
+                        result["msg"] = "Discount Applied";
+                        result["data"] = paymentDetails;
+                        result["applied"] = true;
                     }
-                    paymentDetails.CardAmount = originalAmount;
+                    else {
+                        result["msg"] = "Invalid Promo Code";
+                        result["data"] = paymentDetails;
+                        result["applied"] = false;
+
+                    }
                 }
             }
+            else
+            {
+                result["msg"] = "Already applied this promo code";
+                result["data"] = paymentDetails;
+                result["applied"] = false;
+            }
 
-            var result = new JsonResult();
-            result.Data = paymentDetails;
-            return result;
+            //var result = new JsonResult();
+            //result.Data = paymentDetails;
+            return Json(result);
             //return RedirectToAction("PaymentDetails", paymentDetails);
         }
 
