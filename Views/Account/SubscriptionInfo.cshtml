@@ -60,21 +60,8 @@
                                 <div class="plans pb-3">
                                     <div class="row justify-content-md-center">
                                         <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.RateType, "Epaper", htmlAttributes: new { @autocomplete = "off", @id = "ePaper" })<label for="ePaper">ePaper Edition</label></div>
-                                        @if (Model != null)
-                                        {
-                                            if (Model.Market == "Local" || Model.Market.ToLower() == "local")
-                                            {
-                                                <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.RateType, "Print", htmlAttributes: new { @autocomplete = "off", @id = "Print" })<label for="Print">Print Edition</label></div>
-                                                <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.RateType, "Bundle", htmlAttributes: new { @autocomplete = "off", @id = "Bundle" })<label for="Bundle">Print & ePaper Bundle</label></div>
-                                            }
-
-                                        }
-                                        else
-                                        {
-                                            <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.RateType, "Print", htmlAttributes: new { @autocomplete = "off", @id = "Print", @disabled = "dsiabled" })<label for="Print">Print Edition</label></div>
-                                            <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.RateType, "Bundle", htmlAttributes: new { @autocomplete = "off", @id = "Bundle", @disabled = "dsiabled" })<label for="Bundle">Print & ePaper Bundle</label></div>
-                                        }
-
+                                        <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.RateType, "Print", htmlAttributes: new { @autocomplete = "off", @id = "Print" })<label for="Print">Print Edition</label></div>
+                                        <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.RateType, "Bundle", htmlAttributes: new { @autocomplete = "off", @id = "Bundle" })<label for="Bundle">Print & ePaper Bundle</label></div>
                                     </div>
                                 </div>
                                 @* @Html.Action("GetRatesList", "Account")*@
