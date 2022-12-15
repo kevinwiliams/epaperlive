@@ -157,7 +157,7 @@
             var items = '<option value="">Select a District</option>';
 
             if (parish) {
-                $.getJSON('/Account/DistrictList/' + parish, function (data) {
+                $.getJSON('@Url.Action("DistrictList","Account")?Id=' + parish, function (data) {
                     $.each(data, function (i, district) {
                         items += '<option value="' + (district.Text) + '">' + district.Text + '</option>';
                     });
