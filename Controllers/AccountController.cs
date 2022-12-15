@@ -1264,6 +1264,7 @@ namespace ePaperLive.Controllers
                     }
 
                     dynamic summary = await ChargeCard(data);
+                    return Json(data);
 
                 }
             }
@@ -1635,7 +1636,7 @@ namespace ePaperLive.Controllers
             return View();
         }
 
-        public async Task<ActionResult> ChargeCard(PaymentDetails paymentDetails)
+        public async Task<JsonResult> ChargeCard(PaymentDetails paymentDetails)
         {
             TransactionSummary summary = new TransactionSummary();
             TransactionSummary encrypted = new TransactionSummary();
@@ -1715,7 +1716,8 @@ namespace ePaperLive.Controllers
                         //return view
                         paymentDetails.TransactionSummary = summary;
                         // await SaveSubscriptionAsync(paymentDetails);
-                        return View("PaymentDetails", paymentDetails);
+                        //return View("PaymentDetails", paymentDetails);
+                        return Json(paymentDetails);
                     }
                     else
                     {
@@ -1736,11 +1738,15 @@ namespace ePaperLive.Controllers
 
                                 await SaveSubscriptionAsync(paymentDetails);
                                 RemoveSubscriber();
-                                return View("PaymentSuccess");
+                                // return View("PaymentSuccess");
+                                return Json(paymentDetails);
+
 
                             case PaymentStatus.Failed:
                                 // TODO: Add Friendly Message property to Card Processor to display to user.
-                                return View("PaymentDetails", paymentDetails);
+                                //return View("PaymentDetails", paymentDetails);
+                                return Json(paymentDetails);
+
                             case PaymentStatus.GatewayError:
                             case PaymentStatus.InternalError:
                                 break;
@@ -1750,7 +1756,9 @@ namespace ePaperLive.Controllers
 
                         paymentDetails.TransactionSummary = summary;
                         await SaveSubscriptionAsync(paymentDetails);
-                        return View("PaymentDetails", paymentDetails);
+                        //return View("PaymentDetails", paymentDetails);
+                        return Json(paymentDetails);
+
 
                     }
                 }
@@ -1767,7 +1775,8 @@ namespace ePaperLive.Controllers
                     //TODO: Not sure if 
                     paymentDetails.TransactionSummary = summary;
                     await SaveSubscriptionAsync(paymentDetails);
-                    return View("PaymentDetails", paymentDetails);
+                    //return View("PaymentDetails", paymentDetails);
+                    return Json(paymentDetails);
                 }
 
 
@@ -1779,10 +1788,13 @@ namespace ePaperLive.Controllers
             catch (Exception ex)
             {
                 LogError(ex);
-                return View("PaymentDetails");
+                //return View("PaymentDetails");
             }
             // Something went wrong to get here.
             // return Ok();
+            return Json(paymentDetails);
+
+
         }
 
         [HttpPost]

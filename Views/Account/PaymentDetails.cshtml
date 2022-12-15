@@ -3,7 +3,6 @@
 @{
     ViewBag.Title = "Payment";
 
-    ePaperLive.DBModel.Subscriber_Address address = null;
     if (ViewData["savedAddressData"] != null)
     {
         @Html.Hidden("mailingAddress",  ViewData["savedAddressData"].ToString())
@@ -38,7 +37,7 @@
             <div class="row gy-4">
                 <div class="col-lg-8">
                     <!-- start:wizrd -->
-                    @using (Html.BeginForm("PaymentDetails", "Account", FormMethod.Post, new { @class = "row g-3 needs-validation", novalidate = "novalidate" }))
+                    @using (Html.BeginForm("PaymentDetails", "Account", FormMethod.Post, new { @class = "row g-3 needs-validation", novalidate = "novalidate", name = "PaymentDetails" }))
                     {
                         @Html.AntiForgeryToken()
 
@@ -253,20 +252,11 @@
 @section scripts{
     <script>
           let address = JSON.parse($('#mailingAddress').val());
-        console.log(address);
 
          $("#SameAsMailing").click(() => {
-                alert('click');
             if ($("#SameAsMailing").is(":checked")) {
-                $("#BillingAddress_AddressLine1").prop("disabled", true);
-                $("#BillingAddress_AddressLine2").prop("disabled", true);
-                $("#BillingAddress_CityTown").prop("disabled", true);
-                $("#BillingAddress_StateParish").prop("disabled", true);
-                $("#BillingAddress_ZipCode").prop("disabled", true);
-                $("#BillingAddress_CountryCode").prop("disabled", true);
 
                 if ($('#mailingAddress').val()) {
-                    let address = JSON.parse(sessionStorage.getItem("delAddress"));
                     $("#BillingAddress_AddressLine1").val(address.AddressLine1);
                     $("#BillingAddress_AddressLine2").val(address.AddressLine2);
                     $("#BillingAddress_CityTown").val(address.CityTown).change();
@@ -276,13 +266,6 @@
                 }
             }
             else {
-                $("#BillingAddress_AddressLine1").prop("disabled", false);
-                $("#BillingAddress_AddressLine2").prop("disabled", false);
-                $("#BillingAddress_CityTown").prop("disabled", false);
-                $("#BillingAddress_StateParish").prop("disabled", false);
-                $("#BillingAddress_ZipCode").prop("disabled", false);
-                $("#BillingAddress_CountryCode").prop("disabled", false);
- 
                 $("#BillingAddress_AddressLine1").val("");
                 $("#BillingAddress_AddressLine2").val("");
                 $("#BillingAddress_CityTown").val("");
@@ -297,17 +280,7 @@
             //remove labels
             $(".usercard-cc").html("");
             $("input[name='CardType']").click((e) => e.preventDefault());
-            let routeData = $("#TransactionSummary").val();
-            let timeout;
-            if (routeData) {
-                //$('#paymentGatway').show();
-                routeData = $.parseHTML(routeData);
-                $('#paymentGatway').html(routeData);
-
-                setTimeout(
-                   submitForm, 100
-                );
-            }
+            
 
 
             $(".btn-promo-code").on('click', function (e) {
@@ -327,11 +300,45 @@
 
 
             });
+
+            $("[name=PaymentDetails]").on('submit', function (e) {
+                e.preventDefault();
+                let formData = $("[name=PaymentDetails]").valid();
+
+                if (formData) {
+                    //Serialize the form datas.   
+                    var paymentData = $("[name=PaymentDetails] :input").serialize();
+                    paymentData += '&nextBtn=Pay';
+
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("PaymentDetails", "Account")',
+                        dataType: 'json',
+                        data: paymentData,
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        success: function (result) {
+                            if (result) {
+                                 console.log(result["TransactionSummary"]["Merchant3DSResponseHtml"]);
+                                let routeData = result["TransactionSummary"]["Merchant3DSResponseHtml"];
+
+                                if (routeData) {
+                                    //routeData = $.parseHTML(routeData);
+                                    $('#paymentGatway').html(routeData);
+
+                                    setTimeout(
+                                       submitForm, 100
+                                    );
+                                }
+                            }
+                        }
+                    });
+                }
+            });
         });
 
         function submitForm() {
-            $('#paymentGatway').find('form input[name=submit]').click();
             $('#paymentGatway').find('form').submit();
+            $('#paymentGatway').find('form input[name=submit]').click();
         }
 
     </script>
