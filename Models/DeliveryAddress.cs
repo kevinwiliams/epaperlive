@@ -12,11 +12,11 @@ namespace ePaperLive.Models
     public class DeliveryAddress
     {
       
-        [Display(Name = "Address Line 1")]
+        [Display(Name = "Street Address")]
         //[Required(AllowEmptyStrings = false, ErrorMessage = "Provide an address")]
         public string AddressLine1 { get; set; }
 
-        [Display(Name = "Address Line 2")]
+        [Display(Name = "Street Address Line 2")]
         //[Required(AllowEmptyStrings = false, ErrorMessage = "Email address is required")]
         public string AddressLine2 { get; set; }
 

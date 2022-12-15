@@ -23,6 +23,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title"><strong>Add Delivery Address</strong></h4>
+
             </div>
             <form name="deliveryAddressForm" id="deliveryAddressForm" class="row g-3 needs-validation">
 
@@ -75,6 +76,8 @@
                                 @Html.ValidationMessageFor(model => model.DeliveryAddress.AddressLine2, "", new { @class = "text-danger" })
                             </div>
                         </div>
+                        <p class="p-3 small">Contact us at <a href="mailto:circulation@jamaicaobserver.com">circulation@jamaicaobserver.com</a> if your district/town is not listed above*</p>
+
 
                     </div>
 
@@ -89,6 +92,7 @@
                     {
                         <button type="submit" class="btn btn-primary" name="saveAddress">Update Address</button>
                     }
+                    <br>
                 </div>
             </form>
 
@@ -121,10 +125,22 @@
         })
     })();
 
+
+
 </script>
 @Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
 <script type="text/jscript">
+   
     $(function () {
+        $.validator.setDefaults({
+            ignore: ''
+        });
+
+         $("#delivery-address").on('shown.bs.modal', () => {
+             alert('modal');
+             $("#DeliveryAddress_StateParish").find('select').trigger('change');
+        });
 
         $('#DeliveryAddress_CityTown').select2({
             theme: "bootstrap-5",
@@ -133,7 +149,7 @@
 
         $('#DeliveryAddress_StateParish').change(function () {
             let parish = $('#DeliveryAddress_StateParish').val();
-            var items = '<option>Select a District</option>';
+            var items = '<option value="">Select a District</option>';
 
             if (parish) {
                 $.getJSON('/Account/DistrictList/' + parish, function (data) {
