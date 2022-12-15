@@ -51,11 +51,11 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-5 px-0">
+                        <div class="col-md-5 px-md-0">
                             <div class="form-group p-2">
                                 <div class="col-md-12">
                                     @*@Html.EditorFor(model => model.DeliveryAddress.CityTown, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.DeliveryAddress.CityTown) } })*@
-                                    <select id="DeliveryAddress_CityTown" class="form-control" name="DeliveryAddress.CityTown" aria-label="Default select example">
+                                    <select id="DeliveryAddress_CityTown" class="form-control pb-sm-3" name="DeliveryAddress.CityTown" aria-label="District">
                                         <option>Select a District</option>>
                                     </select>
                                     @Html.ValidationMessageFor(model => model.DeliveryAddress.CityTown, "", new { @class = "text-danger position-relative", @style = "top: 0.7rem"})
@@ -63,7 +63,7 @@
                             </div>
 
                         </div>
-                        <div class="form-group">
+                        <div class="form-group pt-2">
                             <div class="col-md-12 p-2">
                                 @Html.EditorFor(model => model.DeliveryAddress.AddressLine1, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.DeliveryAddress.AddressLine1) } })
                                 @Html.ValidationMessageFor(model => model.DeliveryAddress.AddressLine1, "", new { @class = "text-danger" })
