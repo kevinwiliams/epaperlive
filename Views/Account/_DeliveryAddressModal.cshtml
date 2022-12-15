@@ -58,7 +58,7 @@
                                     <select id="DeliveryAddress_CityTown" class="form-control" name="DeliveryAddress.CityTown" aria-label="Default select example">
                                         <option>Select a District</option>>
                                     </select>
-                                    @Html.ValidationMessageFor(model => model.DeliveryAddress.CityTown, "", new { @class = "text-danger" })
+                                    @Html.ValidationMessageFor(model => model.DeliveryAddress.CityTown, "", new { @class = "text-danger position-relative", @style = "top: 0.7rem"})
                                 </div>
                             </div>
 
@@ -139,7 +139,12 @@
 
          $("#delivery-address").on('shown.bs.modal', () => {
              //alert('modal');
-             $("#DeliveryAddress_StateParish").find('select').trigger('change');
+             var parish = $("#DeliveryAddress_StateParish").val();
+             $("#DeliveryAddress_StateParish").val(parish).trigger('change');
+         });
+
+        $("#DeliveryAddress_CityTown").on("select2:close", function (e) {  
+            $(this).valid(); 
         });
 
         $('#DeliveryAddress_CityTown').select2({
