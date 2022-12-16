@@ -66,14 +66,20 @@ namespace ePaperLive.Controllers
 
                 ApplicationDbContext db = new ApplicationDbContext();
                 List<printandsubrate> ratesList = db.printandsubrates.AsNoTracking()
-                                    .Where(x => x.Market == market)
-                                    .Where(x => x.Active == true).ToList();
-                
+                                    .Where(x => x.Market == market && x.Active.Value).ToList();
+
                 //update frequency pattern to text
-                foreach (var item in ratesList.Where(x => x.PrintDayPattern != null))
+                ratesList.ForEach(item =>
                 {
-                    item.PrintDayPattern = Util.DeliveryFreqToDate(item.PrintDayPattern);
-                }
+                    if (item.PrintDayPattern != null)
+                    {
+                        item.PrintDayPattern = Util.DeliveryFreqToDate(item.PrintDayPattern);
+                    }
+                });
+                //foreach (var item in ratesList.Where(x => x.PrintDayPattern != null))
+                //{
+                //    item.PrintDayPattern = Util.DeliveryFreqToDate(item.PrintDayPattern);
+                //}
 
                 model.Rates = ratesList;
 
