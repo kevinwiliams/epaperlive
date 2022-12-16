@@ -4,37 +4,50 @@
     ViewBag.Title = "Mailing Address";
 }
 
-    <main id="main">
+<style>
+    #select2-CityTownList-container {
+        border: 1px solid #ced4da !important;
+        display: block;
+        /*width: 100%;*/
+        width: 215px;
+        padding: .475rem 1rem .375rem .75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        border-radius: .375rem;
+    }
+</style>
+<main id="main">
 
-        <!-- ======= Breadcrumbs ======= -->
-        <section id="breadcrumbs" class="breadcrumbs">
-            <div class="container">
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+        <div class="container">
 
-                <ol>
-                    <li><a href="@Url.Action("index", "home")">Home</a></li>
-                    <li>@ViewData["Title"]</li>
-                </ol>
-                <h2>@ViewData["Title"]</h2>
+            <ol>
+                <li><a href="@Url.Action("index", "home")">Home</a></li>
+                <li>@ViewData["Title"]</li>
+            </ol>
+            <h2>@ViewData["Title"]</h2>
 
-            </div>
-        </section><!-- End Breadcrumbs -->
-        <!-- ======= Wizard Breadcrumbs ======= -->
-        <div class="container form-header d-flex mb-4 mt-4">
-            <span class="stepIndicator active">Login Details</span>
-            <span class="stepIndicator active">Mailing Address</span>
-            <span class="stepIndicator">Subscription</span>
-            <span class="stepIndicator">Payment</span>
-        </div><!-- End Wizard Breadcrumbs -->
-        <!-- ======= Wizard Section ======= -->
-        <section id="portfolio-details" class="portfolio-details">
-            <div class="container">
+        </div>
+    </section><!-- End Breadcrumbs -->
+    <!-- ======= Wizard Breadcrumbs ======= -->
+    <div class="container form-header d-flex mb-4 mt-4">
+        <span class="stepIndicator active">Login Details</span>
+        <span class="stepIndicator active">Mailing Address</span>
+        <span class="stepIndicator">Subscription</span>
+        <span class="stepIndicator">Payment</span>
+    </div><!-- End Wizard Breadcrumbs -->
+    <!-- ======= Wizard Section ======= -->
+    <section id="portfolio-details" class="portfolio-details">
+        <div class="container">
 
-                <div class="row gy-4">
-                    <div class="col-lg-8">
-                        <!-- start:wizrd -->
-                        @using (Html.BeginForm("AddressDetails", "Account", FormMethod.Post, new { @class = "row g-3 needs-validation", novalidate = "novalidate" }))
-                        {
-                            @Html.AntiForgeryToken()
+            <div class="row gy-4">
+                <div class="col-lg-8">
+                    <!-- start:wizrd -->
+                    @using (Html.BeginForm("AddressDetails", "Account", FormMethod.Post, new { @class = "row g-3 needs-validation", novalidate = "novalidate" }))
+                    {
+                        @Html.AntiForgeryToken()
 
                         <div class="row form-horizontal">
                             <h4>Please enter your mailing address </h4>
@@ -60,7 +73,9 @@
                                     @*@Html.LabelFor(model => model.CityTown, htmlAttributes: new { @class = "control-label " })*@
                                     <div class="col-md-10">
                                         @Html.EditorFor(model => model.CityTown, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.CityTown) } })
-                                        @*@Html.ValidationMessageFor(model => model.CityTown, "", new { @class = "text-danger" })*@
+                                        <select id="CityTownList" class="form-control pb-sm-3" name="CityTown" aria-label="District" required = "required">
+                                            <option>Select a District</option>>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -69,6 +84,7 @@
                                     @*@Html.LabelFor(model => model.StateParish, htmlAttributes: new { @class = "control-label " })*@
                                     <div class="col-md-10">
                                         @Html.EditorFor(model => model.StateParish, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.StateParish) } })
+                                        @Html.DropDownList("StateParish", ViewBag.Parishes as SelectList, "Select a parish", new { @class = "form-control", id = "StateParishList", @required = "required" })
                                         @*@Html.ValidationMessageFor(model => model.StateParish, "", new { @class = "text-danger" })*@
                                     </div>
                                 </div>
@@ -87,10 +103,10 @@
                                 <div class="form-group p-2">
                                     @*@Html.LabelFor(model => model.CountryCode, htmlAttributes: new { @class = "control-label " })*@
                                     <div class="col-md-10">
-                                        @if (Model.CountryList != null)
+                                        @if (ViewBag.CountryList != null)
                                         {
                                             @*@Html.ValidationMessageFor(model => model.CountryCode, "", new { @class = "text-danger" })*@
-                                            @Html.DropDownListFor(model => model.CountryCode, Model.CountryList, "Select Country", new { @class = "form-control", @required = "required" })
+                                            @Html.DropDownListFor(model => model.CountryCode, ViewBag.CountryList as List<SelectListItem>, "Select Country", new { @class = "form-control", @required = "required" })
                                         }
                                     </div>
                                 </div>
@@ -118,45 +134,126 @@
                                 </div>
                             </div>
                         </div>
-                        }
-                        <!-- end:wizrd -->
-                    </div>
-                    <div class="col-lg-4">
-                        @Html.Partial("_SubcriptionSummary")
-                    </div>
-
-
+                    }
+                    <!-- end:wizrd -->
+                </div>
+                <div class="col-lg-4">
+                    @Html.Partial("_SubcriptionSummary")
                 </div>
 
+
             </div>
-        </section><!-- End Wizard Section -->
 
-    </main><!-- End #main -->
-    <script>
-        // Example starter JavaScript for disabling form submissions if there are invalid fields
-        (() => {
-            'use strict'
+        </div>
+    </section><!-- End Wizard Section -->
 
-            // Fetch all the forms we want to apply custom Bootstrap validation styles to
-            const forms = document.querySelectorAll('.needs-validation')
+</main><!-- End #main -->
+<script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+    (() => {
+        'use strict'
 
-            // Loop over them and prevent submission
-            Array.from(forms).forEach(form => {
-                form.addEventListener('submit', event => {
-                    if (!form.checkValidity()) {
-                        event.preventDefault()
-                        event.stopPropagation()
-                    }
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        const forms = document.querySelectorAll('.needs-validation')
 
-                    form.classList.add('was-validated')
-                }, false)
-            })
-        })();
+        // Loop over them and prevent submission
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
 
-    </script>
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })();
+
+</script>
 @section scripts{
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
     <script>
-        
+
+        $(document).ready(function () {
+        var parish = $("#StateParishList").val();
+        $("#StateParish").val(parish).trigger('change');
+
+
+        });
+
+            let countryCode = $('#CountryCode').val();
+
+                if (countryCode == "JAM") {
+                    $('#StateParishList').show();
+                    $('#CityTownList').show();
+                    $('#StateParishList').attr('required', true);
+                    $('#StateParish').hide();
+                    $('#CityTown').hide();
+                    $('#ZipCode').attr('disabled', true);
+                }
+
+            $('#CountryCode').on('change', (e) => {
+                console.log($('#CountryCode').val());
+                countryCode = $('#CountryCode').val();
+
+                if (countryCode == "JAM") {
+                    $('#StateParishList').show();
+                    $('#CityTownList').show();
+
+                    $('#StateParishList').attr('required', true);
+                    $('#StateParish').hide();
+                    $('#CityTown').hide();
+
+                    $('#ZipCode').attr('disabled', true);
+                } else {
+                    $('#StateParishList').hide();
+                    $('#CityTownList').hide();
+
+                    $('#StateParish').show();
+                    $('#CityTown').show();
+                    $('#ZipCode').attr('disabled', false);
+                }
+            });
+
+        //$('#StateParishList').on('change', (e) => {
+        //    $('#StateParish').val($('#StateParishList option:selected').text());
+        //});
+        $("#CityTownList").on("select2:close", function (e) {  
+            $(this).valid(); 
+        });
+
+         $("#CityTownList").on("select2:select", function (e) {  
+             $('#CityTown').val($('#CityTownList').val());
+
+             console.log($('#CityTownList').val());        });
+
+
+        $('#CityTownList').select2({
+            theme: "bootstrap-5",
+        }).addClass("form-control");
+
+        $('#StateParishList').change(function () {
+            console.log();
+            $('#StateParish').val($('#StateParishList option:selected').text());
+
+
+            let parish = $('#StateParishList').val();
+            var items = '<option value="">Select a District</option>';
+
+            if (parish) {
+                $.getJSON('@Url.Action("DistrictList","Account")?Id=' + parish, function (data) {
+                    $.each(data, function (i, district) {
+                        items += '<option value="' + (district.Text) + '">' + district.Text + '</option>';
+                    });
+                    $('#CityTownList').html(items);
+                });
+            } else { $('#CityTownList').html(items); }
+
+
+        });
+
+
 
         let phoneNumber = new Cleave('#Phone', {
             phone: true,

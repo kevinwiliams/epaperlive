@@ -76,10 +76,6 @@ namespace ePaperLive.Controllers
                         item.PrintDayPattern = Util.DeliveryFreqToDate(item.PrintDayPattern);
                     }
                 });
-                //foreach (var item in ratesList.Where(x => x.PrintDayPattern != null))
-                //{
-                //    item.PrintDayPattern = Util.DeliveryFreqToDate(item.PrintDayPattern);
-                //}
 
                 model.Rates = ratesList;
 

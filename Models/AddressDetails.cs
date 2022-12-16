@@ -24,11 +24,11 @@ namespace ePaperLive.Models
         [Required(AllowEmptyStrings = false, ErrorMessage = "Enter a city or closest town")]
         public string CityTown { get; set; }
 
-        [Display(Name = "State/Parish")]
+        [Display(Name = "State/Province")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Enter a state or parish")]
         public string StateParish { get; set; }
         
-        [Display(Name = "Zip")]
+        [Display(Name = "Zip Code")]
         public string ZipCode { get; set; }
 
         [Display(Name = "Country")]

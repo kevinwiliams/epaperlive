@@ -784,6 +784,15 @@ namespace ePaperLive.Controllers
                         user.Email = data.EmailAddress;
                         user.PasswordHash = data.Password;
 
+                        UserLocation objLoc = GetSubscriberLocation();
+
+                        var countryCode = (objLoc.Country_Code == "JM") ? "JAM" : "";
+
+                        //load parishes
+                        List<SelectListItem> parishes = GetParishes();
+                        ViewBag.Parishes = new SelectList(parishes, "Value", "Text");
+                        ViewBag.CountryList = GetCountryList();
+
                         //Test Data
                         AddressDetails ad = new AddressDetails
                         {
@@ -816,6 +825,10 @@ namespace ePaperLive.Controllers
         public ActionResult AddressDetails(AddressDetails data, string prevBtn, string nextBtn)
         {
             ViewData["preloadSub"] = GetPreloadSub();
+
+            List<SelectListItem> Addressparishes = GetParishes();
+            ViewBag.Parishes = new SelectList(Addressparishes, "Value", "Text");
+            ViewBag.CountryList = GetCountryList();
 
             if (prevBtn != null)
             {
@@ -874,6 +887,7 @@ namespace ePaperLive.Controllers
                         //GetParishes();
                         List<SelectListItem> parishes = GetParishes();
                         ViewBag.Parishes = new SelectList(parishes, "Value", "Text");
+                        ViewBag.CountryList = GetCountryList();
 
                         DeliveryAddress delAddressDetails = new DeliveryAddress
                         { 
@@ -990,6 +1004,10 @@ namespace ePaperLive.Controllers
                         CountryCode = objAdd.CountryCode,
                         CountryList = GetCountryList()
                     };
+
+                    List<SelectListItem> prevparishes = GetParishes();
+                    ViewBag.Parishes = new SelectList(prevparishes, "Value", "Text");
+                    ViewBag.CountryList = GetCountryList();
 
                     return View("AddressDetails", ad);
                 }
@@ -1112,14 +1130,17 @@ namespace ePaperLive.Controllers
                         }
 
 
-                        //Country =Session["CountryList"] = 
+                        List<SelectListItem> billparishes = GetParishes();
+                        ViewBag.Parishes = new SelectList(billparishes, "Value", "Text");
+                        ViewBag.CountryList = GetCountryList();
+
                         AddressDetails billingAddress = new AddressDetails {
                             //Test data
-                            AddressLine1 = "Lot 876 Scheme Steet",
-                            CityTown = "Bay Town",
-                            StateParish = "Portland",
-                            CountryCode = "JAM",
-                            ZipCode = "JAMWI",
+                            //AddressLine1 = "Lot 876 Scheme Steet",
+                            //CityTown = "Bay Town",
+                            //StateParish = "Portland",
+                            //CountryCode = "JAM",
+                            //ZipCode = "JAMWI",
                             //end 
                             CountryList = GetCountryList()
                         };
