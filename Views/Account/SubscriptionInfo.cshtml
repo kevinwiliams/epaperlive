@@ -290,7 +290,6 @@
                     return false;
                 } else {
                     let splitDate = $(this).val().split('-');
-                    let newDate = splitDate[2] + '/' + splitDate[1] + '/' + splitDate[0];
                     let summaryDateText = ': ' + givenDate.format('DD/MM/yyyy');
                     $("#subStartDate").html(summaryDateText);
                 }
