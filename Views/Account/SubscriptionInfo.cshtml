@@ -401,11 +401,8 @@
                     let address = JSON.parse(sessionStorage.getItem("delAddress"));
                     $("#DeliveryAddress_AddressLine1").val(address.AddressLine1);
                     $("#DeliveryAddress_AddressLine2").val(address.AddressLine2);
-
-                    $("#DeliveryAddress_StateParish").val(address.StateParish).trigger('change');
                     $("#DeliveryAddress_StateParish").val(address.StateParish);
-                    $("#DeliveryAddress_CityTown").val(address.CityTown).change();
-
+                    $("#DeliveryAddress_CityTown").val(address.CityTown);
                 }
             }
             else {

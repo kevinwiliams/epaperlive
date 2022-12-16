@@ -8,7 +8,12 @@
         @Html.Hidden("mailingAddress",  ViewData["savedAddressData"].ToString())
     }
 }
-
+<style>
+    .na{
+        color: #ccc;
+        text-decoration: line-through;
+    }
+    </style>
     <div id="main">
 
     <!-- ======= Breadcrumbs ======= -->
@@ -43,13 +48,13 @@
 
                         <div class="form-horizontal">
                             <h4><strong>@Html.DisplayFor(model => model.SubType): </strong>@Html.DisplayFor(model => model.RateDescription) </h4>
-                            <h1 style="color:forestgreen"><strong><span id="currency">@Html.DisplayFor(model => model.Currency)</span> <span id="cardAmount">@String.Format("{0:C}", Model.CardAmount)</span></strong></h1>
+                            <h1 style="color:forestgreen"><strong><span id="currency">@Html.DisplayFor(model => model.Currency)</span> <span id="cardAmount">@String.Format("{0:C}", Model.CardAmount)</span> <span class="na"></span></strong></h1>
                             <hr />
                             @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
                             @Html.Hidden("RateID", Model.RateID)
                             @Html.Hidden("CardAmount", Model.CardAmount)
-
+                            <input type="hidden" id="originalAmount" />
                             @Html.HiddenFor(model => model.Currency)
                             @Html.HiddenFor(model => model.SubType)
                             @Html.HiddenFor(model => model.RateDescription)
@@ -285,6 +290,7 @@
 
             $(".btn-promo-code").on('click', function (e) {
                 e.preventDefault();
+                $('#originalAmount').val($("[name=CardAmount]").val());
                 var promoCode = $("[name=PromoCode]").val();
                 if (promoCode != "") {
                      $.ajax({
@@ -293,7 +299,19 @@
                     data: { promoCode: promoCode},
                     success: function (result) {
                         console.log(result);
-                        $('#promoAlert').html(result.msg);
+                        if (result.applied) {
+                            let originalAmount = $('#originalAmount').val();
+                            $("[name=CardAmount]").val(result.data.CardAmount);
+                            let cardAmount = result.data.CardAmount;
+                            originalAmount = parseFloat(originalAmount, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+                            cardAmount = parseFloat(cardAmount, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+
+                            $('span.na').html('$' + originalAmount);
+                            $('span#cardAmount').html('$' + cardAmount);
+                            $('#promoAlert').html(result.msg);
+                            
+                        
+                        }
                     }
                 });
                 }
@@ -381,5 +399,18 @@
             date: true,
             datePattern: ['m', 'y']
         });
+
+        function addCommas(nStr)
+        {
+	        nStr += '';
+	        x = nStr.split('.');
+	        x1 = x[0];
+	        x2 = x.length > 1 ? '.' + x[1] : '';
+	        var rgx = /(\d+)(\d{3})/;
+	        while (rgx.test(x1)) {
+		        x1 = x1.replace(rgx, '$1' + ',' + '$2');
+	        }
+	        return x1 + x2;
+        }
     </script>
 }
