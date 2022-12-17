@@ -735,9 +735,7 @@ namespace ePaperLive.Controllers
         [AllowAnonymous]
         public ActionResult Subscribe(string pkgType, string term, decimal price = 0)
         {
-            ViewData["pkgType"] = pkgType;
-            ViewData["price"] = price;
-            ViewData["term"] = term;
+           
             ViewData["preloadSub"] = GetPreloadSub();
             //Test Data
             LoginDetails ld = new LoginDetails
