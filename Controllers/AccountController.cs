@@ -2055,7 +2055,7 @@ namespace ePaperLive.Controllers
             {
                 result["msg"] = "Already applied this promo code";
                 result["data"] = paymentDetails;
-                result["applied"] = false;
+                result["applied"] = true;
             }
 
             //var result = new JsonResult();
