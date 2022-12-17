@@ -1677,6 +1677,7 @@ namespace ePaperLive.Controllers
                 var cardDetails = new CardDetails();
                 var billingDetails = new BillingDetails();
                 var shippingDetails = new ShippingDetails();
+                var recurringDetails = new RecurringDetails();
 
 
                 paymentDetails.TranxDate = DateTime.Now;
@@ -1728,6 +1729,13 @@ namespace ePaperLive.Controllers
 
                 shippingDetails = (deliveryAddress != null) ? shippingDetails : null;
 
+
+                recurringDetails.IsRecurring = false;
+                recurringDetails.ExecutionDate = "20230105"; //jan 5, 2023
+                recurringDetails.Frequency = "D"; // “D” – Daily : “W” – Weekly : “F” – Fortnightly / Every 2 weeks : “M” – Monthly : “E” – Bi - Monthly, “Q” – Quarterly, “Y” – Yearly
+                recurringDetails.NumberOfRecurrences = 7;
+
+
                 if (!await CardUtils.IsCardCharged(transactionDetails.OrderNumber))
                 {
                     // Clear sensitive data and save for later retrieval.
@@ -1739,7 +1747,7 @@ namespace ePaperLive.Controllers
                     session = sessionRepository.CreateObject(clientData);
                     var isSaved = await sessionRepository.AddOrUpdate(transactionDetails.OrderNumber, session, paymentDetails.RateID, clientData);
 
-                    summary = await cardProcessor.ChargeCard(cardDetails, transactionDetails, billingDetails, shippingDetails);
+                    summary = await cardProcessor.ChargeCard(cardDetails, transactionDetails, billingDetails, shippingDetails, recurringDetails);
 
                     // 3D Secure (Visa/MasterCard) Flow
                     if (!string.IsNullOrWhiteSpace(summary.Merchant3DSResponseHtml))
