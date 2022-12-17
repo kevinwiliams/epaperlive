@@ -258,10 +258,23 @@
             }
 
             let rateType;
+
             $('[name=subdetails]').submit(function (event) {
 
                 let rateType = $('[name=RateType]:checked').val();
                 let deliveryAddress = $("#AddressAdded").val();
+
+                 if(!$('[name=RateType]').is(':checked')) {
+
+                   swal({
+                      title: "Error!",
+                       text: "Please select a subscription plan to proceed",
+                      type: "warning",
+                      dangerMode: true
+                   });
+
+                    return false;
+                }
 
                 if (rateType != "Epaper" && !deliveryAddress ) {
                     swal({
@@ -274,16 +287,11 @@
                     return false;
                 }
 
-                if(!$('[name=RateType]').is(':checked')) {
-
-                   swal({
-                      title: "Error!",
-                       text: "Please select a subscription plan to proceed",
-                      type: "warning",
-                      dangerMode: true
-                   });
-
-                    return false;
+                if ($('[name=RateType]').is(':checked')) {
+                     let formData = $("[name=subdetails]").valid();
+                     if (formData) {
+                         $('#loading').addClass('loading').removeClass('hidden');
+                    }
                 }
               });
 

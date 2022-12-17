@@ -293,11 +293,16 @@
                 $('#originalAmount').val($("[name=CardAmount]").val());
                 var promoCode = $("[name=PromoCode]").val();
                 if (promoCode != "") {
+                    $('#loading').addClass('loading').removeClass('hidden');
                      $.ajax({
                     type: "POST",
                     url: '@Url.Action("CheckPromoCode", "Account")',
-                    data: { promoCode: promoCode},
+                         data: { promoCode: promoCode },
+                    beforeSend: function () {
+                            $('#loading').addClass('loading').removeClass('hidden');
+                        },
                     success: function (result) {
+                        $('#loading').addClass('hidden').removeClass('loading');
                         console.log(result);
                         if (result.applied) {
                             let originalAmount = $('#originalAmount').val();
@@ -312,7 +317,10 @@
                             
                         
                         }
-                    }
+                         },
+                    complete: function() {
+                      $('#loading').addClass('hidden').removeClass('loading');
+                    },
                 });
                 }
 
@@ -324,6 +332,7 @@
                 let formData = $("[name=PaymentDetails]").valid();
 
                 if (formData) {
+
                     //Serialize the form datas.   
                     var paymentData = $("[name=PaymentDetails] :input").serialize();
                     paymentData += '&nextBtn=Pay';
@@ -334,6 +343,9 @@
                         dataType: 'json',
                         data: paymentData,
                         contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        beforeSend: function () {
+                            $('#loading').addClass('loading').removeClass('hidden');
+                        },
                         success: function (result) {
                             if (result) {
                                  console.log(result["TransactionSummary"]["Merchant3DSResponseHtml"]);

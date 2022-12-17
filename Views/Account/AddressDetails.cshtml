@@ -45,7 +45,7 @@
             <div class="row gy-4">
                 <div class="col-lg-8">
                     <!-- start:wizrd -->
-                    @using (Html.BeginForm("AddressDetails", "Account", FormMethod.Post, new { @class = "row g-3 needs-validation", novalidate = "novalidate" }))
+                    @using (Html.BeginForm("AddressDetails", "Account", FormMethod.Post, new { @class = "row g-3 needs-validation", novalidate = "novalidate", @name = "AddressDetails" }))
                     {
                         @Html.AntiForgeryToken()
 
@@ -254,6 +254,12 @@
         });
 
 
+            $('[name=AddressDetails]').on('submit', (e) => {
+                let formData = $("[name=AddressDetails]").valid();
+                 if (formData) {
+                     $('#loading').addClass('loading').removeClass('hidden');
+                }
+            });
 
         let phoneNumber = new Cleave('#Phone', {
             phone: true,

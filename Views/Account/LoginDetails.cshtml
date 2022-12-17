@@ -32,7 +32,7 @@
             <div class="row gy-4">
                 <div class="col-lg-8">
                     <!-- start:wizrd -->
-                    @using (Html.BeginForm("LoginDetails", "Account", FormMethod.Post, new { @class = "row g-3 needs-validation", novalidate = "novalidate" }))
+                    @using (Html.BeginForm("LoginDetails", "Account", FormMethod.Post, new { @class = "row g-3 needs-validation", novalidate = "novalidate", @name ="LoginDetails" }))
                     {
                         @Html.AntiForgeryToken()
 
@@ -95,7 +95,7 @@
                             <div class="col-md-offset-2 col-md-12 pt-3">
                                 <div class="row">
                                     <div class="col-12">
-                                        <input type="submit" value="Next" name="nextBtn" class="btn btn-sign-in bx-pull-right" />
+                                        <input type="submit" value="Next" name="nextBtn" id="nextBtn" class="btn btn-sign-in bx-pull-right" />
                                     </div>
                                 </div>
 
@@ -135,3 +135,15 @@
     })();
 
 </script>
+
+@section scripts {
+    <script>
+        $('[name=LoginDetails]').on('submit', (e) => {
+            let formData = $("[name=LoginDetails]").valid();
+             if (formData) {
+                 $('#loading').addClass('loading').removeClass('hidden');
+
+            }
+    });
+    </script>
+    }
