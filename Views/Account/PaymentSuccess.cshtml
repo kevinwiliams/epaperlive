@@ -25,25 +25,50 @@
         <div class="container">
 
             <div class="row gy-4">
-                <div class="col-lg-8">
+                <div class="col-lg-7">
                     <!-- start:wizrd -->
-                    <h2>Thank you  for @Model.FirstName for subscribing to<br /> The Jamaica Observer Digital Experience</h2>
-                    <p>A confirmation email has been sent to the supplied email address with. Please follow the below link to login to start reading the epaper or keep track of your delivery dates.</p>
+                    <h3>Thank you @Model.FirstName for subscribing to The Jamaica Observer Digital Experience</h3>
+                    <p>A confirmation email has been sent to the supplied email address on the summary. Please follow the below link to login to start reading the ePaper or keep track of your delivery dates.</p>
                     <p>
                         <a href="@Url.Action("login", "account")">Login</a>
                     </p>
                     <!-- end:wizrd -->
                 </div>
-                <div class="col-lg-4">
+                <div class="col-lg-5">
                     <div class="portfolio-info">
                         <h3>Summary</h3>
                         <ul>
                             <li><strong>Order Number:</strong>: <a href="#">@Model.PaymentDetails.FirstOrDefault().OrderNumber</a></li>
                             <li><strong>@Model.SubscriptionDetails.FirstOrDefault().RateType Plan</strong>: @Model.PaymentDetails.FirstOrDefault().RateDescription</li>
                             <li><strong>Subscriber</strong>: @(Model.LastName + ", " + Model.FirstName)</li>
-                            <li><strong>Subscription Period</strong>:<br /> @Model.SubscriptionDetails.FirstOrDefault().StartDate - @Model.SubscriptionDetails.FirstOrDefault().EndDate</li>
-                            <li><strong>Email</strong>: <a href="#">@Model.EmailAddress</a></li>
+                            <li><strong>Subscription Period</strong>: @Model.SubscriptionDetails.FirstOrDefault().StartDate.ToString("dd/MM/yyyy")  - @Model.SubscriptionDetails.FirstOrDefault().EndDate.ToString("dd/MM/yyyy")</li>
+                            <li><strong>Email</strong>: <span class="text-danger">@Model.EmailAddress</span></li>
+                            <li><strong>Amount</strong>: <span class="text-success">@String.Format("{0:C}", Model.PaymentDetails.FirstOrDefault().CardAmount)</span></li>
+                            <li><strong>Card</strong>: <span class="">
+                            @Model.PaymentDetails.FirstOrDefault().CardType :
+                            @Model.PaymentDetails.FirstOrDefault().CardNumberLastFour 
+                                EXP: @Model.PaymentDetails.FirstOrDefault().CardExp
+                        </span></li>
                         </ul>
+                        @if (Model.AddressDetails.Any(x => x.AddressType == "D"))
+                        {
+                            <br />
+                            <h6>Delivery Address</h6>
+                            <hr />
+                            <p>
+                            @foreach (var item in @Model.AddressDetails.Where(x => x.AddressType == "D"))
+                            {
+                                @item.AddressLine1<br />
+                                if (!String.IsNullOrEmpty(item.AddressLine2))
+                                {
+                                    @item.AddressLine2<br />
+                                }
+                                @item.CityTown<br />
+                                @item.StateParish<br />
+                                @item.CountryCode
+                            }
+                            </p>
+                        }
                     </div>
                     <!--
                     <div class="portfolio-description">
