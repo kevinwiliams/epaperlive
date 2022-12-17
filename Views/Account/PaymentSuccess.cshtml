@@ -56,19 +56,23 @@
                             <h6>Delivery Address</h6>
                             <hr />
                             <p>
-                            @foreach (var item in @Model.AddressDetails.Where(x => x.AddressType == "D"))
-                            {
-                                @item.AddressLine1<br />
-                                if (!String.IsNullOrEmpty(item.AddressLine2))
-                                {
-                                    @item.AddressLine2<br />
+                                @{
+                                    var dAddress = @Model.AddressDetails.FirstOrDefault(x => x.AddressType == "D");
                                 }
-                                @item.CityTown<br />
-                                @item.StateParish<br />
-                                @item.CountryCode
-                            }
+
+                                @dAddress.AddressLine1<br />
+                                @if (!String.IsNullOrEmpty(dAddress.AddressLine2))
+                                {
+                                    @dAddress.AddressLine2<br />
+                                }
+
+                                @dAddress.CityTown<br />
+                                @dAddress.StateParish<br />
+                                @dAddress.CountryCode
+
                             </p>
-                        }
+                         }
+                        
                     </div>
                     <!--
                     <div class="portfolio-description">
