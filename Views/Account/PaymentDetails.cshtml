@@ -314,6 +314,8 @@
                             $('span.na').html('$' + originalAmount);
                             $('span#cardAmount').html('$' + cardAmount);
                             $('#promoAlert').html(result.msg);
+                            let currency = $("[name=Currency]").val();
+                            $('p#subRate').html(currency + ' $' + cardAmount);
                             
                         
                         }

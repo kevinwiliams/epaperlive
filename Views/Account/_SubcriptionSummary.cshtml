@@ -32,7 +32,7 @@
                 <strong>@plans.Key.Split('|')[0].ToUpper() SUBSCRIPTION</strong><br />
                 @plans.Key.Split('|')[1];<br />
                 <small>@Html.Raw(freq)</small>
-                <p class="pt-1 text-success fw-semibold fs-3">@plans.Key.Split('|')[3]</p>
+                <p id="subRate" class="pt-1 text-success fw-semibold fs-3">@plans.Key.Split('|')[3]</p>
 
             }
             </div>
