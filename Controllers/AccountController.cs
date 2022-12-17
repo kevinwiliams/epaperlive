@@ -1648,13 +1648,15 @@ namespace ePaperLive.Controllers
             return false;
         }
 
-        [HttpPost]
+        
         [AllowAnonymous]
         public ActionResult PaymentSuccess()
         {
+            AuthSubcriber authSubcriber = GetAuthSubscriber();
             RemoveSubscriber();
-            
-            return View();
+            Session["auth_subscriber"] = authSubcriber;
+
+            return View("PaymentSuccess", authSubcriber);
         }
 
         public async Task<JsonResult> ChargeCard(PaymentDetails paymentDetails)
@@ -1904,10 +1906,8 @@ namespace ePaperLive.Controllers
                         int cacheExpiryDuration = int.Parse(ConfigurationManager.AppSettings["cacheExpiryDuration"] ?? "15");
                         // Repopulate cache for new flow.
                         tempData.Cache.Add(summary.OrderId, $"{email}|{rateID}", new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheExpiryDuration) });
-
-                        RemoveSubscriber();
-
-                        return View("PaymentSuccess", customerData);
+                        Session["auth_subscriber"] = customerData;
+                        return RedirectToAction("PaymentSuccess");
                     case PaymentStatus.Failed:
                     //_logger.CreateLog("Authorization failed", logModel, LogType.Warning, additionalFields: logDetails);
                     //return Redirect($"{host}/payments?status=failed");
@@ -2002,6 +2002,9 @@ namespace ePaperLive.Controllers
                             }
 
                             await context.SaveChangesAsync();
+
+                            return Json(true);
+
                         }
                     }
                 }
@@ -2012,8 +2015,6 @@ namespace ePaperLive.Controllers
                 LogError(ex);
             }
 
-
-            RemoveSubscriber();
             return View("PaymentSuccess");
         }
         [HttpPost]
@@ -2238,7 +2239,7 @@ namespace ePaperLive.Controllers
             Session.Remove("subscriber_epaper");
             Session.Remove("subscriber_print");
             Session.Remove("subscriber_tranx");
-            Session.Clear();
+            //Session.Clear();
             //AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
 
             string[] myCookies = Request.Cookies.AllKeys;
