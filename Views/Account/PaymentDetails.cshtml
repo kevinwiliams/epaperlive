@@ -261,6 +261,9 @@
 
 @section scripts{
     <script>
+        //remove labels
+        $(".usercard-cc").html("");
+
           let address = JSON.parse($('#mailingAddress').val());
 
          $("#SameAsMailing").click(() => {
@@ -287,8 +290,7 @@
 
         $(document).ready(function () {
 
-            //remove labels
-            $(".usercard-cc").html("");
+            
             $("input[name='CardType']").click((e) => e.preventDefault());
             
 

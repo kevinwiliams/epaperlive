@@ -1729,12 +1729,12 @@ namespace ePaperLive.Controllers
 
                 shippingDetails = (deliveryAddress != null) ? shippingDetails : null;
 
-
-                recurringDetails.IsRecurring = false;
-                recurringDetails.ExecutionDate = "20230105"; //jan 5, 2023
-                recurringDetails.Frequency = "D"; // “D” – Daily : “W” – Weekly : “F” – Fortnightly / Every 2 weeks : “M” – Monthly : “E” – Bi - Monthly, “Q” – Quarterly, “Y” – Yearly
-                recurringDetails.NumberOfRecurrences = 7;
-
+                //Recurring Payments Setup
+                //recurringDetails.IsRecurring = true;
+                //recurringDetails.ExecutionDate = "20221217"; //jan 5, 2023
+                //recurringDetails.Frequency = "D"; // “D” – Daily : “W” – Weekly : “F” – Fortnightly / Every 2 weeks : “M” – Monthly : “E” – Bi - Monthly, “Q” – Quarterly, “Y” – Yearly
+                //recurringDetails.NumberOfRecurrences = 3;
+                //transactionDetails.TransactionCode = 4096; //2048 – Subsequent Recurring – future recurring payments : 4096 – Initial Recurring – First Payment in a recurring cycle : 8192 - **HOST SPECIFIC – Initial Recurring for “Free - Trials”
 
                 if (!await CardUtils.IsCardCharged(transactionDetails.OrderNumber))
                 {
@@ -1747,7 +1747,7 @@ namespace ePaperLive.Controllers
                     session = sessionRepository.CreateObject(clientData);
                     var isSaved = await sessionRepository.AddOrUpdate(transactionDetails.OrderNumber, session, paymentDetails.RateID, clientData);
 
-                    summary = await cardProcessor.ChargeCard(cardDetails, transactionDetails, billingDetails, shippingDetails, recurringDetails);
+                    summary = await cardProcessor.ChargeCard(cardDetails, transactionDetails, billingDetails, shippingDetails, null);
 
                     // 3D Secure (Visa/MasterCard) Flow
                     if (!string.IsNullOrWhiteSpace(summary.Merchant3DSResponseHtml))
