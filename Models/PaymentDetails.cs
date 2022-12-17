@@ -33,7 +33,7 @@ namespace ePaperLive.Models
         [Required(AllowEmptyStrings = false, ErrorMessage = "Enter card expiration date")]
         public string CardExp { get; set; }
         [Display(Name = "Amount")]
-        [DisplayFormat(DataFormatString = "{0:C0}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
         public decimal CardAmount { get; set; }
         public string Currency { get; set; }
         public string AuthorizationCode { get; set; }

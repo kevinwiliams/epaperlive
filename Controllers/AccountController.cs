@@ -1668,6 +1668,7 @@ namespace ePaperLive.Controllers
             {
                 AuthSubcriber clientData = GetAuthSubscriber(); //pull exisiting data
                 var processedClientData = new AuthSubcriber();
+                var deliveryAddress = clientData.AddressDetails.FirstOrDefault(x => x.AddressType == "D");
                 List<PaymentDetails> paymentDetailsList = new List<PaymentDetails>();
                
                 // Setup card processor.
@@ -1675,6 +1676,7 @@ namespace ePaperLive.Controllers
                 var transactionDetails = new TransactionDetails();
                 var cardDetails = new CardDetails();
                 var billingDetails = new BillingDetails();
+                var shippingDetails = new ShippingDetails();
 
 
                 paymentDetails.TranxDate = DateTime.Now;
@@ -1714,6 +1716,18 @@ namespace ePaperLive.Controllers
                 billingDetails.BillToAddress2 = paymentDetails.BillingAddress.AddressLine2;
                 billingDetails.BillToCity = paymentDetails.BillingAddress.CityTown;
 
+                // Update Billing Details
+                if (deliveryAddress != null)
+                {
+                    shippingDetails.ShipToFirstName = clientData.FirstName;
+                    shippingDetails.ShipToLastName = clientData.LastName;
+                    shippingDetails.ShipToAddress = deliveryAddress.AddressLine1;
+                    shippingDetails.ShipToAddress2 = deliveryAddress.AddressLine2;
+                    shippingDetails.ShipToCity = deliveryAddress.CityTown;
+                }
+
+                shippingDetails = (deliveryAddress != null) ? shippingDetails : null;
+
                 if (!await CardUtils.IsCardCharged(transactionDetails.OrderNumber))
                 {
                     // Clear sensitive data and save for later retrieval.
@@ -1725,7 +1739,7 @@ namespace ePaperLive.Controllers
                     session = sessionRepository.CreateObject(clientData);
                     var isSaved = await sessionRepository.AddOrUpdate(transactionDetails.OrderNumber, session, paymentDetails.RateID, clientData);
 
-                    summary = await cardProcessor.ChargeCard(cardDetails, transactionDetails, billingDetails, null);
+                    summary = await cardProcessor.ChargeCard(cardDetails, transactionDetails, billingDetails, shippingDetails);
 
                     // 3D Secure (Visa/MasterCard) Flow
                     if (!string.IsNullOrWhiteSpace(summary.Merchant3DSResponseHtml))
@@ -1890,15 +1904,15 @@ namespace ePaperLive.Controllers
 
                 //_logger.CreateLog("Attempting to send payment notification", logModel, LogType.Information, additionalFields: logDetails);
 
-
+                var existingSession = await sessionRepository.Get(email);
+                var customerData = JsonConvert.DeserializeObject<AuthSubcriber>(existingSession.RootObject);
                 // Redirect
                 // Setup messages for failure and passes.
                 switch (summary.TransactionStatus.Status)
                 {
                     case PaymentStatus.Successful:
                         //save subscription
-                        var existingSession = await sessionRepository.Get(email);
-                        var customerData = JsonConvert.DeserializeObject<AuthSubcriber>(existingSession.RootObject);
+                       
                         //await SaveSubscriptionAsync();
                         await SaveSubscriptionInfoAsync(customerData);
 
@@ -1915,7 +1929,9 @@ namespace ePaperLive.Controllers
                     case PaymentStatus.GatewayError:
                         //_logger.CreateLog("Gateway/Internal failure", logModel, LogType.Warning, additionalFields: logDetails);
                         //return Redirect($"{host}/payments?status=error");
-                        break;
+                        customerData.PaymentDetails.FirstOrDefault().TransactionSummary = summary;
+                        return View("PaymentDetails", customerData.PaymentDetails.FirstOrDefault());
+
                     default:
                         //_logger.CreateLog("Generic failure", logModel, LogType.Warning, additionalFields: logDetails);
                         //return Redirect($"{host}/payments?status=failed");

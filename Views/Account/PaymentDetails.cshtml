@@ -48,12 +48,12 @@
 
                         <div class="form-horizontal">
                             <h4><strong>@Html.DisplayFor(model => model.SubType): </strong>@Html.DisplayFor(model => model.RateDescription) </h4>
-                            <h1 style="color:forestgreen"><strong><span id="currency">@Html.DisplayFor(model => model.Currency)</span> <span id="cardAmount">@String.Format("{0:C}", Model.CardAmount)</span> <span class="na"></span></strong></h1>
+                            <h1 style="color:forestgreen"><strong><span id="currency">@Html.DisplayFor(model => model.Currency)</span> <span id="cardAmount">@Html.DisplayFor(model => model.CardAmount)</span> <span class="na"></span></strong></h1>
                             <hr />
                             @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
-                            @Html.Hidden("RateID", Model.RateID)
-                            @Html.Hidden("CardAmount", Model.CardAmount)
+                            @Html.HiddenFor(model => model.RateID)
+                            @Html.HiddenFor(model => model.CardAmount)
                             <input type="hidden" id="originalAmount" />
                             @Html.HiddenFor(model => model.Currency)
                             @Html.HiddenFor(model => model.SubType)
@@ -194,9 +194,14 @@
                                 </div>
 
                             </div>
-                            @if (Model.TransactionSummary != null)
+                            @if (Model != null)
                             {
-                                @Html.Hidden("TransactionSummary", Model.TransactionSummary.Merchant3DSResponseHtml)
+                                if (Model.TransactionSummary != null)
+                                {
+                                    @Html.Hidden("TransactionSummary", Model.TransactionSummary.Merchant3DSResponseHtml)
+
+                                }
+
                             }
                             <section id="paymentGatway" style="display:none"></section>
 
