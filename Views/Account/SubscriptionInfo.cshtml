@@ -181,6 +181,7 @@
                                 </div>
                             </div>
                         </div>
+                        <input type="hidden" id="AddressAdded" />
                     }
                     <!-- end:wizrd -->
                     <!-- Delivery Modal -->
@@ -257,7 +258,22 @@
             }
 
             let rateType;
-            $('[name=subdetails]').submit(function(event){
+            $('[name=subdetails]').submit(function (event) {
+
+                let rateType = $('[name=RateType]:checked').val();
+                let deliveryAddress = $("#AddressAdded").val();
+
+                if (rateType != "Epaper" && !deliveryAddress ) {
+                    swal({
+                      title: "Error!",
+                       text: "Please enter a delivery address to proceed",
+                      type: "warning",
+                      dangerMode: true
+                   });
+
+                    return false;
+                }
+
                 if(!$('[name=RateType]').is(':checked')) {
 
                    swal({
@@ -356,6 +372,7 @@
                                             ${result.CityTown}<br>
                                             ${result.StateParish}<br>
                                         </p>`;
+                            $("#AddressAdded").val("added");
                             $("#delAddressDetails").html(html);
                         }
                     });
