@@ -184,14 +184,20 @@
 
             let countryCode = $('#CountryCode').val();
 
-                if (countryCode == "JAM") {
-                    $('#StateParishList').show();
-                    $('#CityTownList').show();
-                    $('#StateParishList').attr('required', true);
-                    $('#StateParish').hide();
-                    $('#CityTown').hide();
-                    $('#ZipCode').attr('disabled', true);
-                }
+        if (countryCode == "JAM") {
+            $('#StateParishList').show();
+            $('#CityTownList').show();
+            $('#StateParishList').attr('required', true);
+            $('#StateParish').hide();
+            $('#CityTown').hide();
+            $('#ZipCode').attr('disabled', true);
+        } else {
+            $('#StateParishList').hide();
+            $('#CityTownList').hide();
+            $('#StateParish').show();
+            $('#CityTown').show();
+            $('#ZipCode').attr('disabled', false);
+        }
 
             $('#CountryCode').on('change', (e) => {
                 console.log($('#CountryCode').val());
