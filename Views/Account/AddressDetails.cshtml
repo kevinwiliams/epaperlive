@@ -16,6 +16,18 @@
         line-height: 1.5;
         border-radius: .375rem;
     }
+
+    .select2-container--open .select2-dropdown--below {
+        max-width: 300px;
+    }
+
+    .select2-container--open .select2-dropdown--above {
+        max-width: 300px;
+    }
+
+    .select2-container {
+        max-width: 300px;
+    }
 </style>
 <main id="main">
 
@@ -73,7 +85,7 @@
                                     @*@Html.LabelFor(model => model.CityTown, htmlAttributes: new { @class = "control-label " })*@
                                     <div class="col-md-10">
                                         @Html.EditorFor(model => model.CityTown, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.CityTown) } })
-                                        <select id="CityTownList" class="form-control pb-sm-3" name="CityTown" aria-label="District" required = "required">
+                                        <select id="CityTownList" class="form-control pb-sm-3" name="CityTown" aria-label="District" required="required" style="display: none">
                                             <option>Select a District</option>>
                                         </select>
                                     </div>
@@ -84,7 +96,7 @@
                                     @*@Html.LabelFor(model => model.StateParish, htmlAttributes: new { @class = "control-label " })*@
                                     <div class="col-md-10">
                                         @Html.EditorFor(model => model.StateParish, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.StateParish) } })
-                                        @Html.DropDownList("StateParish", ViewBag.Parishes as SelectList, "Select a parish", new { @class = "form-control", id = "StateParishList", @required = "required" })
+                                        @Html.DropDownList("StateParish", ViewBag.Parishes as SelectList, "Select a parish", new { @class = "form-control", id = "StateParishList", @required = "required", @style = "display: none"})
                                         @*@Html.ValidationMessageFor(model => model.StateParish, "", new { @class = "text-danger" })*@
                                     </div>
                                 </div>
@@ -185,6 +197,7 @@
             let countryCode = $('#CountryCode').val();
 
         if (countryCode == "JAM") {
+            $('#CityTownList').select2({ theme: "bootstrap-5", }).addClass("form-control");
             $('#StateParishList').show();
             $('#CityTownList').show();
             $('#StateParishList').attr('required', true);
@@ -204,6 +217,7 @@
                 countryCode = $('#CountryCode').val();
 
                 if (countryCode == "JAM") {
+                    $('#CityTownList').select2({ theme: "bootstrap-5", }).addClass("form-control");
                     $('#StateParishList').show();
                     $('#CityTownList').show();
 
@@ -213,6 +227,11 @@
 
                     $('#ZipCode').attr('disabled', true);
                 } else {
+
+                    if ($('#CityTownList').hasClass("select2-hidden-accessible")){
+                        $("#CityTownList").select2('destroy');
+                    }
+
                     $('#StateParishList').hide();
                     $('#CityTownList').hide();
 
@@ -225,19 +244,17 @@
         //$('#StateParishList').on('change', (e) => {
         //    $('#StateParish').val($('#StateParishList option:selected').text());
         //});
-        $("#CityTownList").on("select2:close", function (e) {  
-            $(this).valid(); 
+        $("#CityTownList").on("select2:close", function (e) {
+            $(this).valid();
         });
 
-         $("#CityTownList").on("select2:select", function (e) {  
+         $("#CityTownList").on("select2:select", function (e) {
              $('#CityTown').val($('#CityTownList').val());
 
              console.log($('#CityTownList').val());        });
 
 
-        $('#CityTownList').select2({
-            theme: "bootstrap-5",
-        }).addClass("form-control");
+
 
         $('#StateParishList').change(function () {
             console.log();
