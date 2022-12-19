@@ -1917,42 +1917,48 @@ namespace ePaperLive.Controllers
 
                 var existingSession = await sessionRepository.Get(email);
                 var customerData = JsonConvert.DeserializeObject<AuthSubcriber>(existingSession.RootObject);
+                Session["auth_subscriber"] = customerData;
+                PaymentDetails paymentDetails = customerData.PaymentDetails.FirstOrDefault();
+                paymentDetails.TransactionSummary = summary;
+
+                var errMsg = ConfigurationManager.AppSettings["CreditCardError"];
+                
+
                 // Redirect
                 // Setup messages for failure and passes.
                 switch (summary.TransactionStatus.Status)
                 {
                     case PaymentStatus.Successful:
                         //save subscription
-                       
                         //await SaveSubscriptionAsync();
                         await SaveSubscriptionInfoAsync(customerData);
-
+                        
                         // Set to 15 minutes by default if not found
                         int cacheExpiryDuration = int.Parse(ConfigurationManager.AppSettings["cacheExpiryDuration"] ?? "15");
                         // Repopulate cache for new flow.
                         tempData.Cache.Add(summary.OrderId, $"{email}|{rateID}", new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheExpiryDuration) });
-                        Session["auth_subscriber"] = customerData;
                         return RedirectToAction("PaymentSuccess");
                     case PaymentStatus.Failed:
                         //_logger.CreateLog("Authorization failed", logModel, LogType.Warning, additionalFields: logDetails);
                         //return Redirect($"{host}/payments?status=failed");
-                        Session["auth_subscriber"] = customerData;
+                        summary.FriendlyErrorMessages.Add(errMsg);
                         ViewBag.CountryList = GetCountryList();
-                        customerData.PaymentDetails.FirstOrDefault().TransactionSummary = summary;
-                        return View("PaymentDetails", customerData.PaymentDetails.FirstOrDefault());
+                        return View("PaymentDetails", paymentDetails);
                     case PaymentStatus.InternalError:
                     case PaymentStatus.GatewayError:
                         //_logger.CreateLog("Gateway/Internal failure", logModel, LogType.Warning, additionalFields: logDetails);
                         //return Redirect($"{host}/payments?status=error");
-                        Session["auth_subscriber"] = customerData;
+                        summary.FriendlyErrorMessages.Add(errMsg);
                         ViewBag.CountryList = GetCountryList();
-                        customerData.PaymentDetails.FirstOrDefault().TransactionSummary = summary;
-                        return View("PaymentDetails", customerData.PaymentDetails.FirstOrDefault());
+                        return View("PaymentDetails", paymentDetails);
 
                     default:
                         //_logger.CreateLog("Generic failure", logModel, LogType.Warning, additionalFields: logDetails);
                         //return Redirect($"{host}/payments?status=failed");
-                        break;
+                        summary.FriendlyErrorMessages.Add(errMsg);
+                        ViewBag.CountryList = GetCountryList();
+                        return View("PaymentDetails", paymentDetails);
+                        
                 }
                 // return Ok();
             }

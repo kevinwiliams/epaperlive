@@ -193,10 +193,23 @@
                             </div>
 
                         </div>
-                        
-                       @Html.HiddenFor(model => model.TransactionSummary.Errors, htmlAttributes: new { @id = "TransactionSummary" })
 
-                        <section id="paymentGatway" style="display:none"></section>
+                        @Html.HiddenFor(model => model.TransactionSummary.Errors, htmlAttributes: new { @id = "TransactionSummary" })
+                        @Html.HiddenFor(model => model.TransactionSummary.FriendlyErrorMessages, htmlAttributes: new { @id = "ErrorMessages" })
+                        @if (Model.TransactionSummary != null)
+                        {
+                            if (Model.TransactionSummary.FriendlyErrorMessages != null)
+                            {
+                                foreach (var item in Model.TransactionSummary.FriendlyErrorMessages)
+                                {
+                                    @item
+                                }
+                            }
+
+                        }
+
+
+                        <section id="paymentGatway" class="hidden"></section>
 
                         <div class="form-group pt-3">
                             <div class="col-md-offset-2 col-md-12 pt-3">
@@ -288,6 +301,7 @@
         $(document).ready(function () {
 
             console.log($('#TransactionSummary').val());
+            console.log($('#ErrorMessages').val());
             
             $("input[name='CardType']").click((e) => e.preventDefault());
 
@@ -354,7 +368,7 @@
                         },
                         success: function (result) {
                             if (result) {
-                                 console.log(result);
+                                 //console.log(result);
                                 let routeData = result["TransactionSummary"]["Merchant3DSResponseHtml"];
 
                                 if (routeData) {
