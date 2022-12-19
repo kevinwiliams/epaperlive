@@ -797,9 +797,9 @@ namespace ePaperLive.Controllers
                             AddressLine1 = "Lot 876 Scheme Steet",
                             CityTown = "Bay Town",
                             StateParish = "Portland",
-                            CountryCode = "JAM",
                             ZipCode = "JAMWI",
                             Phone = "876-875-8651",
+                            CountryCode = countryCode,
                             CountryList = GetCountryList(),
                         };
 
