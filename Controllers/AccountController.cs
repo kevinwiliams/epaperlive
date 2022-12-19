@@ -1736,9 +1736,6 @@ namespace ePaperLive.Controllers
 
                 shippingDetails = (deliveryAddress != null) ? shippingDetails : null;
 
-               
-               
-
                 if (!await CardUtils.IsCardCharged(transactionDetails.OrderNumber))
                 {
                     // Clear sensitive data and save for later retrieval.
@@ -1827,11 +1824,9 @@ namespace ePaperLive.Controllers
                     return Json(paymentDetails);
                 }
 
-
                 //encrypted = summary;
                 //encrypted = Util.EncryptRijndaelManaged(JsonConvert.SerializeObject(responseData), "E");
                 //return encrypted;
-
             }
             catch (Exception ex)
             {
@@ -1852,14 +1847,9 @@ namespace ePaperLive.Controllers
             try
             {
 
-                var websiteHost = ConfigurationManager.AppSettings["ecomm_Prod"];
-                //var host = Utilities.SetAppEnvironment(websiteHost);
-
                 var sessionRepository = new SessionRepository();
                 JOL_UserSession existing = new JOL_UserSession();
-                //AuthSubcriber customerData = new AuthSubcriber();
                 // Retrieve data that was saved before 3DS processing.
-
                 await Task.FromResult(0);
                 var subscriberID = "";
                 var rateID = "";
@@ -1922,7 +1912,6 @@ namespace ePaperLive.Controllers
                 paymentDetails.TransactionSummary = summary;
 
                 var errMsg = ConfigurationManager.AppSettings["CreditCardError"];
-                
 
                 // Redirect
                 // Setup messages for failure and passes.
@@ -1930,7 +1919,6 @@ namespace ePaperLive.Controllers
                 {
                     case PaymentStatus.Successful:
                         //save subscription
-                        //await SaveSubscriptionAsync();
                         await SaveSubscriptionInfoAsync(customerData);
                         
                         // Set to 15 minutes by default if not found
@@ -1938,23 +1926,19 @@ namespace ePaperLive.Controllers
                         // Repopulate cache for new flow.
                         tempData.Cache.Add(summary.OrderId, $"{email}|{rateID}", new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheExpiryDuration) });
                         return RedirectToAction("PaymentSuccess");
+
                     case PaymentStatus.Failed:
-                        //_logger.CreateLog("Authorization failed", logModel, LogType.Warning, additionalFields: logDetails);
-                        //return Redirect($"{host}/payments?status=failed");
                         summary.FriendlyErrorMessages.Add(errMsg);
                         ViewBag.CountryList = GetCountryList();
                         return View("PaymentDetails", paymentDetails);
+
                     case PaymentStatus.InternalError:
                     case PaymentStatus.GatewayError:
-                        //_logger.CreateLog("Gateway/Internal failure", logModel, LogType.Warning, additionalFields: logDetails);
-                        //return Redirect($"{host}/payments?status=error");
                         summary.FriendlyErrorMessages.Add(errMsg);
                         ViewBag.CountryList = GetCountryList();
                         return View("PaymentDetails", paymentDetails);
 
                     default:
-                        //_logger.CreateLog("Generic failure", logModel, LogType.Warning, additionalFields: logDetails);
-                        //return Redirect($"{host}/payments?status=failed");
                         summary.FriendlyErrorMessages.Add(errMsg);
                         ViewBag.CountryList = GetCountryList();
                         return View("PaymentDetails", paymentDetails);
