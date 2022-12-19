@@ -85,7 +85,7 @@
                                     @*@Html.LabelFor(model => model.CityTown, htmlAttributes: new { @class = "control-label " })*@
                                     <div class="col-md-10">
                                         @Html.EditorFor(model => model.CityTown, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.CityTown) } })
-                                        <select id="CityTownList" class="form-control pb-sm-3" name="CityTown" aria-label="District" required="required" style="display: none">
+                                        <select id="CityTownList" class="form-control pb-sm-3 hidden" name="CityTown" aria-label="District" required="required">
                                             <option>Select a District</option>>
                                         </select>
                                     </div>
@@ -197,18 +197,18 @@
             let countryCode = $('#CountryCode').val();
 
         if (countryCode == "JAM") {
-            $('#CityTownList').select2({ theme: "bootstrap-5", }).addClass("form-control");
+            //$('#CityTownList').select2({ theme: "bootstrap-5", }).addClass("form-control");
             $('#StateParishList').show();
-            $('#CityTownList').show();
+            //$('#CityTownList').show();
             $('#StateParishList').attr('required', true);
             $('#StateParish').hide();
-            $('#CityTown').hide();
+            //$('#CityTown').hide();
             $('#ZipCode').attr('disabled', true);
         } else {
             $('#StateParishList').hide();
-            $('#CityTownList').hide();
+            //$('#CityTownList').hide();
             $('#StateParish').show();
-            $('#CityTown').show();
+            //$('#CityTown').show();
             $('#ZipCode').attr('disabled', false);
         }
 
@@ -217,26 +217,26 @@
                 countryCode = $('#CountryCode').val();
 
                 if (countryCode == "JAM") {
-                    $('#CityTownList').select2({ theme: "bootstrap-5", }).addClass("form-control");
+                    //$('#CityTownList').select2({ theme: "bootstrap-5", }).addClass("form-control");
                     $('#StateParishList').show();
-                    $('#CityTownList').show();
+                    //$('#CityTownList').show();
 
                     $('#StateParishList').attr('required', true);
                     $('#StateParish').hide();
-                    $('#CityTown').hide();
+                    //$('#CityTown').hide();
 
                     $('#ZipCode').attr('disabled', true);
                 } else {
 
-                    if ($('#CityTownList').hasClass("select2-hidden-accessible")){
-                        $("#CityTownList").select2('destroy');
-                    }
+                    //if ($('#CityTownList').hasClass("select2-hidden-accessible")){
+                    //    $("#CityTownList").select2('destroy');
+                    //}
 
                     $('#StateParishList').hide();
-                    $('#CityTownList').hide();
+                    //$('#CityTownList').hide();
 
                     $('#StateParish').show();
-                    $('#CityTown').show();
+                    //$('#CityTown').show();
                     $('#ZipCode').attr('disabled', false);
                 }
             });
@@ -244,7 +244,7 @@
         //$('#StateParishList').on('change', (e) => {
         //    $('#StateParish').val($('#StateParishList option:selected').text());
         //});
-        $("#CityTownList").on("select2:close", function (e) {
+        @*$("#CityTownList").on("select2:close", function (e) {
             $(this).valid();
         });
 
@@ -274,7 +274,7 @@
             } else { $('#CityTownList').html(items); }
 
 
-        });
+        });*@
 
 
             $('[name=AddressDetails]').on('submit', (e) => {
