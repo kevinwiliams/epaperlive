@@ -590,7 +590,6 @@
     <Content Include="Views\Account\_RatesFormPartial.cshtml" />
     <Content Include="Views\Account\_RatesPartial.cshtml" />
     <Content Include="Views\Account\_SubcriptionSummary.cshtml" />
-    <Content Include="Views\Account\_SubscriptionInfo.cshtml" />
     <Content Include="Views\Account\Orders.cshtml" />
     <Content Include="Views\Account\UserProfile.cshtml" />
     <Content Include="Views\Home\PrivacyPolicy.cshtml" />

@@ -230,6 +230,8 @@
         }
     </script>
     <script>
+        $('#loading').addClass('loading').removeClass('hidden');
+
         let prePlan = $("#preloadPlan").val();
         let preRate = $("#preloadRate").val();
         let preRateDesc = $("#preloadRateDesc").val();
@@ -249,7 +251,8 @@
         }
 
         $(document).ready(function () {
-
+            $('#loading').addClass('hidden').removeClass('loading');
+            
             if (prePlan) {
                 //select preloaded plan
                 setTimeout(

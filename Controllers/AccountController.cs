@@ -1218,8 +1218,6 @@ namespace ePaperLive.Controllers
         {
             ViewData["preloadSub"] = GetPreloadSub();
 
-            data.BillingAddress.CountryList = GetCountryList();
-
             var cardType = data.CardType;
 
             if (prevBtn != null)
@@ -1288,6 +1286,7 @@ namespace ePaperLive.Controllers
                 }
             }
 
+            ViewBag.CountryList = GetCountryList();
             return View(data);
         }
 
@@ -1675,8 +1674,15 @@ namespace ePaperLive.Controllers
                 var cardDetails = new CardDetails();
                 var billingDetails = new BillingDetails();
                 var shippingDetails = new ShippingDetails();
-                var recurringDetails = new RecurringDetails();
-
+                //TODO: Recurring Payments Setup
+                //transactionDetails.TransactionCode = 4096; //2048 – Subsequent Recurring – future recurring payments : 4096 – Initial Recurring – First Payment in a recurring cycle : 8192 - **HOST SPECIFIC – Initial Recurring for “Free - Trials”
+                var recurringDetails = new RecurringDetails
+                {
+                    IsRecurring = true,
+                    ExecutionDate = "20221217", //jan 5, 2023
+                    Frequency = "D", // “D” – Daily : “W” – Weekly : “F” – Fortnightly / Every 2 weeks : “M” – Monthly : “E” – Bi - Monthly, “Q” – Quarterly, “Y” – Yearly
+                    NumberOfRecurrences = 3
+                };
 
                 paymentDetails.TranxDate = DateTime.Now;
 
@@ -1699,11 +1705,14 @@ namespace ePaperLive.Controllers
                 transactionDetails.Amount = CardUtils.ZeroPadAmount(paymentDetails.CardAmount);
                 transactionDetails.Currency = paymentDetails.Currency;
 
-                //For Testing Purposes Only
-                string xxx = (DateTime.Now.Millisecond).ToString();
-                xxx = xxx.Substring(xxx.Length - 2, 2);
+                //Setup Order Number
+                string milli = Util.ZeroPadNumber(3, DateTime.Now.Millisecond); 
+                // Pad to 10 digits.
+                var paddedRateKey = Util.ZeroPadNumber(3, paymentDetails.RateID);
+                // 2 Character Sub Type
+                var reSubType = paymentDetails.SubType.ToUpper().Substring(0,2);
 
-                transactionDetails.OrderNumber = $"{DateTime.Now.Year}{xxx}{paymentDetails.Currency}{"-"}{paymentDetails.SubType.ToUpper()}{"-"}{CardUtils.ZeroPadAmount(paymentDetails.RateID)}";
+                transactionDetails.OrderNumber = $"{reSubType}{"-"}{DateTime.Now.ToString("yyyyMMddhhmmssfffff")}{"-"}{paymentDetails.Currency}{"-"}{paddedRateKey}";
 
                 paymentDetails.OrderNumber = transactionDetails.OrderNumber;
                 paymentDetailsList.Add(paymentDetails);
@@ -1715,7 +1724,7 @@ namespace ePaperLive.Controllers
                 billingDetails.BillToAddress2 = paymentDetails.BillingAddress.AddressLine2;
                 billingDetails.BillToCity = paymentDetails.BillingAddress.CityTown;
 
-                // Update Billing Details
+                // Update Shipping Details
                 if (deliveryAddress != null)
                 {
                     shippingDetails.ShipToFirstName = clientData.FirstName;
@@ -1727,12 +1736,8 @@ namespace ePaperLive.Controllers
 
                 shippingDetails = (deliveryAddress != null) ? shippingDetails : null;
 
-                //Recurring Payments Setup
-                //recurringDetails.IsRecurring = true;
-                //recurringDetails.ExecutionDate = "20221217"; //jan 5, 2023
-                //recurringDetails.Frequency = "D"; // “D” – Daily : “W” – Weekly : “F” – Fortnightly / Every 2 weeks : “M” – Monthly : “E” – Bi - Monthly, “Q” – Quarterly, “Y” – Yearly
-                //recurringDetails.NumberOfRecurrences = 3;
-                //transactionDetails.TransactionCode = 4096; //2048 – Subsequent Recurring – future recurring payments : 4096 – Initial Recurring – First Payment in a recurring cycle : 8192 - **HOST SPECIFIC – Initial Recurring for “Free - Trials”
+               
+               
 
                 if (!await CardUtils.IsCardCharged(transactionDetails.OrderNumber))
                 {
@@ -1929,12 +1934,18 @@ namespace ePaperLive.Controllers
                         Session["auth_subscriber"] = customerData;
                         return RedirectToAction("PaymentSuccess");
                     case PaymentStatus.Failed:
-                    //_logger.CreateLog("Authorization failed", logModel, LogType.Warning, additionalFields: logDetails);
-                    //return Redirect($"{host}/payments?status=failed");
+                        //_logger.CreateLog("Authorization failed", logModel, LogType.Warning, additionalFields: logDetails);
+                        //return Redirect($"{host}/payments?status=failed");
+                        Session["auth_subscriber"] = customerData;
+                        ViewBag.CountryList = GetCountryList();
+                        customerData.PaymentDetails.FirstOrDefault().TransactionSummary = summary;
+                        return View("PaymentDetails", customerData.PaymentDetails.FirstOrDefault());
                     case PaymentStatus.InternalError:
                     case PaymentStatus.GatewayError:
                         //_logger.CreateLog("Gateway/Internal failure", logModel, LogType.Warning, additionalFields: logDetails);
                         //return Redirect($"{host}/payments?status=error");
+                        Session["auth_subscriber"] = customerData;
+                        ViewBag.CountryList = GetCountryList();
                         customerData.PaymentDetails.FirstOrDefault().TransactionSummary = summary;
                         return View("PaymentDetails", customerData.PaymentDetails.FirstOrDefault());
 
