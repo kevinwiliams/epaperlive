@@ -71,43 +71,7 @@
 
                             </div>
                             @Html.HiddenFor(m => m.RateID, new { @class = ".do-not-ignore" })
-                            <!-- <input type="hidden" name="RateID" /> -->
-
-                            <script>
-                            @*const ratesList = [@(Html.Raw(Json.Encode(this.Model.RatesList)))];*@
-
-                            //var epaperList = filterByProperty(ratesList, "Type", "Epaper");
-                            //var printList = filterByProperty(ratesList, "Type", "Print");
-                            //var bundleList = filterByProperty(ratesList, "Type", "Bundle");
-                           // console.log(epaperList);
-                            //$("$ratesList").val(stringList);
-                            function filterByProperty(array, prop, value)
-                            {
-                                var filtered = [];
-                                for (var i = 0; i < array.length; i++)
-                                {
-                                    var obj = array[i];
-
-                                    for(var key in obj)
-                                    {
-                                        if (typeof(obj[key] == "object")){
-                                            var item = obj[key];
-                                            if (item[prop] == value)
-                                            {
-                                                filtered.push(item);
-                                            }
-                                        }
-                                    }
-
-                                }
-
-                                return filtered;
-
-                            }
-
-
-                            </script>
-
+                      
                             <div class="form-group p-2" id="del-address" style="display: none">
                                 <hr />
                                 <div class="row justify-content-md-center">
@@ -118,9 +82,7 @@
                                 </div>
                             </div>
 
-                            <div id="delAddressDetails">
-
-                            </div>
+                            <div id="delAddressDetails"> </div>
 
                             <div class="form-group p-2" id="del-instructions" style="display: none">
                                 @Html.LabelFor(model => model.DeliveryInstructions, htmlAttributes: new { @class = "form-label " })
@@ -156,16 +118,7 @@
                             <div class="form-group">
 
                             </div>
-                            <!--
-            <div class="offset-md-1 form-group">
-                <div class="col-md-10 p-3">
-                    <div class="form-check">
-                        @Html.EditorFor(model => model.TermsAndCon, new { htmlAttributes = new { @class = "form-check-input", @required = "required" } })
-                        @Html.LabelFor(model => model.TermsAndCon, htmlAttributes: new { @class = "form-check-label" })<br />
-                    </div>
-                </div>
-            </div>
-            -->
+                           
                             @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
                             <div class="form-group">
