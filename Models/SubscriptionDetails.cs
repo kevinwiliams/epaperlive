@@ -49,8 +49,8 @@ namespace ePaperLive.Models
 
         [Display(Name = "Same as mailing address?")]
         public bool SameAsMailing { get; set; }
-
         public DeliveryAddress DeliveryAddress { get; set; }
+        public bool isActive { get; set; }
 
     }
 

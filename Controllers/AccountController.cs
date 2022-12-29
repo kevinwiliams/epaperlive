@@ -732,7 +732,32 @@ namespace ePaperLive.Controllers
             }
             return RedirectToAction("UserProfile");
         }
-       
+        public ActionResult ExtendSubscription()
+        {
+            AuthSubcriber authSubcriber = GetAuthSubscriber();
+
+            AddressDetails mailingAddress = authSubcriber.AddressDetails.FirstOrDefault(x => x.AddressType == "M");
+            ViewData["savedAddress"] = true;
+            ViewData["savedAddressData"] = JsonConvert.SerializeObject(mailingAddress);
+
+            if (authSubcriber.SubscriptionDetails != null)
+            {
+                var startDate = authSubcriber.SubscriptionDetails.FirstOrDefault().StartDate;
+                var endDate = authSubcriber.SubscriptionDetails.FirstOrDefault().EndDate;
+                ViewBag.plans = authSubcriber.SubscriptionDetails;
+                ViewBag.dates = startDate.GetWeekdayInRange(endDate, DayOfWeek.Monday);
+            }
+            //load parishes
+            List<SelectListItem> parishes = GetParishes();
+            ViewBag.Parishes = new SelectList(parishes, "Value", "Text");
+            ViewBag.CountryList = GetCountryList();
+            SubscriptionDetails subscription = new SubscriptionDetails
+            {
+                StartDate = authSubcriber.SubscriptionDetails.FirstOrDefault().EndDate
+            };
+
+            return View(subscription);
+        }
         [AllowAnonymous]
         public ActionResult Subscribe(string pkgType, string term, decimal price = 0)
         {
@@ -2026,10 +2051,12 @@ namespace ePaperLive.Controllers
                             }
 
                             await context.SaveChangesAsync();
+                            //send confirmation email
                             var user = await UserManager.FindByNameAsync(clientData.EmailAddress);
                             string subject = "New Subscription Confirmation";
                             string body = RenderViewToString(this.ControllerContext, "~/Views/Emails/ConfirmSubscription.cshtml", customerData);
                             await UserManager.SendEmailAsync(user.Id, subject, body);
+
                             return Json(true);
 
                         }

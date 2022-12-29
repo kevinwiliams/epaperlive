@@ -599,6 +599,7 @@
     <Content Include="Views\Account\_DeliveryAddressModal.cshtml" />
     <Content Include="Views\Home\_PackagesPartial.cshtml" />
     <Content Include="Views\Home\_FeaturedPackagesPartial.cshtml" />
+    <Content Include="Views\Account\ExtendSubscription.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\roslyn\" />

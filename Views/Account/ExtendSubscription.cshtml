@@ -1,12 +1,10 @@
 ﻿@model ePaperLive.Models.SubscriptionDetails
 
 @{
-    ViewBag.Title = "Subscription";
-    ePaperLive.DBModel.Subscriber_Address address = null;
+    ViewBag.Title = "Extend or Add Subscription";
     if (ViewData["savedAddressData"] != null)
     {
-        address = (ePaperLive.DBModel.Subscriber_Address)ViewData["savedAddressData"];
-        @Html.Label(address.AddressLine1)
+        @Html.Hidden("mailingAddress", ViewData["savedAddressData"].ToString())
     }
 
 
@@ -24,7 +22,7 @@
         <div class="container">
 
             <ol>
-                <li><a href="@Url.Action("index", "home")">Home</a></li>
+                <li><a href="@Url.Action("dashboard", "account")">Home</a></li>
                 <li>@ViewData["Title"]</li>
             </ol>
             <h2>@ViewData["Title"]</h2>
@@ -33,9 +31,7 @@
     </section><!-- End Breadcrumbs -->
     <!-- ======= Wizard Breadcrumbs ======= -->
     <div class="container form-header d-flex mb-4 mt-4">
-        <span class="stepIndicator active">Login Details</span>
-        <span class="stepIndicator active">Mailing Address</span>
-        <span class="stepIndicator active">Subscription</span>
+        <span class="stepIndicator active">Choose Subscription</span>
         <span class="stepIndicator">Payment</span>
     </div><!-- End Wizard Breadcrumbs -->
     <!-- ======= Wizard Section ======= -->
@@ -46,7 +42,7 @@
                 <div class="col-lg-8">
 
                     <!-- start:wizrd -->
-                    @using (Html.BeginForm("SubscriptionInfo", "Account", FormMethod.Post, new { @class = "row g-3 needs-validation", novalidate = "novalidate", name = "subdetails" }))
+                    @using (Html.BeginForm("ExtendSubscription", "Account", FormMethod.Post, new { @class = "row g-3 needs-validation", novalidate = "novalidate", name = "extendsubdetails" }))
                     {
                         @Html.AntiForgeryToken()
 
@@ -71,7 +67,7 @@
 
                             </div>
                             @Html.HiddenFor(m => m.RateID, new { @class = ".do-not-ignore" })
-                      
+
                             <div class="form-group p-2" id="del-address" style="display: none">
                                 <hr />
                                 <div class="row justify-content-md-center">
@@ -96,29 +92,11 @@
                             <div class="form-group p-2">
                                 @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label fw-bold" })
                                 <div class="col-md-4">
-                                    @Html.EditorFor(model => model.StartDate, "", new { htmlAttributes = new { @class = "form-control", maxlength = 10 , @required = "required"} })
+                                    @Html.EditorFor(model => model.StartDate, "", new { htmlAttributes = new { @class = "form-control", maxlength = 10, @required = "required" } })
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col-md-4 p-3">
-                                        <div class="form-check">
-                                            @Html.EditorFor(model => model.NewsletterSignUp, new { htmlAttributes = new { @class = "form-check-input" } })
-                                            @Html.LabelFor(model => model.NewsletterSignUp, htmlAttributes: new { @class = "form-check-label" })
-                                        </div>
-                                    </div>
-                                    <div class="col-md-8 p-3">
-                                        <div class="form-check">
-                                            @Html.EditorFor(model => model.NotificationEmail, new { htmlAttributes = new { @class = "form-check-input" } })
-                                            @Html.LabelFor(model => model.NotificationEmail, htmlAttributes: new { @class = "form-check-label" })
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
 
-                            </div>
-                           
+
                             @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
                             <div class="form-group">
@@ -142,7 +120,24 @@
                     <!-- end: Delivery Modal -->
                 </div>
                 <div class="col-lg-4">
-                    @Html.Partial("_SubcriptionSummary")
+                    <div class="portfolio-info">
+                        <h3>Subscription: <span class="text-success">Active</span> </h3>
+                        @if (ViewBag.plans != null)
+                        {
+                            foreach (var item in (List<ePaperLive.Models.SubscriptionDetails>)ViewBag.plans)
+                            {
+                                <p>@item.RateDescription</p>
+                                <small>
+                                    <strong>Start:</strong> @Convert.ToDateTime(item.StartDate).ToString("dd MMMM yyyy") <br />
+                                    <strong>End:&nbsp;&nbsp;</strong> @Convert.ToDateTime(item.EndDate).ToString("dd MMMM yyyy") <br />
+                                    <!-- <a href="#">Cancel</a> -->
+                                </small>
+
+                            }
+                        }
+                        <br />
+
+                    </div>
                 </div>
 
 
@@ -205,7 +200,7 @@
 
         $(document).ready(function () {
             $('#loading').addClass('hidden').removeClass('loading');
-            
+
             if (prePlan) {
                 //select preloaded plan
                 setTimeout(
@@ -215,7 +210,7 @@
 
             let rateType;
 
-            $('[name=subdetails]').submit(function (event) {
+            $('[name=extendsubdetails]').submit(function (event) {
 
                 let rateType = $('[name=RateType]:checked').val();
                 let deliveryAddress = $("#AddressAdded").val();
@@ -244,7 +239,7 @@
                 }
 
                 if ($('[name=RateType]').is(':checked')) {
-                     let formData = $("[name=subdetails]").valid();
+                     let formData = $("[name=extendsubdetails]").valid();
                      if (formData) {
                          $('#loading').addClass('loading').removeClass('hidden');
                     }
@@ -273,7 +268,7 @@
                     let summaryDateText = ': ' + givenDate.format('DD/MM/yyyy');
                     $("#subStartDate").html(summaryDateText);
                 }
-                    
+
             });
 
             $('[name=RateType]').on("click", function () {
@@ -371,35 +366,36 @@
         });
 
 
-        $("#SameAsMailing").click(() => {
-            if ($("#SameAsMailing").is(":checked")) {
-                $("#DeliveryAddress_AddressLine1").prop("disabled", true);
-                $("#DeliveryAddress_AddressLine2").prop("disabled", true);
-                $("#DeliveryAddress_CityTown").prop("disabled", true);
-                $("#DeliveryAddress_StateParish").prop("disabled", true);
+        let address;
+        var mailAddress = $('#mailingAddress').val();
 
-                if (sessionStorage.getItem("delAddress")) {
-                    let address = JSON.parse(sessionStorage.getItem("delAddress"));
+        if (mailAddress) {
+            address = JSON.parse(mailAddress);
+        }
+
+         $("#SameAsMailing").click(() => {
+            if ($("#SameAsMailing").is(":checked")) {
+
+                if ($('#mailingAddress').val()) {
                     $("#DeliveryAddress_AddressLine1").val(address.AddressLine1);
                     $("#DeliveryAddress_AddressLine2").val(address.AddressLine2);
-                    $("#DeliveryAddress_StateParish").val(address.StateParish);
                     $("#DeliveryAddress_CityTown").val(address.CityTown);
                     $("#DeliveryAddress_CityTown").val(address.CityTown).trigger('change');
+                    $("#DeliveryAddress_StateParish").val(address.StateParish);
+                    $("#DeliveryAddress_ZipCode").val(address.ZipCode);
+                    $("#DeliveryAddress_CountryCode").val(address.CountryCode);
                 }
             }
             else {
-                $("#DeliveryAddress_AddressLine1").prop("disabled", false);
-                $("#DeliveryAddress_AddressLine2").prop("disabled", false);
-                $("#DeliveryAddress_CityTown").prop("disabled", false);
-                $("#DeliveryAddress_StateParish").prop("disabled", false);
- 
                 $("#DeliveryAddress_AddressLine1").val("");
                 $("#DeliveryAddress_AddressLine2").val("");
                 $("#DeliveryAddress_CityTown").val("");
                 $("#DeliveryAddress_CityTown").val("").trigger('change');
                 $("#DeliveryAddress_StateParish").val("");
+                $("#DeliveryAddress_ZipCode").val("");
+                $("#DeliveryAddress_CountryCode").val("");
             }
-            })
+         })
         //});
     </script>
 }

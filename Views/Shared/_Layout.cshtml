@@ -70,6 +70,7 @@
                                         <li>@Html.ActionLink("Change Password", "changepassword", "manage")</li>
                                         <li>@Html.ActionLink("Update Profile", "userprofile", "account")</li>
                                         <li><a class="nav-link scrollto" href="#testimonials">Request Refund</a></li>
+                                        <li>@Html.ActionLink("Extend Subscription", "extendsubscription", "account")</li>
                                         @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
                                         {
                                             @Html.AntiForgeryToken()
