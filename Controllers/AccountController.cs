@@ -20,6 +20,7 @@ using System.Configuration;
 using FACGatewayService;
 using FACGatewayService.FACPG;
 using System.Runtime.Caching;
+using System.IO;
 
 namespace ePaperLive.Controllers
 {
@@ -795,7 +796,7 @@ namespace ePaperLive.Controllers
                         AddressDetails ad = new AddressDetails
                         {
                             AddressLine1 = "Lot 876 Scheme Steet",
-                            CityTown = "Bay Town",
+                            CityTown = "Hope Bay",
                             StateParish = "Portland",
                             ZipCode = "JAMWI",
                             Phone = "876-875-8651",
@@ -2025,7 +2026,10 @@ namespace ePaperLive.Controllers
                             }
 
                             await context.SaveChangesAsync();
-
+                            var user = await UserManager.FindByNameAsync(clientData.EmailAddress);
+                            string subject = "New Subscription Confirmation";
+                            string body = RenderViewToString(this.ControllerContext, "~/Views/Emails/ConfirmSubscription.cshtml", customerData);
+                            await UserManager.SendEmailAsync(user.Id, subject, body);
                             return Json(true);
 
                         }
@@ -2088,6 +2092,26 @@ namespace ePaperLive.Controllers
             //return RedirectToAction("PaymentDetails", paymentDetails);
         }
 
+        public static string RenderViewToString<TModel>(ControllerContext controllerContext, string viewName, TModel model)
+        {
+            ViewEngineResult viewEngineResult = ViewEngines.Engines.FindView(controllerContext, viewName, null);
+            if (viewEngineResult.View == null)
+            {
+                throw new Exception("Could not find the View file. Searched locations:\r\n" + viewEngineResult.SearchedLocations);
+            }
+            else
+            {
+                IView view = viewEngineResult.View;
+
+                using (var stringWriter = new StringWriter())
+                {
+                    var viewContext = new ViewContext(controllerContext, view, new ViewDataDictionary<TModel>(model), new TempDataDictionary(), stringWriter);
+                    view.Render(viewContext, stringWriter);
+
+                    return stringWriter.ToString();
+                }
+            }
+        }
 
         [NonAction]
         public bool IsEmailExist(string emailAddress)
