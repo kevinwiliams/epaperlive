@@ -188,101 +188,56 @@
     <script>
 
         $(document).ready(function () {
-        var parish = $("#StateParishList").val();
-        $("#StateParish").val(parish).trigger('change');
-
-
+            var parish = $("#StateParishList").val();
+            $("#StateParish").val(parish).trigger('change');
         });
 
-            let countryCode = $('#CountryCode').val();
+        let countryCode = $('#CountryCode').val();
 
         if (countryCode == "JAM") {
-            //$('#CityTownList').select2({ theme: "bootstrap-5", }).addClass("form-control");
             $('#StateParishList').show();
-            //$('#CityTownList').show();
             $('#StateParishList').attr('required', true);
             $('#StateParish').hide();
-            //$('#CityTown').hide();
             $('#ZipCode').attr('disabled', true);
         } else {
             $('#StateParishList').hide();
-            //$('#CityTownList').hide();
+            $('#StateParishList').removeAttr('required');
             $('#StateParish').show();
-            //$('#CityTown').show();
             $('#ZipCode').attr('disabled', false);
         }
 
-            $('#CountryCode').on('change', (e) => {
-                console.log($('#CountryCode').val());
-                countryCode = $('#CountryCode').val();
+        $('#CountryCode').on('change', (e) => {
+            console.log($('#CountryCode').val());
+            countryCode = $('#CountryCode').val();
 
-                if (countryCode == "JAM") {
-                    //$('#CityTownList').select2({ theme: "bootstrap-5", }).addClass("form-control");
-                    $('#StateParishList').show();
-                    //$('#CityTownList').show();
+            if (countryCode == "JAM") {
+                $('#StateParishList').show();
+                $('#StateParishList').attr('required', true);
+                $('#StateParish').hide();
+                $('#ZipCode').attr('disabled', true);
+            } else {
 
-                    $('#StateParishList').attr('required', true);
-                    $('#StateParish').hide();
-                    //$('#CityTown').hide();
+                $('#StateParishList').hide();
+                $('#StateParishList').removeAttr('required');
 
-                    $('#ZipCode').attr('disabled', true);
-                } else {
-
-                    //if ($('#CityTownList').hasClass("select2-hidden-accessible")){
-                    //    $("#CityTownList").select2('destroy');
-                    //}
-
-                    $('#StateParishList').hide();
-                    //$('#CityTownList').hide();
-
-                    $('#StateParish').show();
-                    //$('#CityTown').show();
-                    $('#ZipCode').attr('disabled', false);
-                }
-            });
-
-        //$('#StateParishList').on('change', (e) => {
-        //    $('#StateParish').val($('#StateParishList option:selected').text());
-        //});
-        @*$("#CityTownList").on("select2:close", function (e) {
-            $(this).valid();
+                $('#StateParish').show();
+                $('#ZipCode').attr('disabled', false);
+            }
         });
 
-         $("#CityTownList").on("select2:select", function (e) {
-             $('#CityTown').val($('#CityTownList').val());
-
-             console.log($('#CityTownList').val());        });
-
-
-
-
-        $('#StateParishList').change(function () {
-            console.log();
+        $('#StateParishList').on('change', (e) => {
             $('#StateParish').val($('#StateParishList option:selected').text());
+        });
 
 
-            let parish = $('#StateParishList').val();
-            var items = '<option value="">Select a District</option>';
 
-            if (parish) {
-                $.getJSON('@Url.Action("DistrictList","Account")?Id=' + parish, function (data) {
-                    $.each(data, function (i, district) {
-                        items += '<option value="' + (district.Text) + '">' + district.Text + '</option>';
-                    });
-                    $('#CityTownList').html(items);
-                });
-            } else { $('#CityTownList').html(items); }
-
-
-        });*@
-
-
-            $('[name=AddressDetails]').on('submit', (e) => {
-                let formData = $("[name=AddressDetails]").valid();
-                 if (formData) {
-                     $('#loading').addClass('loading').removeClass('hidden');
-                }
-            });
+        $('[name=AddressDetails]').on('submit', (e) => {
+            let formData = $("[name=AddressDetails]").valid();
+                if (formData) {
+                    $('#loading').addClass('loading').removeClass('hidden');
+                    return true;
+            }
+        });
 
         let phoneNumber = new Cleave('#Phone', {
             phone: true,

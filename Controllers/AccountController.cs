@@ -552,6 +552,8 @@ namespace ePaperLive.Controllers
                                     subscriptionDetails.EndDate = epaper.EndDate;
                                     subscriptionDetails.RateDescription = ratesList.FirstOrDefault(X => X.Rateid == epaper.RateID).RateDescr;
                                     subscriptionDetails.SubType = ratesList.FirstOrDefault(X => X.Rateid == epaper.RateID).Type;
+                                    subscriptionDetails.isActive = epaper.IsActive;
+
                                 SubscriptionList.Add(subscriptionDetails);
                                 }
                             }
@@ -567,7 +569,9 @@ namespace ePaperLive.Controllers
                                         subscriptionDetails.StartDate = print.StartDate;
                                         subscriptionDetails.EndDate = print.EndDate;
                                         subscriptionDetails.RateDescription = ratesList.FirstOrDefault(X => X.Rateid == print.RateID).RateDescr;
-                                        SubscriptionList.Add(subscriptionDetails);
+                                        subscriptionDetails.isActive = print.IsActive;
+
+                                    SubscriptionList.Add(subscriptionDetails);
                                     }
 
                                 }
@@ -753,10 +757,253 @@ namespace ePaperLive.Controllers
             ViewBag.CountryList = GetCountryList();
             SubscriptionDetails subscription = new SubscriptionDetails
             {
-                StartDate = authSubcriber.SubscriptionDetails.FirstOrDefault().EndDate
+                StartDate = (authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).EndDate != null) ? authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).EndDate : DateTime.Now
             };
 
-            return View(subscription);
+            return View();
+        }
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public ActionResult ExtendSubscription(SubscriptionDetails data, string nextBtn)
+        {
+            
+            if (nextBtn != null)
+            {
+                if (ModelState.IsValid)
+                {
+
+                    try
+                    {
+                        ApplicationDbContext db = new ApplicationDbContext();
+
+                        Subscriber objSub = GetSubscriber();
+                        DeliveryAddress objDelv = GetSubscriberDeliveryAddress();
+                        Subscriber_Epaper objEp = GetEpaperDetails();
+                        Subscriber_Print objPr = GetPrintDetails();
+                        Subscriber_Tranx objTran = GetTransaction();
+                        AuthSubcriber authUser = GetAuthSubscriber();
+                        List<SubscriptionDetails> subscriptionDetails = new List<SubscriptionDetails>();
+                        List<PaymentDetails> paymentDetailsList = new List<PaymentDetails>();
+                        //List<AddressDetails> addressDetails = new List<AddressDetails>();
+
+                        objTran.RateID = data.RateID;
+
+                        var selectedPlan = db.printandsubrates.FirstOrDefault(x => x.Rateid == data.RateID);
+
+                        if (selectedPlan.Type == "Print")
+                        {
+                            var endDate = data.EndDate = data.StartDate.AddDays((double)selectedPlan.PrintTerm * 7);
+                            SubscriptionDetails printSubscription = new SubscriptionDetails
+                            {
+                                StartDate = data.StartDate,
+                                EndDate = endDate,
+                                RateID = data.RateID,
+                                DeliveryInstructions = data.DeliveryInstructions,
+                                RateType = selectedPlan.Type
+                            };
+
+                            subscriptionDetails.Add(printSubscription);
+                            authUser.SubscriptionDetails = subscriptionDetails;
+
+                            AddressDetails deliveryAddress = new AddressDetails
+                            {
+                                AddressLine1 = objDelv.AddressLine1,
+                                AddressLine2 = objDelv.AddressLine2,
+                                AddressType = "D",
+                                CityTown = objDelv.CityTown,
+                                StateParish = objDelv.StateParish,
+                                CountryCode = objDelv.CountryCode
+                            };
+                            authUser.AddressDetails.Add(deliveryAddress);
+
+                        }
+                        if (selectedPlan.Type == "Epaper")
+                        {
+                            var endDate = data.EndDate = data.StartDate.AddDays((double)selectedPlan.ETerm);
+                            SubscriptionDetails epaperSubscription = new SubscriptionDetails
+                            {
+                                StartDate = data.StartDate,
+                                EndDate = endDate,
+                                RateID = data.RateID,
+                                SubType = data.SubType,
+                                RateType = selectedPlan.Type
+                            };
+
+                            subscriptionDetails.Add(epaperSubscription);
+                            authUser.SubscriptionDetails = subscriptionDetails;
+
+                        }
+                        if (selectedPlan.Type == "Bundle")
+                        {
+                            var pEndDate = data.EndDate = data.StartDate.AddDays(30);
+                            SubscriptionDetails printSubscription = new SubscriptionDetails
+                            {
+                                StartDate = data.StartDate,
+                                EndDate = pEndDate,
+                                RateID = data.RateID,
+                                DeliveryInstructions = data.DeliveryInstructions,
+                            };
+                            //print subscription
+                            subscriptionDetails.Add(printSubscription);
+
+                            var eEndDate = data.EndDate = data.StartDate.AddDays((double)selectedPlan.PrintTerm * 7);
+                            SubscriptionDetails epaperSubscription = new SubscriptionDetails
+                            {
+                                StartDate = data.StartDate,
+                                EndDate = eEndDate,
+                                RateID = data.RateID,
+                                SubType = data.SubType,
+                                NotificationEmail = data.NotificationEmail,
+                                RateType = selectedPlan.Type
+
+                            };
+                            //Epaper subscription
+                            subscriptionDetails.Add(epaperSubscription);
+
+                            authUser.SubscriptionDetails = subscriptionDetails;
+
+
+                            AddressDetails deliveryAddress = new AddressDetails
+                            {
+                                AddressLine1 = objDelv.AddressLine1,
+                                AddressLine2 = objDelv.AddressLine2,
+                                AddressType = "D",
+                                CityTown = objDelv.CityTown,
+                                StateParish = objDelv.StateParish,
+                                CountryCode = objDelv.CountryCode
+                            };
+
+                            authUser.AddressDetails.Add(deliveryAddress);
+                        }
+
+
+                        List<SelectListItem> billparishes = GetParishes();
+                        ViewBag.Parishes = new SelectList(billparishes, "Value", "Text");
+                        ViewBag.CountryList = GetCountryList();
+
+                        AddressDetails billingAddress = new AddressDetails
+                        {
+                            CountryList = GetCountryList()
+                        };
+
+
+                        PaymentDetails pd = new PaymentDetails
+                        {
+                            RateID = data.RateID,
+                            RateDescription = selectedPlan.RateDescr,
+                            Currency = selectedPlan.Curr,
+                            CardAmount = (decimal)selectedPlan.Rate,
+                            SubType = selectedPlan.Type,
+                            BillingAddress = billingAddress,
+                            IsExtension = true
+                        };
+
+                        paymentDetailsList.Add(pd);
+                        authUser.PaymentDetails = paymentDetailsList;
+
+
+                        return View("ExtendPayment", pd);
+                    }
+                    catch (Exception ex)
+                    {
+
+                        LogError(ex);
+                    }
+
+                }
+            }
+
+            return View();
+        }
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ExtendPayment(PaymentDetails data, string prevBtn, string nextBtn)
+        {
+            ViewData["preloadSub"] = GetPreloadSub();
+            AuthSubcriber authSubcriber = GetAuthSubscriber();
+
+            var cardType = data.CardType;
+
+            if (prevBtn != null)
+            {
+
+                try
+                {
+                    ApplicationDbContext db = new ApplicationDbContext();
+                    Subscriber objSub = GetSubscriber();
+                    Subscriber_Epaper objEp = GetEpaperDetails();
+                    Subscriber_Print objPr = GetPrintDetails();
+                    UserLocation objLoc = GetSubscriberLocation();
+                    var market = (objLoc.Country_Code == "JM") ? "Local" : "International";
+
+
+                    SubscriptionDetails sd = new SubscriptionDetails
+                    {
+                        StartDate = objEp.StartDate,
+                        RateID = objEp.RateID,
+                        DeliveryInstructions = objPr.DeliveryInstructions,
+                        SubType = objEp.SubType,
+                        RatesList = db.printandsubrates.Where(x => x.Market == market).Where(x => x.Active == true).ToList(),
+                        Market = market
+                    };
+
+                    return View("SubscriptionInfo", sd);
+                }
+                catch (Exception ex)
+                {
+
+                    throw ex;
+                }
+
+            }
+
+            if (nextBtn != null)
+            {
+                if (ModelState.IsValid)
+                {
+
+                    try
+                    {
+                        //get all session variables
+                        AuthSubcriber authUser = GetAuthSubscriber();
+                        Subscriber objSub = GetSubscriber();
+                        Subscriber_Address objAdd = GetSubscriberAddress();
+                        Subscriber_Epaper objE = GetEpaperDetails();
+                        Subscriber_Print objP = GetPrintDetails();
+                        Subscriber_Tranx objTran = GetTransaction();
+                        ApplicationUser user = GetAppUser();
+
+                        objTran.CardType = data.CardType;
+                        objTran.CardOwner = data.CardOwner;
+                        objTran.TranxAmount = (double)data.CardAmount;
+                    }
+                    catch (Exception ex)
+                    {
+                        LogError(ex);
+                    }
+
+                    dynamic summary = await ChargeCard(data);
+                    return Json(data);
+
+                }
+            }
+
+            AddressDetails mailingAddress = authSubcriber.AddressDetails.FirstOrDefault(x => x.AddressType == "M");
+            ViewData["savedAddress"] = true;
+            ViewData["savedAddressData"] = JsonConvert.SerializeObject(mailingAddress);
+
+            if (authSubcriber.SubscriptionDetails != null)
+            {
+                var startDate = authSubcriber.SubscriptionDetails.FirstOrDefault().StartDate;
+                var endDate = authSubcriber.SubscriptionDetails.FirstOrDefault().EndDate;
+                ViewBag.plans = authSubcriber.SubscriptionDetails;
+                ViewBag.dates = startDate.GetWeekdayInRange(endDate, DayOfWeek.Monday);
+            }
+
+            ViewBag.CountryList = GetCountryList();
+            return View(data);
         }
         [AllowAnonymous]
         public ActionResult Subscribe(string pkgType, string term, decimal price = 0)
@@ -1945,7 +2192,8 @@ namespace ePaperLive.Controllers
                 {
                     case PaymentStatus.Successful:
                         //save subscription
-                        await SaveSubscriptionInfoAsync(customerData);
+                        if(!paymentDetails.IsExtension)
+                            await SaveSubscriptionInfoAsync(customerData);
                         
                         // Set to 15 minutes by default if not found
                         int cacheExpiryDuration = int.Parse(ConfigurationManager.AppSettings["cacheExpiryDuration"] ?? "15");

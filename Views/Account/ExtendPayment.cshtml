@@ -1,0 +1,452 @@
+﻿@model ePaperLive.Models.PaymentDetails
+
+@{
+    ViewBag.Title = "Payment";
+
+    if (ViewData["savedAddressData"] != null)
+    {
+        @Html.Hidden("mailingAddress",  ViewData["savedAddressData"].ToString())
+    }
+}
+<style>
+    .na{
+        color: #ccc;
+        text-decoration: line-through;
+    }
+    </style>
+    <div id="main">
+
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+        <div class="container">
+
+            <ol>
+                <li><a href="@Url.Action("index", "home")">Home</a></li>
+                <li>@ViewData["Title"]</li>
+            </ol>
+            <h2> @ViewData["Title"]</h2>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+    <!-- ======= Wizard Breadcrumbs ======= -->
+    <div class="container form-header d-flex mb-4 mt-4">
+        <span class="stepIndicator active">Choose Subscription</span>
+        <span class="stepIndicator active">Payment</span>
+    </div><!-- End Wizard Breadcrumbs -->
+    <!-- ======= Wizard Section ======= -->
+    <section id="portfolio-details" class="portfolio-details">
+        <div class="container">
+
+            <div class="row gy-4">
+                <div class="col-lg-8">
+                    <!-- start:wizrd -->
+                    @using (Html.BeginForm("PaymentDetails", "Account", FormMethod.Post, new { @class = "row g-3 needs-validation", novalidate = "novalidate", name = "PaymentDetails" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                    <div class="form-horizontal">
+                        <h4><strong>@Html.DisplayFor(model => model.SubType): </strong>@Html.DisplayFor(model => model.RateDescription) </h4>
+                        <h1 style="color:forestgreen"><strong><span id="currency">@Html.DisplayFor(model => model.Currency)</span> <span id="cardAmount">@Html.DisplayFor(model => model.CardAmount)</span> <span class="na"></span></strong></h1>
+                        <hr />
+                        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+                        @Html.HiddenFor(model => model.RateID)
+                        @Html.HiddenFor(model => model.CardAmount)
+                        <input type="hidden" id="originalAmount" />
+                        @Html.HiddenFor(model => model.Currency)
+                        @Html.HiddenFor(model => model.SubType)
+                        @Html.HiddenFor(model => model.RateDescription)
+
+                        <!-- rate id needs to fix-->
+                        @*@Html.Hidden("RateID")*@
+
+                        <div class="offset-md-1 row form-horizontal">
+                            <strong>Please enter your billing address </strong>
+                            <div class="form-group">
+                                <div class="col-md-10 p-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="" id="SameAsMailing">
+                                        <label class="form-check-label" for="SameAsMailing">
+                                            Same as mailing address?
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @*@Html.LabelFor(model => model.AddressLine1, htmlAttributes: new { @class = "control-label" })*@
+                                <div class="col-md-10 p-2">
+                                    @Html.EditorFor(model => model.BillingAddress.AddressLine1, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.BillingAddress.AddressLine1) } })
+                                    @*@Html.ValidationMessageFor(model => model.AddressLine1, "", new { @class = "text-danger" })*@
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @*@Html.LabelFor(model => model.AddressLine2, htmlAttributes: new { @class = "control-label" })*@
+                                <div class="col-md-10 p-2">
+                                    @Html.EditorFor(model => model.BillingAddress.AddressLine2, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.BillingAddress.AddressLine2) } })
+                                    @*@Html.ValidationMessageFor(model => model.AddressLine2, "", new { @class = "text-danger" })*@
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group p-2">
+                                    @*@Html.LabelFor(model => model.CityTown, htmlAttributes: new { @class = "control-label " })*@
+                                    <div class="col-md-10">
+                                        @Html.EditorFor(model => model.BillingAddress.CityTown, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.BillingAddress.CityTown) } })
+                                        @*@Html.ValidationMessageFor(model => model.CityTown, "", new { @class = "text-danger" })*@
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group p-2">
+                                    @*@Html.LabelFor(model => model.StateParish, htmlAttributes: new { @class = "control-label " })*@
+                                    <div class="col-md-10">
+                                        @Html.EditorFor(model => model.BillingAddress.StateParish, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.BillingAddress.StateParish) } })
+                                        @*@Html.ValidationMessageFor(model => model.StateParish, "", new { @class = "text-danger" })*@
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-5">
+                                <div class="form-group p-2">
+                                    @*@Html.LabelFor(model => model.ZipCode, htmlAttributes: new { @class = "control-label " })*@
+                                    <div class="col-md-10">
+                                        @Html.EditorFor(model => model.BillingAddress.ZipCode, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.BillingAddress.ZipCode) } })
+                                        @*@Html.ValidationMessageFor(model => model.ZipCode, "", new { @class = "text-danger" })*@
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group p-2">
+                                    @*@Html.LabelFor(model => model.CountryCode, htmlAttributes: new { @class = "control-label " })*@
+                                    <div class="col-md-10">
+                                        @*@Html.ValidationMessageFor(model => model.CountryCode, "", new { @class = "text-danger" })*@
+                                        @Html.DropDownListFor(model => model.BillingAddress.CountryCode, ViewBag.CountryList as List<SelectListItem>, "Select Country", new { @class = "form-control", @required = "required" })
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                       <hr />
+
+                        <div class="offset-md-1 p-3 form-group p-2 cc-selector">
+                            <div class="pb-2">
+                                <strong>Please enter your credit card details below </strong>
+
+                            </div>
+                            @*@Html.LabelFor(model => model.CardType, htmlAttributes: new { @class = "control-label " }) <br />*@
+                            @{
+                                var paymentMethods = ePaperLive.Util.GetEnumSelectList<ePaperLive.Models.PaymentMethod>().ToList();
+                            }
+                            @foreach (var method in paymentMethods)
+                            {
+                                var index = paymentMethods.IndexOf(method);
+                                var newClass = String.Format("{0} {1}", "usercard-cc", method.Text);
+                                @Html.RadioButtonFor(model => model.CardType, method.Text, new { @required = "required", id = $"CardType{index}" })
+                                @Html.LabelFor(model => model.CardType, method.Text, htmlAttributes: new { @class = newClass, @for = $"CardType{index}" })
+                            }
+                            @Html.HiddenFor(m => m.CardType)
+
+                        </div>
+                        <div class="offset-md-1 form-group p-2">
+                            @*@Html.LabelFor(model => model.cardNumber, htmlAttributes: new { @class = "control-label " })*@
+                            <div class="col-md-5">
+                                @Html.EditorFor(model => model.CardNumber, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.CardNumber) } })
+                            </div>
+                        </div>
+                        <div class="offset-md-1 form-group p-2">
+                            @*@Html.LabelFor(model => model.cardOwner, htmlAttributes: new { @class = "control-label " })*@
+                            <div class="col-md-8">
+                                @Html.EditorFor(model => model.CardOwner, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.CardOwner) } })
+                            </div>
+                        </div>
+
+
+                        <div class="offset-md-1 form-group p-2">
+                            <div class="col-md-offset-2 col-md-12 pt-3">
+                                <div class="row">
+                                    <div class="col-6">
+                                        @Html.LabelFor(model => model.CardExp, htmlAttributes: new { @class = "control-label " })
+                                        <div class="col-md-6">
+                                            @Html.EditorFor(model => model.CardExp, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = "MM/YY" } })
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        @Html.LabelFor(model => model.CardCVV, htmlAttributes: new { @class = "control-label " })
+                                        <div class="col-md-3">
+                                            @Html.EditorFor(model => model.CardCVV, new { htmlAttributes = new { @class = "form-control", @required = "required", type = "password", placeholder = Html.DisplayNameFor(model => model.CardCVV) } })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        @Html.HiddenFor(model => model.TransactionSummary.Errors, htmlAttributes: new { @id = "TransactionSummary" })
+                        @Html.HiddenFor(model => model.TransactionSummary.FriendlyErrorMessages, htmlAttributes: new { @id = "ErrorMessages" })
+                        @if (Model.TransactionSummary != null)
+                        {
+                            if (Model.TransactionSummary.FriendlyErrorMessages != null)
+                            {
+                                foreach (var item in Model.TransactionSummary.FriendlyErrorMessages)
+                                {
+                                    @item
+                                }
+                            }
+
+                        }
+
+
+                        <section id="paymentGatway" class="hidden"></section>
+
+                        <div class="form-group pt-3">
+                            <div class="col-md-offset-2 col-md-12 pt-3">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <input type="submit" value="Prev" name="prevBtn" class="btn btn-sign-in bx-pull-left" />
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="submit" value="Pay Now" name="nextBtn" class="btn btn-sign-in bx-pull-right" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                    <!-- end:wizrd -->
+                </div>
+                <div class="col-lg-4">
+                    <div class="portfolio-info">
+                        <h3>Subscription: <span class="text-success">Active</span> </h3>
+                        @if (ViewBag.plans != null)
+                        {
+                            foreach (var item in (List<ePaperLive.Models.SubscriptionDetails>)ViewBag.plans)
+                            {
+                                <p>@item.RateDescription</p>
+                                <small>
+                                    <strong>Start:</strong> @Convert.ToDateTime(item.StartDate).ToString("dd MMMM yyyy") <br />
+                                    <strong>End:&nbsp;&nbsp;</strong> @Convert.ToDateTime(item.EndDate).ToString("dd MMMM yyyy") <br />
+                                    <!-- <a href="#">Cancel</a> -->
+                                </small>
+
+                            }
+                        }
+                        <br />
+
+                    </div>
+                </div>
+
+
+
+
+
+            </div>
+
+        </div>
+    </section><!-- End Wizard Section -->
+
+</div><!-- End #main -->
+
+<script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+    (() => {
+        'use strict'
+
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        const forms = document.querySelectorAll('.needs-validation')
+
+        // Loop over them and prevent submission
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })();
+
+</script>
+
+@section scripts{
+    <script>
+        //remove labels
+        $(".usercard-cc").html("");
+        let address;
+        var mailAddress = $('#mailingAddress').val();
+
+        if (mailAddress) {
+            address = JSON.parse(mailAddress);
+        }
+
+         $("#SameAsMailing").click(() => {
+            if ($("#SameAsMailing").is(":checked")) {
+
+                if ($('#mailingAddress').val()) {
+                    $("#BillingAddress_AddressLine1").val(address.AddressLine1);
+                    $("#BillingAddress_AddressLine2").val(address.AddressLine2);
+                    $("#BillingAddress_CityTown").val(address.CityTown).change();
+                    $("#BillingAddress_StateParish").val(address.StateParish);
+                    $("#BillingAddress_ZipCode").val(address.ZipCode);
+                    $("#BillingAddress_CountryCode").val(address.CountryCode);
+                }
+            }
+            else {
+                $("#BillingAddress_AddressLine1").val("");
+                $("#BillingAddress_AddressLine2").val("");
+                $("#BillingAddress_CityTown").val("");
+                $("#BillingAddress_StateParish").val("");
+                $("#BillingAddress_ZipCode").val("");
+                $("#BillingAddress_CountryCode").val("");
+            }
+         })
+
+        $(document).ready(function () {
+
+            console.log($('#TransactionSummary').val());
+            console.log($('#ErrorMessages').val());
+            
+            $("input[name='CardType']").click((e) => e.preventDefault());
+
+
+            $(".btn-promo-code").on('click', function (e) {
+                e.preventDefault();
+                $('#originalAmount').val($("[name=CardAmount]").val());
+                var promoCode = $("[name=PromoCode]").val();
+                if (promoCode != "") {
+                    $('#loading').addClass('loading').removeClass('hidden');
+                     $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("CheckPromoCode", "Account")',
+                         data: { promoCode: promoCode },
+                    beforeSend: function () {
+                            $('#loading').addClass('loading').removeClass('hidden');
+                        },
+                    success: function (result) {
+                        $('#loading').addClass('hidden').removeClass('loading');
+                        console.log(result);
+                        if (result.applied) {
+                            let originalAmount = $('#originalAmount').val();
+                            $("[name=CardAmount]").val(result.data.CardAmount);
+                            let cardAmount = result.data.CardAmount;
+                            originalAmount = parseFloat(originalAmount, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+                            cardAmount = parseFloat(cardAmount, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+
+                            $('span.na').html('$' + originalAmount);
+                            $('span#cardAmount').html('$' + cardAmount);
+                            $('#promoAlert').html(result.msg);
+                            let currency = $("[name=Currency]").val();
+                            $('p#subRate').html(currency + ' $' + cardAmount);
+                            
+                        
+                        }
+                         },
+                    complete: function() {
+                      $('#loading').addClass('hidden').removeClass('loading');
+                    },
+                });
+                }
+
+
+            });
+
+            $("[name=PaymentDetails]").on('submit', function (e) {
+                e.preventDefault();
+                let formData = $("[name=PaymentDetails]").valid();
+
+                if (formData) {
+
+                    //Serialize the form datas.   
+                    var paymentData = $("[name=PaymentDetails] :input").serialize();
+                    paymentData += '&nextBtn=Pay';
+
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("PaymentDetails", "Account")',
+                        dataType: 'json',
+                        data: paymentData,
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        beforeSend: function () {
+                            $('#loading').addClass('loading').removeClass('hidden');
+                        },
+                        success: function (result) {
+                            if (result) {
+                                 //console.log(result);
+                                let routeData = result["TransactionSummary"]["Merchant3DSResponseHtml"];
+
+                                if (routeData) {
+                                    //routeData = $.parseHTML(routeData);
+                                    $('#paymentGatway').html(routeData);
+
+                                    setTimeout(
+                                       submitForm, 100
+                                    );
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        function submitForm() {
+            $('#paymentGatway').find('form').submit();
+            $('#paymentGatway').find('form input[name=submit]').click();
+        }
+
+    </script>
+    <script>
+
+        // Needed for KeyCard
+        $("#CardNumber").on("input", (e) => {
+            if ($("#CardNumber").val().startsWith("7")) {
+                $("input[value='KeyCard']").prop("checked", true);
+            }
+            else if ($("#CardNumber").val().length == 0) {
+                $("input[name='CardType']").prop("checked", false);
+            }
+        });
+
+        //$("#CardCVV").on("input", (e) => {
+        //    $("#CardCVV").val($("#CardCVV").val().replace(/\D/g, ''));
+        //});
+
+        let cardNumber = new Cleave('#CardNumber', {
+            creditCard: true,
+            onCreditCardTypeChanged: (type) => {
+                /*$("input[name='CardType']").prop("checked", false);*/
+                if (type == 'visa') {
+                    $("input[value='Visa']").prop("checked", true);
+                }
+                else if (type == 'mastercard') {
+                    $("input[value='Mastercard']").prop("checked", true);
+                }
+                //console.log(type);
+            }
+        });
+
+        let cardCVV = new Cleave('#CardCVV', {
+            blocks: [3],
+            numericOnly: true
+        })
+
+        let expirationDate = new Cleave('#CardExp', {
+            date: true,
+            datePattern: ['m', 'y']
+        });
+
+        function addCommas(nStr)
+        {
+	        nStr += '';
+	        x = nStr.split('.');
+	        x1 = x[0];
+	        x2 = x.length > 1 ? '.' + x[1] : '';
+	        var rgx = /(\d+)(\d{3})/;
+	        while (rgx.test(x1)) {
+		        x1 = x1.replace(rgx, '$1' + ',' + '$2');
+	        }
+	        return x1 + x2;
+        }
+    </script>
+}
