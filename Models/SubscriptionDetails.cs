@@ -51,6 +51,7 @@ namespace ePaperLive.Models
         public bool SameAsMailing { get; set; }
         public DeliveryAddress DeliveryAddress { get; set; }
         public bool isActive { get; set; }
+        public int SubscriptionID { get; set; }
 
     }
 

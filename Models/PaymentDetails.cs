@@ -10,6 +10,7 @@ namespace ePaperLive.Models
     public class PaymentDetails
     {
 
+        public int TransactionID { get; set; }
         [Display(Name = "Name on Card")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Enter cardholder name")]
         [StringLength(50, MinimumLength = 5, ErrorMessage = "Must have a minimum length of 5.")]

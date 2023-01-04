@@ -12,6 +12,7 @@ namespace ePaperLive.Models
     public class AddressDetails
     {
       
+        public int AddressID { get; set; }
         [Display(Name = "Address Line 1")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Provide an address")]
         public string AddressLine1 { get; set; }

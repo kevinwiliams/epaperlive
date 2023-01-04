@@ -546,15 +546,16 @@ namespace ePaperLive.Controllers
                             {
                                 foreach (var epaper in tableData.Subscriber_Epaper)
                                 {
-                                    SubscriptionDetails subscriptionDetails = new SubscriptionDetails();
-                                    subscriptionDetails.RateID = epaper.RateID;
-                                    subscriptionDetails.StartDate = epaper.StartDate;
-                                    subscriptionDetails.EndDate = epaper.EndDate;
-                                    subscriptionDetails.RateDescription = ratesList.FirstOrDefault(X => X.Rateid == epaper.RateID).RateDescr;
-                                    subscriptionDetails.SubType = ratesList.FirstOrDefault(X => X.Rateid == epaper.RateID).Type;
-                                    subscriptionDetails.isActive = epaper.IsActive;
-
-                                SubscriptionList.Add(subscriptionDetails);
+                                    SubscriptionDetails subscriptionDetails = new SubscriptionDetails { 
+                                        RateID = epaper.RateID,
+                                        StartDate = epaper.StartDate,
+                                        EndDate = epaper.EndDate,
+                                        RateDescription = ratesList.FirstOrDefault(X => X.Rateid == epaper.RateID).RateDescr,
+                                        SubType = ratesList.FirstOrDefault(X => X.Rateid == epaper.RateID).Type,
+                                        isActive = epaper.IsActive,
+                                        SubscriptionID = epaper.Subscriber_EpaperID
+                                    };
+                                    SubscriptionList.Add(subscriptionDetails);
                                 }
                             }
                             //Print Subscriptions
@@ -564,13 +565,14 @@ namespace ePaperLive.Controllers
                                 {
                                     if (SubscriptionList.FirstOrDefault(X => X.RateID == print.RateID) == null)
                                     {
-                                        SubscriptionDetails subscriptionDetails = new SubscriptionDetails();
-                                        subscriptionDetails.RateID = print.RateID;
-                                        subscriptionDetails.StartDate = print.StartDate;
-                                        subscriptionDetails.EndDate = print.EndDate;
-                                        subscriptionDetails.RateDescription = ratesList.FirstOrDefault(X => X.Rateid == print.RateID).RateDescr;
-                                        subscriptionDetails.isActive = print.IsActive;
-
+                                        SubscriptionDetails subscriptionDetails = new SubscriptionDetails { 
+                                        RateID = print.RateID,
+                                        StartDate = print.StartDate,
+                                        EndDate = print.EndDate,
+                                        RateDescription = ratesList.FirstOrDefault(X => X.Rateid == print.RateID).RateDescr,
+                                        isActive = print.IsActive,
+                                        SubscriptionID = print.Subscriber_PrintID
+                                    };
                                     SubscriptionList.Add(subscriptionDetails);
                                     }
 
@@ -582,14 +584,17 @@ namespace ePaperLive.Controllers
                             {
                                 foreach (var address in tableData.Subscriber_Address)
                                 {
-                                    AddressDetails addressDetails = new AddressDetails();
-                                    addressDetails.AddressLine1 = address.AddressLine1;
-                                    addressDetails.AddressLine2 = address.AddressLine2;
-                                    addressDetails.AddressType = address.AddressType;
-                                    addressDetails.CityTown = address.CityTown;
-                                    addressDetails.StateParish = address.StateParish;
-                                    addressDetails.CountryCode = address.CountryCode;
-                                    addressDetails.ZipCode = address.ZipCode;
+                                    AddressDetails addressDetails = new AddressDetails { 
+                                        AddressLine1 = address.AddressLine1,
+                                        AddressLine2 = address.AddressLine2,
+                                        AddressType = address.AddressType,
+                                        CityTown = address.CityTown,
+                                        StateParish = address.StateParish,
+                                        CountryCode = address.CountryCode,
+                                        ZipCode = address.ZipCode,
+                                        AddressID = address.AddressID
+                                    };
+
                                     AddressList.Add(addressDetails);
                                 }
                             }
@@ -598,14 +603,16 @@ namespace ePaperLive.Controllers
                             {
                                 foreach (var payments in tableData.Subscriber_Tranx)
                                 {
-                                    PaymentDetails paymentDetails = new PaymentDetails();
-                                    paymentDetails.CardAmount = (decimal)payments.TranxAmount;
-                                    paymentDetails.CardNumber = payments.CardLastFour;
-                                    paymentDetails.CardExp = payments.CardExp;
-                                    paymentDetails.CardOwner = payments.CardOwner;
-                                    paymentDetails.CardType = payments.CardType;
-                                    paymentDetails.TranxDate = payments.TranxDate;
-                                    paymentDetails.RateDescription = ratesList.FirstOrDefault(X => X.Rateid == payments.RateID).RateDescr;
+                                    PaymentDetails paymentDetails = new PaymentDetails { 
+                                        CardAmount = (decimal)payments.TranxAmount,
+                                        CardNumber = payments.CardLastFour,
+                                        CardExp = payments.CardExp,
+                                        CardOwner = payments.CardOwner,
+                                        CardType = payments.CardType,
+                                        TranxDate = payments.TranxDate,
+                                        RateDescription = ratesList.FirstOrDefault(X => X.Rateid == payments.RateID).RateDescr,
+                                        TransactionID = payments.Subscriber_TranxID
+                                    };
                                     PaymentsList.Add(paymentDetails);
 
                                 }
