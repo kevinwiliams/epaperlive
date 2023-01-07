@@ -67,6 +67,7 @@
 
                             </div>
                             @Html.HiddenFor(m => m.RateID, new { @class = ".do-not-ignore" })
+                            @Html.HiddenFor(model => model.RateType, new { @id = "rateTypeHidden" })
 
                             <div class="form-group p-2" id="del-address" style="display: none">
                                 <hr />
@@ -180,8 +181,8 @@
     <script>
         $('#loading').addClass('loading').removeClass('hidden');
 
-        let prePlan = $("#preloadPlan").val();
-        let preRate = $("#preloadRate").val();
+        let prePlan = $("#rateTypeHidden").val();
+        let preRate = $("#RateID").val();
         let preRateDesc = $("#preloadRateDesc").val();
 
         function selectRate() {
