@@ -166,11 +166,12 @@ else
                             {
                                 <div class="value p-2">
                                     <button class="btn btn-link" name="subscribeNow" 
+                                            style="text-align: right !important"
                                             data-sub-id="@(plans.Rateid)" 
                                             data-rate-type="@(plans.Type)" 
                                             data-rate-price="@(plans.Curr + " " + String.Format("{0:C}", plans.Rate))" 
                                             data-bs-toggle="tooltip" data-bs-placement="top" title="Subscribe now">
-                                        @(" " + plans.RateDescr)
+                                        @(" " + plans.RateDescr.Split('/')[0] ) <br /> @(plans.RateDescr.Split('/')[1])
                                     </button>
                                     <br />
                                     <span class="m-auto fw-bold">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span>

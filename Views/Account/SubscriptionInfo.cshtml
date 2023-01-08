@@ -188,6 +188,9 @@
         let prePlan = $("#preloadPlan").val();
         let preRate = $("#preloadRate").val();
         let preRateDesc = $("#preloadRateDesc").val();
+        let today = moment().format('YYYY-MM-DD');
+        let tomorrow = moment().add(1, 'days').format('YYYY-MM-DD');
+        let currentDate = today;
 
         function selectRate() {
             if (preRateDesc) {
@@ -209,7 +212,7 @@
             if (prePlan) {
                 //select preloaded plan
                 setTimeout(
-                selectPlan
+                    selectPlan
                 , 500);
             }
 
@@ -255,7 +258,6 @@
 
                 let givenDate = $(this).val();
                 givenDate = moment(givenDate);
-                let currentDate = new moment().format('YYYY-MM-DD');
 
                 if (givenDate.isBefore(currentDate)) {
                     swal({
@@ -280,18 +282,25 @@
                 rateType = $(this).val();
                 //console.log($(this).val());
                 if (rateType != "Epaper") {
+                    currentDate = tomorrow;
+                    $("[name=StartDate]").val(tomorrow);
+
                     $("#del-address").show();
                     $("#del-instructions").show();
                     $("#deliveryAddressForm").show();
                     $("#deliveryAddressForm :input:not(#DeliveryAddress_AddressLine2):not([name=SameAsMailing])").attr("required", "required");
                 } else {
+                    currentDate = today;
+                    $("[name=StartDate]").val(today);
+
                     $("#del-address").hide();
                     $("#del-instructions").hide();
                     $("#deliveryAddressForm").hide();
                     $("#deliveryAddressForm :input:not(#DeliveryAddress_AddressLine2):not([name=SameAsMailing])").removeAttr('required');
                 }
 
-                //$(this).closest("form").submit();
+                $("[name=StartDate]").trigger("change");
+
             });
 
             $("[name=RateType]").click(function (e) {

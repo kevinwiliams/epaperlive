@@ -68,6 +68,7 @@
                             </div>
                             @Html.HiddenFor(m => m.RateID, new { @class = ".do-not-ignore" })
                             @Html.HiddenFor(model => model.RateType, new { @id = "rateTypeHidden" })
+                            @Html.HiddenFor(model => model.StartDate, new { @id = "startDateHidden" })
 
                             <div class="form-group p-2" id="del-address" style="display: none">
                                 <hr />
@@ -184,6 +185,11 @@
         let prePlan = $("#rateTypeHidden").val();
         let preRate = $("#RateID").val();
         let preRateDesc = $("#preloadRateDesc").val();
+        let startDate = $("#startDateHidden").val();
+        console.log(startDate);
+        let currentDate = moment(startDate).format('YYYY-MM-DD');
+        let today = moment().format('YYYY-MM-DD');
+        let tomorrow = moment().add(1, 'days').format('YYYY-MM-DD');
 
         function selectRate() {
             if (preRateDesc) {
@@ -251,7 +257,6 @@
 
                 let givenDate = $(this).val();
                 givenDate = moment(givenDate);
-                let currentDate = new moment().format('YYYY-MM-DD');
 
                 if (givenDate.isBefore(currentDate)) {
                     swal({
@@ -275,6 +280,20 @@
             $('[name=RateType]').on("click", function () {
                 rateType = $(this).val();
                 //console.log($(this).val());
+
+                if (rateType != prePlan) {
+                    if (rateType == "Epaper") {
+                        currentDate = today;
+                        $("[name=StartDate]").val(today);
+
+                    } else {
+                        currentDate = tomorrow;
+                        $("[name=StartDate]").val(tomorrow);
+                    }
+                } else {
+                    $("[name=StartDate]").val(moment(startDate).format('YYYY-MM-DD'));
+                }
+
                 if (rateType != "Epaper") {
                     $("#del-address").show();
                     $("#del-instructions").show();
@@ -287,7 +306,7 @@
                     $("#deliveryAddressForm :input:not(#DeliveryAddress_AddressLine2):not([name=SameAsMailing])").removeAttr('required');
                 }
 
-                //$(this).closest("form").submit();
+                $("[name=StartDate]").trigger("change");
             });
 
             $("[name=RateType]").click(function (e) {
