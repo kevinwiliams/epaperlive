@@ -119,9 +119,25 @@
                                     <table cellspacing="0" cellpadding="0" border="0" width="100%">
                                         <tr>
                                             <td style="padding: 40px; font-family: sans-serif; font-size: 15px; mso-height-rule: exactly; line-height: 20px; color: #555555;">
-                                                <p> Thank you @Model.FirstName, for subscribing to <strong>The Jamaica Observer Digital Experience.</strong></p>
-                                                <p>
-                                                    Please clink the below link to login to start reading the ePaper or keep track of your delivery dates.
+                                                <p> Thank you @Model.FirstName, for subscribing to <strong>The Jamaica Observer 
+                                                    @switch (Model.PaymentDetails.FirstOrDefault().SubType)
+                                                    {
+                                                        case "Epaper":
+                                                            @("ePaper");
+                                                            break;
+                                                        case "Print":
+                                                            @("Print Edition");
+                                                            break;
+                                                        case "Bundle":
+                                                            @("ePaper & Print Edition");
+                                                            break;
+                                                        default:
+                                                            break;
+                                                    }
+                                                        </strong></p>
+                                            
+                                                                                            <p>
+                                                                                                Please clink the below link to login to start reading the ePaper or keep track of your delivery dates.
                                                     <br>
                                                     <!-- Button : Begin -->
                                                 </p>
@@ -146,6 +162,24 @@
                                                             </tr>
                                                             <tr>
                                                                 <td><strong>Plan Type</strong></td>
+                                                                <td>&nbsp;
+                                                                    @switch (Model.PaymentDetails.FirstOrDefault().SubType)
+                                                                    {
+                                                                        case "Epaper":
+                                                                        case "Print":
+                                                                            @(Model.PaymentDetails.FirstOrDefault().SubType + " Only")
+                                                                            break;
+                                                                        case "Bundle":
+                                                                            @("Print & ePaper "+ Model.PaymentDetails.FirstOrDefault().SubType);
+                                                                            break;
+                                                                        default:
+                                                                            break;
+                                                                    }
+                                                                   
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td><strong>Description</strong></td>
                                                                 <td>
                                                                     &nbsp;@Model.PaymentDetails.FirstOrDefault().RateDescription.Split('/')[0]<br />
                                                                     @if (Model.PaymentDetails.FirstOrDefault().RateDescription.Split('/').Length > 1)

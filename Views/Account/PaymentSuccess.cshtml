@@ -27,7 +27,23 @@
             <div class="row gy-4">
                 <div class="col-lg-7">
                     <!-- start:wizrd -->
-                    <h3>Thank you @Model.FirstName for subscribing to The Jamaica Observer Digital Experience</h3>
+                    <h3>
+                        Thank you @Model.FirstName for subscribing to The Jamaica Observer  
+                        @switch (Model.PaymentDetails.FirstOrDefault().SubType)
+                        {
+                            case "Epaper":
+                                @("ePaper");
+                                break;
+                            case "Print":
+                                @("Print Edition");
+                                break;
+                            case "Bundle":
+                                @("ePaper & Print Edition");
+                                break;
+                            default:
+                                break;
+                        }
+                    </h3>
                     <p>A confirmation email has been sent to the supplied email address on the summary. Please follow the below link to login to start reading the ePaper or keep track of your delivery dates.</p>
                     <p>
                         <a href="@Url.Action("login", "account")">Login</a>

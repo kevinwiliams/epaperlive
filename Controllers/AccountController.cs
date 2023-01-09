@@ -1316,8 +1316,8 @@ namespace ePaperLive.Controllers
                         Subscriber_Print objPr = GetPrintDetails();
                         Subscriber_Tranx objTran = GetTransaction();
                         AuthSubcriber authUser = GetAuthSubscriber();
-                        List<SubscriptionDetails> subscriptionDetails = new List<SubscriptionDetails>();
-                        List<PaymentDetails> paymentDetailsList = new List<PaymentDetails>();
+                        List<SubscriptionDetails> subscriptionDetails = authUser.SubscriptionDetails = new List<SubscriptionDetails>();
+                        List<PaymentDetails> paymentDetailsList = authUser.PaymentDetails = new List<PaymentDetails>();
                         //List<AddressDetails> addressDetails = new List<AddressDetails>();
 
                         objSub.Newsletter = data.NewsletterSignUp;
@@ -1334,11 +1334,11 @@ namespace ePaperLive.Controllers
                                 EndDate = endDate,
                                 RateID = data.RateID,
                                 DeliveryInstructions = data.DeliveryInstructions,
-                                RateType = selectedPlan.Type
+                                RateType = selectedPlan.Type,
+                                SubType = selectedPlan.Type
                             };
 
                             subscriptionDetails.Add(printSubscription);
-                            authUser.SubscriptionDetails = subscriptionDetails;
 
                             AddressDetails deliveryAddress = new AddressDetails 
                             {
@@ -1349,7 +1349,6 @@ namespace ePaperLive.Controllers
                                 StateParish = objDelv.StateParish,
                                 CountryCode = objDelv.CountryCode
                             };
-                            authUser.AddressDetails.Add(deliveryAddress);
 
                         }
                         if (selectedPlan.Type == "Epaper")
@@ -1357,17 +1356,15 @@ namespace ePaperLive.Controllers
                             var endDate = data.EndDate = data.StartDate.AddDays((double)selectedPlan.ETerm);
                             SubscriptionDetails epaperSubscription = new SubscriptionDetails
                             {
-                                StartDate = data.StartDate,
+                                StartDate = DateTime.Now,
                                 EndDate = endDate,
                                 RateID = data.RateID,
-                                SubType = data.SubType,
+                                SubType = selectedPlan.Type,
                                 NotificationEmail = data.NotificationEmail,
                                 RateType = selectedPlan.Type
                             };
 
                             subscriptionDetails.Add(epaperSubscription);
-                            authUser.SubscriptionDetails = subscriptionDetails;
-
                         }
                         if (selectedPlan.Type == "Bundle")
                         {
@@ -1378,6 +1375,8 @@ namespace ePaperLive.Controllers
                                 EndDate = pEndDate,
                                 RateID = data.RateID,
                                 DeliveryInstructions = data.DeliveryInstructions,
+                                RateType = selectedPlan.Type,
+                                SubType = "Print"
                             };
                             //print subscription
                             subscriptionDetails.Add(printSubscription);
@@ -1385,19 +1384,16 @@ namespace ePaperLive.Controllers
                             var eEndDate = data.EndDate = data.StartDate.AddDays((double)selectedPlan.PrintTerm * 7);
                             SubscriptionDetails epaperSubscription = new SubscriptionDetails
                             {
-                                StartDate = data.StartDate,
+                                StartDate = DateTime.Now,
                                 EndDate = eEndDate,
                                 RateID = data.RateID,
-                                SubType = data.SubType,
+                                SubType = "Epaper",
                                 NotificationEmail = data.NotificationEmail,
                                 RateType = selectedPlan.Type
 
                             };
                             //Epaper subscription
                             subscriptionDetails.Add(epaperSubscription);
-
-                            authUser.SubscriptionDetails = subscriptionDetails;
-
 
                             AddressDetails deliveryAddress = new AddressDetails
                             {
@@ -1442,7 +1438,7 @@ namespace ePaperLive.Controllers
                         };
 
                         paymentDetailsList.Add(pd);
-                        authUser.PaymentDetails = paymentDetailsList;
+                        //authUser.PaymentDetails.Add(pd);
 
                         Subscriber_Address mailingAddress = GetSubscriberAddress();
                         ViewData["savedAddress"] = true;
@@ -1548,13 +1544,13 @@ namespace ePaperLive.Controllers
                     try
                     {
                         //get all session variables
-                        AuthSubcriber authUser = GetAuthSubscriber();
+                        //AuthSubcriber authUser = GetAuthSubscriber();
                         Subscriber objSub = GetSubscriber();
-                        Subscriber_Address objAdd = GetSubscriberAddress();
-                        Subscriber_Epaper objE = GetEpaperDetails();
-                        Subscriber_Print objP = GetPrintDetails();
+                        //Subscriber_Address objAdd = GetSubscriberAddress();
+                        //Subscriber_Epaper objE = GetEpaperDetails();
+                        //Subscriber_Print objP = GetPrintDetails();
                         Subscriber_Tranx objTran = GetTransaction();
-                        ApplicationUser user = GetAppUser();
+                        //ApplicationUser user = GetAppUser();
                         
                         objTran.CardType = data.CardType;
                         objTran.CardOwner = data.CardOwner;
@@ -1769,7 +1765,7 @@ namespace ePaperLive.Controllers
                     };
                 }
 
-                SubscriptionDetails epaperSub = authUser.SubscriptionDetails.FirstOrDefault(x => x.RateType == "Epaper" || x.RateType == "Bundle" && x.SubscriptionID == 0);
+                SubscriptionDetails epaperSub = authUser.SubscriptionDetails.FirstOrDefault(x => x.RateType == "Epaper" || x.RateType == "Bundle" && x.SubType == "Epaper" && x.SubscriptionID == 0);
                 Subscriber_Epaper objE = new Subscriber_Epaper();
                 if (epaperSub != null)
                 {
@@ -1786,7 +1782,7 @@ namespace ePaperLive.Controllers
                     };
                 }
 
-                SubscriptionDetails printSub = authUser.SubscriptionDetails.FirstOrDefault(x => x.RateType == "Print" || x.RateType == "Bundle" && x.SubscriptionID == 0);
+                SubscriptionDetails printSub = authUser.SubscriptionDetails.FirstOrDefault(x => x.RateType == "Print" || x.RateType == "Bundle" && x.SubType == "Print" && x.SubscriptionID == 0);
                 Subscriber_Print objP = new Subscriber_Print();
                 if (printSub != null)
                 {
@@ -1826,7 +1822,7 @@ namespace ePaperLive.Controllers
 
                 string SubscriberID = authUser.SubscriberID;
                 int addressID = 0;
-                var rateID = objTran.RateID;
+                var rateID = trxDetails.RateID;
 
                 IdentityResult createAccount = new IdentityResult();
                 ApplicationUser newAccount = new ApplicationUser();
