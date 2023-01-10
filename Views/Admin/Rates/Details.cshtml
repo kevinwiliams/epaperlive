@@ -1,0 +1,171 @@
+﻿@model ePaperLive.DBModel.printandsubrate
+
+@{
+    ViewBag.Title = "Details";
+}
+    <div class="container">
+        <h2>Details</h2>
+
+        <div>
+            <h4>printandsubrate</h4>
+            <hr />
+            <dl class="dl-horizontal">
+                <dt>
+                    @Html.DisplayNameFor(model => model.Market)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Market)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Type)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Type)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.RateDescr)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.RateDescr)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.PrintDayPattern)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.PrintDayPattern)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.PrintTerm)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.PrintTerm)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.PrintTermUnit)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.PrintTermUnit)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.EDayPattern)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.EDayPattern)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.ETerm)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.ETerm)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.ETermUnit)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.ETermUnit)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Curr)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Curr)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Rate)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Rate)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.SortOrder)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.SortOrder)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Active)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Active)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.IntroRate)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.IntroRate)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.OfferIntroRate)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.OfferIntroRate)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.IsFeatured)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.IsFeatured)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.IsCTA)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.IsCTA)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.FeatureList)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.FeatureList)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.BestDealFlag)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.BestDealFlag)
+                </dd>
+
+            </dl>
+        </div>
+        <p>
+            @Html.ActionLink("Edit", "Edit", new { id = Model.Rateid }) |
+            @Html.ActionLink("Back to List", "Index")
+        </p>
+    </div>

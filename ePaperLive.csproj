@@ -317,6 +317,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\PaymentsController.cs" />
@@ -359,6 +360,7 @@
     <Compile Include="Models\UserLogin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Controllers\RatesController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\MIGRATION-SCRIPT.sql" />
@@ -601,11 +603,16 @@
     <Content Include="Views\Home\_FeaturedPackagesPartial.cshtml" />
     <Content Include="Views\Account\ExtendSubscription.cshtml" />
     <Content Include="Views\Account\ExtendPayment.cshtml" />
+    <Content Include="Views\Admin\Rates\Create.cshtml" />
+    <Content Include="Views\Admin\Rates\Delete.cshtml" />
+    <Content Include="Views\Admin\Rates\Details.cshtml" />
+    <Content Include="Views\Admin\Rates\Edit.cshtml" />
+    <Content Include="Views\Admin\Rates\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\roslyn\" />
-    <Folder Include="Views\Admin\" />
     <Folder Include="Views\Payments\" />
+    <Folder Include="Views\Rates\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />
