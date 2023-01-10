@@ -43,7 +43,9 @@ namespace ePaperLive
                     ssl_enabled = (string)settings["ssl_enabled"],
                     password = (string)settings["email_password"],
                     domain = (string)settings["email_address_domain"],
-                    portNumber = (string)settings["email_port_number"];
+                    portNumber = (string)settings["email_port_number"],
+                    bccPrint = (string)settings["bcc_print"],
+                    bccEpaper = (string)settings["bcc_epaper"];
 
                 int port;
 
@@ -55,9 +57,23 @@ namespace ePaperLive
                 smtp.UseDefaultCredentials = true;
 
                 var newMsg = new MailMessage();
+                var mailSubject = msg.Subject;
                 newMsg.To.Add(msg.Destination);
+
+                if (mailSubject.Contains("Print"))
+                    newMsg.Bcc.Add(bccPrint);
+                
+                if (mailSubject.Contains("Epaper"))
+                    newMsg.Bcc.Add(bccEpaper);
+
+                if (mailSubject.Contains("Bundle")) { 
+                    newMsg.Bcc.Add(bccEpaper);
+                    newMsg.Bcc.Add(bccPrint);
+                }
+
+
                 newMsg.From = new MailAddress(sentFrom, displayName);
-                newMsg.Subject = msg.Subject;
+                newMsg.Subject = mailSubject;
                 newMsg.Body = msg.Body;
                 newMsg.IsBodyHtml = true;
 

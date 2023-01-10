@@ -7,6 +7,10 @@
   "email_address_username": "caribbusinessreport@gmail.com",
   "email_address_domain": "jamobsvr.com",
   "email_port_number": "587",
+  "bcc_print": "williamskt@jamaicaobserver.com, iamteddikev@gmail.com",
+  //"bcc_print": "circulation@jamaicaobserver.com, williamskt@jamaicaobserver.com, morgano@jamaicaobserver.com, wainwrightk@jamaicaobserver.com",
+  "bcc_epaper": "williamskt@jamaicaobserver.com",
+  //"bcc_epaper": "morgano@jamaicaobserver.com",
   "paymentInbox": {
     "testing": "caribbusinessreport@gmail.com",
     "production": "payments@jamaicaobserver.com.com"
