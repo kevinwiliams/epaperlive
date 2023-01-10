@@ -158,55 +158,68 @@
                                                         <tbody>
                                                             <tr>
                                                                 <td><strong>Order Number</strong></td>
-                                                                <td>&nbsp;@Model.PaymentDetails.FirstOrDefault().OrderNumber</td>
+                                                                <td>&nbsp;@Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).OrderNumber</td>
                                                             </tr>
                                                             <tr>
                                                                 <td><strong>Plan Type</strong></td>
-                                                                <td>&nbsp;
-                                                                    @switch (Model.PaymentDetails.FirstOrDefault().SubType)
+                                                                <td>
+                                                                    &nbsp;
+                                                                    @switch (Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).SubType)
                                                                     {
                                                                         case "Epaper":
                                                                         case "Print":
-                                                                            @(Model.PaymentDetails.FirstOrDefault().SubType + " Only")
+                                                                            @(Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).SubType + " Only")
                                                                             break;
                                                                         case "Bundle":
-                                                                            @("Print & ePaper "+ Model.PaymentDetails.FirstOrDefault().SubType);
+                                                                            @("Print & ePaper " + Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).SubType);
                                                                             break;
                                                                         default:
                                                                             break;
                                                                     }
-                                                                   
+
                                                                 </td>
                                                             </tr>
                                                             <tr>
                                                                 <td><strong>Description</strong></td>
                                                                 <td>
-                                                                    &nbsp;@Model.PaymentDetails.FirstOrDefault().RateDescription.Split('/')[0]<br />
-                                                                    @if (Model.PaymentDetails.FirstOrDefault().RateDescription.Split('/').Length > 1)
+                                                                    &nbsp;@Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).RateDescription.Split('/')[0]<br />
+                                                                    @if (Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).RateDescription.Split('/').Length > 1)
                                                                     {
-                                                                        @Model.PaymentDetails.FirstOrDefault().RateDescription.Split('/')[1]
+                                                                        @Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).RateDescription.Split('/')[1]
                                                                     }
                                                                 </td>
                                                             </tr>
-                                                            <tr>
-                                                                <td><strong>Subscription Period</strong></td>
-                                                                <td>&nbsp;@Model.SubscriptionDetails.FirstOrDefault().StartDate.ToString("dd/MM/yyyy") - @Model.SubscriptionDetails.FirstOrDefault().EndDate.ToString("dd/MM/yyyy")</td>
-                                                            </tr>
+                                                            @if (Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.SubscriptionID == 0) != null)
+                                                            {
+                                                                <tr>
+                                                                    <td><strong>ePaper Subscription Period</strong></td>
+                                                                    <td>&nbsp;@Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.SubscriptionID == 0).StartDate.ToString("dd/MM/yyyy") - @Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.SubscriptionID == 0).EndDate.ToString("dd/MM/yyyy")</td>
+                                                                </tr>
+                                                            }
+                                                            @if (Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.SubscriptionID == 0) != null)
+                                                            {
+                                                                <tr>
+                                                                    <td><strong>Print Subscription Period</strong></td>
+                                                                    <td>&nbsp;@Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.SubscriptionID == 0).StartDate.ToString("dd/MM/yyyy") - @Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.SubscriptionID == 0).EndDate.ToString("dd/MM/yyyy")</td>
+                                                                </tr>
+                                                            }
+
+
                                                             <tr>
                                                                 <td><strong>Email</strong></td>
                                                                 <td>&nbsp;@Model.EmailAddress</td>
                                                             </tr>
                                                             <tr>
                                                                 <td><strong>Payment</strong></td>
-                                                                <td>&nbsp;@String.Format("{0:C}", Model.PaymentDetails.FirstOrDefault().CardAmount)</td>
+                                                                <td>&nbsp;@String.Format("{0:C}", Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardAmount)</td>
                                                             </tr>
                                                             <tr>
                                                                 <td><strong>Card Number Ending</strong></td>
-                                                                <td>&nbsp;@Model.PaymentDetails.FirstOrDefault().CardNumberLastFour ex: @Model.PaymentDetails.FirstOrDefault().CardExp</td>
+                                                                <td>&nbsp;@Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardNumberLastFour ex: @Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardExp</td>
                                                             </tr>
                                                             <tr>
                                                                 <td><strong>Card Type</strong></td>
-                                                                <td>&nbsp;@Model.PaymentDetails.FirstOrDefault().CardType.ToUpper()</td>
+                                                                <td>&nbsp;@Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardType.ToUpper()</td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -219,7 +232,7 @@
                                                     <hr />
                                                     <p>
                                                         @{
-                                                            var dAddress = @Model.AddressDetails.FirstOrDefault(x => x.AddressType == "D");
+                                                            var dAddress = @Model.AddressDetails.FirstOrDefault(x => x.AddressType == "D" && x.AddressID == 0);
                                                         }
 
                                                         @dAddress.AddressLine1<br />

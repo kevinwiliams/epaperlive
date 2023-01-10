@@ -29,7 +29,7 @@
                     <!-- start:wizrd -->
                     <h3>
                         Thank you @Model.FirstName for subscribing to The Jamaica Observer  
-                        @switch (Model.PaymentDetails.FirstOrDefault().SubType)
+                        @switch (Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).SubType)
                         {
                             case "Epaper":
                                 @("ePaper");
@@ -54,17 +54,29 @@
                     <div class="portfolio-info">
                         <h3>Summary</h3>
                         <ul>
-                            <li><strong>Order Number:</strong>: <a href="#">@Model.PaymentDetails.FirstOrDefault().OrderNumber</a></li>
-                            <li><strong>@Model.SubscriptionDetails.FirstOrDefault().RateType Plan</strong>: @Model.PaymentDetails.FirstOrDefault().RateDescription</li>
+                            <li><strong>Order Number:</strong>: <a href="#">@Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).OrderNumber</a></li>
+                            <li><strong>@Model.SubscriptionDetails.FirstOrDefault(x => x.SubscriptionID == 0).RateType Plan</strong>: @Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).RateDescription</li>
                             <li><strong>Subscriber</strong>: @(Model.LastName + ", " + Model.FirstName)</li>
-                            <li><strong>Subscription Period</strong>: @Model.SubscriptionDetails.FirstOrDefault().StartDate.ToString("dd/MM/yyyy")  - @Model.SubscriptionDetails.FirstOrDefault().EndDate.ToString("dd/MM/yyyy")</li>
+                            @if (Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.SubscriptionID == 0) != null)
+                            {
+                                <li><strong>ePaper Subscription Period</strong>: @Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.SubscriptionID == 0).StartDate.ToString("dd/MM/yyyy")  - @Model.SubscriptionDetails.FirstOrDefault(x => x.SubscriptionID == 0).EndDate.ToString("dd/MM/yyyy")</li>
+
+                            }
+
+                            @if (Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.SubscriptionID == 0) != null )
+                            {
+                                <li><strong>Print Subscription Period</strong>: @Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.SubscriptionID == 0).StartDate.ToString("dd/MM/yyyy")  - @Model.SubscriptionDetails.FirstOrDefault(x => x.SubscriptionID == 0).EndDate.ToString("dd/MM/yyyy")</li>
+
+                            }
                             <li><strong>Email</strong>: <span class="text-danger">@Model.EmailAddress</span></li>
-                            <li><strong>Amount</strong>: <span class="text-success">@String.Format("{0:C}", Model.PaymentDetails.FirstOrDefault().CardAmount)</span></li>
-                            <li><strong>Card</strong>: <span class="">
-                            @Model.PaymentDetails.FirstOrDefault().CardType :
-                            @Model.PaymentDetails.FirstOrDefault().CardNumberLastFour 
-                                EXP: @Model.PaymentDetails.FirstOrDefault().CardExp
-                        </span></li>
+                            <li><strong>Amount</strong>: <span class="text-success">@String.Format("{0:C}", Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardAmount)</span></li>
+                            <li>
+                                <strong>Card</strong>: <span class="">
+                                    @Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardType :
+                                    @Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardNumberLastFour
+                                    EXP: @Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardExp
+                                </span>
+                            </li>
                         </ul>
                         @if (Model.AddressDetails.Any(x => x.AddressType == "D"))
                         {
