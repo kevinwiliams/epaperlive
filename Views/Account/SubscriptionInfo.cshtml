@@ -280,31 +280,35 @@
             });
 
             $('[name=RateType]').on("click", function () {
-                    today = moment();
+
+                today = moment();
+                console.log(today.format('YYYY-MM-DD'), ' day: ', today.isoWeekday(), ' hr: ', today.hours());
 
                 rateType = $(this).val();
                 //console.log($(this).val());
                 if (rateType != "Epaper") {
                     $("[name=StartDate]").removeClass('hidden');
                     $("[for=StartDate]").removeClass('hidden');
-                    //if (today is a mon, tues, wed or thur) and time of day <= 11am
-                    if (today.isoWeekday() <= 4 && today.hours() <= 11) {
-                      currentDate = today.add(1, 'days').format('YYYY-MM-DD');
-                    } else {
-                      currentDate = today.add(2, 'days').format('YYYY-MM-DD');
-                    }
                     // if (today is fri) and time of day <=  10am
+                    today = moment();
                     if (today.isoWeekday() === 5 && today.hours() <= 10) {
                       currentDate = today.add(1, 'days').format('YYYY-MM-DD');
                     } else {
                       currentDate = today.add(2, 'days').format('YYYY-MM-DD');
                     }
                     //If (today is sat or sun)
+                    today = moment();
                     if (today.isoWeekday() >= 6) {
                       currentDate = moment().isoWeekday(2).format('YYYY-MM-DD');
                     }
+                    //if (today is a mon, tues, wed or thur) and time of day <= 11am
+                    today = moment();
+                    if (today.isoWeekday() <= 4 && today.hours() <= 11) {
+                      currentDate = today.add(1, 'days').format('YYYY-MM-DD');
+                    } else {
+                      currentDate = today.add(2, 'days').format('YYYY-MM-DD');
+                    }
 
-                    console.log('not:' + currentDate);
                     $("[name=StartDate]").val(currentDate);
 
                     $("#del-address").show();
@@ -315,7 +319,6 @@
                     $("[name=StartDate]").addClass('hidden');
                     $("[for=StartDate]").addClass('hidden');
                     currentDate = today.format('YYYY-MM-DD');
-                    console.log('ep: ' + currentDate);
 
                     $("[name=StartDate]").val(currentDate);
 
