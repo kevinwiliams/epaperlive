@@ -21,7 +21,7 @@ namespace ePaperLive.Models
         public string RateType { get; set; }
         public string Market { get; set; }
 
-        [Display(Name = "Subscription Start Date")]
+        [Display(Name = "Print Subscription Start Date")]
         [Required(AllowEmptyStrings = false, ErrorMessage = "Please select a start date")]
         [DataType(DataType.Date)]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
