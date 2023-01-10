@@ -23,27 +23,33 @@
         {
             var preloadSub = (Dictionary<string, int>)ViewData["preloadSub"];
             <div id="subSummary" class="text-center pb-4">
-            @foreach (var plans in preloadSub)
-            {
-                ViewData["rateType"] = plans.Key.Split('|')[0];
-                var freq = plans.Key.Split('|')[4];
-                freq = (freq != "undefined" && freq != null) ? freq.Split(':')[0] + "<br>" + freq.Split(':')[1] : String.Empty;
-               
-                <strong>@plans.Key.Split('|')[0].ToUpper() SUBSCRIPTION</strong><br />
-                @plans.Key.Split('|')[1];<br />
-                <small>@Html.Raw(freq)</small>
-                <p id="subRate" class="pt-1 text-success fw-semibold fs-3">@plans.Key.Split('|')[3]</p>
+                @foreach (var plans in preloadSub)
+                {
+                    ViewData["rateType"] = plans.Key.Split('|')[0];
+                    var freq = plans.Key.Split('|')[4];
+                    freq = (freq != "undefined" && freq != null) ? freq.Split(':')[0] + "<br>" + freq.Split(':')[1] : String.Empty;
 
-            }
+                    <strong>@plans.Key.Split('|')[0].ToUpper() SUBSCRIPTION</strong><br />
+                    @plans.Key.Split('|')[1];<br />
+                    <small>@Html.Raw(freq)</small>
+                    <p id="subRate" class="pt-1 text-success fw-semibold fs-3">@plans.Key.Split('|')[3]</p>
+
+                }
             </div>
         }
-        <p class="text-center"><strong>Your subscription start date</strong></p>
-        <p class="text-center fs-6">Your subscription starts <span id="subStartDate">today: @DateTime.Now.ToString("d/MM/yyyy")</span></p>
+        @{
+            var url = Request.Url.ToString();
+            if (!url.Contains("Subscribe") && !url.Contains("LoginDetails"))
+            {
+                <p class="text-center"><strong>Your subscription start date</strong></p>
+                <p class="text-center fs-6">Your subscription starts <span id="subStartDate">today: @DateTime.Now.ToString("d/MM/yyyy")</span></p>
+                <br />
+            }
 
-        
-        <br />
+        }
+
         <p class="text-center"><strong>What's included?</strong></p>
-        
+
         <ul>
             @if (ViewData["rateType"] != null)
             {
