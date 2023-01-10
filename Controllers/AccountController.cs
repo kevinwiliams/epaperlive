@@ -2378,7 +2378,7 @@ namespace ePaperLive.Controllers
 
                             //send confirmation email
                             var user = await UserManager.FindByNameAsync(clientData.EmailAddress);
-                            string subject = "Jamaica Observer Subscription Confirmation";
+                            string subject = "Jamaica Observer Subscription Confirmation (" + currentTransaction.SubType + ")";
                             string body = RenderViewToString(this.ControllerContext, "~/Views/Emails/ConfirmSubscription.cshtml", customerData);
                             await UserManager.SendEmailAsync(user.Id, subject, body);
 
