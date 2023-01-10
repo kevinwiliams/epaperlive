@@ -1350,6 +1350,7 @@ namespace ePaperLive.Controllers
                                 CountryCode = objDelv.CountryCode
                             };
 
+                            authUser.AddressDetails.Add(deliveryAddress);
                         }
                         if (selectedPlan.Type == "Epaper")
                         {
@@ -1368,7 +1369,7 @@ namespace ePaperLive.Controllers
                         }
                         if (selectedPlan.Type == "Bundle")
                         {
-                            var pEndDate = data.EndDate = data.StartDate.AddDays(30);
+                            var pEndDate = data.EndDate = data.StartDate.AddDays((double)selectedPlan.PrintTerm * 7);
                             SubscriptionDetails printSubscription = new SubscriptionDetails
                             {
                                 StartDate = data.StartDate,
@@ -1381,7 +1382,7 @@ namespace ePaperLive.Controllers
                             //print subscription
                             subscriptionDetails.Add(printSubscription);
 
-                            var eEndDate = data.EndDate = data.StartDate.AddDays((double)selectedPlan.PrintTerm * 7);
+                            var eEndDate = data.EndDate = data.StartDate.AddDays((double)selectedPlan.ETerm);
                             SubscriptionDetails epaperSubscription = new SubscriptionDetails
                             {
                                 StartDate = DateTime.Now,
@@ -1448,7 +1449,6 @@ namespace ePaperLive.Controllers
                     }
                     catch (Exception ex)
                     {
-
                         LogError(ex);
                     }
 

@@ -2,6 +2,8 @@
 
 @{
     ViewBag.Title = "Thank you";
+    var subtype = Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).SubType;
+
 }
 
 
@@ -29,7 +31,7 @@
                     <!-- start:wizrd -->
                     <h3>
                         Thank you @Model.FirstName for subscribing to The Jamaica Observer  
-                        @switch (Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).SubType)
+                        @switch (subtype)
                         {
                             case "Epaper":
                                 @("ePaper");
@@ -44,7 +46,24 @@
                                 break;
                         }
                     </h3>
-                    <p>A confirmation email has been sent to the supplied email address on the summary. Please follow the below link to login to start reading the ePaper or keep track of your delivery dates.</p>
+                    <p>
+                        A confirmation email has been sent to the supplied email address on the summary. Please click the below link to login to
+                        @switch (subtype)
+                        {
+                            case "Epaper":
+                                @("start reading the ePaper");
+                                break;
+                            case "Print":
+                                @("keep track of your delivery dates");
+                                break;
+                            case "Bundle":
+                                @("start reading the ePaper or keep track of your delivery dates");
+                                break;
+                            default:
+                                @("start reading the ePaper or keep track of your delivery dates");
+                                break;
+                        }.
+                    </p>
                     <p>
                         <a href="@Url.Action("login", "account")">Login</a>
                     </p>
