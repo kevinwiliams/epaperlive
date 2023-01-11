@@ -184,8 +184,12 @@
                                                                 <td>&nbsp;@Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).OrderNumber</td>
                                                             </tr>
                                                             <tr>
+                                                                <td><strong>Subscriber </strong></td>
+                                                                <td>&nbsp;@(Model.FirstName + " " + Model.LastName)</td>
+                                                            </tr>
+                                                            <tr>
                                                                 <td><strong>Plan Type</strong></td>
-                                                                <td>
+                                                                <td>&nbsp;
                                                                     @switch (subtype)
                                                                     {
                                                                         case "Epaper":
@@ -201,14 +205,24 @@
 
                                                                 </td>
                                                             </tr>
+                                                            @{
+                                                                var desc = Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).RateDescription;
+                                                                var term = Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).RateTerm;
+
+                                                                if (subtype == "Print")
+                                                                {
+                                                                    desc = desc + " (" + term + ")";
+                                                                }
+                                                                if (subtype == "Bundle")
+                                                                {
+                                                                    desc = desc.Split('/')[0] + " <br />" + desc.Split('/')[1];
+                                                                }
+
+                                                            }
                                                             <tr>
                                                                 <td><strong>Description</strong></td>
                                                                 <td>
-                                                                    &nbsp;@Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).RateDescription.Split('/')[0]<br />
-                                                                    @if (Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).RateDescription.Split('/').Length > 1)
-                                                                    {
-                                                                        @Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).RateDescription.Split('/')[1]
-                                                                    }
+                                                                    &nbsp;@desc
                                                                 </td>
                                                             </tr>
                                                             @if (Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.SubscriptionID == 0) != null)

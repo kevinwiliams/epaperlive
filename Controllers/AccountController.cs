@@ -1425,11 +1425,14 @@ namespace ePaperLive.Controllers
                             CountryList = GetCountryList()
                         };
 
-                        
+                        var printTerm = selectedPlan.PrintTerm + " " + selectedPlan.PrintTermUnit;
+                        var epaperTerm = selectedPlan.ETerm + " " + selectedPlan.ETermUnit;
+                        var rateTerm = (selectedPlan.Type == "Print") ? printTerm : epaperTerm;
                         PaymentDetails pd = new PaymentDetails
                         {
                             RateID = data.RateID,
                             RateDescription = selectedPlan.RateDescr,
+                            RateTerm = rateTerm,
                             Currency = selectedPlan.Curr,
                             CardAmount = (decimal)selectedPlan.Rate,
                             SubType = selectedPlan.Type,

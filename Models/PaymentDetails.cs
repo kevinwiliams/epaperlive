@@ -47,6 +47,7 @@ namespace ePaperLive.Models
         public string SubType { get; set; }
         [Display(Name = "Subcription")]
         public string RateDescription { get; set; }
+        public string RateTerm { get; set; }
 
         [Display(Name = "Transaction Date")]
         public DateTime? TranxDate { get; set; }
