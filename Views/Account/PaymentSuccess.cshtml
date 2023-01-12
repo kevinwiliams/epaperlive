@@ -89,7 +89,7 @@
                         }
                         <ul>
                             <li><strong>Order Number:</strong>: <a href="#">@Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).OrderNumber</a></li>
-                            <li><strong>@Model.SubscriptionDetails.FirstOrDefault(x => x.SubscriptionID == 0).RateType Plan</strong>: @desc</li>
+                            <li><strong>@Model.SubscriptionDetails.FirstOrDefault(x => x.SubscriptionID == 0).RateType Plan</strong>: @Html.Raw(desc)</li>
                             <li><strong>Subscriber</strong>: @(Model.LastName + ", " + Model.FirstName)</li>
                             @if (Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.SubscriptionID == 0) != null)
                             {

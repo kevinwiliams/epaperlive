@@ -339,13 +339,14 @@
                     $("#sub-dt-e").addClass('hidden');
                     break;
                 case "Epaper":
-                    $("#subStartDate").removeClass('hidden');
                     $("#subtypedesc").html('ePaper');
                     break;
                 case "Bundle":
                     $("#sub-dt-p").removeClass('hidden');
+                    $("#subtypedesc").html('ePaper');
                     break;
                 default:
+                    break;
             }
 
             if (subType == "Epaper") {
