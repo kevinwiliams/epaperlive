@@ -1443,6 +1443,12 @@ namespace ePaperLive.Controllers
 
                         paymentDetailsList.Add(pd);
                         //authUser.PaymentDetails.Add(pd);
+                        if (!String.IsNullOrEmpty(epaperTerm.Trim()))
+                            ViewData["ePaperStartDate"] = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.SubscriptionID == 0).StartDate;
+
+                        if(!String.IsNullOrEmpty(printTerm.Trim()))
+                            ViewData["printStartDate"] = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.SubscriptionID == 0).StartDate;
+
 
                         Subscriber_Address mailingAddress = GetSubscriberAddress();
                         ViewData["savedAddress"] = true;

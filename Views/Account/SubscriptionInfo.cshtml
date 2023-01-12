@@ -287,6 +287,7 @@
                 rateType = $(this).val();
                 //console.log($(this).val());
                 if (rateType != "Epaper") {
+                    $("#subtypedesc").html(rateType.toLowerCase());
                     $("[name=StartDate]").removeClass('hidden');
                     $("[for=StartDate]").removeClass('hidden');
                     // if (today is fri) and time of day <=  10am
@@ -316,6 +317,7 @@
                     $("#deliveryAddressForm").show();
                     $("#deliveryAddressForm :input:not(#DeliveryAddress_AddressLine2):not([name=SameAsMailing])").attr("required", "required");
                 } else {
+                    $("#subtypedesc").html('ePaper');
                     $("[name=StartDate]").addClass('hidden');
                     $("[for=StartDate]").addClass('hidden');
                     currentDate = today.format('YYYY-MM-DD');

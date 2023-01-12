@@ -42,7 +42,9 @@
             if (!url.Contains("Subscribe") && !url.Contains("LoginDetails"))
             {
                 <p class="text-center"><strong>Your subscription start date</strong></p>
-                <p class="text-center fs-6">Your subscription starts <span id="subStartDate">today: @DateTime.Now.ToString("d/MM/yyyy")</span></p>
+                <p class="text-center fs-6" id="sub-dt-e">Your <span id="subtypedesc"></span> subscription starts <span id="subStartDate">today: @DateTime.Now.ToString("d/MM/yyyy")</span></p>
+                <p class="text-center fs-6 hidden" id="sub-dt-p">Your print subscription starts <span id="subPStartDate"></span></p>
+               
                 <br />
             }
 

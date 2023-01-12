@@ -222,7 +222,7 @@
                                                             <tr>
                                                                 <td><strong>Description</strong></td>
                                                                 <td>
-                                                                    &nbsp;@desc
+                                                                    &nbsp;@Html.Raw(desc)
                                                                 </td>
                                                             </tr>
                                                             @if (Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.SubscriptionID == 0) != null)
