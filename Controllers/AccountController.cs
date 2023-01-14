@@ -1651,7 +1651,7 @@ namespace ePaperLive.Controllers
                     objTran.CardLastFour = paymentDetails.CardNumberLastFour;
                     objTran.TranxAmount = (double)paymentDetails.CardAmount;
                     objTran.OrderID = paymentDetails.OrderNumber;
-                    objTran.PromoCode = paymentDetails.CardOwner;
+                    objTran.PromoCode = paymentDetails.PromoCode;
                     objTran.EnrolledIn3DSecure = paymentDetails.EnrolledIn3DSecure;
                     context.subscriber_tranx.Add(objTran);
                     await context.SaveChangesAsync();
@@ -2424,19 +2424,27 @@ namespace ePaperLive.Controllers
 
                     if (discount != null)
                     {
-                        originalAmount -= (originalAmount * (decimal)discount.Discount);
-                        paymentDetails.PromoCode = discount.PromoCode;
-                        paymentDetails.CardAmount = originalAmount;
-
-                        result["msg"] = "Discount Applied";
-                        result["data"] = paymentDetails;
-                        result["applied"] = true;
+                        if (discount.EndDate > DateTime.Now && discount.Active == true)
+                        {
+                            originalAmount -= (originalAmount * (decimal)discount.Discount);
+                            paymentDetails.PromoCode = discount.PromoCode;
+                            paymentDetails.CardAmount = originalAmount;
+                            result["msg"] = "Discount Applied";
+                            result["data"] = paymentDetails;
+                            result["applied"] = true;
+                        }
+                        else 
+                        {
+                            result["msg"] = "Expired promo code";
+                            result["data"] = paymentDetails;
+                            result["applied"] = false;
+                        }
                     }
-                    else {
+                    else 
+                    {
                         result["msg"] = "Invalid Promo Code";
                         result["data"] = paymentDetails;
                         result["applied"] = false;
-
                     }
                 }
             }
