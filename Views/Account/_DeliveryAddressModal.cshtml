@@ -141,9 +141,8 @@
              //alert('modal');
              var parish = $("#DeliveryAddress_StateParish").val();
              var town = $("#DeliveryAddress_CityTown").val();
-             $("#DeliveryAddress_StateParish").val(parish).trigger('change');
-             $("#DeliveryAddress_CityTown").val(town).trigger('change');
-
+             $("#DeliveryAddress_StateParish").val(parish);
+             $("#DeliveryAddress_CityTown").val(town);
          });
 
         $("#DeliveryAddress_CityTown").on("select2:close", function (e) {  
