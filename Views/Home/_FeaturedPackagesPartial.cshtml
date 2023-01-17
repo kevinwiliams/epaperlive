@@ -13,6 +13,7 @@
         var duration = (plans.Type != "Epaper") ? printWeeks : epaperWeeks;
         string featureText = "";
         string rateFreq = "";
+        var ratePrice = (plans.OfferIntroRate) ? plans.IntroRate : plans.Rate;
 
         <div class="col-lg-3 col-md-6 @tabClass">
             <div class="box @isCTA" data-aos="zoom-in" data-aos-delay="@delay">
@@ -21,11 +22,15 @@
                     <span class="advanced">Best Deal</span>
                 }
                 <h3>@plans.Type</h3>
-                <h4>
-                    <sup>$</sup>@String.Format("{0:n}", plans.Rate)
+                <h4 class="mb-1">
+                    <sup>$</sup>@String.Format("{0:n}", ratePrice)
                     <!--    <span> / month</span> -->
                 </h4>
-                <ul>
+                @if (plans.OfferIntroRate == true)
+                {
+                    <span class="text-black-50 text-decoration-line-through fs-4">@String.Format("${0:n}", plans.Rate)</span>
+                }
+                <ul class="mt-4">
                     <p>Duration: @duration</p>
                     @foreach (var item in featureList)
                     {
@@ -50,7 +55,7 @@
                        data-sub-id="@(plans.Rateid)"
                        data-rate-desc="@plans.RateDescr.Replace(" ", "").Replace("&", "")"
                        data-rate-type="@(plans.Type)"
-                       data-rate-price="@(plans.Curr + " " + String.Format("{0:C}", plans.Rate))"
+                       data-rate-price="@(plans.Curr + " " + String.Format("{0:C}", ratePrice))"
                        data-bs-toggle="tooltip"
                        data-bs-placement="top"
                        title="Subscribe now">Subscribe</a>

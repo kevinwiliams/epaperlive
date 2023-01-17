@@ -6,6 +6,7 @@ using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Google;
 using Owin;
 using ePaperLive.Models;
+using System.Configuration;
 
 namespace ePaperLive
 {
@@ -59,11 +60,11 @@ namespace ePaperLive
             //   appId: "",
             //   appSecret: "");
 
-            //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
-            //{
-            //    ClientId = "",
-            //    ClientSecret = ""
-            //});
+            app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
+            {
+                ClientId = ConfigurationManager.AppSettings["google_client_id"],
+                ClientSecret = ConfigurationManager.AppSettings["google_client_secret"]
+            });
         }
     }
 }

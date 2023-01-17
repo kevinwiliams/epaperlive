@@ -1917,7 +1917,7 @@ namespace ePaperLive.Controllers
                                     {
                                         result.DeliveryInstructions = objP.DeliveryInstructions;
                                         result.RateID = objP.RateID;
-                                        result.EndDate = objP.EndDate;
+                                        result.EndDate = objP.EndDate.AddDays((double)selectedPlan.PrintTerm * 7);
                                         await context.SaveChangesAsync();
                                     }
                                 }
@@ -1939,7 +1939,7 @@ namespace ePaperLive.Controllers
                                     if (result != null)
                                     {
                                         result.RateID = (int)rateID;
-                                        result.EndDate = objP.EndDate;
+                                        result.EndDate = objP.EndDate.AddDays((double)selectedPlan.ETerm);
                                         await context.SaveChangesAsync();
                                     }
                                 }
@@ -1962,7 +1962,7 @@ namespace ePaperLive.Controllers
                                     {
                                         result.DeliveryInstructions = objP.DeliveryInstructions;
                                         result.RateID = objP.RateID;
-                                        result.EndDate = objP.EndDate;
+                                        result.EndDate = objP.EndDate.AddDays((double)selectedPlan.PrintTerm * 7);
                                         await context.SaveChangesAsync();
                                     }
                                 }
@@ -1982,7 +1982,7 @@ namespace ePaperLive.Controllers
                                     if (result != null)
                                     {
                                         result.RateID = (int)rateID;
-                                        result.EndDate = objP.EndDate;
+                                        result.EndDate = objP.EndDate.AddDays((double)selectedPlan.ETerm);
                                         await context.SaveChangesAsync();
                                     }
                                 }

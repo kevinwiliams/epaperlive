@@ -11,6 +11,7 @@ else
         var rates = Model.Rates.ToList();
         foreach (var plans in rates)
         {
+            var ratePrice = (plans.OfferIntroRate) ? plans.IntroRate : plans.Rate; 
             var printWeeks = (plans.Type != "Epaper") ? "  [" + plans.PrintTerm + " " + plans.PrintTermUnit + "] " : "";
             var frequency = "Delivery Freq.: " + plans.PrintDayPattern;
 
@@ -41,7 +42,7 @@ else
                                         @data_is_feature = "false",
                                         @data_sub_id = plans.Rateid,
                                         @data_rate_type = plans.Type,
-                                        @data_rate_price = plans.Curr + " " + String.Format("{0:C}", plans.Rate),
+                                        @data_rate_price = plans.Curr + " " + String.Format("{0:C}", ratePrice),
                                         @data_rate_desc = mainDesc.Replace(" ", "").Replace("&", ""),
                                         id = $"RateID{rates.IndexOf(plans)}"
                                          })
@@ -57,7 +58,14 @@ else
 
                         }
                     </span>
-                    <span style="margin-left: auto">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span>
+                    
+                    <span style="margin-left: auto">
+                        @if (plans.OfferIntroRate == true)
+                        {
+                            <span class="d-none d-lg-inline-block mx-2 text-black-50 text-decoration-line-through float-start">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span>
+                        }
+                        @(plans.Curr + " " + String.Format("{0:C}", ratePrice))
+                    </span>
                 </span>
             </label>
 

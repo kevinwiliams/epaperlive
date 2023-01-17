@@ -105,7 +105,7 @@ GO
 --load  rates table
 
 SELECT CONCAT(
-'new printandsubrates() { Rateid = ', [Rateid], ', '
+'new printandsubrate() { Rateid = ', [Rateid], ', '
       ,'Market = "', [Market], '", '
       ,'Type = "', [Type], '", '
       ,'RateDescr = "', [RateDescr], '", '
@@ -136,7 +136,13 @@ SELECT CONCAT(
       ,'Curr = "',[Curr], '", '
       ,'Rate = ',[Rate], ', '
       ,'SortOrder = ',[SortOrder], ', '
-      ,'Active = ',[Active], ' }, '
+      ,'Active = ',CASE WHEN [Active] = 1 THEN 'true' ELSE 'false' END, ', '
+	  ,'IntroRate = ', [IntroRate], ', '
+      ,'OfferIntroRate = ',CASE WHEN [OfferIntroRate] = 1 THEN 'true' ELSE 'false' END, ', '
+      ,'IsFeatured =',CASE WHEN [OfferIntroRate] = 1 THEN 'true' ELSE 'false' END, ', '
+      ,'IsCTA =',CASE WHEN [IsCTA] = 1 THEN 'true' ELSE 'false' END, ', '
+      ,'FeatureList ="',[FeatureList], '", '
+      ,'BestDealFlag = ',CASE WHEN [BestDealFlag] = 1 THEN 'true' ELSE 'false' END,  ' }, '
 	  )
   FROM [dbo].[printandsubrates]
 

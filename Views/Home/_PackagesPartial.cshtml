@@ -54,20 +54,28 @@ else
                         <div class=" col-md-7 col-sm-12 float-left">
                             @foreach (var plans in Model.Rates.Where(x => x.Type == "Epaper"))
                             {
-                                <div class="value p-2">
-                                    <button class="btn btn-link" name="subscribeNow" 
-                                            data-is-feature ="false"
-                                            data-sub-id="@(plans.Rateid)" 
-                                            data-rate-type="@(plans.Type)" 
-                                            data-rate-price="@(plans.Curr + " " + String.Format("{0:C}", plans.Rate))" 
-                                            data-bs-toggle="tooltip" 
-                                            data-bs-placement="top" 
-                                            title="Subscribe now">
-                                        @(" " + plans.RateDescr)
-                                    </button>
-                                    <br />
-                                    <span class="m-auto fw-bold">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span>
-                                </div>
+                                 
+                                var ratePrice = (plans.OfferIntroRate) ? plans.IntroRate : plans.Rate;
+                                
+                            <div class="value p-2">
+                                <button class="btn btn-link" name="subscribeNow"
+                                        data-is-feature="false"
+                                        data-sub-id="@(plans.Rateid)"
+                                        data-rate-type="@(plans.Type)"
+                                        data-rate-price="@(plans.Curr + " " + String.Format("{0:C}", ratePrice))"
+                                        data-bs-toggle="tooltip"
+                                        data-bs-placement="top"
+                                        title="Subscribe now">
+                                    @(" " + plans.RateDescr)
+                                </button>
+                                <br />
+                                @if (plans.OfferIntroRate == true)
+                                {
+                                    <span class="m-auto text-black-50 text-decoration-line-through px-1">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span>
+                                }
+                                <span class="m-auto fw-bold">@(plans.Curr + " " + String.Format("{0:C}", ratePrice)) </span>
+
+                            </div>
                             }
 
                         </div>
@@ -92,6 +100,7 @@ else
                                 }
                                 @foreach (var plans in printSubs)
                                 {
+                                    var ratePrice = (plans.OfferIntroRate) ? plans.IntroRate : plans.Rate; 
                                     var printWeeks = "  " + plans.PrintTerm + " " + plans.PrintTermUnit + " ";
 
                                     var mainDesc = plans.RateDescr;
@@ -125,13 +134,17 @@ else
                                             <button class="btn btn-link" name="subscribeNow" 
                                                     data-sub-id="@(plans.Rateid)" 
                                                     data-rate-type="@(plans.Type)" 
-                                                    data-rate-price="@(plans.Curr + " " + String.Format("{0:C}", plans.Rate))" 
+                                                    data-rate-price="@(plans.Curr + " " + String.Format("{0:C}", ratePrice))" 
                                                     data-rate-desc="@mainDesc.Replace(" ", "").Replace("&", "")" 
                                                     data-bs-toggle="tooltip" data-bs-placement="top" title="Subscribe now">
                                                 @(" " + printWeeks)<br />
                                             </button>
                                             <br />
-                                            <span class="my-3 fw-bold">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span>
+                                            @if (plans.OfferIntroRate == true)
+                                            {
+                                                <span class="m-auto text-black-50 text-decoration-line-through">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span>
+                                            }
+                                            <span class="my-3 fw-bold">@(plans.Curr + " " + String.Format("{0:C}", ratePrice)) </span>
                                         </div>
                                     </div>	
                                     <!-- end: rates-->
@@ -164,18 +177,24 @@ else
                         <div class=" col-md-7 col-sm-12 float-left">
                             @foreach (var plans in Model.Rates.Where(x => x.Type == "Bundle"))
                             {
-                                <div class="value p-2">
-                                    <button class="btn btn-link" name="subscribeNow" 
-                                            style="text-align: right !important"
-                                            data-sub-id="@(plans.Rateid)" 
-                                            data-rate-type="@(plans.Type)" 
-                                            data-rate-price="@(plans.Curr + " " + String.Format("{0:C}", plans.Rate))" 
-                                            data-bs-toggle="tooltip" data-bs-placement="top" title="Subscribe now">
-                                        @(" " + plans.RateDescr.Split('/')[0] ) <br /> @(plans.RateDescr.Split('/')[1])
-                                    </button>
-                                    <br />
-                                    <span class="m-auto fw-bold">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span>
-                                </div>
+                                var ratePrice = (plans.OfferIntroRate) ? plans.IntroRate : plans.Rate; 
+
+                            <div class="value p-2">
+                                <button class="btn btn-link" name="subscribeNow"
+                                        style="text-align: right !important"
+                                        data-sub-id="@(plans.Rateid)"
+                                        data-rate-type="@(plans.Type)"
+                                        data-rate-price="@(plans.Curr + " " + String.Format("{0:C}", ratePrice))"
+                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Subscribe now">
+                                    @(" " + plans.RateDescr.Split('/')[0]) <br /> @(plans.RateDescr.Split('/')[1])
+                                </button>
+                                <br />
+                                @if (plans.OfferIntroRate == true)
+                                {
+                                    <span class="m-auto text-black-50 text-decoration-line-through">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span>
+                                }
+                                <span class="m-auto fw-bold">@(plans.Curr + " " + String.Format("{0:C}", ratePrice)) </span>
+                            </div>
                             }
 
                         </div>

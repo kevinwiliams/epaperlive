@@ -54,185 +54,188 @@
                     {
                         @Html.AntiForgeryToken()
 
-                        <div class="form-horizontal">
-                            <h4><strong>@Html.DisplayFor(model => model.SubType): </strong>@Html.DisplayFor(model => model.RateDescription) </h4>
-                            <h1 style="color:forestgreen"><strong><span id="currency">@Html.DisplayFor(model => model.Currency)</span> <span id="cardAmount">@Html.DisplayFor(model => model.CardAmount)</span> <span class="na"></span></strong></h1>
-                            <hr />
-                            @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                    <div class="form-horizontal">
+                        <h4><strong>@Html.DisplayFor(model => model.SubType): </strong>@Html.DisplayFor(model => model.RateDescription) </h4>
+                        <h1 style="color:forestgreen"><strong><span id="currency">@Html.DisplayFor(model => model.Currency)</span> <span id="cardAmount">@Html.DisplayFor(model => model.CardAmount)</span> <span class="na"></span></strong></h1>
+                        @if (Model.CardAmount == 0)
+                        {
+                            <p class="small"><strong>Please note:</strong>  A valid credit is still required for our one-month free trial, however, your credit card WILL NOT be charged or saved for subscription renewal at this time.</p>
+                        }
+                        <hr />
+                        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
-                            @Html.HiddenFor(model => model.RateID)
-                            @Html.HiddenFor(model => model.CardAmount)
-                            <input type="hidden" id="originalAmount" />
-                            @Html.HiddenFor(model => model.Currency)
-                            @Html.HiddenFor(model => model.SubType)
-                            @Html.HiddenFor(model => model.RateDescription)
-                            @Html.HiddenFor(model => model.RateTerm)
+                        @Html.HiddenFor(model => model.RateID)
+                        @Html.HiddenFor(model => model.CardAmount)
+                        <input type="hidden" id="originalAmount" />
+                        @Html.HiddenFor(model => model.Currency)
+                        @Html.HiddenFor(model => model.SubType)
+                        @Html.HiddenFor(model => model.RateDescription)
+                        @Html.HiddenFor(model => model.RateTerm)
 
-                            <!-- rate id needs to fix-->
-                            @*@Html.Hidden("RateID")*@
+                        <!-- rate id needs to fix-->
+                        @*@Html.Hidden("RateID")*@
 
-                            <div class="offset-md-1 row form-horizontal">
-                                <strong>Please enter your billing address </strong>
-                                <div class="form-group">
-                                    <div class="col-md-10 p-2">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="" id="SameAsMailing">
-                                            <label class="form-check-label" for="SameAsMailing">
-                                                Same as mailing address?
-                                            </label>
-                                        </div>
+                        <div class="offset-md-1 row form-horizontal">
+                            <strong>Please enter your billing address </strong>
+                            <div class="form-group">
+                                <div class="col-md-10 p-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="" id="SameAsMailing">
+                                        <label class="form-check-label" for="SameAsMailing">
+                                            Same as mailing address?
+                                        </label>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    @*@Html.LabelFor(model => model.AddressLine1, htmlAttributes: new { @class = "control-label" })*@
-                                    <div class="col-md-10 p-2">
-                                        @Html.EditorFor(model => model.BillingAddress.AddressLine1, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.BillingAddress.AddressLine1) } })
-                                        @*@Html.ValidationMessageFor(model => model.AddressLine1, "", new { @class = "text-danger" })*@
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    @*@Html.LabelFor(model => model.AddressLine2, htmlAttributes: new { @class = "control-label" })*@
-                                    <div class="col-md-10 p-2">
-                                        @Html.EditorFor(model => model.BillingAddress.AddressLine2, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.BillingAddress.AddressLine2) } })
-                                        @*@Html.ValidationMessageFor(model => model.AddressLine2, "", new { @class = "text-danger" })*@
-                                    </div>
-                                </div>
-                                <div class="col-md-5">
-                                    <div class="form-group p-2">
-                                        @*@Html.LabelFor(model => model.CityTown, htmlAttributes: new { @class = "control-label " })*@
-                                        <div class="col-md-10">
-                                            @Html.EditorFor(model => model.BillingAddress.CityTown, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.BillingAddress.CityTown) } })
-                                            @*@Html.ValidationMessageFor(model => model.CityTown, "", new { @class = "text-danger" })*@
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group p-2">
-                                        @*@Html.LabelFor(model => model.StateParish, htmlAttributes: new { @class = "control-label " })*@
-                                        <div class="col-md-10">
-                                            @Html.EditorFor(model => model.BillingAddress.StateParish, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.BillingAddress.StateParish) } })
-                                            @*@Html.ValidationMessageFor(model => model.StateParish, "", new { @class = "text-danger" })*@
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-5">
-                                    <div class="form-group p-2">
-                                        @*@Html.LabelFor(model => model.ZipCode, htmlAttributes: new { @class = "control-label " })*@
-                                        <div class="col-md-10">
-                                            @Html.EditorFor(model => model.BillingAddress.ZipCode, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.BillingAddress.ZipCode) } })
-                                            @*@Html.ValidationMessageFor(model => model.ZipCode, "", new { @class = "text-danger" })*@
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group p-2">
-                                        @*@Html.LabelFor(model => model.CountryCode, htmlAttributes: new { @class = "control-label " })*@
-                                        <div class="col-md-10">
-                                            @*@Html.ValidationMessageFor(model => model.CountryCode, "", new { @class = "text-danger" })*@
-                                            @Html.DropDownListFor(model => model.BillingAddress.CountryCode, ViewBag.CountryList as List<SelectListItem>, "Select Country", new { @class = "form-control", @required = "required" })
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                            <hr />
-
-                            <div class="offset-md-1 form-group p-2 pb-5 col-md-5">
-                                @Html.LabelFor(model => model.PromoCode, htmlAttributes: new { @class = "control-label " })
-                                <div class="input-group">
-                                    @Html.EditorFor(model => model.PromoCode, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.PromoCode) } })
-                                    <button type="button" class="btn btn-danger btn-promo-code">APPLY</button>
-                                </div>
-                                <label id="promoAlert" class="text-danger" for="PromoCode"></label>
-
-                            </div>
-                            <hr />
-
-                            <div class="offset-md-1 p-3 form-group p-2 cc-selector">
-                                <div class="pb-2">
-                                    <strong>Please enter your credit card details below </strong>
-
-                                </div>
-                                @*@Html.LabelFor(model => model.CardType, htmlAttributes: new { @class = "control-label " }) <br />*@
-                                @{
-                                    var paymentMethods = ePaperLive.Util.GetEnumSelectList<ePaperLive.Models.PaymentMethod>().ToList();
-                                }
-                                @foreach (var method in paymentMethods)
-                                {
-                                    var index = paymentMethods.IndexOf(method);
-                                    var newClass = String.Format("{0} {1}", "usercard-cc", method.Text);
-                                    @Html.RadioButtonFor(model => model.CardType, method.Text, new { @required = "required", id = $"CardType{index}" })
-                                    @Html.LabelFor(model => model.CardType, method.Text, htmlAttributes: new { @class = newClass, @for = $"CardType{index}" })
-                                }
-                                @Html.HiddenFor(m => m.CardType)
-
-                            </div>
-                            <div class="offset-md-1 form-group p-2">
-                                @*@Html.LabelFor(model => model.cardNumber, htmlAttributes: new { @class = "control-label " })*@
-                                <div class="col-md-5">
-                                    @Html.EditorFor(model => model.CardNumber, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.CardNumber) } })
                                 </div>
                             </div>
-                            <div class="offset-md-1 form-group p-2">
-                                @*@Html.LabelFor(model => model.cardOwner, htmlAttributes: new { @class = "control-label " })*@
-                                <div class="col-md-8">
-                                    @Html.EditorFor(model => model.CardOwner, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.CardOwner) } })
+                            <div class="form-group">
+                                @*@Html.LabelFor(model => model.AddressLine1, htmlAttributes: new { @class = "control-label" })*@
+                                <div class="col-md-10 p-2">
+                                    @Html.EditorFor(model => model.BillingAddress.AddressLine1, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.BillingAddress.AddressLine1) } })
+                                    @*@Html.ValidationMessageFor(model => model.AddressLine1, "", new { @class = "text-danger" })*@
                                 </div>
                             </div>
 
-
-                            <div class="offset-md-1 form-group p-2">
-                                <div class="col-md-offset-2 col-md-12 pt-3">
-                                    <div class="row">
-                                        <div class="col-6">
-                                            @Html.LabelFor(model => model.CardExp, htmlAttributes: new { @class = "control-label " })
-                                            <div class="col-md-6">
-                                                @Html.EditorFor(model => model.CardExp, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = "MM/YY" } })
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            @Html.LabelFor(model => model.CardCVV, htmlAttributes: new { @class = "control-label " })
-                                            <div class="col-md-3">
-                                                @Html.EditorFor(model => model.CardCVV, new { htmlAttributes = new { @class = "form-control", @required = "required", type = "password", placeholder = Html.DisplayNameFor(model => model.CardCVV) } })
-                                            </div>
-                                        </div>
+                            <div class="form-group">
+                                @*@Html.LabelFor(model => model.AddressLine2, htmlAttributes: new { @class = "control-label" })*@
+                                <div class="col-md-10 p-2">
+                                    @Html.EditorFor(model => model.BillingAddress.AddressLine2, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.BillingAddress.AddressLine2) } })
+                                    @*@Html.ValidationMessageFor(model => model.AddressLine2, "", new { @class = "text-danger" })*@
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group p-2">
+                                    @*@Html.LabelFor(model => model.CityTown, htmlAttributes: new { @class = "control-label " })*@
+                                    <div class="col-md-10">
+                                        @Html.EditorFor(model => model.BillingAddress.CityTown, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.BillingAddress.CityTown) } })
+                                        @*@Html.ValidationMessageFor(model => model.CityTown, "", new { @class = "text-danger" })*@
                                     </div>
                                 </div>
-
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group p-2">
+                                    @*@Html.LabelFor(model => model.StateParish, htmlAttributes: new { @class = "control-label " })*@
+                                    <div class="col-md-10">
+                                        @Html.EditorFor(model => model.BillingAddress.StateParish, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.BillingAddress.StateParish) } })
+                                        @*@Html.ValidationMessageFor(model => model.StateParish, "", new { @class = "text-danger" })*@
+                                    </div>
+                                </div>
                             </div>
 
-                            @Html.HiddenFor(model => model.TransactionSummary.Errors, htmlAttributes: new { @id = "TransactionSummary" })
-                            @Html.HiddenFor(model => model.TransactionSummary.FriendlyErrorMessages, htmlAttributes: new { @id = "ErrorMessages" })
-                            @if (Model.TransactionSummary != null)
+                            <div class="col-md-5">
+                                <div class="form-group p-2">
+                                    @*@Html.LabelFor(model => model.ZipCode, htmlAttributes: new { @class = "control-label " })*@
+                                    <div class="col-md-10">
+                                        @Html.EditorFor(model => model.BillingAddress.ZipCode, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.BillingAddress.ZipCode) } })
+                                        @*@Html.ValidationMessageFor(model => model.ZipCode, "", new { @class = "text-danger" })*@
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group p-2">
+                                    @*@Html.LabelFor(model => model.CountryCode, htmlAttributes: new { @class = "control-label " })*@
+                                    <div class="col-md-10">
+                                        @*@Html.ValidationMessageFor(model => model.CountryCode, "", new { @class = "text-danger" })*@
+                                        @Html.DropDownListFor(model => model.BillingAddress.CountryCode, ViewBag.CountryList as List<SelectListItem>, "Select Country", new { @class = "form-control", @required = "required" })
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <hr />
+
+                        <div class="offset-md-1 form-group p-2 pb-2 col-md-5">
+                            @Html.LabelFor(model => model.PromoCode, htmlAttributes: new { @class = "control-label " })
+                            <div class="input-group">
+                                @Html.EditorFor(model => model.PromoCode, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.PromoCode) } })
+                                <button type="button" class="btn btn-danger btn-promo-code">APPLY</button>
+                            </div>
+                            <label id="promoAlert" class="text-danger" for="PromoCode"></label>
+
+                        </div>
+
+                        <div class="offset-md-1 p-3 form-group p-2 cc-selector">
+                            <div class="pb-2">
+                                <strong>Please enter your credit card details below </strong>
+
+                            </div>
+                            @*@Html.LabelFor(model => model.CardType, htmlAttributes: new { @class = "control-label " }) <br />*@
+                            @{
+                                var paymentMethods = ePaperLive.Util.GetEnumSelectList<ePaperLive.Models.PaymentMethod>().ToList();
+                            }
+                            @foreach (var method in paymentMethods)
                             {
-                                if (Model.TransactionSummary.FriendlyErrorMessages != null)
-                                {
-                                    foreach (var item in Model.TransactionSummary.FriendlyErrorMessages)
-                                    {
-                                        @item
-                                    }
-                                }
+                                var index = paymentMethods.IndexOf(method);
+                                var newClass = String.Format("{0} {1}", "usercard-cc", method.Text);
+                                @Html.RadioButtonFor(model => model.CardType, method.Text, new { @required = "required", id = $"CardType{index}" })
+                                @Html.LabelFor(model => model.CardType, method.Text, htmlAttributes: new { @class = newClass, @for = $"CardType{index}" })
+                            }
+                            @Html.HiddenFor(m => m.CardType)
 
+                        </div>
+                        <div class="offset-md-1 form-group p-2">
+                            @*@Html.LabelFor(model => model.cardNumber, htmlAttributes: new { @class = "control-label " })*@
+                            <div class="col-md-5">
+                                @Html.EditorFor(model => model.CardNumber, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.CardNumber) } })
+                            </div>
+                        </div>
+                        <div class="offset-md-1 form-group p-2">
+                            @*@Html.LabelFor(model => model.cardOwner, htmlAttributes: new { @class = "control-label " })*@
+                            <div class="col-md-8">
+                                @Html.EditorFor(model => model.CardOwner, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.CardOwner) } })
+                            </div>
+                        </div>
+
+
+                        <div class="offset-md-1 form-group p-2">
+                            <div class="col-md-offset-2 col-md-12 pt-3">
+                                <div class="row">
+                                    <div class="col-6">
+                                        @Html.LabelFor(model => model.CardExp, htmlAttributes: new { @class = "control-label " })
+                                        <div class="col-md-6">
+                                            @Html.EditorFor(model => model.CardExp, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = "MM/YY" } })
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        @Html.LabelFor(model => model.CardCVV, htmlAttributes: new { @class = "control-label " })
+                                        <div class="col-md-3">
+                                            @Html.EditorFor(model => model.CardCVV, new { htmlAttributes = new { @class = "form-control", @required = "required", type = "password", placeholder = Html.DisplayNameFor(model => model.CardCVV) } })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        @Html.HiddenFor(model => model.TransactionSummary.Errors, htmlAttributes: new { @id = "TransactionSummary" })
+                        @Html.HiddenFor(model => model.TransactionSummary.FriendlyErrorMessages, htmlAttributes: new { @id = "ErrorMessages" })
+                        @if (Model.TransactionSummary != null)
+                        {
+                            if (Model.TransactionSummary.FriendlyErrorMessages != null)
+                            {
+                                foreach (var item in Model.TransactionSummary.FriendlyErrorMessages)
+                                {
+                                    @item
+                                }
                             }
 
+                        }
 
-                            <section id="paymentGatway" class="hidden"></section>
 
-                            <div class="form-group pt-3">
-                                <div class="col-md-offset-2 col-md-12 pt-3">
-                                    <div class="row">
-                                        <div class="col-6">
-                                            <input type="submit" value="Prev" name="prevBtn" class="btn btn-sign-in bx-pull-left" />
-                                        </div>
-                                        <div class="col-6">
-                                            <input type="submit" value="Pay Now" name="nextBtn" class="btn btn-sign-in bx-pull-right" />
-                                        </div>
+                        <section id="paymentGatway" class="hidden"></section>
+
+                        <div class="form-group pt-3">
+                            <div class="col-md-offset-2 col-md-12 pt-3">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <input type="submit" value="Prev" name="prevBtn" class="btn btn-sign-in bx-pull-left" />
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="submit" value="Pay Now" name="nextBtn" class="btn btn-sign-in bx-pull-right" />
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
                     }
                     <!-- end:wizrd -->
                 </div>
