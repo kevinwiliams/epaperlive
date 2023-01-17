@@ -194,10 +194,10 @@
                                                                     {
                                                                         case "Epaper":
                                                                         case "Print":
-                                                                            @(" " + Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).SubType + " Only")
+                                                                            @Html.Raw("&nbsp;" + Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).SubType + " Only")
                                                                             break;
                                                                         case "Bundle":
-                                                                            @(" Print & ePaper " + Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).SubType);
+                                                                            @Html.Raw("&nbsp;Print &amp; ePaper " + Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).SubType);
                                                                             break;
                                                                         default:
                                                                             break;
@@ -215,7 +215,7 @@
                                                                 }
                                                                 if (subtype == "Bundle")
                                                                 {
-                                                                    desc = desc.Split('/')[0] + " <br />&nbsp;" + desc.Split('/')[1];
+                                                                    desc = desc.Split('/')[0] + " <br />" + desc.Split('/')[1];
                                                                 }
 
                                                             }

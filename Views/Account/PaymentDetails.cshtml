@@ -59,7 +59,7 @@
                         <h1 style="color:forestgreen"><strong><span id="currency">@Html.DisplayFor(model => model.Currency)</span> <span id="cardAmount">@Html.DisplayFor(model => model.CardAmount)</span> <span class="na"></span></strong></h1>
                         @if (Model.CardAmount == 0)
                         {
-                            <p class="small"><strong class="text-danger">Please note:</strong>  A valid credit is still required for our one-month free trial, however, your credit card WILL NOT be charged or saved for subscription renewal at this time.</p>
+                            <p class="small"><strong class="text-danger">Please note:</strong>  A valid credit card is still required for our one-month free trial, additionally, your credit card WILL NOT be charged or saved for subscription renewal at this time.</p>
                         }
                         <hr />
                         @Html.ValidationSummary(false, "", new { @class = "text-danger" })
