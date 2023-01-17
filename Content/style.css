@@ -1284,6 +1284,7 @@ section {
   position: relative;
   overflow: hidden;
   border: 2px solid #e9ecee;
+  height: 100%;
 }
 
 .pricing h3 {

@@ -47,7 +47,7 @@
                         <li><span class="@cssClass">@featureText</span></li>
                     }
                 </ul>
-                <div class="btn-wrap">
+                <div class="btn-wrap  mb-3">
                     <a href="" class="btn-buy"
                        name="subscribeNow"
                        data-del-freq="@("Delivery Frequency: " + rateFreq)"
@@ -70,4 +70,11 @@
 
 
 }
+@Scripts.Render("~/bundles/jquery")
+<script type="text/jscript">
 
+    $(function () {
+        //$('.btn-wrap').addClass('position-absolute bottom-0 translate-middle-x start-50');
+    });
+
+ </script>
