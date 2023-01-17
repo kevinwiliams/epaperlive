@@ -194,10 +194,10 @@
                                                                     {
                                                                         case "Epaper":
                                                                         case "Print":
-                                                                            @(Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).SubType + " Only")
+                                                                            @(" " + Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).SubType + " Only")
                                                                             break;
                                                                         case "Bundle":
-                                                                            @("Print & ePaper " + Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).SubType);
+                                                                            @(" Print & ePaper " + Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).SubType);
                                                                             break;
                                                                         default:
                                                                             break;
