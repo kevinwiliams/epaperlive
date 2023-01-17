@@ -749,10 +749,18 @@ namespace ePaperLive.Controllers
         public ActionResult ExtendSubscription()
         {
             AuthSubcriber authSubcriber = GetAuthSubscriber();
+            SubscriptionDetails subscription = new SubscriptionDetails();
+            subscription.StartDate = DateTime.Now;
 
-            AddressDetails mailingAddress = authSubcriber.AddressDetails.FirstOrDefault(x => x.AddressType == "M");
-            ViewData["savedAddress"] = true;
-            ViewData["savedAddressData"] = JsonConvert.SerializeObject(mailingAddress);
+            if (authSubcriber.AddressDetails != null)
+            {
+                var mailingAddress = authSubcriber.AddressDetails.FirstOrDefault(x => x.AddressType == "M");
+                if (mailingAddress != null)
+                {
+                    ViewData["savedAddress"] = true;
+                    ViewData["savedAddressData"] = JsonConvert.SerializeObject(mailingAddress);
+                }
+            }
 
             if (authSubcriber.SubscriptionDetails != null)
             {
@@ -760,17 +768,19 @@ namespace ePaperLive.Controllers
                 var endDate = authSubcriber.SubscriptionDetails.FirstOrDefault().EndDate;
                 ViewBag.plans = authSubcriber.SubscriptionDetails;
                 ViewBag.dates = startDate.GetWeekdayInRange(endDate, DayOfWeek.Monday);
+
+                subscription = new SubscriptionDetails
+                {
+                    StartDate = (authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).EndDate != null) ? authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).EndDate : DateTime.Now,
+                    RateType = authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).RateType,
+                    RateID = authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).RateID
+                };
             }
             //load parishes
             List<SelectListItem> parishes = GetParishes();
             ViewBag.Parishes = new SelectList(parishes, "Value", "Text");
             ViewBag.CountryList = GetCountryList();
-            SubscriptionDetails subscription = new SubscriptionDetails
-            {
-                StartDate = (authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).EndDate != null) ? authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).EndDate : DateTime.Now,
-                RateType = authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).RateType,
-                RateID = authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).RateID
-            };
+            
 
             return View(subscription);
         }
@@ -2387,7 +2397,7 @@ namespace ePaperLive.Controllers
 
                             //send confirmation email
                             var user = await UserManager.FindByNameAsync(clientData.EmailAddress);
-                            string subject = "Jamaica Observer Subscription Confirmation (" + currentTransaction.SubType + ")";
+                            string subject = "Subscription Confirmation (" + currentTransaction.SubType + ")";
                             string body = RenderViewToString(this.ControllerContext, "~/Views/Emails/ConfirmSubscription.cshtml", customerData);
                             await UserManager.SendEmailAsync(user.Id, subject, body);
 
