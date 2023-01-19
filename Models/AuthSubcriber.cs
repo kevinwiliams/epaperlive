@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -24,5 +25,6 @@ namespace ePaperLive.Models
         public List<SubscriptionDetails> SubscriptionDetails { get; set; }
         public List<AddressDetails> AddressDetails { get; set; }
         public List<PaymentDetails> PaymentDetails { get; set; }
+        public UserLoginInfo Login { get; set; }
     }
 }

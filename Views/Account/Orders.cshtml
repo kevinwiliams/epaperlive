@@ -48,10 +48,10 @@
                 <td>
                     @Convert.ToDateTime(item.EndDate).ToString("dd MMMM yyyy")
                 </td>
-                <td>
+                @*<td>
                     @Html.ActionLink("Details", "Details", new { id = item.RateID }) |
                     @Html.ActionLink("Cancel Subscription", "Cancel", new { id = item.RateID })
-                </td>
+                </td>*@
             </tr>
         }
 

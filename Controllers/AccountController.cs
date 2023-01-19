@@ -364,6 +364,9 @@ namespace ePaperLive.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
         {
+            AuthSubcriber authSubcriber = GetAuthSubscriber();
+            Subscriber obj = GetSubscriber();
+
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
             if (loginInfo == null)
             {
@@ -385,7 +388,49 @@ namespace ePaperLive.Controllers
                     // If the user does not have an account, then prompt the user to create an account
                     ViewBag.ReturnUrl = returnUrl;
                     ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
-                    return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = loginInfo.Email });
+                    var info = await AuthenticationManager.GetExternalLoginInfoAsync();
+                    if (info == null)
+                    {
+                        return View("ExternalLoginFailure");
+                    }
+                    
+                    authSubcriber.Login = info.Login;
+
+                    var lastName = loginInfo.ExternalIdentity.Claims.FirstOrDefault(x => x.Type.Contains("surname")).Value;
+                    var firstName = loginInfo.ExternalIdentity.Claims.FirstOrDefault(x => x.Type.Contains("givenname")).Value;
+                    authSubcriber.FirstName = obj.FirstName = firstName;
+                    authSubcriber.LastName = obj.LastName = lastName;
+                    authSubcriber.EmailAddress = obj.EmailAddress = loginInfo.Email;
+                    obj.CreatedAt = DateTime.Now;
+                    obj.IpAddress = Request.UserHostAddress;
+
+                    var isExist = IsEmailExist(loginInfo.Email);
+                    if (isExist)
+                    {
+                        ModelState.AddModelError("EmailExist", "Email address is already assigned. Please use forget password option to log in");
+                        return View("LoginDetails", obj);
+                    }
+
+                    UserLocation objLoc = GetSubscriberLocation();
+
+                    var countryCode = (objLoc.Country_Code == "JM") ? "JAM" : "";
+
+                    //load parishes
+                    List<SelectListItem> parishes = GetParishes();
+                    ViewBag.Parishes = new SelectList(parishes, "Value", "Text");
+                    ViewBag.CountryList = GetCountryList();
+                    ViewBag.Name = firstName;
+
+                    //Test Data
+                    AddressDetails ad = new AddressDetails
+                    {
+                        CountryCode = countryCode,
+                        CountryList = GetCountryList(),
+                    };
+
+                    ViewData["preloadSub"] = GetPreloadSub();
+
+                    return View("AddressDetails", ad);
             }
         }
 
@@ -746,6 +791,17 @@ namespace ePaperLive.Controllers
             }
             return RedirectToAction("UserProfile");
         }
+        public ActionResult UpdateProfile() 
+        {
+            AuthSubcriber authSubcriber = GetAuthSubscriber();
+            ViewData["preloadSub"] = GetPreloadSub();
+
+            List<SelectListItem> Addressparishes = GetParishes();
+            ViewBag.Parishes = new SelectList(Addressparishes, "Value", "Text");
+            ViewBag.CountryList = GetCountryList();
+
+            return View(authSubcriber);
+        }
         public ActionResult ExtendSubscription()
         {
             AuthSubcriber authSubcriber = GetAuthSubscriber();
@@ -1085,6 +1141,7 @@ namespace ePaperLive.Controllers
                         List<SelectListItem> parishes = GetParishes();
                         ViewBag.Parishes = new SelectList(parishes, "Value", "Text");
                         ViewBag.CountryList = GetCountryList();
+                        ViewBag.Name = data.FirstName;
 
                         //Test Data
                         AddressDetails ad = new AddressDetails
@@ -1181,6 +1238,7 @@ namespace ePaperLive.Controllers
                         List<SelectListItem> parishes = GetParishes();
                         ViewBag.Parishes = new SelectList(parishes, "Value", "Text");
                         ViewBag.CountryList = GetCountryList();
+                        ViewBag.Name = authUser.FirstName;
 
                         DeliveryAddress delAddressDetails = new DeliveryAddress
                         { 
@@ -1438,13 +1496,14 @@ namespace ePaperLive.Controllers
                         var printTerm = selectedPlan.PrintTerm + " " + selectedPlan.PrintTermUnit;
                         var epaperTerm = selectedPlan.ETerm + " " + selectedPlan.ETermUnit;
                         var rateTerm = (selectedPlan.Type == "Print") ? printTerm : epaperTerm;
+                        var ratePrice = (selectedPlan.OfferIntroRate) ? selectedPlan.IntroRate : selectedPlan.Rate;
                         PaymentDetails pd = new PaymentDetails
                         {
                             RateID = data.RateID,
                             RateDescription = selectedPlan.RateDescr,
                             RateTerm = rateTerm,
                             Currency = selectedPlan.Curr,
-                            CardAmount = (decimal)selectedPlan.Rate,
+                            CardAmount = (decimal)ratePrice,
                             SubType = selectedPlan.Type,
                             BillingAddress = billingAddress,
                             //test data
@@ -1857,7 +1916,12 @@ namespace ePaperLive.Controllers
                     };
 
                     //create application user
-                    createAccount = await UserManager.CreateAsync(newAccount, authUser.PasswordKey);
+                    createAccount = (authUser.Login != null) ? await UserManager.CreateAsync(newAccount) : await UserManager.CreateAsync(newAccount, authUser.PasswordKey);
+
+                    //
+                    //create oauthuser login
+                    if (authUser.Login != null)
+                        await UserManager.AddLoginAsync(newAccount.Id, authUser.Login);
                 }   
                 //get Subscriber ID
                 SubscriberID = (!String.IsNullOrEmpty(SubscriberID)) ? SubscriberID : newAccount.Id;

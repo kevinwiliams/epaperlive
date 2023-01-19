@@ -55,7 +55,7 @@
                         @Html.AntiForgeryToken()
 
                     <div class="form-horizontal">
-                        <h4><strong>@Html.DisplayFor(model => model.SubType): </strong>@Html.DisplayFor(model => model.RateDescription) </h4>
+                        <h5><strong>@Html.DisplayFor(model => model.SubType): </strong>@Html.DisplayFor(model => model.RateDescription) </h5>
                         <h1 style="color:forestgreen"><strong><span id="currency">@Html.DisplayFor(model => model.Currency)</span> <span id="cardAmount">@Html.DisplayFor(model => model.CardAmount)</span> <span class="na"></span></strong></h1>
                         @if (Model.CardAmount == 0)
                         {

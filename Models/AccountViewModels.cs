@@ -8,6 +8,7 @@ namespace ePaperLive.Models
         [Required]
         [Display(Name = "Email")]
         public string Email { get; set; }
+        public AuthSubcriber AuthSubcriber { get; set; }
     }
 
     public class ExternalLoginListViewModel
