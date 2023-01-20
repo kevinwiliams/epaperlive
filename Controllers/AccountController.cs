@@ -408,7 +408,13 @@ namespace ePaperLive.Controllers
                     if (isExist)
                     {
                         ModelState.AddModelError("EmailExist", "Email address is already assigned. Please use forget password option to log in");
-                        return View("LoginDetails", obj);
+                        LoginDetails loginDetails = new LoginDetails 
+                        { 
+                            EmailAddress = loginInfo.Email,
+                            FirstName = firstName,
+                            LastName = lastName
+                        };
+                        return View("LoginDetails", loginDetails);
                     }
 
                     UserLocation objLoc = GetSubscriberLocation();
