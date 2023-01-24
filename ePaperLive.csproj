@@ -609,6 +609,7 @@
     <Content Include="Views\Admin\Rates\Edit.cshtml" />
     <Content Include="Views\Admin\Rates\Index.cshtml" />
     <Content Include="Views\Account\UpdateProfile.cshtml" />
+    <Content Include="Views\Home\Newsletter.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\roslyn\" />

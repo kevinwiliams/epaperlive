@@ -352,11 +352,11 @@
 
                 $.ajax({
                     type: "POST",
-                    url: '@Url.Action("PreloadSubscription","Home")',
+                    url: '@Url.Action("preloadsubscription","home")',
                     data: { rateType: rateType, rateId: rateId },
                     success: function (result) {
                         //console.log(result['data']);
-                        window.location.href = '@Url.Action("Subscribe", "Account")';
+                        window.location.href = '@Url.Action("subscribe", "account")';
                     }
                 });
             });

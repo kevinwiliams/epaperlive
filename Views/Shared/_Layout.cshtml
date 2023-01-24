@@ -71,7 +71,7 @@
                                         <li>@Html.ActionLink("Update Profile", "userprofile", "account")</li>
                                         <li><a class="nav-link scrollto" href="#testimonials">Request Refund</a></li>
                                         <li>@Html.ActionLink("Extend Subscription", "extendsubscription", "account")</li>
-                                        @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                                        @using (Html.BeginForm("logoff", "account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
                                         {
                                             @Html.AntiForgeryToken()
                                             <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
@@ -161,7 +161,8 @@
                     <div class="col-lg-4 col-md-6 footer-newsletter">
                         <h4>Our Newsletter</h4>
                         <p>Subscribe to our newsletter to get the latest updates</p>
-                        <form action="" method="post">
+                        <form action="~/home/newsletter" method="post">
+                            @Html.AntiForgeryToken()
                             <input type="email" name="email"><input type="submit" value="Subscribe">
                         </form>
 

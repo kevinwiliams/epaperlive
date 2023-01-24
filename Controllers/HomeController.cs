@@ -135,6 +135,17 @@ namespace ePaperLive.Controllers
             return View();
         }
 
+        public ActionResult Newsletter()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult Newsletter(string email)
+        {
+            ViewData["newsletterEmail"] = email;
+            return View();
+        }
+
         private UserLocation GetSubscriberLocation()
         {
             if (Session["subscriber_location"] == null)
