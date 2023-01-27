@@ -11,17 +11,22 @@ using ePaperLive.Models;
 
 namespace ePaperLive.Views.Admin.Rates
 {
+    [Authorize]
+    [RoutePrefix("Admin/Rates")]
+    [Route("action = index")]
     public class RatesController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Rates
+        [Route]
         public ActionResult Index()
         {
             return View(db.printandsubrates.ToList());
         }
 
         // GET: Rates/Details/5
+        [Route("details/{id:int}")]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -37,6 +42,7 @@ namespace ePaperLive.Views.Admin.Rates
         }
 
         // GET: Rates/Create
+        [Route("create")]
         public ActionResult Create()
         {
             return View();
@@ -46,6 +52,7 @@ namespace ePaperLive.Views.Admin.Rates
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Route("create")]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Rateid,Market,Type,RateDescr,PrintDayPattern,PrintTerm,PrintTermUnit,EDayPattern,ETerm,ETermUnit,Curr,Rate,SortOrder,Active,IntroRate,OfferIntroRate,IsFeatured,IsCTA,FeatureList,BestDealFlag")] printandsubrate printandsubrate)
         {
@@ -60,6 +67,7 @@ namespace ePaperLive.Views.Admin.Rates
         }
 
         // GET: Rates/Edit/5
+        [Route("edit/{id:int}")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -78,6 +86,7 @@ namespace ePaperLive.Views.Admin.Rates
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Route("edit")]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Rateid,Market,Type,RateDescr,PrintDayPattern,PrintTerm,PrintTermUnit,EDayPattern,ETerm,ETermUnit,Curr,Rate,SortOrder,Active,IntroRate,OfferIntroRate,IsFeatured,IsCTA,FeatureList,BestDealFlag")] printandsubrate printandsubrate)
         {
@@ -91,6 +100,7 @@ namespace ePaperLive.Views.Admin.Rates
         }
 
         // GET: Rates/Delete/5
+        [Route("delete/{id:int}")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -107,6 +117,7 @@ namespace ePaperLive.Views.Admin.Rates
 
         // POST: Rates/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Route("delete/{id:int}")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
