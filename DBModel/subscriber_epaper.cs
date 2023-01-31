@@ -30,5 +30,6 @@ namespace ePaperLive.DBModel
             NotificationEmail = false;
 
         }
+        public string PlanDesc { get; set; }
     }
 }

@@ -38,7 +38,7 @@
                             if (!Request.IsAuthenticated)
                             {
                                 <!-- <li>@Html.ActionLink("Home", "index", "home")</li> -->
-                                <li><a class="nav-link scrollto" href="~/">Home</a></li>
+                                <li><a class="nav-link scrollto" href="~/#hero">Home</a></li>
                                 <li><a class="nav-link scrollto" href="~/#pricing">Featured Packages</a></li>
                                 <li><a class="nav-link scrollto" href="~/#features">Subscriptions</a></li>
                                 <li><a class="nav-link scrollto" href="~/#cta">ePaper App</a></li>
@@ -59,9 +59,24 @@
                             //if (!String.IsNullOrEmpty(@HttpContext.Current.User.Identity.Name))
                             if (Request.IsAuthenticated)
                             {
+
                                 <li>@Html.ActionLink("Home", "dashboard", "account")</li>
 
+
+
                                 <li>@Html.ActionLink("Orders", "orders", "account")</li>
+
+                                if (User.IsInRole("Circulation") || User.IsInRole("Admin"))
+                                {
+                                    <li>@Html.ActionLink("Print Subscriptions", "printsub", "admin")</li>
+
+                                }
+                                if (User.IsInRole("Admin"))
+                                {
+                                    <li>@Html.ActionLink("Rates Table", "rates", "admin")</li>
+                                    <li>@Html.ActionLink("Transactions Table", "transactions", "admin")</li>
+
+                                }
 
                                 <li class="dropdown">
                                     <a href="#"><span>My Account</span> <i class="bi bi-chevron-down"></i></a>

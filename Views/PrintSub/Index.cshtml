@@ -1,0 +1,119 @@
+﻿@model IEnumerable<ePaperLive.DBModel.Subscriber_Print>
+
+@{
+    ViewBag.Title = "Print Subscribers";
+}
+
+<div id="main">
+
+        <!-- ======= Breadcrumbs ======= -->
+        <section id="breadcrumbs" class="breadcrumbs">
+            <div class="container">
+
+                <ol>
+                    <li><a href="@Url.Action("index", "home")">Home</a></li>
+                    <li>@ViewData["Title"]</li>
+                </ol>
+                <h2>@ViewData["Title"]</h2>
+
+            </div>
+        </section><!-- End Breadcrumbs -->
+        <!-- ======= Wizard Section ======= -->
+        <section id="portfolio-details" class="portfolio-details">
+            <div class="container">
+               
+                <div class="row gy-4">
+                    <div class="col-lg-12">
+
+                        <p>
+                            @Html.ActionLink("Create New", "Create")
+                        </p>
+                        <!-- start:wizrd -->
+                        <table class="table" id="printSubList">
+                            <thead>
+                                <tr>
+
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.EmailAddress)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.PlanDesc)
+                                    </th>
+
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.StartDate)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.EndDate)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.IsActive)
+                                    </th>
+
+                                    <th>
+                                        CircPro ID
+                                    </th>
+                                    <th>
+                                        Date Added
+                                    </th>
+                                    <th>Options</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.EmailAddress)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.PlanDesc)
+                                        </td>
+
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.StartDate)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.EndDate)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.IsActive)
+                                        </td>
+
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Circprosubid)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.CreatedAt)
+                                        </td>
+                                        <td>
+                                            @Html.ActionLink("Edit", "Edit", new { id = item.Subscriber_PrintID }) 
+                                            @*@Html.ActionLink("Details", "Details", new { id = item.Subscriber_PrintID })*@
+                                            @*@Html.ActionLink("Delete", "Delete", new { id = item.Subscriber_PrintID })*@
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        <!-- end:wizrd -->
+                    </div>
+                </div>
+
+            </div>
+        </section><!-- End Wizard Section -->
+
+    </div>
+
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $('#printSubList').DataTable({
+
+            });
+        });
+
+
+    </script>
+}

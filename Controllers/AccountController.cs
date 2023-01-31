@@ -1409,7 +1409,8 @@ namespace ePaperLive.Controllers
                                 RateID = data.RateID,
                                 DeliveryInstructions = data.DeliveryInstructions,
                                 RateType = selectedPlan.Type,
-                                SubType = selectedPlan.Type
+                                SubType = selectedPlan.Type,
+                                RateDescription = selectedPlan.RateDescr
                             };
 
                             subscriptionDetails.Add(printSubscription);
@@ -1436,7 +1437,8 @@ namespace ePaperLive.Controllers
                                 RateID = data.RateID,
                                 SubType = selectedPlan.Type,
                                 NotificationEmail = data.NotificationEmail,
-                                RateType = selectedPlan.Type
+                                RateType = selectedPlan.Type,
+                                RateDescription = selectedPlan.RateDescr
                             };
 
                             subscriptionDetails.Add(epaperSubscription);
@@ -1451,7 +1453,8 @@ namespace ePaperLive.Controllers
                                 RateID = data.RateID,
                                 DeliveryInstructions = data.DeliveryInstructions,
                                 RateType = selectedPlan.Type,
-                                SubType = "Print"
+                                SubType = "Print",
+                                RateDescription = selectedPlan.RateDescr
                             };
                             //print subscription
                             subscriptionDetails.Add(printSubscription);
@@ -1464,8 +1467,8 @@ namespace ePaperLive.Controllers
                                 RateID = data.RateID,
                                 SubType = "Epaper",
                                 NotificationEmail = data.NotificationEmail,
-                                RateType = selectedPlan.Type
-
+                                RateType = selectedPlan.Type,
+                                RateDescription = selectedPlan.RateDescr
                             };
                             //Epaper subscription
                             subscriptionDetails.Add(epaperSubscription);
@@ -1655,146 +1658,6 @@ namespace ePaperLive.Controllers
             return View(data);
         }
 
-        public async Task<bool> SaveSubscriptionAsync(PaymentDetails paymentDetails)
-        {
-           
-            //get all session variables
-            Subscriber objSub = GetSubscriber();
-            Subscriber_Address objAdd = GetSubscriberAddress();
-            Subscriber_Epaper objE = GetEpaperDetails();
-            Subscriber_Print objP = GetPrintDetails();
-            Subscriber_Tranx objTran = GetTransaction();
-            ApplicationUser user = GetAppUser();
-
-            AuthSubcriber authUser = GetAuthSubscriber();
-            authUser.FirstName = objSub.FirstName;
-            authUser.LastName = objSub.LastName;
-            authUser.EmailAddress = objSub.EmailAddress;
-
-            string SubscriberID = "";
-            int addressID = 0;
-            var rateID = objTran.RateID;
-
-            //save subscribers
-            objSub.IsActive = true;
-
-            var newAccount = new ApplicationUser
-            {
-                UserName = user.Email,
-                Email = user.Email,
-                Subscriber = objSub
-            };
-            //create application user
-            var createAccount = await UserManager.CreateAsync(newAccount, user.PasswordHash);
-            if (createAccount.Succeeded)
-            {
-                //get Subscriber ID
-                SubscriberID = newAccount.Id;
-                //assign User Role
-                createAccount = await UserManager.AddToRoleAsync(SubscriberID, "Subscriber");
-                //save to DB
-                using (var context = new ApplicationDbContext())
-                {
-                    //save address
-                    objAdd.SubscriberID = SubscriberID;
-                    context.subscriber_address.Add(objAdd);
-                    await context.SaveChangesAsync();
-
-                    //get Address ID
-                    addressID = objAdd.AddressID;
-
-                    //update subscribers table w/ address ID
-                    var result = context.subscribers.SingleOrDefault(b => b.SubscriberID == SubscriberID);
-                    if (result != null)
-                    {
-                        result.AddressID = addressID;
-                        await context.SaveChangesAsync();
-                    }
-
-                    var selectedPlan = context.printandsubrates.SingleOrDefault(b => b.Rateid == rateID);
-
-                    //save transaction
-                    objTran.EmailAddress = objSub.EmailAddress;
-                    objTran.TranxDate = DateTime.Now;
-                    objTran.SubscriberID = SubscriberID;
-                    objTran.RateID = rateID;
-                    objTran.IpAddress = Request.UserHostAddress;
-                    //from gateway
-                    objTran.CardOwner = paymentDetails.CardOwner;
-                    objTran.CardType = paymentDetails.CardType;
-                    objTran.CardExp = paymentDetails.CardExp;
-                    objTran.CardLastFour = paymentDetails.CardNumberLastFour;
-                    objTran.TranxAmount = (double)paymentDetails.CardAmount;
-                    objTran.OrderID = paymentDetails.OrderNumber;
-                    objTran.PromoCode = paymentDetails.PromoCode;
-                    objTran.EnrolledIn3DSecure = paymentDetails.EnrolledIn3DSecure;
-                    context.subscriber_tranx.Add(objTran);
-                    await context.SaveChangesAsync();
-
-                    //disable subscription unti 3ds process is complete
-                    if (paymentDetails.EnrolledIn3DSecure)
-                    {
-                        objP.IsActive = false;
-                        objE.IsActive = false;
-                    }
-
-                    //save based on subscription
-                    if (selectedPlan != null)
-                    {
-                        switch (selectedPlan.Type)
-                        {
-                            case "Print":
-                                //save print subscription
-                                objP.AddressID = addressID;
-                                objP.SubscriberID = SubscriberID;
-                                context.subscriber_print.Add(objP);
-                                await context.SaveChangesAsync();
-                                break;
-
-                            case "Epaper":
-                                //save epaper subscription
-                                objE.SubType = SubscriptionType.Paid.ToString();
-                                objE.SubscriberID = SubscriberID;
-                                context.subscriber_epaper.Add(objE);
-                                await context.SaveChangesAsync();
-                                break;
-
-                            case "Bundle":
-                                //save print subscription
-                                objP.AddressID = addressID;
-                                objP.SubscriberID = SubscriberID;
-                                context.subscriber_print.Add(objP);
-
-                                //save epaper subscription
-                                objE.SubscriberID = SubscriberID;
-                                context.subscriber_epaper.Add(objE);
-
-                                await context.SaveChangesAsync();
-                                break;
-
-                            default:
-                                break;
-                        }
-                        }
-                    }
-
-                    if (paymentDetails.EnrolledIn3DSecure)
-                    {
-                        return true;
-
-                    }
-                    else
-                    {
-                        return false;
-
-                    }
-                    //RemoveSubscriber();
-            }
-
-            AddErrors(createAccount);
-            return false;
-        }
-
         public async Task<bool> SaveSubscriptionInfoAsync(AuthSubcriber authUser)
         {
 
@@ -1862,7 +1725,8 @@ namespace ePaperLive.Controllers
                         SubType = epaperSub.SubType,
                         IsActive = false,
                         EmailAddress = emailAddress,
-                        NotificationEmail = epaperSub.NotificationEmail
+                        NotificationEmail = epaperSub.NotificationEmail,
+                        PlanDesc = epaperSub.RateDescription
                     };
                 }
 
@@ -1879,6 +1743,7 @@ namespace ePaperLive.Controllers
                         EmailAddress = emailAddress,
                         DeliveryInstructions = printSub.DeliveryInstructions,
                         CreatedAt = DateTime.Now,
+                        PlanDesc = printSub.RateDescription
                     };
                 }
 
@@ -1899,7 +1764,8 @@ namespace ePaperLive.Controllers
                         CardLastFour = trxDetails.CardNumberLastFour,
                         TranxAmount = (double)trxDetails.CardAmount,
                         OrderID = trxDetails.OrderNumber,
-                        EnrolledIn3DSecure = true
+                        EnrolledIn3DSecure = true,
+                        PlanDesc = trxDetails.RateDescription
                     };
                 }
 
@@ -2099,7 +1965,41 @@ namespace ePaperLive.Controllers
             
             return false;
         }
-        
+
+        [AllowAnonymous]
+        public ActionResult RedeemCoupon()
+        {
+
+            List<SelectListItem> Addressparishes = GetParishes();
+            ViewBag.Parishes = new SelectList(Addressparishes, "Value", "Text");
+            ViewBag.CountryList = GetCountryList();
+
+            return View();
+        }
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public ActionResult RedeemCoupon(AuthSubcriber authUser, string nextBtn)
+        {
+            SubscriptionDetails subscriptionDetails = new SubscriptionDetails();
+
+            //var endDate = data.EndDate = data.StartDate.AddDays((double)selectedPlan.ETerm);
+            //SubscriptionDetails epaperSubscription = new SubscriptionDetails
+            //{
+            //    StartDate = DateTime.Now,
+            //    EndDate = endDate,
+            //    RateID = data.RateID,
+            //    SubType = selectedPlan.Type,
+            //    NotificationEmail = data.NotificationEmail,
+            //    RateType = selectedPlan.Type,
+            //    RateDescription = selectedPlan.RateDescr
+            //};
+
+            //subscriptionDetails.Add(epaperSubscription);
+
+            return View();
+        }
+
         [AllowAnonymous]
         public ActionResult PaymentSuccess()
         {
@@ -2235,7 +2135,7 @@ namespace ePaperLive.Controllers
                                 paymentDetails.AuthorizationCode = summary.AuthCode;
                                 paymentDetails.IsMadeLiveSuccessful = true;
 
-                                await SaveSubscriptionAsync(paymentDetails);
+                                await SaveSubscriptionInfoAsync(clientData);
                                 RemoveSubscriber();
                                 // return View("PaymentSuccess");
                                 return Json(paymentDetails);
@@ -2254,7 +2154,7 @@ namespace ePaperLive.Controllers
                         RemoveSubscriber();
 
                         paymentDetails.TransactionSummary = summary;
-                        await SaveSubscriptionAsync(paymentDetails);
+                        await SaveSubscriptionInfoAsync(clientData);
                         //return View("PaymentDetails", paymentDetails);
                         return Json(paymentDetails);
 
@@ -2273,7 +2173,7 @@ namespace ePaperLive.Controllers
                     paymentDetails.ConfirmationNumber = transSummary.ReferenceNo;
                     //TODO: Not sure if 
                     paymentDetails.TransactionSummary = summary;
-                    await SaveSubscriptionAsync(paymentDetails);
+                    await SaveSubscriptionInfoAsync(clientData);
                     //return View("PaymentDetails", paymentDetails);
                     return Json(paymentDetails);
                 }

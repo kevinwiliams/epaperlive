@@ -86,7 +86,7 @@ namespace ePaperLive.Views.Admin.Rates
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [Route("edit")]
+        [Route("edit/{id:int}")]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Rateid,Market,Type,RateDescr,PrintDayPattern,PrintTerm,PrintTermUnit,EDayPattern,ETerm,ETermUnit,Curr,Rate,SortOrder,Active,IntroRate,OfferIntroRate,IsFeatured,IsCTA,FeatureList,BestDealFlag")] printandsubrate printandsubrate)
         {
