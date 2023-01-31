@@ -26,8 +26,6 @@
             <div class="row gy-4">
                 <div class="col-lg-8">
 
-
-
                     <!-- start:wizrd -->
                     @using (Html.BeginForm())
                     {
@@ -35,7 +33,7 @@
 
                         <div class="form-horizontal">
 
-                            @Html.ValidationSummary(false, "", new { @class = "text-danger" });
+                            @Html.ValidationSummary(false, "", new { @class = "text-danger" })
                             <div class="row form-horizontal">
                                 <p>Please provide your basic information to get started.</p>
                                 <hr />
