@@ -1800,8 +1800,9 @@ namespace ePaperLive.Controllers
 
                 if (createAccount.Succeeded)
                 {
+                    var userRole = (newAccount.Email.Contains("jamaicaobserver.com")) ? "Staff" : "Subscriber";
                     //assign User Role
-                    createAccount = await UserManager.AddToRoleAsync(SubscriberID, "Subscriber");
+                    createAccount = await UserManager.AddToRoleAsync(SubscriberID, userRole);
                 }
                 AddErrors(createAccount);
 
