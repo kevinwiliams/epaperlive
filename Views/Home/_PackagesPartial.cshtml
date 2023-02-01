@@ -52,7 +52,7 @@ else
                 <div class="tab-pane active show" id="tab-1">
                     <div class="row">
                         <div class=" col-md-7 col-sm-12 float-left">
-                            @foreach (var plans in Model.Rates.Where(x => x.Type == "Epaper"))
+                            @foreach (var plans in Model.Rates.Where(x => x.Type == "Epaper").OrderBy(s => s.SortOrder))
                             {
                                  
                                 var ratePrice = (plans.OfferIntroRate) ? plans.IntroRate : plans.Rate;
@@ -96,7 +96,7 @@ else
                                 @{
                                     var currentDesc = "";
                                     var showTab = "";
-                                    var printSubs = Model.Rates.Where(x => x.Type == "Print");
+                                    var printSubs = Model.Rates.Where(x => x.Type == "Print").ToList().GroupBy(g => g.RateDescr).SelectMany(g => g.OrderBy(o => o.SortOrder)).ToList();
                                 }
                                 @foreach (var plans in printSubs)
                                 {
@@ -175,7 +175,7 @@ else
                 <div class="tab-pane" id="tab-3">
                     <div class="row">
                         <div class=" col-md-7 col-sm-12 float-left">
-                            @foreach (var plans in Model.Rates.Where(x => x.Type == "Bundle"))
+                            @foreach (var plans in Model.Rates.Where(x => x.Type == "Bundle").OrderBy(s => s.SortOrder))
                             {
                                 var ratePrice = (plans.OfferIntroRate) ? plans.IntroRate : plans.Rate; 
 
