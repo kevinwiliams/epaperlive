@@ -328,6 +328,7 @@
     <Compile Include="DBModel\JOL_UserSession.cs" />
     <Compile Include="DBModel\log_errors.cs" />
     <Compile Include="DBModel\printandsubrate.cs" />
+    <Compile Include="DBModel\coupons.cs" />
     <Compile Include="DBModel\promo_codes.cs" />
     <Compile Include="DBModel\subscriber.cs" />
     <Compile Include="DBModel\subscriber_address.cs" />
@@ -363,6 +364,7 @@
     <Compile Include="Startup.cs" />
     <Compile Include="Controllers\RatesController.cs" />
     <Compile Include="Controllers\PrintSubController.cs" />
+    <Compile Include="Controllers\CouponsController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\MIGRATION-SCRIPT.sql" />
@@ -623,6 +625,11 @@
     <Content Include="Views\PrintSub\Edit.cshtml" />
     <Content Include="Views\PrintSub\Index.cshtml" />
     <Content Include="Views\Account\RedeemCoupon.cshtml" />
+    <Content Include="Views\Coupons\Create.cshtml" />
+    <Content Include="Views\Coupons\Delete.cshtml" />
+    <Content Include="Views\Coupons\Details.cshtml" />
+    <Content Include="Views\Coupons\Edit.cshtml" />
+    <Content Include="Views\Coupons\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\roslyn\" />

@@ -1,0 +1,102 @@
+﻿@model IEnumerable<ePaperLive.DBModel.Coupons>
+
+@{
+    ViewBag.Title = "Coupons";
+}
+
+<div id="main">
+
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+        <div class="container">
+
+            <ol>
+                <li><a href="@Url.Action("index", "home")">Home</a></li>
+                <li>@ViewData["Title"]</li>
+            </ol>
+            <h2>@ViewData["Title"]</h2>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+    <!-- ======= Wizard Section ======= -->
+    <section id="portfolio-details" class="portfolio-details">
+        <div class="container">
+
+            <div class="row gy-4">
+                <div class="col-lg-8">
+                    <!-- start:wizrd -->
+                    <p>
+                        @Html.ActionLink("Create New Coupon", "Create")
+                    </p>
+                    <table class="table table-hover table-responsive table-striped small" id="couponsList">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.CouponCode)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.SubDays)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.ExpiryDate)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.UsedDate)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.CreatedAt)
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.CouponCode)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.SubDays)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ExpiryDate)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.UsedDate)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.CreatedAt)
+                                    </td>
+                                    <td>
+                                        @Html.ActionLink("Edit", "Edit", new { id = item.CouponID }) |
+                                        @*@Html.ActionLink("Details", "Details", new { id = item.CouponID }) |*@
+                                        @*@Html.ActionLink("Delete", "Delete", new { id = item.CouponID })*@
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <!-- end:wizrd -->
+                </div>
+
+
+            </div>
+
+        </div>
+    </section><!-- End Wizard Section -->
+
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $('#couponsList').DataTable({
+
+            });
+        });
+
+
+    </script>
+}
+

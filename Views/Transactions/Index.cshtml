@@ -1,105 +1,132 @@
 ﻿@model IEnumerable<ePaperLive.DBModel.Subscriber_Tranx>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Transactions";
 }
 
-<h2>Index</h2>
+    <div id="main">
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table" id="tranxList">
-    <thead>
+        <!-- ======= Breadcrumbs ======= -->
+        <section id="breadcrumbs" class="breadcrumbs">
+            <div class="container">
 
-        <tr>
+                <ol>
+                    <li><a href="@Url.Action("index", "home")">Home</a></li>
+                    <li>@ViewData["Title"]</li>
+                </ol>
+                <h2>@ViewData["Title"]</h2>
 
-            <th>
-                @Html.DisplayNameFor(model => model.EmailAddress)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CardOwner)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CardType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CardExp)
-            </th>
+            </div>
+        </section><!-- End Breadcrumbs -->
+        <!-- ======= Wizard Section ======= -->
+        <section id="portfolio-details" class="portfolio-details">
+            <div class="container">
 
-            <th>
-                @Html.DisplayNameFor(model => model.TranxAmount)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TranxDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RateID)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TranxType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OrderID)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AuthCode)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ConfirmationNo)
-            </th>
-            <th>Options</th>
-        </tr>
-        </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
+                <div class="row gy-4">
+                    <div class="col-lg-12">
+                        <!-- start:wizrd -->
+                        <table class="table table-hover table-responsive table-striped small" id="tranxList">
+                            <thead>
 
-                <td>
-                    @Html.DisplayFor(modelItem => item.EmailAddress)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CardOwner)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CardType)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CardExp)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TranxAmount)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TranxDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.RateID)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TranxType)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.OrderID)
-                </td>
+                                <tr>
 
-                <td>
-                    @Html.DisplayFor(modelItem => item.AuthCode)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ConfirmationNo)
-                </td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.Subscriber_TranxID }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.Subscriber_TranxID }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.Subscriber_TranxID })
-                </td>
-            </tr>
-        }
-    </tbody>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.EmailAddress)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.CardOwner)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.CardType)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.CardExp)
+                                    </th>
 
-</table>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.TranxAmount)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.TranxDate)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.RateID)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.TranxType)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.OrderID)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.AuthCode)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.ConfirmationNo)
+                                    </th>
+                                    <th>Options</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.EmailAddress)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.CardOwner)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.CardType)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.CardExp)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.TranxAmount)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.TranxDate)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.RateID)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.TranxType)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.OrderID)
+                                        </td>
+
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.AuthCode)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.ConfirmationNo)
+                                        </td>
+                                        <td>
+                                            @Html.ActionLink("Edit", "Edit", new { id = item.Subscriber_TranxID }) |
+                                            @Html.ActionLink("View", "Details", new { id = item.Subscriber_TranxID }) 
+                                            @*@Html.ActionLink("Delete", "Delete", new { id = item.Subscriber_TranxID })*@
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+
+                        </table>
+                        <!-- end:wizrd -->
+                    </div>
+                </div>
+
+            </div>
+        </section><!-- End Wizard Section -->
+
+    </div>
+
+
+
 
 @section scripts{
     <script>

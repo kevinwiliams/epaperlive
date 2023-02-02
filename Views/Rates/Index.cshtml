@@ -1,166 +1,198 @@
 ﻿@model IEnumerable<ePaperLive.DBModel.printandsubrate>
 
 @{
-    ViewBag.Title = "Index";
-}
-    <div class="container-fluid table-hover table-responsive">
-        <h2>Index</h2>
+    ViewBag.Title = "Rates Table";
 
-        <p>
-            @Html.ActionLink("Create New", "Create")
-        </p>
-        <table class="table" id="ratesList">
-            <thead>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Market)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Type)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.RateDescr)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.PrintDayPattern)
-                    </th>
-                    <th>
-                        Count
-                    </th>
-                    <th>
-                        Units
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.EDayPattern)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Curr)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Rate)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.IntroRate)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.SortOrder)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Active)
-                    </th>
+    <div id="main">
 
-                    <th>
-                        Intro?
-                    </th>
-                    <th>
-                        Featrd?
-                    </th>
-                    <th>
-                       Red?
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.FeatureList)
-                    </th>
-                    <th>
-                        BestDeal?
-                    </th>
-                    <th>Options</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Market)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Type)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.RateDescr)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.PrintDayPattern)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.PrintTerm)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.PrintTermUnit)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.EDayPattern)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Curr)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Rate)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.IntroRate)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.SortOrder)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Active)
-                    </td>
+        <!-- ======= Breadcrumbs ======= -->
+        <section id="breadcrumbs" class="breadcrumbs">
+            <div class="container">
 
-                    <td>
-                        @Html.DisplayFor(modelItem => item.OfferIntroRate)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.IsFeatured)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.IsCTA)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.FeatureList)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.BestDealFlag)
-                    </td>
-                    <td>
-                        @Html.ActionLink("Edit", "Edit", new { id = item.Rateid }) |
-                        @Html.ActionLink("Details", "Details", new { id = item.Rateid }) |
-                        @Html.ActionLink("Delete", "Delete", new { id = item.Rateid })
-                    </td>
-                </tr>
-                }
-            </tbody>
+                <ol>
+                    <li><a href="@Url.Action("index", "home")">Home</a></li>
+                    <li>@ViewData["Title"]</li>
+                </ol>
+                <h2>@ViewData["Title"]</h2>
 
-        </table>
+            </div>
+        </section><!-- End Breadcrumbs -->
+        <!-- ======= Wizard Section ======= -->
+        <section id="portfolio-details" class="portfolio-details">
+            <div class="container">
+
+                <div class="row gy-4">
+                    <div class="col-lg-12">
+                        <!-- start:wizrd -->
+                        <div class="container-fluid ">
+
+                            <p>
+                                @*@Html.ActionLink("Create New", "Create")*@
+                            </p>
+                            <table class="table table-hover table-responsive table-striped small" id="ratesList">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.Market)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.Type)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.RateDescr)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.PrintDayPattern)
+                                        </th>
+                                        <th>
+                                            Count
+                                        </th>
+                                        <th>
+                                            Units
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.EDayPattern)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.Curr)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.Rate)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.IntroRate)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.SortOrder)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.Active)
+                                        </th>
+
+                                        <th>
+                                            Intro?
+                                        </th>
+                                        <th>
+                                            Featrd?
+                                        </th>
+                                        <th>
+                                            Red?
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.FeatureList)
+                                        </th>
+                                        <th>
+                                            BestDeal?
+                                        </th>
+                                        <th>Options</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Market)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Type)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.RateDescr)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.PrintDayPattern)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.PrintTerm)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.PrintTermUnit)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.EDayPattern)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Curr)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Rate)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.IntroRate)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.SortOrder)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Active)
+                                            </td>
+
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.OfferIntroRate)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.IsFeatured)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.IsCTA)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.FeatureList)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.BestDealFlag)
+                                            </td>
+                                            <td>
+                                                @Html.ActionLink("Edit", "Edit", new { id = item.Rateid }) |
+                                                @Html.ActionLink("View", "Details", new { id = item.Rateid }) 
+                                                @*@Html.ActionLink("Delete", "Delete", new { id = item.Rateid })*@
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+
+                            </table>
+                        </div>
+                        <!-- end:wizrd -->
+                    </div>
+                    
+
+                </div>
+
+            </div>
+        </section><!-- End Wizard Section -->
+
     </div>
+}
+
 
 @section scripts{
     <script>
-        $(document).ready( function () {
+        $(document).ready(function () {
             $('#ratesList').DataTable({
                 columnDefs: [
-                    {
-                        target: 3,
-                        visible: false,
-                        searchable: false,
-                    },
-                    {
-                        target: 6,
-                        visible: false,
+                    {
+                        target: 3,
+                        visible: false,
+                        searchable: false,
                     },
                     {
-                        target: 7,
-                        visible: false,
+                        target: 6,
+                        visible: false,
                     },
                     {
-                        target: 15,
-                        visible: false,
-                    },
-                ],
+                        target: 7,
+                        visible: false,
+                    },
+                    {
+                        target: 15,
+                        visible: false,
+                    },
+                ],
             });
-        } );
+        });
 
 
     </script>
-    }
+}

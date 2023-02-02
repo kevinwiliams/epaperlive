@@ -11,7 +11,9 @@
     @Styles.Render("~/Content/css")
     <!-- Vendor CSS Files -->
     @Styles.Render("~/Content/vendor")
-    <link href="//cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css" rel="stylesheet">
+    <!--link href="//cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css" rel="stylesheet" -->
+    <link href="//cdn.datatables.net/v/bs5/dt-1.13.1/b-2.3.3/b-colvis-2.3.3/b-html5-2.3.3/b-print-2.3.3/date-1.2.0/fc-4.2.1/fh-3.3.1/r-2.4.0/sc-2.0.7/sb-1.4.0/sl-1.5.0/datatables.min.css" rel="stylesheet">
+    
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 </head>
 <body>
@@ -62,21 +64,7 @@
 
                                 <li>@Html.ActionLink("Home", "dashboard", "account")</li>
 
-
-
                                 <li>@Html.ActionLink("Orders", "orders", "account")</li>
-
-                                if (User.IsInRole("Circulation") || User.IsInRole("Admin"))
-                                {
-                                    <li>@Html.ActionLink("Print Subscriptions", "printsub", "admin")</li>
-
-                                }
-                                if (User.IsInRole("Admin"))
-                                {
-                                    <li>@Html.ActionLink("Rates Table", "rates", "admin")</li>
-                                    <li>@Html.ActionLink("Transactions Table", "transactions", "admin")</li>
-
-                                }
 
                                 <li class="dropdown">
                                     <a href="#"><span>My Account</span> <i class="bi bi-chevron-down"></i></a>
@@ -95,6 +83,27 @@
 
                                     </ul>
                                 </li>
+                                if (User.IsInRole("Circulation") || User.IsInRole("Admin"))
+                                {
+                                    <li class="dropdown">
+                                        <a href="#"><span>System</span> <i class="bi bi-chevron-down"></i></a>
+                                        <ul>
+                                            @if (User.IsInRole("Circulation") || User.IsInRole("Admin"))
+                                            {
+                                                <li>@Html.ActionLink("Print Subscriptions", "printsub", "admin")</li>
+
+                                            }
+                                            @if (User.IsInRole("Admin"))
+                                            {
+                                                <li>@Html.ActionLink("Subscription Rates", "rates", "admin")</li>
+                                                <li>@Html.ActionLink("Transactions", "transactions", "admin")</li>
+                                                <li>@Html.ActionLink("Coupons", "coupons", "admin")</li>
+
+                                            }
+                                        </ul>
+                                    </li>
+                                }
+
                             }
                         }
                         catch (Exception ex)
@@ -215,7 +224,10 @@
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/Scripts/js")
     @Scripts.Render("~/Scripts/bootstrap")
-    <script src="//cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+    <!-- script src="//cdn.datatables.net/1.13.1/js/jquery.dataTables.bootstrap5.min.js"></!-script -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.13.1/b-2.3.3/b-colvis-2.3.3/b-html5-2.3.3/b-print-2.3.3/date-1.2.0/fc-4.2.1/fh-3.3.1/r-2.4.0/sc-2.0.7/sb-1.4.0/sl-1.5.0/datatables.min.js"></script>
     @RenderSection("scripts", required: false)
 
     <script>
