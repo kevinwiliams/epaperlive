@@ -30,55 +30,47 @@
                         {
                             @Html.AntiForgeryToken()
 
-                            <div class="form-horizontal">
-                                <hr />
-                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.CouponCode, htmlAttributes: new { @class = "control-label col-md-2" })
-                                    <div class="col-md-10">
-                                        @Html.EditorFor(model => model.CouponCode, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.CouponCode, "", new { @class = "text-danger" })
-                                    </div>
-                                </div>
+                        <div class="form-horizontal">
+                            <hr />
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.SubDays, htmlAttributes: new { @class = "control-label col-md-2" })
-                                    <div class="col-md-10">
-                                        @Html.EditorFor(model => model.SubDays, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.SubDays, "", new { @class = "text-danger" })
-                                    </div>
-                                </div>
+                        <div class="form-group col-md-5">
+                            <div class="input-group py-2 ">
+                                @* @Html.LabelFor(model => model.CouponCode, htmlAttributes: new { @class = "control-label col-md-2" })*@
+                                    @Html.EditorFor(model => model.CouponCode, new { htmlAttributes = new { @class = "form-control" } })
+                                    <button type="button" class="btn btn-danger btn-coupon-code">Generate Coupon Code</button>
 
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.ExpiryDate, htmlAttributes: new { @class = "control-label col-md-2" })
-                                    <div class="col-md-10">
-                                        @Html.EditorFor(model => model.ExpiryDate, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.ExpiryDate, "", new { @class = "text-danger" })
-                                    </div>
-                                </div>
+                                    @Html.ValidationMessageFor(model => model.CouponCode, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                            
 
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.UsedDate, htmlAttributes: new { @class = "control-label col-md-2" })
-                                    <div class="col-md-10">
-                                        @Html.EditorFor(model => model.UsedDate, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.UsedDate, "", new { @class = "text-danger" })
-                                    </div>
-                                </div>
+                            <div class="form-group col-md-5 py-2">
+                                @Html.LabelFor(model => model.SubDays, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @*@Html.EditorFor(model => model.SubDays, new { htmlAttributes = new { @class = "form-control" } })*@
+                                    @Html.HiddenFor(model => model.SubDays)
+                                    @Html.DropDownList("SubDaysList", ViewBag.SubDaysList as SelectList, "Select days", new { @class = "form-control", id = "SubDaysList", @required = "required" })
 
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.CreatedAt, htmlAttributes: new { @class = "control-label col-md-2" })
-                                    <div class="col-md-10">
-                                        @Html.EditorFor(model => model.CreatedAt, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.CreatedAt, "", new { @class = "text-danger" })
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <div class="col-md-offset-2 col-md-10">
-                                        <input type="submit" value="Create Coupon" class="btn btn-sign-in" />
-                                    </div>
+                                    @Html.ValidationMessageFor(model => model.SubDays, "", new { @class = "text-danger" })
                                 </div>
                             </div>
+
+                            <div class="form-group col-md-5 py-2">
+                                @Html.LabelFor(model => model.ExpiryDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.ExpiryDate, new { htmlAttributes = new { @class = "form-control",@type = "date"} })
+                                    @Html.ValidationMessageFor(model => model.ExpiryDate, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+
+                            <div class="form-group py-3">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <input type="submit" value="Create Coupon" class="btn btn-sign-in" />
+                                </div>
+                            </div>
+                        </div>
                         }
 
                         <div>
@@ -94,4 +86,41 @@
         </section><!-- End Wizard Section -->
 
     </div>
+@section scripts {
+    <script>
 
+        $(document).ready(function () {
+            $(".btn-coupon-code").on('click', function (e) {
+                e.preventDefault();
+                $('#originalAmount').val($("[name=CardAmount]").val());
+                var couponCode = $("[name=couponCode]").val();
+                if (couponCode != "") {
+                    $('#loading').addClass('loading').removeClass('hidden');
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("GenerateCoupon", "Coupons")',
+                        data: { couponCode : couponCode },
+                        beforeSend: function () {
+                            $('#loading').addClass('loading').removeClass('hidden');
+                        },
+                        success: function (result) {
+                            $('#loading').addClass('hidden').removeClass('loading');
+                            console.log(result.data);
+                            $("[name=CouponCode]").val(result.data);
+                        },
+                        complete: function () {
+                            $('#loading').addClass('hidden').removeClass('loading');
+                        },
+                    });
+                }
+
+
+            });
+
+            $('#SubDaysList').on('change', (e) => {
+                $('#SubDays').val($('#SubDaysList option:selected').text());
+            });
+        });
+
+    </script>
+    }

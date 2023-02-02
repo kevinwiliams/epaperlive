@@ -25,6 +25,20 @@ namespace ePaperLive.Views.Admin.Coupon
         {
             return View(await db.coupons.ToListAsync());
         }
+        // generate coupon
+        [Route("generatecoupon")]
+        public JsonResult GenerateCoupon() {
+            var resultData = new Dictionary<string, object>();
+            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            var random = new Random();
+            var couponCode = new string(
+                Enumerable.Repeat(chars, 13)
+                          .Select(s => s[random.Next(s.Length)])
+                          .ToArray());
+            resultData["data"] = couponCode;
+
+            return Json(resultData);
+        }
 
         // GET: Coupons/Details/5
         [Route("details/{id:int}")]
@@ -46,6 +60,14 @@ namespace ePaperLive.Views.Admin.Coupon
         [Route("create")]
         public ActionResult Create()
         {
+            var values = new List<int> { 7, 30, 180, 360 };
+            var items = values.Select(v => new SelectListItem
+            {
+                Value = v.ToString(),
+                Text = v.ToString()
+            }).ToList();
+
+            ViewBag.SubDaysList = items;
             return View();
         }
 
@@ -55,10 +77,11 @@ namespace ePaperLive.Views.Admin.Coupon
         [HttpPost]
         [Route("create")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "CouponID,CouponCode,SubDays,ExpiryDate,UsedDate,CreatedAt")] Coupons coupons)
+        public async Task<ActionResult> Create([Bind(Include = "CouponID,CouponCode,SubDays,ExpiryDate")] Coupons coupons)
         {
             if (ModelState.IsValid)
             {
+                coupons.CreatedAt = DateTime.Now;
                 db.coupons.Add(coupons);
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
