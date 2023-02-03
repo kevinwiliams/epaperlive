@@ -10,7 +10,7 @@ using ePaperLive.Models;
 
 namespace ePaperLive.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class ManageController : Controller
     {
         private ApplicationSignInManager _signInManager;

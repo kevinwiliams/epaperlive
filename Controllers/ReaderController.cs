@@ -159,7 +159,7 @@ namespace ePaperLive.Controllers
                     mb.subscription = subscriptionCode;
                     //change date format to YYYY-MM-DD
                     var dateTime = result.Subscriber_Epaper.FirstOrDefault(x => x.IsActive == true).EndDate.ToString();
-                    DateTime dt = DateTime.ParseExact(dateTime, "d/M/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
+                    DateTime dt = DateTime.ParseExact(dateTime, "dd/M/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
                     mb.expiration = dt.ToString("yyyy-MM-dd");
                 }
                         
