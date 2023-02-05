@@ -35,7 +35,7 @@ namespace ePaperLive
                 XmlSerializer xsSubmit = new XmlSerializer(typeof(T));
                 //remove generated namespaces
                 XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
-                ns.Add("", "");
+                ns.Add(String.Empty, String.Empty);
 
                 using (var sww = new StringWriter())
                 {

@@ -66,6 +66,28 @@
 
                                 <li>@Html.ActionLink("Orders", "orders", "account")</li>
 
+                                if (User.IsInRole("Circulation") || User.IsInRole("Admin"))
+                                {
+                                    <li class="dropdown">
+                                        <a href="#"><span>System</span> <i class="bi bi-chevron-down"></i></a>
+                                        <ul>
+                                            @if (User.IsInRole("Circulation") || User.IsInRole("Admin"))
+                                            {
+                                                <li>@Html.ActionLink("Print Subscriptions", "printsub", "admin")</li>
+
+                                            }
+                                            @if (User.IsInRole("Admin"))
+                                            {
+                                                <li>@Html.ActionLink("Subscription Rates", "rates", "admin")</li>
+                                                <li>@Html.ActionLink("Transactions", "transactions", "admin")</li>
+                                                <li>@Html.ActionLink("Coupons", "coupons", "admin")</li>
+                                                <li>@Html.ActionLink("Addresses", "address", "admin")</li>
+
+                                            }
+                                        </ul>
+                                    </li>
+                                }
+
                                 <li class="dropdown">
                                     <a href="#"><span>My Account</span> <i class="bi bi-chevron-down"></i></a>
                                     <ul>
@@ -83,26 +105,7 @@
 
                                     </ul>
                                 </li>
-                                if (User.IsInRole("Circulation") || User.IsInRole("Admin"))
-                                {
-                                    <li class="dropdown">
-                                        <a href="#"><span>System</span> <i class="bi bi-chevron-down"></i></a>
-                                        <ul>
-                                            @if (User.IsInRole("Circulation") || User.IsInRole("Admin"))
-                                            {
-                                                <li>@Html.ActionLink("Print Subscriptions", "printsub", "admin")</li>
 
-                                            }
-                                            @if (User.IsInRole("Admin"))
-                                            {
-                                                <li>@Html.ActionLink("Subscription Rates", "rates", "admin")</li>
-                                                <li>@Html.ActionLink("Transactions", "transactions", "admin")</li>
-                                                <li>@Html.ActionLink("Coupons", "coupons", "admin")</li>
-
-                                            }
-                                        </ul>
-                                    </li>
-                                }
 
                             }
                         }

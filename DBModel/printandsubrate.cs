@@ -35,6 +35,7 @@ namespace ePaperLive.DBModel
         public bool IsCTA { get; set; } = false;
         public string FeatureList { get; set; }
         public bool BestDealFlag { get; set; } = false;
+        public bool IsRenewalRate { get; set; } = false;
 
 
     }

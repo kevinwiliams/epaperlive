@@ -111,9 +111,10 @@ namespace ePaperLive.Controllers
                 }
                 catch (Exception ex)
                 {
-                    throw ex;
+                    LogError(ex);
+                    return Request.CreateResponse(HttpStatusCode.BadRequest);
                 }
-               
+
             }
             else
             {
@@ -158,9 +159,8 @@ namespace ePaperLive.Controllers
                     mb.nickname = result.FirstName + " " + result.LastName;
                     mb.subscription = subscriptionCode;
                     //change date format to YYYY-MM-DD
-                    var dateTime = result.Subscriber_Epaper.FirstOrDefault(x => x.IsActive == true).EndDate.ToString();
-                    DateTime dt = DateTime.ParseExact(dateTime, "dd/M/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
-                    mb.expiration = dt.ToString("yyyy-MM-dd");
+                    var dateTime = result.Subscriber_Epaper.FirstOrDefault(x => x.IsActive == true).EndDate.ToString("yyyy-MM-dd");
+                    mb.expiration = dateTime;
                 }
                         
                 //serialize class to xml string using helper
@@ -170,7 +170,7 @@ namespace ePaperLive.Controllers
             catch (Exception ex)
             {
 
-                throw ex;
+                LogError(ex);
             }
             return xml;
         }

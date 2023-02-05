@@ -8,17 +8,27 @@ else
 {
     @:<div id="planSelection">
         var currentDesc = "";
-        var rates = Model.Rates.ToList();
-        foreach (var plans in rates)
+    List<ePaperLive.DBModel.printandsubrate> rates = new List<ePaperLive.DBModel.printandsubrate>();
+    if (Model.RateType != "Print")
+    {
+        rates = Model.Rates.OrderBy(s => s.SortOrder).ToList();
+    }
+    else
+    {
+        
+        rates = Model.Rates.ToList();
+    }
+
+    foreach (var plans in rates)
+    {
+        var ratePrice = (plans.OfferIntroRate) ? plans.IntroRate : plans.Rate;
+        var printWeeks = (plans.Type != "Epaper") ? "  [" + plans.PrintTerm + " " + plans.PrintTermUnit + "] " : "";
+        var frequency = "Delivery Freq.: " + plans.PrintDayPattern;
+
+        var mainDesc = plans.RateDescr;
+
+        if (currentDesc != mainDesc && currentDesc != "" && plans.Type == "Print")
         {
-            var ratePrice = (plans.OfferIntroRate) ? plans.IntroRate : plans.Rate; 
-            var printWeeks = (plans.Type != "Epaper") ? "  [" + plans.PrintTerm + " " + plans.PrintTermUnit + "] " : "";
-            var frequency = "Delivery Freq.: " + plans.PrintDayPattern;
-
-            var mainDesc = plans.RateDescr;
-
-            if (currentDesc != mainDesc && currentDesc != "" && plans.Type == "Print")
-            {
             @:</div> <br /><br />
         }
 
