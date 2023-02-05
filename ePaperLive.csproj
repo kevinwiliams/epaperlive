@@ -365,6 +365,7 @@
     <Compile Include="Controllers\RatesController.cs" />
     <Compile Include="Controllers\PrintSubController.cs" />
     <Compile Include="Controllers\CouponsController.cs" />
+    <Compile Include="Controllers\AddressController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\MIGRATION-SCRIPT.sql" />
@@ -630,6 +631,11 @@
     <Content Include="Views\Coupons\Details.cshtml" />
     <Content Include="Views\Coupons\Edit.cshtml" />
     <Content Include="Views\Coupons\Index.cshtml" />
+    <Content Include="Views\Address\Create.cshtml" />
+    <Content Include="Views\Address\Delete.cshtml" />
+    <Content Include="Views\Address\Details.cshtml" />
+    <Content Include="Views\Address\Edit.cshtml" />
+    <Content Include="Views\Address\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\roslyn\" />
