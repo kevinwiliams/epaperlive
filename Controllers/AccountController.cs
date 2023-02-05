@@ -591,9 +591,10 @@ namespace ePaperLive.Controllers
                     {
                         authSubcriber.FirstName = tableData.FirstName;
                         authSubcriber.LastName = tableData.LastName;
+                        authSubcriber.EmailAddress = tableData.EmailAddress;
 
                             //Epaper subscriptions
-                            if (tableData.Subscriber_Epaper.Count() > 0)
+                        if (tableData.Subscriber_Epaper.Count() > 0)
                             {
                                 foreach (var epaper in tableData.Subscriber_Epaper)
                                 {
@@ -601,8 +602,8 @@ namespace ePaperLive.Controllers
                                         RateID = epaper.RateID,
                                         StartDate = epaper.StartDate,
                                         EndDate = epaper.EndDate,
-                                        RateDescription = ratesList.FirstOrDefault(X => X.Rateid == epaper.RateID).RateDescr,
-                                        SubType = ratesList.FirstOrDefault(X => X.Rateid == epaper.RateID).Type,
+                                        RateDescription = (ratesList.Where(X => X.Rateid == epaper.RateID).Count() > 0) ? ratesList.FirstOrDefault(X => X.Rateid == epaper.RateID).RateDescr : "Complimentary",
+                                        SubType = (ratesList.Where(X => X.Rateid == epaper.RateID).Count() > 0) ? ratesList.FirstOrDefault(X => X.Rateid == epaper.RateID).Type : "Epaper",
                                         isActive = epaper.IsActive,
                                         SubscriptionID = epaper.Subscriber_EpaperID,
                                         RateType = "Epaper"
@@ -664,7 +665,7 @@ namespace ePaperLive.Controllers
                                         CardOwner = payments.CardOwner,
                                         CardType = payments.CardType,
                                         TranxDate = payments.TranxDate,
-                                        RateDescription = ratesList.FirstOrDefault(X => X.Rateid == payments.RateID).RateDescr,
+                                        RateDescription = (ratesList.Where(X => X.Rateid == payments.RateID).Count() > 0) ? ratesList.FirstOrDefault(X => X.Rateid == payments.RateID).RateDescr : "Complimentary",
                                         TransactionID = payments.Subscriber_TranxID
                                     };
                                     PaymentsList.Add(paymentDetails);
@@ -888,7 +889,7 @@ namespace ePaperLive.Controllers
                             };
 
                             subscriptionDetails.Add(printSubscription);
-                            authUser.SubscriptionDetails = subscriptionDetails;
+                            authUser.SubscriptionDetails.Add(printSubscription);
 
                             AddressDetails deliveryAddress = new AddressDetails
                             {
@@ -915,7 +916,8 @@ namespace ePaperLive.Controllers
                             };
 
                             subscriptionDetails.Add(epaperSubscription);
-                            authUser.SubscriptionDetails = subscriptionDetails;
+                            authUser.SubscriptionDetails.Add(epaperSubscription);
+
 
                         }
                         if (selectedPlan.Type == "Bundle")
@@ -944,8 +946,7 @@ namespace ePaperLive.Controllers
                             };
                             //Epaper subscription
                             subscriptionDetails.Add(epaperSubscription);
-
-                            authUser.SubscriptionDetails = subscriptionDetails;
+                            authUser.SubscriptionDetails.Add(epaperSubscription);
 
 
                             AddressDetails deliveryAddress = new AddressDetails
@@ -984,8 +985,7 @@ namespace ePaperLive.Controllers
                         };
 
                         paymentDetailsList.Add(pd);
-                        authUser.PaymentDetails = paymentDetailsList;
-
+                        authUser.PaymentDetails.Add(pd);
 
                         return View("ExtendPayment", pd);
                     }
@@ -1033,7 +1033,7 @@ namespace ePaperLive.Controllers
                         Market = market
                     };
 
-                    return View("SubscriptionInfo", sd);
+                    return View("ExtendSubscription", sd);
                 }
                 catch (Exception ex)
                 {
@@ -1131,7 +1131,7 @@ namespace ePaperLive.Controllers
                         authUser.FirstName = obj.FirstName = data.FirstName;
                         authUser.LastName = obj.LastName = data.LastName;
                         authUser.EmailAddress = obj.EmailAddress = data.EmailAddress;
-                        authUser.PasswordKey = data.Password;
+                        authUser.Password = data.Password;
                         //obj.passwordHash = PasswordHash(data.Password);
                         obj.CreatedAt = DateTime.Now;
                         obj.IpAddress = Request.UserHostAddress;
@@ -1788,7 +1788,7 @@ namespace ePaperLive.Controllers
                     };
 
                     //create application user
-                    createAccount = (authUser.Login != null) ? await UserManager.CreateAsync(newAccount) : await UserManager.CreateAsync(newAccount, authUser.PasswordKey);
+                    createAccount = (authUser.Login != null) ? await UserManager.CreateAsync(newAccount) : await UserManager.CreateAsync(newAccount, authUser.Password);
 
                     //
                     //create oauthuser login
@@ -1893,7 +1893,8 @@ namespace ePaperLive.Controllers
                                 else
                                 {
                                     //save epaper subscription
-                                    objE.SubType = SubscriptionType.Paid.ToString();
+                                    var subType = (selectedPlan.RateDescr.Contains("Coupon")) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString();
+                                    objE.SubType = subType;
                                     objE.SubscriberID = SubscriberID;
                                     context.subscriber_epaper.Add(objE);
                                     await context.SaveChangesAsync();
@@ -1980,23 +1981,74 @@ namespace ePaperLive.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult RedeemCoupon(AuthSubcriber authUser, string nextBtn)
+        public async Task<ActionResult> RedeemCoupon(AuthSubcriber authUser, string nextBtn)
         {
-            SubscriptionDetails subscriptionDetails = new SubscriptionDetails();
+            authUser.SubscriptionDetails = new List<SubscriptionDetails>();
+            authUser.PaymentDetails = new List<PaymentDetails>();
 
-            //var endDate = data.EndDate = data.StartDate.AddDays((double)selectedPlan.ETerm);
-            //SubscriptionDetails epaperSubscription = new SubscriptionDetails
-            //{
-            //    StartDate = DateTime.Now,
-            //    EndDate = endDate,
-            //    RateID = data.RateID,
-            //    SubType = selectedPlan.Type,
-            //    NotificationEmail = data.NotificationEmail,
-            //    RateType = selectedPlan.Type,
-            //    RateDescription = selectedPlan.RateDescr
-            //};
+            if (nextBtn != null)
+            {
+                if (ModelState.IsValid)
+                {
+                    var isExist = IsEmailExist(authUser.EmailAddress);
+                    if (isExist)
+                    {
+                        ModelState.AddModelError("EmailExist", "Email address is already assigned. Please use forget password option to log in");
+                        return View(authUser);
+                    }
 
-            //subscriptionDetails.Add(epaperSubscription);
+                    authUser.AddressDetails.FirstOrDefault().AddressType = "M";
+                    using (var context = new ApplicationDbContext())
+                    { 
+                        var result = context.coupons.FirstOrDefault(x => x.CouponCode == authUser.RedeemCode && x.UsedDate == null && x.ExpiryDate >= DateTime.Now);
+                        if (result != null)
+                        {
+                            var endDate = DateTime.Now.AddDays((double)result.SubDays);
+
+                            SubscriptionDetails subscriptionDetails = new SubscriptionDetails 
+                            {
+                                StartDate = DateTime.Now,
+                                EndDate = endDate,
+                                RateID = 61,
+                                SubType = "Epaper",
+                                NotificationEmail = false,
+                                RateType = "Epaper",
+                                RateDescription = "ePaper Coupon"
+
+                            };
+                            authUser.SubscriptionDetails.Add(subscriptionDetails);
+
+                            PaymentDetails pd = new PaymentDetails
+                            {
+                                RateID = 61,
+                                RateDescription = "ePaper Coupon",
+                                RateTerm = "",
+                                Currency = "JMD",
+                                CardAmount = 0,
+                                SubType = "Epaper",
+                                                                
+                                //test data
+                                CardOwner = authUser.FirstName + " " + authUser.LastName,
+                                OrderNumber = "Complimentary : Coupon",
+                            };
+                            authUser.PaymentDetails.Add(pd);
+
+                            var saved = await SaveSubscriptionInfoAsync(authUser);
+                            if (saved)
+                            {
+                                //await CompleteTransactionProcess(pd.RateID, pd.OrderNumber, authUser.EmailAddress);
+                                return View("PaymentSuccess");
+                            }
+                        }
+                        ModelState.AddModelError("InvalidCode", "Invalid Code");
+
+                    }
+                }
+            }
+
+            List<SelectListItem> Addressparishes = GetParishes();
+            ViewBag.Parishes = new SelectList(Addressparishes, "Value", "Text");
+            ViewBag.CountryList = GetCountryList();
 
             return View();
         }
@@ -2072,7 +2124,8 @@ namespace ePaperLive.Controllers
                 paymentDetails.OrderNumber = transactionDetails.OrderNumber;
                 paymentDetailsList.Add(paymentDetails);
                 processedClientData.PaymentDetails = paymentDetailsList;
-                clientData.PaymentDetails = paymentDetailsList;
+                clientData.PaymentDetails.RemoveAll(x => x.TransactionID == 0);
+                clientData.PaymentDetails.Add(paymentDetails);
 
                 // Update Billing Details
                 billingDetails.BillToAddress = paymentDetails.BillingAddress.AddressLine1;
@@ -2334,12 +2387,18 @@ namespace ePaperLive.Controllers
                             currentTransaction = new PaymentDetails();
                         }
 
-                        var transactionResponse = await cardProcessor.GetGatewayTransactionStatus(orderNumber);
-                        var transSummary = cardProcessor.GetTransactionSummary(transactionResponse);
+                        TransactionSummary transSummary = new TransactionSummary();
+                        if (customerData.RedeemCode == null)
+                        {
+                            var transactionResponse = await cardProcessor.GetGatewayTransactionStatus(orderNumber);
+                            transSummary = cardProcessor.GetTransactionSummary(transactionResponse);
 
-                        currentTransaction.ConfirmationNumber = savedTransaction.ConfirmationNo;
-                        //currentTransaction.OrderID = orderID;
-                        currentTransaction.AuthorizationCode = savedTransaction.AuthCode;
+                            currentTransaction.ConfirmationNumber = savedTransaction.ConfirmationNo;
+                            //currentTransaction.OrderID = orderID;
+                            currentTransaction.AuthorizationCode = savedTransaction.AuthCode;
+                        }
+                       
+
                         using (var context = new ApplicationDbContext())
                         {
                             //load data and join via foriegn keys
@@ -2351,9 +2410,13 @@ namespace ePaperLive.Controllers
 
                             if (clientData != null)
                             {
-                                //update transaction table with authcode and confirmation no.
-                                clientData.Subscriber_Tranx.FirstOrDefault(x => x.OrderID == orderNumber).AuthCode = transSummary.AuthCode;
-                                clientData.Subscriber_Tranx.FirstOrDefault(x => x.OrderID == orderNumber).ConfirmationNo = transSummary.ReferenceNo;
+                                if (customerData.RedeemCode == null)
+                                {
+                                    //update transaction table with authcode and confirmation no.
+                                    clientData.Subscriber_Tranx.FirstOrDefault(x => x.OrderID == orderNumber).AuthCode = transSummary.AuthCode;
+                                    clientData.Subscriber_Tranx.FirstOrDefault(x => x.OrderID == orderNumber).ConfirmationNo = transSummary.ReferenceNo;
+                                }
+                                
                                 clientData.Subscriber_Tranx.FirstOrDefault(x => x.OrderID == orderNumber).IsMadeLiveSuccessful = true;
 
                                 //make subscription active

@@ -40,7 +40,7 @@
             <div class="row gy-4">
                 <div class="col-lg-8">
                     <!-- start:wizrd -->
-                    @using (Html.BeginForm("PaymentDetails", "Account", FormMethod.Post, new { @class = "row g-3 needs-validation", novalidate = "novalidate", name = "PaymentDetails" }))
+                    @using (Html.BeginForm("ExtendPayment", "Account", FormMethod.Post, new { @class = "row g-3 needs-validation", novalidate = "novalidate", name = "ExtendPayment" }))
                     {
                         @Html.AntiForgeryToken()
 
@@ -301,60 +301,21 @@
             $("input[name='CardType']").click((e) => e.preventDefault());
 
 
-            $(".btn-promo-code").on('click', function (e) {
+            
+
+            $("[name=ExtendPayment]").on('submit', function (e) {
                 e.preventDefault();
-                $('#originalAmount').val($("[name=CardAmount]").val());
-                var promoCode = $("[name=PromoCode]").val();
-                if (promoCode != "") {
-                    $('#loading').addClass('loading').removeClass('hidden');
-                     $.ajax({
-                    type: "POST",
-                    url: '@Url.Action("CheckPromoCode", "Account")',
-                         data: { promoCode: promoCode },
-                    beforeSend: function () {
-                            $('#loading').addClass('loading').removeClass('hidden');
-                        },
-                    success: function (result) {
-                        $('#loading').addClass('hidden').removeClass('loading');
-                        console.log(result);
-                        if (result.applied) {
-                            let originalAmount = $('#originalAmount').val();
-                            $("[name=CardAmount]").val(result.data.CardAmount);
-                            let cardAmount = result.data.CardAmount;
-                            originalAmount = parseFloat(originalAmount, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
-                            cardAmount = parseFloat(cardAmount, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
-
-                            $('span.na').html('$' + originalAmount);
-                            $('span#cardAmount').html('$' + cardAmount);
-                            $('#promoAlert').html(result.msg);
-                            let currency = $("[name=Currency]").val();
-                            $('p#subRate').html(currency + ' $' + cardAmount);
-                            
-                        
-                        }
-                         },
-                    complete: function() {
-                      $('#loading').addClass('hidden').removeClass('loading');
-                    },
-                });
-                }
-
-
-            });
-
-            $("[name=PaymentDetails]").on('submit', function (e) {
-                e.preventDefault();
-                let formData = $("[name=PaymentDetails]").valid();
+                let formData = $("[name=ExtendPayment]").valid();
 
                 if (formData) {
 
                     //Serialize the form datas.   
-                    var paymentData = $("[name=PaymentDetails] :input").serialize();
+                    var paymentData = $("[name=ExtendPayment] :input").serialize();
                     paymentData += '&nextBtn=Pay';
 
                     $.ajax({
                         type: "POST",
-                        url: '@Url.Action("PaymentDetails", "Account")',
+                        url: '@Url.Action("ExtendPayment", "Account")',
                         dataType: 'json',
                         data: paymentData,
                         contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
