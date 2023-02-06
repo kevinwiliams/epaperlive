@@ -51,34 +51,57 @@ namespace ePaperLive.Models
 
                             // One transaction at a time
                             var currentTransaction = currentTransactionData.PaymentDetails.FirstOrDefault(t => t.RateID == rateID && t.OrderNumber == orderNumber);
-
-                            if (currentTransaction.EnrolledIn3DSecure)
+                            // Needs something else to link it with
+                            var currentSubscription = currentTransactionData.SubscriptionDetails.LastOrDefault(s => s.StartDate.ToLongDateString() == currentTransaction.TranxDate.Value.ToLongDateString());
+                            if (!existingTransactionData.PaymentDetails.Any(t => t.RateID == rateID && t.OrderNumber == orderNumber))
                             {
-                                if (!existingTransactionData.PaymentDetails.Any(c => c.OrderNumber == orderNumber))
-                                {
-                                    existingTransactionData.PaymentDetails.Add(currentTransaction);
-                                }
-                                else
-                                {
-                                    // Remove and re add
-                                    var index = existingTransactionData.PaymentDetails.FindIndex(t => t.OrderID == rateID);
-                                    existingTransactionData.PaymentDetails.RemoveAt(index);
-                                    existingTransactionData.PaymentDetails.Add(currentTransaction);
-                                }
+                                existingTransactionData.PaymentDetails.Add(currentTransaction);
+                                existingTransactionData.SubscriptionDetails.Add(currentSubscription);
+
                             }
+                            else
+                            {
+                                // Remove and re add
+                                var index = existingTransactionData.PaymentDetails.FindIndex(t => t.RateID == rateID && t.OrderNumber == orderNumber);
+                                var subIndex = currentTransactionData.SubscriptionDetails.FindIndex(s => s.StartDate.ToLongDateString() == currentTransaction.TranxDate.Value.ToLongDateString());
+                                existingTransactionData.PaymentDetails.RemoveAt(index);
+                                existingTransactionData.PaymentDetails.Add(currentTransaction);
+
+                                existingTransactionData.SubscriptionDetails.RemoveAt(subIndex);
+                                existingTransactionData.SubscriptionDetails.Add(currentSubscription);
+                            }
+
+                            //if (currentTransaction.EnrolledIn3DSecure)
+                            //{
+                            //    if (!existingTransactionData.PaymentDetails.Any(c => c.OrderNumber == orderNumber))
+                            //    {
+                            //        existingTransactionData.PaymentDetails.Add(currentTransaction);
+                            //    }
+                            //    else
+                            //    {
+                            //        // Remove and re add
+                            //        var index = existingTransactionData.PaymentDetails.FindIndex(t => t.OrderID == rateID);
+                            //        existingTransactionData.PaymentDetails.RemoveAt(index);
+                            //        existingTransactionData.PaymentDetails.Add(currentTransaction);
+                            //    }
+                            //}
                         }
                         else
                         {
                             // Add new transaction for non-3D secure.
 
-                            var transaction = currentTransactionData.PaymentDetails.FirstOrDefault(t => t.OrderNumber == orderNumber);
+                            var transaction = currentTransactionData.PaymentDetails.FirstOrDefault(t => t.RateID == rateID && t.OrderNumber == orderNumber);
+                            
                             if (transaction != null)
                             {
+                                var currentSubscription = currentTransactionData.SubscriptionDetails.LastOrDefault(s => s.StartDate.ToLongDateString() == transaction.TranxDate.Value.ToLongDateString());
                                 existingTransactionData.PaymentDetails.Add(transaction);
+                                existingTransactionData.SubscriptionDetails.Add(currentSubscription);
                             }
 
                         }
-
+                        var updatedClientData = (CreateObject(existingTransactionData)).RootObject;
+                        lastSession.RootObject = updatedClientData;
 
                         /*
 
@@ -186,7 +209,7 @@ namespace ePaperLive.Models
             {
                 using (var db = new ApplicationDbContext())
                 {
-                    var session = await db.JOL_UserSession.FirstOrDefaultAsync(c => c.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+                    var session = await db.JOL_UserSession.Where(c => c.Email == email).OrderByDescending(t => t.TimeStamp).FirstOrDefaultAsync();
                     if (session != null)
                     {
                         return session;
