@@ -15,8 +15,13 @@ else
     }
     else
     {
-        
+
         rates = Model.Rates.ToList();
+    }
+
+    if (Model.IsRenewal)
+    {
+        rates = Model.Rates.Where(x => x.IsRenewalRate == Model.IsRenewal).ToList();
     }
 
     foreach (var plans in rates)

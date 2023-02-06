@@ -1310,7 +1310,7 @@ namespace ePaperLive.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult GetRatesList(string rateType)
+        public ActionResult GetRatesList(string rateType, bool isRenewal = false)
         {
             //rateType = (rateType != null) ? rateType : "Epaper";
             PrintSubRates model = new PrintSubRates();
@@ -1338,6 +1338,7 @@ namespace ePaperLive.Controllers
 
                     model.Rates = nratesList;
                     model.RateType = rateType;
+                    model.IsRenewal = isRenewal;
 
                     return PartialView("_RatesPartial", model);
                 }
@@ -1762,7 +1763,7 @@ namespace ePaperLive.Controllers
                     };
                 }
 
-                PaymentDetails trxDetails = authUser.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0);
+                PaymentDetails trxDetails = authUser.PaymentDetails.Where(x => x.TransactionID == 0).OrderByDescending(t => t.TranxDate).FirstOrDefault();
                 Subscriber_Tranx objTran = new Subscriber_Tranx();
                 if (trxDetails != null)
                 {
@@ -1877,8 +1878,8 @@ namespace ePaperLive.Controllers
                                     var result = context.subscriber_print.FirstOrDefault(x => x.SubscriberID == SubscriberID && x.IsActive == true);
                                     if (result != null)
                                     {
-                                        result.DeliveryInstructions = objP.DeliveryInstructions;
-                                        result.RateID = objP.RateID;
+                                        //result.DeliveryInstructions = objP.DeliveryInstructions;
+                                        //result.RateID = objP.RateID;
                                         result.EndDate = objP.EndDate.AddDays((double)selectedPlan.PrintTerm * 7);
                                         await context.SaveChangesAsync();
                                     }
@@ -1900,8 +1901,8 @@ namespace ePaperLive.Controllers
                                     var result = context.subscriber_epaper.FirstOrDefault(x => x.SubscriberID == SubscriberID && x.IsActive == true);
                                     if (result != null)
                                     {
-                                        result.RateID = (int)rateID;
-                                        result.EndDate = objP.EndDate.AddDays((double)selectedPlan.ETerm);
+                                        //result.RateID = (int)rateID;
+                                        result.EndDate = objE.EndDate.AddDays((double)selectedPlan.ETerm);
                                         await context.SaveChangesAsync();
                                     }
                                 }
@@ -1923,8 +1924,8 @@ namespace ePaperLive.Controllers
                                     var result = context.subscriber_print.FirstOrDefault(x => x.SubscriberID == SubscriberID && x.IsActive == true);
                                     if (result != null)
                                     {
-                                        result.DeliveryInstructions = objP.DeliveryInstructions;
-                                        result.RateID = objP.RateID;
+                                        //result.DeliveryInstructions = objP.DeliveryInstructions;
+                                        //result.RateID = objP.RateID;
                                         result.EndDate = objP.EndDate.AddDays((double)selectedPlan.PrintTerm * 7);
                                         await context.SaveChangesAsync();
                                     }
@@ -1944,8 +1945,8 @@ namespace ePaperLive.Controllers
                                     var result = context.subscriber_epaper.FirstOrDefault(x => x.SubscriberID == SubscriberID && x.IsActive == true);
                                     if (result != null)
                                     {
-                                        result.RateID = (int)rateID;
-                                        result.EndDate = objP.EndDate.AddDays((double)selectedPlan.ETerm);
+                                        //result.RateID = (int)rateID;
+                                        result.EndDate = objE.EndDate.AddDays((double)selectedPlan.ETerm);
                                         await context.SaveChangesAsync();
                                     }
                                 }
@@ -2305,7 +2306,7 @@ namespace ePaperLive.Controllers
                 subscriberID = (keys[0]);
                 rateID = (keys[1]);
                 var email = keys[3];
-
+                Session["userEmail"] = email;
 
                 var originalAmount = CardUtils.GetAmountFromString(keys[2]);
                 threedsparams.Amount = originalAmount;
@@ -2445,7 +2446,7 @@ namespace ePaperLive.Controllers
                             }
 
                             //send confirmation email
-                            var user = await UserManager.FindByNameAsync(clientData.EmailAddress);
+                            var user = await UserManager.FindByNameAsync(emailAddress);
                             string subject = "Subscription Confirmation (" + currentTransaction.SubType + ")";
                             string body = RenderViewToString(this.ControllerContext, "~/Views/Emails/ConfirmSubscription.cshtml", customerData);
                             await UserManager.SendEmailAsync(user.Id, subject, body);
@@ -2709,6 +2710,7 @@ namespace ePaperLive.Controllers
         }
         private void RemoveSubscriber()
         {
+
             Session.Remove("subscriber");
             Session.Remove("subscriber_address");
             Session.Remove("subscriber_epaper");
@@ -2723,6 +2725,16 @@ namespace ePaperLive.Controllers
                 Response.Cookies[cookie].Expires = DateTime.Now.AddDays(-1);
             }
 
+            using (var context = new ApplicationDbContext())
+            {
+                var email = Session["userEmail"];
+                var remove = context.JOL_UserSession.Where(x => x.Email == email.ToString()).FirstOrDefault();
+                if (remove != null)
+                {
+                    context.JOL_UserSession.Remove(remove);
+                    context.SaveChanges();
+                }
+            }
             Dispose(true);
         }
 

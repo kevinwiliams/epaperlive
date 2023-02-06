@@ -11,8 +11,8 @@ namespace ePaperLive.Models
     {
         [Key]
         public int RateID { get; set; }
-
         public string RateType { get; set; }
         public IEnumerable<printandsubrate> Rates { get; set; }
+        public bool IsRenewal { get; set; }
     }
 }

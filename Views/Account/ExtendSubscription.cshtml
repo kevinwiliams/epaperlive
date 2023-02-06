@@ -352,7 +352,7 @@
                 $.ajax({
                     type: "POST",
                     url: '@Url.Action("GetRatesList", "Account")',
-                    data: { rateType: rateType },
+                    data: { rateType: rateType, isRenewal: true },
                     success: function (result) {
                         //console.log(result);
                         $("#rates-results").html(result);
