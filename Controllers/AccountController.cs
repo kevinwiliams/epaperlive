@@ -878,7 +878,12 @@ namespace ePaperLive.Controllers
 
                         if (selectedPlan.Type == "Print")
                         {
-                            var endDate = data.EndDate = data.StartDate.AddDays((double)selectedPlan.PrintTerm * 7);
+
+                            var existingPrintPlan = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.isActive == true);
+                            data.StartDate = existingPrintPlan.EndDate;
+                            // This code doesn't extend the subscription fully.
+                            var endDate = data.EndDate = existingPrintPlan.EndDate.AddDays((double)selectedPlan.PrintTerm * 7);
+
                             SubscriptionDetails printSubscription = new SubscriptionDetails
                             {
                                 StartDate = data.StartDate,
@@ -905,7 +910,11 @@ namespace ePaperLive.Controllers
                         }
                         if (selectedPlan.Type == "Epaper")
                         {
-                            var endDate = data.EndDate = data.StartDate.AddDays((double)selectedPlan.ETerm);
+                            var existingEpaperPlan = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.isActive == true);
+                            data.StartDate = existingEpaperPlan.EndDate;
+                            // This code doesn't extend the subscription fully.
+                            var endDate = data.EndDate = existingEpaperPlan.EndDate.AddDays((double)selectedPlan.ETerm);
+                            //endDate.
                             SubscriptionDetails epaperSubscription = new SubscriptionDetails
                             {
                                 StartDate = data.StartDate,
@@ -922,7 +931,10 @@ namespace ePaperLive.Controllers
                         }
                         if (selectedPlan.Type == "Bundle")
                         {
-                            var pEndDate = data.EndDate = data.StartDate.AddDays(30);
+                            var existingPrintPlan = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.isActive == true);
+                            data.StartDate = existingPrintPlan.EndDate;
+                            // This code doesn't extend the subscription fully.
+                            var pEndDate = data.EndDate = existingPrintPlan.EndDate.AddDays((double)selectedPlan.PrintTerm * 7);
                             SubscriptionDetails printSubscription = new SubscriptionDetails
                             {
                                 StartDate = data.StartDate,
@@ -931,9 +943,12 @@ namespace ePaperLive.Controllers
                                 DeliveryInstructions = data.DeliveryInstructions,
                             };
                             //print subscription
-                            subscriptionDetails.Add(printSubscription);
 
-                            var eEndDate = data.EndDate = data.StartDate.AddDays((double)selectedPlan.PrintTerm * 7);
+                            subscriptionDetails.Add(printSubscription);
+                            var existingEpaperPlan = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.isActive == true);
+                            var eEndDate = data.StartDate = existingEpaperPlan.EndDate;
+                            // This code doesn't extend the subscription fully.
+                            var endDate = data.EndDate = existingEpaperPlan.EndDate.AddDays((double)selectedPlan.ETerm);
                             SubscriptionDetails epaperSubscription = new SubscriptionDetails
                             {
                                 StartDate = data.StartDate,
