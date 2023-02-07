@@ -2666,7 +2666,7 @@ namespace ePaperLive.Controllers
                                 CityTown = item.City,
                                 StateParish = item.State,
                                 ZipCode = item.Zip.ToString(),
-                                CountryCode = ConvertTwoLetterNameToThreeLetterName(item.Country),
+                                CountryCode = (item.Country != null) ? ConvertTwoLetterNameToThreeLetterName(item.Country) : "JAM",
                                 CreatedAt = item.SubscriptionStart
                             };
 
@@ -2676,7 +2676,7 @@ namespace ePaperLive.Controllers
                                 StartDate = item.SubscriptionStart,
                                 EndDate = item.SubscriptionEnd,
                                 RateID = rateID, //TODO
-                                SubType = (item.Country.Contains("complimentary")) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString(),
+                                SubType = (item.Country !=null && item.Country.Contains("complimentary")) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString(),
                                 IsActive = (item.SubscriptionStart > DateTime.Now && item.Active == "yes") ? true : false,
                                 EmailAddress = emailAddress,
                                 NotificationEmail = (item.Newsletter == "yes") ? true : false,
