@@ -2576,164 +2576,176 @@ namespace ePaperLive.Controllers
 
                     foreach (var item in result)
                     {
-                        TimeSpan difference = item.SubscriptionEnd - item.SubscriptionStart;
-                        var days = difference.TotalDays;
-                        var rateID = 0;
 
-                        //1   International Epaper  1 Month(30 Days)
-                        //2   International Epaper  1 Month(30 Days) - Free
-                        //3   International Epaper  12 Months(360 Days)
-                        //4   International Epaper  6 Months(180 Days)
-                        //31  Local Epaper  1 Month(30 Days)
-                        //32  Local Epaper  1 Month(30 Days) - Free
-                        //33  Local Epaper  1 Year(360 Days)
-                        //34  Local Epaper  6 Months(180 Days)
-                        if (days >= 360)
-                        {
-                            if (item.CardAmount < 300)
-                            {
-                                rateID = 3;
-                            }
-                            else {
-                                rateID = 33;
-                            }
+                        var isExist = IsEmailExist(item.Email);
+                        if (!isExist) {
+                            TimeSpan difference = item.SubscriptionEnd - item.SubscriptionStart;
+                            var days = difference.TotalDays;
+                            var rateID = 0;
 
-                        }
-                        if (days < 180 && days > 30)
-                        {
-                            if (item.CardAmount < 300)
+                            //1   International Epaper  1 Month(30 Days)
+                            //2   International Epaper  1 Month(30 Days) - Free
+                            //3   International Epaper  12 Months(360 Days)
+                            //4   International Epaper  6 Months(180 Days)
+                            //31  Local Epaper  1 Month(30 Days)
+                            //32  Local Epaper  1 Month(30 Days) - Free
+                            //33  Local Epaper  1 Year(360 Days)
+                            //34  Local Epaper  6 Months(180 Days)
+                            if (days >= 360)
                             {
-                                rateID = 4;
-                            }
-                            else
-                            {
-                                rateID = 34;
-                            }
-                        }
-
-                        if (days <= 30)
-                        {
-                            if (item.CardAmount < 300 && item.CardAmount > 0)
-                            {
-                                rateID = 1;
-                            }
-
-                            if (item.OrderId.ToLower().Contains("free30")) {
-                                if (item.Country == "jm")
-                                    rateID = 32;
+                                if (item.CardAmount < 300)
+                                {
+                                    rateID = 3;
+                                }
                                 else
-                                    rateID = 2;
+                                {
+                                    rateID = 33;
+                                }
+
                             }
-                        }
-
-                        string SubscriberID = "";
-                        int addressID = 0;
-                        string planDesc = "";
-
-                        var selectedPlan = context.printandsubrates.SingleOrDefault(b => b.Rateid == rateID);
-                        planDesc = selectedPlan.RateDescr;
-
-                        var emailAddress = item.Email;
-
-                        Subscriber objSub = new Subscriber
-                        {
-                            FirstName = item.Fname,
-                            LastName = item.Lname,
-                            EmailAddress = emailAddress,
-                            CreatedAt = DateTime.Now,
-                            IpAddress = item.Ip,
-                            IsActive = (item.Active == "yes") ? true : false,
-                            Secretquestion = item.SecretQuestion,
-                            Secretans = item.SecretAnswer
-                        };
-
-                        Subscriber_Address objAdd = new Subscriber_Address
-                        {
-                            EmailAddress = emailAddress,
-                            //address type M - Mailing --- B - Billing
-                            AddressType = "M",
-                            AddressLine1 = item.Address,
-                            //AddressLine2 = mailingAddress.AddressLine2,
-                            CityTown = item.City,
-                            StateParish = item.State,
-                            ZipCode = item.Zip.ToString(),
-                            CountryCode = ConvertTwoLetterNameToThreeLetterName(item.Country),
-                            CreatedAt = item.SubscriptionStart
-                        };
-
-                        Subscriber_Epaper objE = new Subscriber_Epaper
-                        {
-                            CreatedAt = item.SubscriptionStart,
-                            StartDate = item.SubscriptionStart,
-                            EndDate = item.SubscriptionEnd,
-                            RateID = rateID, //TODO
-                            SubType = (item.Country.Contains("complimentary")) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString(),
-                            IsActive = (item.SubscriptionStart > DateTime.Now && item.Active == "yes") ? true : false,
-                            EmailAddress = emailAddress,
-                            NotificationEmail = (item.Newsletter == "yes") ? true : false,
-                            PlanDesc = planDesc,
-                        };
-
-                        Subscriber_Tranx objTran = new Subscriber_Tranx
-                        {
-                            //save transaction
-                            EmailAddress = emailAddress,
-                            TranxDate = item.TransactionDate,
-                            RateID = rateID,
-                            IpAddress = item.Ip,
-                            CardOwner = item.CardOwnerName,
-                            CardType = (item.CardType.Contains("comp")) ? "COMP" : item.CardType.ToUpper(),
-                            CardExp = "00/00",
-                            CardLastFour = "0000",
-                            TranxAmount = (double)item.CardAmount,
-                            OrderID = item.OrderId,
-                            EnrolledIn3DSecure = true,
-                            PlanDesc = planDesc
-                        };
-
-                        var newAccount = new ApplicationUser
-                        {
-                            UserName = emailAddress,
-                            Email = emailAddress,
-                            Subscriber = objSub
-                        };
-                        //create application user
-                        var createAccount = await UserManager.CreateAsync(newAccount, item.Password);
-                        if (createAccount.Succeeded)
-                        {
-                            SubscriberID = newAccount.Id;
-
-                            var userRole = (newAccount.Email.Contains("jamaicaobserver.com")) ? "Staff" : "Subscriber";
-                            //assign User Role
-                            createAccount = await UserManager.AddToRoleAsync(SubscriberID, userRole);
-                            //save address
-                            objAdd.SubscriberID = SubscriberID;
-                            context.subscriber_address.Add(objAdd);
-                            await context.SaveChangesAsync();
-
-                            //get Address ID
-                            addressID = objAdd.AddressID;
-
-                            //update subscribers table w/ address ID
-                            var sub = context.subscribers.SingleOrDefault(b => b.SubscriberID == SubscriberID);
-                            if (sub != null)
+                            if (days < 360 && days > 30)
                             {
-                                sub.AddressID = addressID;
-                                await context.SaveChangesAsync();
+                                if (item.CardAmount < 300)
+                                {
+                                    rateID = 4;
+                                }
+                                else
+                                {
+                                    rateID = 34;
+                                }
                             }
+                            if (days <= 30)
+                            {
+                                if (item.CardAmount < 300 && item.CardAmount > 0)
+                                {
+                                    rateID = 1;
+                                }
+                                else
+                                {
+                                    rateID = 32;
+                                }
 
-                            //save epaper
-                            objE.SubscriberID = SubscriberID;
-                            context.subscriber_epaper.Add(objE);
-                            await context.SaveChangesAsync();
+                                if (item.OrderId.ToLower().Contains("free30"))
+                                {
+                                    if (item.Country == "jm")
+                                        rateID = 32;
+                                    else
+                                        rateID = 2;
+                                }
+                            }
+                           
 
-                            //save transaction
-                            context.subscriber_tranx.Add(objTran);
-                            await context.SaveChangesAsync();
+                            string SubscriberID = "";
+                            int addressID = 0;
+                            string planDesc = "";
 
-                            AddErrors(createAccount);
+                            var selectedPlan = context.printandsubrates.SingleOrDefault(b => b.Rateid == rateID);
+                            planDesc = selectedPlan.RateDescr;
 
+                            var emailAddress = item.Email;
+
+                            Subscriber objSub = new Subscriber
+                            {
+                                FirstName = item.Fname,
+                                LastName = item.Lname,
+                                EmailAddress = emailAddress,
+                                CreatedAt = DateTime.Now,
+                                IpAddress = item.Ip,
+                                IsActive = (item.Active == "yes") ? true : false,
+                                Secretquestion = item.SecretQuestion,
+                                Secretans = item.SecretAnswer
+                            };
+
+                            Subscriber_Address objAdd = new Subscriber_Address
+                            {
+                                EmailAddress = emailAddress,
+                                //address type M - Mailing --- B - Billing
+                                AddressType = "M",
+                                AddressLine1 = item.Address,
+                                //AddressLine2 = mailingAddress.AddressLine2,
+                                CityTown = item.City,
+                                StateParish = item.State,
+                                ZipCode = item.Zip.ToString(),
+                                CountryCode = ConvertTwoLetterNameToThreeLetterName(item.Country),
+                                CreatedAt = item.SubscriptionStart
+                            };
+
+                            Subscriber_Epaper objE = new Subscriber_Epaper
+                            {
+                                CreatedAt = item.SubscriptionStart,
+                                StartDate = item.SubscriptionStart,
+                                EndDate = item.SubscriptionEnd,
+                                RateID = rateID, //TODO
+                                SubType = (item.Country.Contains("complimentary")) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString(),
+                                IsActive = (item.SubscriptionStart > DateTime.Now && item.Active == "yes") ? true : false,
+                                EmailAddress = emailAddress,
+                                NotificationEmail = (item.Newsletter == "yes") ? true : false,
+                                PlanDesc = planDesc,
+                            };
+
+                            Subscriber_Tranx objTran = new Subscriber_Tranx
+                            {
+                                //save transaction
+                                EmailAddress = emailAddress,
+                                TranxDate = item.TransactionDate,
+                                RateID = rateID,
+                                IpAddress = item.Ip,
+                                CardOwner = item.CardOwnerName,
+                                CardType = (item.CardType.Contains("comp")) ? "COMP" : item.CardType.ToUpper().Trim(),
+                                CardExp = "00/00",
+                                CardLastFour = "0000",
+                                TranxAmount = (double)item.CardAmount,
+                                OrderID = item.OrderId,
+                                EnrolledIn3DSecure = false,
+                                PlanDesc = planDesc
+                            };
+
+                            var newAccount = new ApplicationUser
+                            {
+                                UserName = emailAddress,
+                                Email = emailAddress,
+                                Subscriber = objSub
+                            };
+                            //create application user
+                            var createAccount = await UserManager.CreateAsync(newAccount, item.Password);
+                            if (createAccount.Succeeded)
+                            {
+                                SubscriberID = newAccount.Id;
+
+                                var userRole = (newAccount.Email.Contains("jamaicaobserver.com")) ? "Staff" : "Subscriber";
+                                //assign User Role
+                                createAccount = await UserManager.AddToRoleAsync(SubscriberID, userRole);
+                                //save address
+                                objAdd.SubscriberID = SubscriberID;
+                                context.subscriber_address.Add(objAdd);
+                                await context.SaveChangesAsync();
+
+                                //get Address ID
+                                addressID = objAdd.AddressID;
+
+                                //update subscribers table w/ address ID
+                                var sub = context.subscribers.SingleOrDefault(b => b.SubscriberID == SubscriberID);
+                                if (sub != null)
+                                {
+                                    sub.AddressID = addressID;
+                                    await context.SaveChangesAsync();
+                                }
+
+                                //save epaper
+                                objE.SubscriberID = SubscriberID;
+                                context.subscriber_epaper.Add(objE);
+                                await context.SaveChangesAsync();
+
+                                //save transaction
+                                objTran.SubscriberID = SubscriberID;
+                                context.subscriber_tranx.Add(objTran);
+                                await context.SaveChangesAsync();
+
+                                AddErrors(createAccount);
+
+                            }
                         }
+                        
 
                     }
                     //return true;

@@ -29,9 +29,9 @@ namespace ePaperLive.DBModel
         [StringLength(50)]
         public string LastName { get; set; }
         public Nullable<System.DateTime> DateOfBirth { get; set; }
-        [StringLength(50)]
+        [StringLength(250)]
         public string Secretquestion { get; set; }
-        [StringLength(50)]
+        [StringLength(250)]
         public string Secretans { get; set; }
         [StringLength(50)]
         public string IpAddress { get; set; }

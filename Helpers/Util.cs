@@ -831,7 +831,8 @@ namespace ePaperLive
         {
             if (name.Length != 2)
             {
-                throw new ArgumentException("name must be two letters.");
+                //throw new ArgumentException("name must be two letters.");
+                return "JAM";
             }
 
             name = name.ToUpper();
