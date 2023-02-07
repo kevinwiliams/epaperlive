@@ -2578,11 +2578,53 @@ namespace ePaperLive.Controllers
                     {
                         TimeSpan difference = item.SubscriptionEnd - item.SubscriptionStart;
                         var days = difference.TotalDays;
+                        var rateID = 0;
 
+                        //1   International Epaper  1 Month(30 Days)
+                        //2   International Epaper  1 Month(30 Days) - Free
+                        //3   International Epaper  12 Months(360 Days)
+                        //4   International Epaper  6 Months(180 Days)
+                        //31  Local Epaper  1 Month(30 Days)
+                        //32  Local Epaper  1 Month(30 Days) - Free
+                        //33  Local Epaper  1 Year(360 Days)
+                        //34  Local Epaper  6 Months(180 Days)
+                        if (days >= 360)
+                        {
+                            if (item.CardAmount < 300)
+                            {
+                                rateID = 3;
+                            }
+                            else {
+                                rateID = 33;
+                            }
+
+                        }
+                        if (days < 180 && days > 30)
+                        {
+                            if (item.CardAmount < 300)
+                            {
+                                rateID = 4;
+                            }
+                            else
+                            {
+                                rateID = 34;
+                            }
+                        }
+
+                        if (days <= 30)
+                        {
+                            if (item.CardAmount < 300)
+                            {
+                                rateID = 1;
+                            }
+                            else
+                            {
+                                rateID = 31;
+                            }
+                        }
 
                         string SubscriberID = "";
                         int addressID = 0;
-                        var rateID = 0;
                         string planDesc = "";
 
                         var emailAddress = item.Email;
@@ -2594,7 +2636,9 @@ namespace ePaperLive.Controllers
                             EmailAddress = emailAddress,
                             CreatedAt = DateTime.Now,
                             IpAddress = item.Ip,
-                            IsActive = (item.Active == "yes") ? true : false
+                            IsActive = (item.Active == "yes") ? true : false,
+                            Secretquestion = item.SecretQuestion,
+                            Secretans = item.SecretAnswer
                         };
 
                         Subscriber_Address objAdd = new Subscriber_Address
@@ -2616,12 +2660,12 @@ namespace ePaperLive.Controllers
                             CreatedAt = item.SubscriptionStart,
                             StartDate = item.SubscriptionStart,
                             EndDate = item.SubscriptionEnd,
-                            RateID = 0, //TODO
+                            RateID = rateID, //TODO
                             SubType = (item.Country.Contains("complimentary")) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString(),
-                            IsActive = (item.Active == "yes") ? true : false,
+                            IsActive = (item.SubscriptionStart > DateTime.Now && item.Active == "yes") ? true : false,
                             EmailAddress = emailAddress,
                             NotificationEmail = (item.Newsletter == "yes") ? true : false,
-                            PlanDesc = planDesc
+                            PlanDesc = planDesc,
                         };
 
                         Subscriber_Tranx objTran = new Subscriber_Tranx
@@ -2629,12 +2673,12 @@ namespace ePaperLive.Controllers
                             //save transaction
                             EmailAddress = emailAddress,
                             TranxDate = item.TransactionDate,
-                            RateID = 0,
+                            RateID = rateID,
                             IpAddress = item.Ip,
                             CardOwner = item.CardOwnerName,
-                            CardType = item.CardType,
-                            CardExp = "",
-                            CardLastFour = "",
+                            CardType = (item.CardType.Contains("comp")) ? "COMP" : item.CardType.ToUpper(),
+                            CardExp = "00/00",
+                            CardLastFour = "0000",
                             TranxAmount = (double)item.CardAmount,
                             OrderID = item.OrderId,
                             EnrolledIn3DSecure = true,
