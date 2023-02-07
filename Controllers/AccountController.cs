@@ -2613,19 +2613,25 @@ namespace ePaperLive.Controllers
 
                         if (days <= 30)
                         {
-                            if (item.CardAmount < 300)
+                            if (item.CardAmount < 300 && item.CardAmount > 0)
                             {
                                 rateID = 1;
                             }
-                            else
-                            {
-                                rateID = 31;
+
+                            if (item.OrderId.ToLower().Contains("free30")) {
+                                if (item.Country == "jm")
+                                    rateID = 32;
+                                else
+                                    rateID = 2;
                             }
                         }
 
                         string SubscriberID = "";
                         int addressID = 0;
                         string planDesc = "";
+
+                        var selectedPlan = context.printandsubrates.SingleOrDefault(b => b.Rateid == rateID);
+                        planDesc = selectedPlan.RateDescr;
 
                         var emailAddress = item.Email;
 
