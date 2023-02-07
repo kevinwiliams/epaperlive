@@ -19,6 +19,7 @@ using Newtonsoft.Json;
 using DeviceDetectorNET;
 using ePaperLive.Models;
 using System.Web.Script.Serialization;
+using System.Globalization;
 
 namespace ePaperLive
 {
@@ -826,7 +827,31 @@ namespace ePaperLive
             }
         }
 
+        public static string ConvertTwoLetterNameToThreeLetterName(string name)
+        {
+            if (name.Length != 2)
+            {
+                throw new ArgumentException("name must be two letters.");
+            }
+
+            name = name.ToUpper();
+
+            CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
+            foreach (CultureInfo culture in cultures)
+            {
+                RegionInfo region = new RegionInfo(culture.LCID);
+                if (region.TwoLetterISORegionName.ToUpper() == name)
+                {
+                    return region.ThreeLetterISORegionName; //TwoLetterISORegionName
+                }
+            }
+
+            return null;
+        }
+
     }
+
+    
 
     public static class DateUtils
     {

@@ -1112,9 +1112,9 @@ namespace ePaperLive.Controllers
             //Test Data
             LoginDetails ld = new LoginDetails
             {
-                FirstName = "Dwayne",
-                LastName = "Mendez",
-                EmailAddress = "dwayne.mendez@live.net",
+                //FirstName = "Dwayne",
+                //LastName = "Mendez",
+                //EmailAddress = "dwayne.mendez@live.net",
             };
             return View("LoginDetails", ld);
         }
@@ -1167,11 +1167,11 @@ namespace ePaperLive.Controllers
                         //Test Data
                         AddressDetails ad = new AddressDetails
                         {
-                            AddressLine1 = "Lot 876 Scheme Steet",
-                            CityTown = "Hope Bay",
-                            StateParish = "Portland",
-                            ZipCode = "JAMWI",
-                            Phone = "876-875-8651",
+                            //AddressLine1 = "Lot 876 Scheme Steet",
+                            //CityTown = "Hope Bay",
+                            //StateParish = "Portland",
+                            //ZipCode = "JAMWI",
+                            //Phone = "876-875-8651",
                             CountryCode = countryCode,
                             CountryList = GetCountryList(),
                         };
@@ -1532,7 +1532,7 @@ namespace ePaperLive.Controllers
                             SubType = selectedPlan.Type,
                             BillingAddress = billingAddress,
                             //test data
-                            CardOwner = "Dwayne Mendez",
+                            //CardOwner = "Dwayne Mendez",
                         };
 
                         paymentDetailsList.Add(pd);
@@ -2558,6 +2558,146 @@ namespace ePaperLive.Controllers
             {
 
                 throw ex;
+            }
+
+        }
+
+        [AllowAnonymous]
+        public async Task<bool> MigrateUsers()
+        {
+            ApplicationDbContext db = new ApplicationDbContext();
+            try
+            {
+                using (var context = new ApplicationDbContext())
+                {
+                    var sql = @"SELECT * FROM eusers";
+
+                    var result = await context.Database.SqlQuery<Eusers>(sql).ToListAsync();
+
+                    foreach (var item in result)
+                    {
+                        TimeSpan difference = item.SubscriptionEnd - item.SubscriptionStart;
+                        var days = difference.TotalDays;
+
+
+                        string SubscriberID = "";
+                        int addressID = 0;
+                        var rateID = 0;
+                        string planDesc = "";
+
+                        var emailAddress = item.Email;
+
+                        Subscriber objSub = new Subscriber
+                        {
+                            FirstName = item.Fname,
+                            LastName = item.Lname,
+                            EmailAddress = emailAddress,
+                            CreatedAt = DateTime.Now,
+                            IpAddress = item.Ip,
+                            IsActive = (item.Active == "yes") ? true : false
+                        };
+
+                        Subscriber_Address objAdd = new Subscriber_Address
+                        {
+                            EmailAddress = emailAddress,
+                            //address type M - Mailing --- B - Billing
+                            AddressType = "M",
+                            AddressLine1 = item.Address,
+                            //AddressLine2 = mailingAddress.AddressLine2,
+                            CityTown = item.City,
+                            StateParish = item.State,
+                            ZipCode = item.Zip.ToString(),
+                            CountryCode = ConvertTwoLetterNameToThreeLetterName(item.Country),
+                            CreatedAt = item.SubscriptionStart
+                        };
+
+                        Subscriber_Epaper objE = new Subscriber_Epaper
+                        {
+                            CreatedAt = item.SubscriptionStart,
+                            StartDate = item.SubscriptionStart,
+                            EndDate = item.SubscriptionEnd,
+                            RateID = 0, //TODO
+                            SubType = (item.Country.Contains("complimentary")) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString(),
+                            IsActive = (item.Active == "yes") ? true : false,
+                            EmailAddress = emailAddress,
+                            NotificationEmail = (item.Newsletter == "yes") ? true : false,
+                            PlanDesc = planDesc
+                        };
+
+                        Subscriber_Tranx objTran = new Subscriber_Tranx
+                        {
+                            //save transaction
+                            EmailAddress = emailAddress,
+                            TranxDate = item.TransactionDate,
+                            RateID = 0,
+                            IpAddress = item.Ip,
+                            CardOwner = item.CardOwnerName,
+                            CardType = item.CardType,
+                            CardExp = "",
+                            CardLastFour = "",
+                            TranxAmount = (double)item.CardAmount,
+                            OrderID = item.OrderId,
+                            EnrolledIn3DSecure = true,
+                            PlanDesc = planDesc
+                        };
+
+                        var newAccount = new ApplicationUser
+                        {
+                            UserName = emailAddress,
+                            Email = emailAddress,
+                            Subscriber = objSub
+                        };
+                        //create application user
+                        var createAccount = await UserManager.CreateAsync(newAccount, item.Password);
+                        if (createAccount.Succeeded)
+                        {
+                            SubscriberID = newAccount.Id;
+
+                            var userRole = (newAccount.Email.Contains("jamaicaobserver.com")) ? "Staff" : "Subscriber";
+                            //assign User Role
+                            createAccount = await UserManager.AddToRoleAsync(SubscriberID, userRole);
+                            //save address
+                            objAdd.SubscriberID = SubscriberID;
+                            context.subscriber_address.Add(objAdd);
+                            await context.SaveChangesAsync();
+
+                            //get Address ID
+                            addressID = objAdd.AddressID;
+
+                            //update subscribers table w/ address ID
+                            var sub = context.subscribers.SingleOrDefault(b => b.SubscriberID == SubscriberID);
+                            if (sub != null)
+                            {
+                                sub.AddressID = addressID;
+                                await context.SaveChangesAsync();
+                            }
+
+                            //save epaper
+                            objE.SubscriberID = SubscriberID;
+                            context.subscriber_epaper.Add(objE);
+                            await context.SaveChangesAsync();
+
+                            //save transaction
+                            context.subscriber_tranx.Add(objTran);
+                            await context.SaveChangesAsync();
+
+                            AddErrors(createAccount);
+
+                        }
+
+                    }
+                    //return true;
+
+                }
+
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+                return false;
+
             }
 
         }
