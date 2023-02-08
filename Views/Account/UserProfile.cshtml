@@ -143,9 +143,20 @@
             </div>
             <div class="col-lg-4">
                 <div class="portfolio-info">
-                    <h3>Active Subscription</h3>
                     @if (ViewBag.plans != null)
                     {
+                        List<ePaperLive.Models.SubscriptionDetails> subDetails = (List<ePaperLive.Models.SubscriptionDetails>)ViewBag.plans;
+
+                        if (subDetails.FirstOrDefault(x => x.isActive == true).EndDate > DateTime.Now)
+                        {
+                            <h3>Current Subscription: <span class="text-success">Active</span> </h3>
+                        }
+                        else
+                        {
+                            <h3>Current Subscription: <span class="text-success">Inactive</span> </h3>
+
+                        }
+
                         foreach (var item in (List<ePaperLive.Models.SubscriptionDetails>)ViewBag.plans)
                         {
                             <p>@item.RateDescription</p>

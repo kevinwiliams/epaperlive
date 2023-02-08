@@ -730,6 +730,8 @@ namespace ePaperLive.Controllers
         [HttpPost]
         public ActionResult UserProfile(AuthSubcriber authSubcriber)
         {
+            AuthSubcriber authSubcriber = GetAuthSubscriber();
+            ViewBag.plans = authSubcriber.SubscriptionDetails;
 
             string authUser = User.Identity.GetUserId();
 
@@ -801,6 +803,7 @@ namespace ePaperLive.Controllers
         public ActionResult UpdateProfile() 
         {
             AuthSubcriber authSubcriber = GetAuthSubscriber();
+            ViewBag.plans = authSubcriber.SubscriptionDetails;
             ViewData["preloadSub"] = GetPreloadSub();
 
             List<SelectListItem> Addressparishes = GetParishes();
@@ -812,6 +815,7 @@ namespace ePaperLive.Controllers
         public ActionResult ExtendSubscription()
         {
             AuthSubcriber authSubcriber = GetAuthSubscriber();
+            ViewBag.plans = authSubcriber.SubscriptionDetails;
             SubscriptionDetails subscription = new SubscriptionDetails();
             subscription.StartDate = DateTime.Now;
 
@@ -2029,7 +2033,8 @@ namespace ePaperLive.Controllers
                                 SubType = "Epaper",
                                 NotificationEmail = false,
                                 RateType = "Epaper",
-                                RateDescription = "ePaper Coupon"
+                                RateDescription = "ePaper Coupon",
+                                isActive = true
 
                             };
                             authUser.SubscriptionDetails.Add(subscriptionDetails);
