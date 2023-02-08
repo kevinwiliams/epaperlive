@@ -730,7 +730,6 @@ namespace ePaperLive.Controllers
         [HttpPost]
         public ActionResult UserProfile(AuthSubcriber authSubcriber)
         {
-            AuthSubcriber authSubcriber = GetAuthSubscriber();
             ViewBag.plans = authSubcriber.SubscriptionDetails;
 
             string authUser = User.Identity.GetUserId();
