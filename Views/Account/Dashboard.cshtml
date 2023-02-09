@@ -30,12 +30,12 @@
                         <div class="row">
 
                             <div class="col-lg-8 d-flex">
-                                <p>Click the front page to read your ePaper or <a href="@Url.Action("ReadPaper", "Account")">click here</a></p>
+                                <p>Click the front page to read your ePaper or <a href="@Url.Action("ReadPaper", "Account")" target="_blank">click here</a></p>
 
                             </div>
                             <div class="col-lg-4 hero-img" data-aos="fade-right">
                                 <!-- Press Reader Front Page -->
-                                <a href="@Url.Action("ReadPaper", "Account")">
+                                <a href="@Url.Action("ReadPaper", "Account")" target="_blank">
                                     <img src="@String.Format("https://i.prcdn.co/img?cid=9IJ5&page=1&height=300?{0}", DateTime.Now.ToString("yyyyMMdd"))" class="img-fluid" alt="" style="border: 2px solid red;">
                                 </a>
 
@@ -74,19 +74,9 @@
                 </div>
                 <div class="col-lg-4">
                     <div class="portfolio-info">
+                        <h3>Current Subscription: <span class="text-success">Active</span> </h3>
                         @if (ViewBag.plans != null)
                         {
-                            List<ePaperLive.Models.SubscriptionDetails> subDetails = (List<ePaperLive.Models.SubscriptionDetails>)ViewBag.plans;
-
-                            if (subDetails.FirstOrDefault(x => x.isActive == true).EndDate > DateTime.Now)
-                            {
-                                <h3>Current Subscription: <span class="text-success">Active</span> </h3>
-                            }
-                            else { 
-                                <h3>Current Subscription: <span class="text-success">Inactive</span> </h3>
-                                
-                            }
-
                             foreach (var item in (List<ePaperLive.Models.SubscriptionDetails>)ViewBag.plans)
                             {
                                 <p>@item.RateDescription</p>
