@@ -2681,7 +2681,7 @@ namespace ePaperLive.Controllers
                                 EndDate = item.SubscriptionEnd,
                                 RateID = rateID, //TODO
                                 SubType = (item.Country !=null && item.Country.Contains("complimentary")) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString(),
-                                IsActive = (item.SubscriptionStart > DateTime.Now && item.Active == "yes") ? true : false,
+                                IsActive = (item.SubscriptionEnd > DateTime.Now && item.Active == "yes") ? true : false,
                                 EmailAddress = emailAddress,
                                 NotificationEmail = (item.Newsletter == "yes") ? true : false,
                                 PlanDesc = planDesc,
