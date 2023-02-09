@@ -17,6 +17,14 @@
                     </h2>
                     @*<a href="@Url.Action("Subscribe", "Account")" class="btn-get-started scrollto">Subscribe Now</a>*@
                     <a href="#pricing" class="btn-get-started scrollto">Subscribe Now</a>
+                    @if (ViewBag.Market == "JM")
+                    {
+                        <a href="" class="btn-get-started" name="subscribeNow" data-is-feature="false" data-sub-id="32" data-rate-type="Epaper" data-rate-price="JMD $0.00" data-bs-toggle="tooltip" data-bs-placement="top" title="Subscribe now">Read Free for a Month</a>
+                    }
+                    else
+                    {
+                        <a href="" class="btn-get-started" name="subscribeNow" data-is-feature="false" data-sub-id="2" data-rate-type="Epaper" data-rate-price="USD $0.00" data-bs-toggle="tooltip" data-bs-placement="top" title="Subscribe now">Read Free for a Month</a>
+                    }
                     <p class="my-3">&nbsp;</p>
                     @Html.ActionLink("Redeem Coupon", "redeemcoupon", "account")
                 </div>
@@ -46,9 +54,19 @@
         <div class="section-title" data-aos="fade-up">
             <h2>Featured Packages</h2>
             <p>Subscribe to trusted, insightful journalism and enjoy unlimited access online or offline. </p>
-            <button class="btn btn-link" name="subscribeNow" data-is-feature="false" data-sub-id="32" data-rate-type="Epaper" data-rate-price="JMD $0.00" data-bs-toggle="tooltip" data-bs-placement="top" title="Subscribe now">
-                Try our ePaper for ONE MONTH FREE*
-            </button>
+            @if (ViewBag.Market == "JM")
+            {
+                <button class="btn btn-link" name="subscribeNow" data-is-feature="false" data-sub-id="32" data-rate-type="Epaper" data-rate-price="JMD $0.00" data-bs-toggle="tooltip" data-bs-placement="top" title="Subscribe now">
+                    Try our ePaper for ONE MONTH FREE*
+                </button>
+            }
+            elses
+            {
+                <button class="btn btn-link" name="subscribeNow" data-is-feature="false" data-sub-id="2" data-rate-type="Epaper" data-rate-price="USD $0.00" data-bs-toggle="tooltip" data-bs-placement="top" title="Subscribe now">
+                    Try our ePaper for ONE MONTH FREE*
+                </button>
+            }
+
         </div>
 
         <div class="row justify-content-md-center">

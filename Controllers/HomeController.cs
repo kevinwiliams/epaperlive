@@ -16,7 +16,8 @@ namespace ePaperLive.Controllers
     {
         public ActionResult Index()
         {
-           
+            ViewBag.Market = GetSubscriberLocation().Country_Code;
+
             LoginDetails login = new LoginDetails
             {
                 location = GetSubscriberLocation()
