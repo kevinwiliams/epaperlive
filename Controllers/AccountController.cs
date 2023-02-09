@@ -2343,17 +2343,20 @@ namespace ePaperLive.Controllers
                     case PaymentStatus.Failed:
                         summary.FriendlyErrorMessages.Add(errMsg);
                         ViewBag.CountryList = GetCountryList();
+                        ClearDBSession(email);
                         return View("PaymentDetails", paymentDetails);
 
                     case PaymentStatus.InternalError:
                     case PaymentStatus.GatewayError:
                         summary.FriendlyErrorMessages.Add(errMsg);
                         ViewBag.CountryList = GetCountryList();
+                        ClearDBSession(email);
                         return View("PaymentDetails", paymentDetails);
 
                     default:
                         summary.FriendlyErrorMessages.Add(errMsg);
                         ViewBag.CountryList = GetCountryList();
+                        ClearDBSession(email);
                         return View("PaymentDetails", paymentDetails);
                         
                 }
@@ -2941,7 +2944,21 @@ namespace ePaperLive.Controllers
                     context.SaveChanges();
                 }
             }
+
             Dispose(true);
+        }
+
+        private void ClearDBSession(string email) {
+
+            using (var context = new ApplicationDbContext())
+            {
+                var remove = context.JOL_UserSession.Where(x => x.Email == email).FirstOrDefault();
+                if (remove != null)
+                {
+                    context.JOL_UserSession.Remove(remove);
+                    context.SaveChanges();
+                }
+            }
         }
 
         #region Helpers
