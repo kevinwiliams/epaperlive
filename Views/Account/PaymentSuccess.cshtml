@@ -72,7 +72,7 @@
                 <div class="col-lg-5">
                     <div class="portfolio-info">
                         <h3>Summary</h3>
-                       
+
                         @{
                             var desc = Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).RateDescription;
                             var term = Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).RateTerm;
@@ -112,28 +112,32 @@
                                 </span>
                             </li>
                         </ul>
-                        @if (Model.AddressDetails.Any(x => x.AddressType == "D"))
+                        @if (Model.AddressDetails != null)
                         {
-                            <br />
-                            <h6>Delivery Address</h6>
-                            <hr />
-                            <p>
-                                @{
-                                    var dAddress = @Model.AddressDetails.FirstOrDefault(x => x.AddressType == "D");
-                                }
+                            if (Model.AddressDetails.Any(x => x.AddressType == "D"))
+                            {
+                                <br />
+                                <h6>Delivery Address</h6>
+                                <hr />
+                                <p>
+                                    @{
+                                        var dAddress = @Model.AddressDetails.FirstOrDefault(x => x.AddressType == "D");
+                                    }
 
-                                @dAddress.AddressLine1<br />
-                                @if (!String.IsNullOrEmpty(dAddress.AddressLine2))
-                                {
-                                    @dAddress.AddressLine2<br />
-                                }
+                                    @dAddress.AddressLine1<br />
+                                    @if (!String.IsNullOrEmpty(dAddress.AddressLine2))
+                                    {
+                                        @dAddress.AddressLine2<br />
+                                    }
 
-                                @dAddress.CityTown<br />
-                                @dAddress.StateParish<br />
-                                @dAddress.CountryCode
+                                    @dAddress.CityTown<br />
+                                    @dAddress.StateParish<br />
+                                    @dAddress.CountryCode
 
-                            </p>
+                                </p>
+                            }
                         }
+                        
 
                     </div>
                     <!--

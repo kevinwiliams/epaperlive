@@ -120,23 +120,26 @@
                                     <table cellspacing="0" cellpadding="0" border="0" width="100%">
                                         <tr>
                                             <td style="padding: 40px; font-family: sans-serif; font-size: 15px; mso-height-rule: exactly; line-height: 20px; color: #555555;">
-                                                <p> Thank you @Model.FirstName, for subscribing to <strong>The Jamaica Observer 
-                                                    @switch (subtype)
-                                                    {
-                                                        case "Epaper":
-                                                            @("ePaper");
-                                                            break;
-                                                        case "Print":
-                                                            @("Print Edition");
-                                                            break;
-                                                        case "Bundle":
-                                                            @("ePaper & Print Edition");
-                                                            break;
-                                                        default:
-                                                            break;
-                                                    }
-                                                        </strong></p>
-                                            
+                                                <p>
+                                                    Thank you @Model.FirstName, for subscribing to <strong>
+                                                        The Jamaica Observer
+                                                        @switch (subtype)
+                                                        {
+                                                            case "Epaper":
+                                                                @("ePaper");
+                                                                break;
+                                                            case "Print":
+                                                                @("Print Edition");
+                                                                break;
+                                                            case "Bundle":
+                                                                @("ePaper & Print Edition");
+                                                                break;
+                                                            default:
+                                                                break;
+                                                        }
+                                                    </strong>
+                                                </p>
+
                                                 <p>
                                                     Please click the below link to login to
                                                     @switch (subtype)
@@ -161,11 +164,11 @@
                                                     <!-- Button : Begin -->
 
                                                 </p>
-                                                                                        
+
                                                 <table cellspacing="0" cellpadding="0" border="0" align="center" style="margin: auto;">
-                                                                                        
+
                                                     <tr>
-                                                                                        
+
                                                         <td style="border-radius: 3px; background: #222222; text-align: center;" class="button-td">
                                                             <a href="https://janus.jamaicaobserver.com/epaperstage/" style="background: #222222; border: 15px solid #222222; padding: 0 10px;color: #ffffff; font-family: sans-serif; font-size: 13px; line-height: 1.1; text-align: center; text-decoration: none; display: block; border-radius: 3px; font-weight: bold;" class="button-a">
                                                                 <!--[if mso]>&nbsp;&nbsp;&nbsp;&nbsp;<![endif]-->Login<!--[if mso]>&nbsp;&nbsp;&nbsp;&nbsp;<![endif]-->
@@ -177,112 +180,115 @@
                                                 <!-- Button : END -->
                                                 <br>
                                                 <h3>Subscription  Details</h3>
-                                                    <table width="100%" border="0" cellpadding="2">
-                                                        <tbody>
-                                                            <tr>
-                                                                <td><strong>Order Number</strong></td>
-                                                                <td>&nbsp;@Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).OrderNumber</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td><strong>Subscriber </strong></td>
-                                                                <td>&nbsp;@(Model.FirstName + " " + Model.LastName)</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td><strong>Plan Type</strong></td>
-                                                                <td>
-                                                                    @switch (subtype)
-                                                                    {
-                                                                        case "Epaper":
-                                                                        case "Print":
-                                                                            @Html.Raw("&nbsp;" + Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).SubType + " Only")
-                                                                            break;
-                                                                        case "Bundle":
-                                                                            @Html.Raw("&nbsp;Print &amp; ePaper " + Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).SubType);
-                                                                            break;
-                                                                        default:
-                                                                            break;
-                                                                    }
-
-                                                                </td>
-                                                            </tr>
-                                                            @{
-                                                                var desc = Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).RateDescription;
-                                                                var term = Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).RateTerm;
-
-                                                                if (subtype == "Print")
+                                                <table width="100%" border="0" cellpadding="2">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td><strong>Order Number</strong></td>
+                                                            <td>&nbsp;@Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).OrderNumber</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><strong>Subscriber </strong></td>
+                                                            <td>&nbsp;@(Model.FirstName + " " + Model.LastName)</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><strong>Plan Type</strong></td>
+                                                            <td>
+                                                                @switch (subtype)
                                                                 {
-                                                                    desc = desc + " (" + term + ")";
-                                                                }
-                                                                if (subtype == "Bundle")
-                                                                {
-                                                                    desc = desc.Split('/')[0] + " <br />" + desc.Split('/')[1];
+                                                                    case "Epaper":
+                                                                    case "Print":
+                                                                        @Html.Raw("&nbsp;" + Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).SubType + " Only")
+                                                                        break;
+                                                                    case "Bundle":
+                                                                        @Html.Raw("&nbsp;Print &amp; ePaper " + Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).SubType);
+                                                                        break;
+                                                                    default:
+                                                                        break;
                                                                 }
 
-                                                            }
-                                                            <tr>
-                                                                <td><strong>Description</strong></td>
-                                                                <td>
-                                                                    &nbsp;@Html.Raw(desc)
-                                                                </td>
-                                                            </tr>
-                                                            @if (Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.SubscriptionID == 0) != null)
-                                                            {
-                                                                <tr>
-                                                                    <td><strong>ePaper Subscription Period</strong></td>
-                                                                    <td>&nbsp;@Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.SubscriptionID == 0).StartDate.ToString("dd/MM/yyyy") - @Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.SubscriptionID == 0).EndDate.ToString("dd/MM/yyyy")</td>
-                                                                </tr>
-                                                            }
-                                                            @if (Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.SubscriptionID == 0) != null)
-                                                            {
-                                                                <tr>
-                                                                    <td><strong>Print Subscription Period</strong></td>
-                                                                    <td>&nbsp;@Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.SubscriptionID == 0).StartDate.ToString("dd/MM/yyyy") - @Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.SubscriptionID == 0).EndDate.ToString("dd/MM/yyyy")</td>
-                                                                </tr>
-                                                            }
-
-
-                                                            <tr>
-                                                                <td><strong>Email</strong></td>
-                                                                <td>&nbsp;@Model.EmailAddress</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td><strong>Payment</strong></td>
-                                                                <td>&nbsp;@String.Format("{0:C}", Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardAmount)</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td><strong>Card Number Ending</strong></td>
-                                                                <td>&nbsp;@Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardNumberLastFour ex: @Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardExp</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td><strong>Card Type</strong></td>
-                                                                <td>&nbsp;@Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardType.ToUpper()</td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-
-
-                                                @if (Model.AddressDetails.Any(x => x.AddressType == "D"))
-                                                {
-                                                    <br />
-                                                    <h3>Delivery Address</h3>
-                                                    <hr />
-                                                    <p>
+                                                            </td>
+                                                        </tr>
                                                         @{
-                                                            var dAddress = @Model.AddressDetails.FirstOrDefault(x => x.AddressType == "D" && x.AddressID == 0);
-                                                        }
+                                                            var desc = Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).RateDescription;
+                                                            var term = Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).RateTerm;
 
-                                                        @dAddress.AddressLine1<br />
-                                                        @if (!String.IsNullOrEmpty(dAddress.AddressLine2))
+                                                            if (subtype == "Print")
+                                                            {
+                                                                desc = desc + " (" + term + ")";
+                                                            }
+                                                            if (subtype == "Bundle")
+                                                            {
+                                                                desc = desc.Split('/')[0] + " <br />" + desc.Split('/')[1];
+                                                            }
+
+                                                        }
+                                                        <tr>
+                                                            <td><strong>Description</strong></td>
+                                                            <td>
+                                                                &nbsp;@Html.Raw(desc)
+                                                            </td>
+                                                        </tr>
+                                                        @if (Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.SubscriptionID == 0) != null)
                                                         {
-                                                            @dAddress.AddressLine2<br />
+                                                            <tr>
+                                                                <td><strong>ePaper Subscription Period</strong></td>
+                                                                <td>&nbsp;@Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.SubscriptionID == 0).StartDate.ToString("dd/MM/yyyy") - @Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.SubscriptionID == 0).EndDate.ToString("dd/MM/yyyy")</td>
+                                                            </tr>
+                                                        }
+                                                        @if (Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.SubscriptionID == 0) != null)
+                                                        {
+                                                            <tr>
+                                                                <td><strong>Print Subscription Period</strong></td>
+                                                                <td>&nbsp;@Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.SubscriptionID == 0).StartDate.ToString("dd/MM/yyyy") - @Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.SubscriptionID == 0).EndDate.ToString("dd/MM/yyyy")</td>
+                                                            </tr>
                                                         }
 
-                                                        @dAddress.CityTown<br />
-                                                        @dAddress.StateParish<br />
-                                                        @dAddress.CountryCode
 
-                                                    </p>
-                                                }.
+                                                        <tr>
+                                                            <td><strong>Email</strong></td>
+                                                            <td>&nbsp;@Model.EmailAddress</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><strong>Payment</strong></td>
+                                                            <td>&nbsp;@String.Format("{0:C}", Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardAmount)</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><strong>Card Number Ending</strong></td>
+                                                            <td>&nbsp;@Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardNumberLastFour ex: @Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardExp</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><strong>Card Type</strong></td>
+                                                            <td>&nbsp;@Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardType.ToUpper()</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+
+                                                @if (Model.AddressDetails != null)
+                                                {
+                                                    if (Model.AddressDetails.Any(x => x.AddressType == "D"))
+                                                    {
+                                                        <br />
+                                                        <h3>Delivery Address</h3>
+                                                        <hr />
+                                                        <p>
+                                                            @{
+                                                                var dAddress = @Model.AddressDetails.FirstOrDefault(x => x.AddressType == "D" && x.AddressID == 0);
+                                                            }
+
+                                                            @dAddress.AddressLine1<br />
+                                                            @if (!String.IsNullOrEmpty(dAddress.AddressLine2))
+                                                            {
+                                                                @dAddress.AddressLine2<br />
+                                                            }
+
+                                                            @dAddress.CityTown<br />
+                                                            @dAddress.StateParish<br />
+                                                            @dAddress.CountryCode
+
+                                                        </p>
+                                                    }
+                                                                                                    }
+
                                             </td>
                                         </tr>
                                     </table>

@@ -687,7 +687,7 @@ namespace ePaperLive.Controllers
                 ViewBag.address = authSubcriber.AddressDetails.ToList();
             if (authSubcriber.PaymentDetails != null)
                 ViewBag.payments = authSubcriber.PaymentDetails.ToList();
-            if (authSubcriber.SubscriptionDetails != null)
+            if (authSubcriber.SubscriptionDetails.Count() > 0)
             {
                 var startDate = authSubcriber.SubscriptionDetails.FirstOrDefault().StartDate;
                 var endDate = authSubcriber.SubscriptionDetails.FirstOrDefault().EndDate;
@@ -1694,7 +1694,11 @@ namespace ePaperLive.Controllers
 
             try
             {
-                AddressDetails mailingAddress = authUser.AddressDetails.FirstOrDefault(x => x.AddressType == "M" && x.AddressID == 0);
+                AddressDetails mailingAddress = null;
+
+                if (authUser.AddressDetails != null)
+                    mailingAddress = authUser.AddressDetails.FirstOrDefault(x => x.AddressType == "M" && x.AddressID == 0);
+                
                 Subscriber_Address objAdd = new Subscriber_Address();
                 if (mailingAddress != null)
                 {
@@ -1712,8 +1716,10 @@ namespace ePaperLive.Controllers
                         CreatedAt = DateTime.Now
                     };
                 }
+                AddressDetails deliveryAddress = null;
+                if (authUser.AddressDetails != null)
+                    deliveryAddress = authUser.AddressDetails.FirstOrDefault(x => x.AddressType == "D" && x.AddressID == 0);
 
-                AddressDetails deliveryAddress = authUser.AddressDetails.FirstOrDefault(x => x.AddressType == "D" && x.AddressID == 0);
                 Subscriber_Address objDelAdd = new Subscriber_Address();
                 if (deliveryAddress != null)
                 {
@@ -1831,11 +1837,14 @@ namespace ePaperLive.Controllers
                     //save address
                     if(!trxDetails.IsExtension)
                     {
-                        objAdd.SubscriberID = SubscriberID;
-                        context.subscriber_address.Add(objAdd);
-                        await context.SaveChangesAsync();
+                        if (mailingAddress != null)
+                        {
+                            objAdd.SubscriberID = SubscriberID;
+                            context.subscriber_address.Add(objAdd);
+                            await context.SaveChangesAsync();
+                        }
+                        
                     }
-
 
                     //save delivery address
                     if (deliveryAddress != null)
@@ -2070,6 +2079,101 @@ namespace ePaperLive.Controllers
             ViewBag.Parishes = new SelectList(Addressparishes, "Value", "Text");
             ViewBag.CountryList = GetCountryList();
 
+            return View();
+        }
+
+        [AllowAnonymous]
+        public ActionResult FreeMonth()
+        {
+            AuthSubcriber authUser = new AuthSubcriber();
+            authUser.RedeemCode = "FREEMONTH";
+           
+
+
+            return View(authUser);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> FreeMonth(AuthSubcriber authUser, string nextBtn)
+        {
+            authUser.SubscriptionDetails = new List<SubscriptionDetails>();
+            authUser.PaymentDetails = new List<PaymentDetails>();
+
+            if (nextBtn != null)
+            {
+                if (ModelState.IsValid)
+                {
+                    var isExist = IsEmailExist(authUser.EmailAddress);
+                    if (isExist)
+                    {
+                        ModelState.AddModelError("EmailExist", "Email address is already assigned. Please use forget password option to log in");
+                        return View(authUser);
+                    }
+
+                    using (var context = new ApplicationDbContext())
+                    {
+                        var result = context.coupons.FirstOrDefault(x => x.CouponCode == authUser.RedeemCode && x.UsedDate == null && x.ExpiryDate >= DateTime.Now);
+                        if (result != null)
+                        {
+                            var market = GetUserLocation().Country_Code;
+                            var rateID = (market == "JM") ? 32 : 2;
+                            var currency = (market == "JM") ? "JMD" : "USD";
+
+                            var selectedPlan = context.printandsubrates.FirstOrDefault(x => x.Rateid == rateID);
+                            
+
+                            var endDate = DateTime.Now.AddDays((double)result.SubDays);
+
+                            SubscriptionDetails subscriptionDetails = new SubscriptionDetails
+                            {
+                                StartDate = DateTime.Now,
+                                EndDate = endDate,
+                                RateID = rateID,
+                                SubType = "Epaper",
+                                NotificationEmail = false,
+                                RateType = "Epaper",
+                                RateDescription = "1 Month (30 Days) - Free"
+
+                            };
+                            authUser.SubscriptionDetails.Add(subscriptionDetails);
+
+                            PaymentDetails pd = new PaymentDetails
+                            {
+                                RateID = rateID,
+                                RateDescription = "1 Month (30 Days) - Free",
+                                RateTerm = "",
+                                Currency = currency,
+                                CardAmount = 0,
+                                SubType = "Epaper",
+                                CardType = "N/A",
+                                //test data
+                                CardOwner = authUser.FirstName + " " + authUser.LastName,
+                                OrderNumber = "Complimentary:Coupon",
+                            };
+                            authUser.PaymentDetails.Add(pd);
+
+
+                            JOL_UserSession session;
+                            var sessionRepository = new SessionRepository();
+                            session = sessionRepository.CreateObject(authUser);
+                            var isSaved = await sessionRepository.AddOrUpdate(pd.OrderNumber, session, rateID, authUser);
+
+                            var saved = await SaveSubscriptionInfoAsync(authUser);
+                            if (saved)
+                            {
+                                //await CompleteTransactionProcess(pd.RateID, pd.OrderNumber, authUser.EmailAddress);
+                                return View("PaymentSuccess", authUser);
+                            }
+                        }
+                        ModelState.AddModelError("InvalidCode", "Invalid Code");
+
+                    }
+                }
+            }
+
+         
             return View();
         }
 

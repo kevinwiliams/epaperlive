@@ -642,6 +642,7 @@
     <Content Include="Views\Subscribers\Create.cshtml" />
     <Content Include="Views\Subscribers\Index.cshtml" />
     <Content Include="Views\Subscribers\Edit.cshtml" />
+    <Content Include="Views\Account\FreeMonth.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\roslyn\" />

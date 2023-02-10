@@ -1,0 +1,124 @@
+﻿@model ePaperLive.Models.AuthSubcriber
+
+@{
+    ViewBag.Title = "Redeem Free Month";
+}
+
+<div id="main">
+
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+        <div class="container">
+
+            <ol>
+                <li><a href="@Url.Action("index", "home")">Home</a></li>
+                <li>@ViewData["Title"]</li>
+            </ol>
+            <h2>@ViewData["Title"]</h2>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+
+    <!-- ======= Wizard Section ======= -->
+    <section id="portfolio-details" class="portfolio-details">
+        <div class="container">
+
+            <div class="row gy-4">
+                <div class="col-lg-8">
+
+                    <!-- start:wizrd -->
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-horizontal">
+
+                            @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                            <div class="row form-horizontal">
+                                <p>Please provide your basic information to get started.</p>
+                                <hr />
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                @*@System.Globalization.RegionInfo.CurrentRegion.DisplayName*@
+                                <div class="offset-md-1 col-md-5 p-2">
+                                    <div class="form-group">
+                                        @*@Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label" })*@
+                                        <div class="col-md-10">
+                                            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.FirstName) } })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-5 p-2">
+                                    <div class="form-group">
+                                        @*@Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label" })*@
+                                        <div class="col-md-10">
+                                            @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.LastName) } })
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group p-2">
+                                    @*@Html.LabelFor(model => model.EmailAddress, htmlAttributes: new { @class = "control-label col-md-4" })*@
+                                    <div class="offset-md-1 col-md-8">
+                                        @Html.EditorFor(model => model.EmailAddress, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.EmailAddress) } })
+                                    </div>
+                                </div>
+
+                                <div class="offset-md-1 col-md-5 p-2">
+                                    <div class="form-group">
+                                        @*@Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label" })*@
+                                        <div class="col-md-10">
+                                            @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.Password) } })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-5 p-2">
+                                    <div class="form-group">
+                                        @*@Html.LabelFor(model => model.ConfirmPassword, htmlAttributes: new { @class = "control-label" })*@
+                                        <div class="col-md-10">
+                                            @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @autocomplete = "off", @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.ConfirmPassword) } })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr>
+                                <div class="offset-md-1 form-group p-3">
+                                    @Html.LabelFor(model => model.RedeemCode, htmlAttributes: new { @class = "control-label " })
+                                    <div class="col-md-4">
+                                        @Html.EditorFor(model => model.RedeemCode, new { htmlAttributes = new { @class = "form-control text-bg-warning", placeholder = Html.DisplayNameFor(model => model.RedeemCode) } })
+                                        @*@Html.ValidationMessageFor(model => model.phone, "", new { @class = "text-danger" })*@
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            
+                            <div class="col-12">
+                                <small>
+                                    Your information will be used in accordance with our <a href="~/home/privacypolicy/">Privacy Policy</a>, and may be used to contact you if you do not complete your purchase to check if you need any support. <br />
+                                    <br />
+                                    By clicking Redeem Code, you agree to the <a href="~/home/TermsCondition/">Terms Of Use</a>, and the <a href="~/home/privacypolicy/">Privacy Policy</a>.
+                                </small>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-12 pt-3">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <input type="submit" value="Redeem Coupon" name="nextBtn" id="nextBtn" class="btn btn-sign-in bx-pull-right" />
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <!-- end:wizrd -->
+                </div>
+                <div class="col-lg-4">
+                    @Html.Partial("_SubcriptionSummary")
+                </div>
+            </div>
+        </div>
+    </section><!-- End Wizard Section -->
+
+</div>
