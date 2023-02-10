@@ -1,7 +1,7 @@
 ﻿@model ePaperLive.Models.AuthSubcriber
 
 @{
-    ViewBag.Title = "Redeem Free Month";
+    ViewBag.Title = "Read For Free";
 }
 
 <div id="main">
@@ -82,6 +82,8 @@
                                 </div>
 
                                 <hr>
+                                <small class="px-3">We've entered the coupon for you but just in case you are not seeing it, please enter "READFORFREE30DAYS" in the field below</small>
+
                                 <div class="offset-md-1 form-group p-3">
                                     @Html.LabelFor(model => model.RedeemCode, htmlAttributes: new { @class = "control-label " })
                                     <div class="col-md-4">
@@ -104,7 +106,7 @@
                                 <div class="col-md-offset-2 col-md-12 pt-3">
                                     <div class="row">
                                         <div class="col-12">
-                                            <input type="submit" value="Redeem Coupon" name="nextBtn" id="nextBtn" class="btn btn-sign-in bx-pull-right" />
+                                            <input type="submit" value="CLICK HERE TO REDEEM COUPON" name="nextBtn" id="nextBtn" class="btn btn-sign-in bx-pull-left" />
                                         </div>
                                     </div>
 

@@ -2055,18 +2055,24 @@ namespace ePaperLive.Controllers
                                 Currency = "JMD",
                                 CardAmount = 0,
                                 SubType = "Epaper",
-                                                                
+                                CardType =  "N/A",                                                                
                                 //test data
                                 CardOwner = authUser.FirstName + " " + authUser.LastName,
                                 OrderNumber = "Complimentary : Coupon",
                             };
                             authUser.PaymentDetails.Add(pd);
 
+
+                            JOL_UserSession session;
+                            var sessionRepository = new SessionRepository();
+                            session = sessionRepository.CreateObject(authUser);
+                            var isSaved = await sessionRepository.AddOrUpdate(pd.OrderNumber, session, 61, authUser);
+
                             var saved = await SaveSubscriptionInfoAsync(authUser);
                             if (saved)
                             {
                                 //await CompleteTransactionProcess(pd.RateID, pd.OrderNumber, authUser.EmailAddress);
-                                return View("PaymentSuccess");
+                                return View("PaymentSuccess", authUser);
                             }
                         }
                         ModelState.AddModelError("InvalidCode", "Invalid Code");
@@ -2086,10 +2092,8 @@ namespace ePaperLive.Controllers
         public ActionResult FreeMonth()
         {
             AuthSubcriber authUser = new AuthSubcriber();
-            authUser.RedeemCode = "FREEMONTH";
-           
 
-
+            authUser.RedeemCode = "READFORFREE30DAYS";
             return View(authUser);
         }
 
