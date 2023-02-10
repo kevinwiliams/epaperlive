@@ -40,11 +40,20 @@ namespace ePaperLive.Controllers.Admin.Subscribers
         }
 
         // GET: Subscribers/Edit/5
-        [Route("edit/{id:int}")]
-        public async Task<ActionResult> Edit(int? id)
+        [Route("edit/{id}")]
+        public async Task<ActionResult> Edit(string id)
         {
-            ViewBag.Roles = new SelectList(db.Roles.Where(u => !u.Name.Contains("Admins"))
+            var rolesList = new List<SelectListItem>();
+            var userRoles = new SelectList(db.Roles.Where(u => !u.Name.Contains("Admins"))
                                     .ToList(), "Name", "Name");
+
+            foreach (var role in userRoles)
+            {
+                rolesList.Add(new SelectListItem { Text = role.Text, Value = role.Value });
+            }
+
+            ViewBag.Roles = rolesList;
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -60,8 +69,7 @@ namespace ePaperLive.Controllers.Admin.Subscribers
                     WHERE AspNetUsers.Id = @Id";
             var idParam = new SqlParameter("Id", id);
 
-            var result = await db.Database.SqlQuery<UsersWithRoles>(sql).ToListAsync();
-
+            UsersWithRoles result = await db.Database.SqlQuery<UsersWithRoles>(sql, idParam).FirstOrDefaultAsync();
             if (result == null)
             {
                 return HttpNotFound();
