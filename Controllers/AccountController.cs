@@ -2210,7 +2210,7 @@ namespace ePaperLive.Controllers
                 var billingDetails = new BillingDetails();
                 var shippingDetails = new ShippingDetails();
                 //TODO: Recurring Payments Setup
-                //transactionDetails.TransactionCode = 4096; //2048 – Subsequent Recurring – future recurring payments : 4096 – Initial Recurring – First Payment in a recurring cycle : 8192 - **HOST SPECIFIC – Initial Recurring for “Free - Trials”
+                transactionDetails.TransactionCode = 8; //2048 – Subsequent Recurring – future recurring payments : 4096 – Initial Recurring – First Payment in a recurring cycle : 8192 - **HOST SPECIFIC – Initial Recurring for “Free - Trials”
                 var recurringDetails = new RecurringDetails
                 {
                     IsRecurring = true,
