@@ -2491,7 +2491,7 @@ namespace ePaperLive.Controllers
 
             try
             {
-                var savedTransaction = await appDbOther.subscriber_tranx.FirstOrDefaultAsync(t => t.OrderID == orderNumber);
+                var savedTransaction = await appDbOther.subscriber_tranx.FirstOrDefaultAsync(t => t.OrderID == orderNumber && t.EmailAddress == emailAddress);
 
                 if (savedTransaction != null)
                 {

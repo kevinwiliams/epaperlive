@@ -149,12 +149,25 @@ namespace ePaperLive.Controllers
                     mb.homephone = String.Empty;
                     mb.workareacode = String.Empty;
                     mb.workphone = String.Empty;
-                    mb.address = result.Subscriber_Address.FirstOrDefault(x => x.AddressType == "M").AddressLine1;
-                    mb.apartment = result.Subscriber_Address.FirstOrDefault(x => x.AddressType == "M").AddressLine2;
-                    mb.city = result.Subscriber_Address.FirstOrDefault(x => x.AddressType == "M").CityTown;
-                    mb.province = result.Subscriber_Address.FirstOrDefault(x => x.AddressType == "M").StateParish;
-                    mb.postalcode = result.Subscriber_Address.FirstOrDefault(x => x.AddressType == "M").ZipCode;
-                    mb.country = result.Subscriber_Address.FirstOrDefault(x => x.AddressType == "M").CountryCode;
+                    if (result.Subscriber_Address.Count() > 0)
+                    {
+                        mb.address = result.Subscriber_Address.FirstOrDefault(x => x.AddressType == "M").AddressLine1;
+                        mb.apartment = result.Subscriber_Address.FirstOrDefault(x => x.AddressType == "M").AddressLine2;
+                        mb.city = result.Subscriber_Address.FirstOrDefault(x => x.AddressType == "M").CityTown;
+                        mb.province = result.Subscriber_Address.FirstOrDefault(x => x.AddressType == "M").StateParish;
+                        mb.postalcode = result.Subscriber_Address.FirstOrDefault(x => x.AddressType == "M").ZipCode;
+                        mb.country = result.Subscriber_Address.FirstOrDefault(x => x.AddressType == "M").CountryCode;
+                    }
+                    else
+                    {
+                        mb.address = String.Empty;
+                        mb.apartment = String.Empty;
+                        mb.city = String.Empty;
+                        mb.province = String.Empty;
+                        mb.postalcode = String.Empty;
+                        mb.country = String.Empty;
+                    }
+                    
                     mb.gender = String.Empty;
                     mb.nickname = result.FirstName + " " + result.LastName;
                     mb.subscription = subscriptionCode;
