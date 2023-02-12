@@ -67,16 +67,20 @@
                                 <div class="offset-md-1 col-md-5 p-2">
                                     <div class="form-group">
                                         @*@Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label" })*@
-                                        <div class="col-md-10">
+                                        <div class="col-md-10 position-relative">
                                             @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.Password) } })
+                                            <i class="fa-solid fa-eye" id="eye"></i>
+
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-5 p-2">
                                     <div class="form-group">
                                         @*@Html.LabelFor(model => model.ConfirmPassword, htmlAttributes: new { @class = "control-label" })*@
-                                        <div class="col-md-10">
+                                        <div class="col-md-10 position-relative">
                                             @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @autocomplete = "off", @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.ConfirmPassword) } })
+                                            <i class="fa-solid fa-eye" id="eyeC"></i>
+
                                         </div>
                                     </div>
                                 </div>
@@ -124,3 +128,25 @@
     </section><!-- End Wizard Section -->
 
 </div>
+@section scripts{
+    <script>
+         const passwordInput = $("#Password");
+        const passwordConfirmInput = $("#ConfirmPassword");
+        const eye = $("#eye");
+        const eyeC = $("#eyeC");
+
+        $(eye).click(function() {
+          $(this).toggleClass("fa-eye-slash");
+          const type = $(passwordInput).attr("type") === "password" ? "text" : "password";
+          $(passwordInput).attr("type", type);
+        });
+
+        $(eyeC).click(function() {
+          $(this).toggleClass("fa-eye-slash");
+          const typeC = $(passwordConfirmInput).attr("type") === "password" ? "text" : "password";
+          $(passwordConfirmInput).attr("type", typeC);
+        });
+
+     </script>
+    
+    }
