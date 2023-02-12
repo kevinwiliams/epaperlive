@@ -27,7 +27,7 @@
             <div class="col-lg-6 order-1 order-lg-2 hero-img" data-aos="fade-left">
                 <!-- Press Reader Front Page -->
                 @*<img src="https://i.prcdn.co/img?cid=9IJ5&page=1&height=450" class="img-fluid" alt="" id="frontpage" style="border: 2px solid red;">*@
-                <img src="@String.Format("https://i.prcdn.co/img?cid=9IJ5&page=1&height=450?{0}", DateTime.Now.ToString("yyyyMMdd"))" class="img-fluid" alt="" id="frontpage" style="border: 2px solid red;">
+                <img src="@String.Format("https://i.prcdn.co/img?cid=9IJ5&page=1&height=450?{0}", DateTime.Now.ToString("yyyyMMddssfffffffK"))" class="img-fluid" alt="" id="frontpage" style="border: 2px solid red;">
             </div>
         </div>
     </div>
@@ -232,7 +232,7 @@
             </li>
 
             <li>
-                <div data-bs-toggle="collapse" href="#faq6" class="collapsed question">How may past issues do I have access to on the ePaper? <i class="bi bi-chevron-down icon-show"></i><i class="bi bi-chevron-up icon-close"></i></div>
+                <div data-bs-toggle="collapse" href="#faq6" class="collapsed question">How many past issues do I have access to on the ePaper? <i class="bi bi-chevron-down icon-show"></i><i class="bi bi-chevron-up icon-close"></i></div>
                 <div id="faq6" class="collapse" data-bs-parent=".faq-list">
                     <p>
                         Two (2) weeks.
@@ -281,7 +281,7 @@
 
             <div class="col-lg-7 mt-5 mt-lg-0 d-flex align-items-stretch" data-aos="fade-left">
 
-                @using (Html.BeginForm("Index", "Home", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "php-email-form", role = "form" }))
+                @using (Html.BeginForm("Index", "Home", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "php-email-form", role = "form", name = "feedBackForm"}))
 
                 {
                     @Html.AntiForgeryToken()
@@ -327,7 +327,7 @@
                         <div class="error-message"></div>
                         <div class="sent-message">Your message has been sent. Thank you!</div>
                     </div>
-                    <div class="text-center"><button type="submit">Send Message</button></div>
+                    <div class="text-center"><button type="submit" id="feedbackBtn">Send Message</button></div>
                 }
 
 
@@ -341,8 +341,31 @@
     <script>
         $(document).ready(function () {
             //$("[name=subscribeNow]").click((e) => e.preventDefault());
-            $("[name=subscribeNow]").click((e) => {
+            $("#feedbackBtn").click((e) => {
+                e.preventDefault();
 
+
+                let formData = $("[name=feedBackForm]").valid();
+                if (formData) {
+                    var feebBackFormData = $("[name=feedBackForm] :input").serialize();
+
+                     $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("index","home")',
+                        data: feebBackFormData,
+                        success: function (result) {
+                            //console.log(result['data']);
+                            $("[name=feedBackForm] :input").val('');
+                            
+                            swal({
+                              title: "Success!",
+                               text: "Thanks for your feeback!",
+                              type: "success",
+                              dangerMode: false
+                           });
+                        }
+                    });
+                }
             });
 
             $("[name=subscribeNow]").on("click", function (e) {

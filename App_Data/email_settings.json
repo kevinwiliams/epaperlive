@@ -11,6 +11,7 @@
   //"bcc_print": "circulation@jamaicaobserver.com, williamskt@jamaicaobserver.com, morgano@jamaicaobserver.com, wainwrightk@jamaicaobserver.com",
   "bcc_epaper": "williamskt@jamaicaobserver.com",
   //"bcc_epaper": "morgano@jamaicaobserver.com",
+  "feedback_email": "williamskt@jamaicaobserver.com",
   "paymentInbox": {
     "testing": "caribbusinessreport@gmail.com",
     "production": "payments@jamaicaobserver.com.com"
