@@ -602,7 +602,7 @@ namespace ePaperLive.Controllers
                                         RateID = epaper.RateID,
                                         StartDate = epaper.StartDate,
                                         EndDate = epaper.EndDate,
-                                        RateDescription = (ratesList.Where(X => X.Rateid == epaper.RateID).Count() > 0) ? ratesList.FirstOrDefault(X => X.Rateid == epaper.RateID).RateDescr : "Complimentary",
+                                        RateDescription = epaper.PlanDesc,
                                         SubType = (ratesList.Where(X => X.Rateid == epaper.RateID).Count() > 0) ? ratesList.FirstOrDefault(X => X.Rateid == epaper.RateID).Type : "Epaper",
                                         isActive = epaper.IsActive,
                                         SubscriptionID = epaper.Subscriber_EpaperID,
@@ -622,7 +622,7 @@ namespace ePaperLive.Controllers
                                         RateID = print.RateID,
                                         StartDate = print.StartDate,
                                         EndDate = print.EndDate,
-                                        RateDescription = ratesList.FirstOrDefault(X => X.Rateid == print.RateID).RateDescr,
+                                        RateDescription = print.PlanDesc,
                                         isActive = print.IsActive,
                                         SubscriptionID = print.Subscriber_PrintID,
                                         RateType = "Print"
@@ -665,7 +665,7 @@ namespace ePaperLive.Controllers
                                         CardOwner = payments.CardOwner,
                                         CardType = payments.CardType,
                                         TranxDate = payments.TranxDate,
-                                        RateDescription = (ratesList.Where(X => X.Rateid == payments.RateID).Count() > 0) ? ratesList.FirstOrDefault(X => X.Rateid == payments.RateID).RateDescr : "Complimentary",
+                                        RateDescription = payments.PlanDesc,
                                         TransactionID = payments.Subscriber_TranxID
                                     };
                                     PaymentsList.Add(paymentDetails);
@@ -687,10 +687,10 @@ namespace ePaperLive.Controllers
                 ViewBag.address = authSubcriber.AddressDetails.ToList();
             if (authSubcriber.PaymentDetails != null)
                 ViewBag.payments = authSubcriber.PaymentDetails.ToList();
-            if (authSubcriber.SubscriptionDetails.Count() > 0)
+            if (authSubcriber.SubscriptionDetails != null)
             {
-                var startDate = authSubcriber.SubscriptionDetails.FirstOrDefault().StartDate;
-                var endDate = authSubcriber.SubscriptionDetails.FirstOrDefault().EndDate;
+                var startDate = authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).StartDate;
+                var endDate = authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).EndDate;
                 ViewBag.plans = authSubcriber.SubscriptionDetails;
                 ViewBag.dates = startDate.GetWeekdayInRange(endDate, DayOfWeek.Monday);
             }
@@ -709,11 +709,17 @@ namespace ePaperLive.Controllers
             {
                 AuthSubcriber authSubcriber = GetAuthSubscriber();
                 List<SubscriptionDetails> subscriptionDetails = authSubcriber.SubscriptionDetails;
-                return View(subscriptionDetails);
+                if (subscriptionDetails != null)
+                {
+                    return View(subscriptionDetails);
+                }
+                else 
+                {
+                    return View("dashboard");
+                }
             }
             catch (Exception)
             {
-
                 return View("dashboard");
             }
             
@@ -2154,7 +2160,7 @@ namespace ePaperLive.Controllers
                                 CardType = "N/A",
                                 //test data
                                 CardOwner = authUser.FirstName + " " + authUser.LastName,
-                                OrderNumber = "Complimentary:Coupon",
+                                OrderNumber = "FreeTrial:Coupon",
                             };
                             authUser.PaymentDetails.Add(pd);
 

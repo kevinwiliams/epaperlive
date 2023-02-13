@@ -1,4 +1,4 @@
-﻿@using BotDetect.Web.Mvc;
+﻿@using ePaperLive.Models
 @model ePaperLive.Models.FeedbackFormModel
 
 @{ ViewBag.Title = "Home Page"; }
@@ -16,15 +16,15 @@
                         Subscribe to the Jamaica Observer digital replica of the printed newspaper or have it delivered nationwide* directly at your doorstep.
                     </h2>
                     @*<a href="@Url.Action("Subscribe", "Account")" class="btn-get-started scrollto">Subscribe Now</a>*@
-                    <a href="#pricing" class="btn-get-started scrollto">Subscribe Now</a>
+                    <a href="#pricing" class="btn-get-started scrollto mb-2">Subscribe Now</a>
                     <a href="@Url.Action("freemonth", "account")" class="btn-get-started scrollto">Read Free for a Month</a>
 
-                   
+
                     <p class="my-3">&nbsp;</p>
                     @Html.ActionLink("Redeem Coupon", "redeemcoupon", "account")
                 </div>
             </div>
-            <div class="col-lg-6 order-1 order-lg-2 hero-img" data-aos="fade-left">
+            <div class="col-lg-6 order-1 order-lg-2 hero-img  text-sm-left text-md-center text-lg-center" data-aos="fade-left">
                 <!-- Press Reader Front Page -->
                 @*<img src="https://i.prcdn.co/img?cid=9IJ5&page=1&height=450" class="img-fluid" alt="" id="frontpage" style="border: 2px solid red;">*@
                 <img src="@String.Format("https://i.prcdn.co/img?cid=9IJ5&page=1&height=450?{0}", DateTime.Now.ToString("yyyyMMddssfffffffK"))" class="img-fluid" alt="" id="frontpage" style="border: 2px solid red;">
@@ -35,10 +35,10 @@
 </section>
 <!-- End Hero -->
 <!-- start: adspot -->
-<div id="adspot" class="p-5 text-center d-none d-md-block">
+<div id="adspot" class="p-lg-5 text-center d-none d-md-none d-lg-block">
     <img src="@Url.Content("~/assets/img/clients/jdx-970x90.jfif")">
 </div>
-<div id="adspot" class="p-3 text-center d-block d-sm-none">
+<div id="adspot" class="p-3 text-center d-block d-sm-none d-md-block d-lg-none">
     <img src="@Url.Content("~/assets/img/clients/lw-300x250.jfif")">
 </div>
 <!-- end: adspot -->
@@ -50,29 +50,24 @@
             <h2>Featured Packages</h2>
             <p>Subscribe to trusted, insightful journalism and enjoy unlimited access online or offline. </p>
             <a href="@Url.Action("freemonth", "account")" class="btn-get-started scrollto">Read Free for a Month</a>
-
-
         </div>
 
         <div class="row justify-content-md-center">
-
             <!-- featured packages-->
             @Html.Action("GetFeaturedPackages", "Home")
-
             <!-- end featured packages-->
         </div>
 
     </div>
-
-    <!-- start: adspot -->
-    <div id="adspot" class="p-5 text-center d-none d-md-block">
-        <img src="@Url.Content("~/assets/img/clients/lw-970x90.jfif")">
-    </div>
-    <div id="adspot" class="p-3 text-center d-block d-sm-none">
-        <img src="@Url.Content("~/assets/img/clients/lw-300x250.jfif")">
-    </div>
 </section>
 <!-- End Pricing Section -->
+<!-- start: adspot -->
+<div id="adspot" class="p-lg-5 text-center d-none d-md-none d-lg-block">
+    <img src="@Url.Content("~/assets/img/clients/lw-970x90.jfif")">
+</div>
+<div id="adspot" class="p-3 text-center d-block d-sm-none d-md-block d-lg-none">
+    <img src="@Url.Content("~/assets/img/clients/lw-300x250.jfif")">
+</div>
 <!-- ======= Features Section ======= -->
 <section id="features" class="features">
     <div class="container">
@@ -114,10 +109,10 @@
     </div>
 </section><!-- End Cta Section -->
 <!-- start: adspot -->
-<div id="adspot" class="p-5 text-center d-none d-md-block">
+<div id="adspot" class="p-lg-5 text-center d-none d-md-none d-lg-block">
     <img src="@Url.Content("~/assets/img/clients/jdx-970x90.jfif")">
 </div>
-<div id="adspot" class="p-3 text-center d-block d-sm-none">
+<div id="adspot" class="p-3 text-center d-block d-sm-none d-md-block d-lg-none">
     <img src="@Url.Content("~/assets/img/clients/lw-300x250.jfif")">
 </div>
 <!-- ======= Features Section ======= -->
@@ -184,7 +179,7 @@
                 <div data-bs-toggle="collapse" class="collapsed question" href="#faq1">How can I contact Customer Services? <i class="bi bi-chevron-down icon-show"></i><i class="bi bi-chevron-up icon-close"></i></div>
                 <div id="faq1" class="collapse" data-bs-parent=".faq-list">
                     <p>
-                        If you have any questions or concerns, please call us on 876 018 5177 (free from a landline) or 876 7022 6620 (charged at your network providers standard rate). Call us Monday – Fri 8:30am to 5:00pm.
+                        If you have any questions or concerns, please call us on 876 926 7655 (charged at your network providers standard rate). Call us Monday – Fri 8:30am to 5:00pm.
 
                     </p><p>
                         Alternatively, email us at info@jamaicaobserver.com
@@ -196,7 +191,7 @@
                 <div data-bs-toggle="collapse" href="#faq2" class="collapsed question">Can I cancel my subscription?? <i class="bi bi-chevron-down icon-show"></i><i class="bi bi-chevron-up icon-close"></i></div>
                 <div id="faq2" class="collapse" data-bs-parent=".faq-list">
                     <p>
-                        You can cancel your subscription by calling Customer Services on 876 068 4965. Call us Monday – Friday 8:30am to 5:00pm. If you wish to cancel your subscription after your minimum term, you must call us at least 2 days before your next billing date. For print subscriptions, please contact us at least 15 days before your next billing date.
+                        You can cancel your subscription by calling Customer Services on 876 926 7655. Call us Monday – Friday 8:30am to 5:00pm. If you wish to cancel your subscription after your minimum term, you must call us at least 2 days before your next billing date. For print subscriptions, please contact us at least 15 days before your next billing date.
                     </p>
                     <p>
                         If you cancel within 14 days of the start of your subscription, we will refund any payments received from you using the same method of payment that you used to purchase your subscription. You will not be entitled to a refund of your initial payment if you cancel after the first 14 days of the start of your subscription.
@@ -235,7 +230,7 @@
                 <div data-bs-toggle="collapse" href="#faq6" class="collapsed question">How many past issues do I have access to on the ePaper? <i class="bi bi-chevron-down icon-show"></i><i class="bi bi-chevron-up icon-close"></i></div>
                 <div id="faq6" class="collapse" data-bs-parent=".faq-list">
                     <p>
-                        Two (2) weeks.
+                        30 days
                     </p>
                 </div>
             </li>
@@ -281,7 +276,7 @@
 
             <div class="col-lg-7 mt-5 mt-lg-0 d-flex align-items-stretch" data-aos="fade-left">
 
-                @using (Html.BeginForm("Index", "Home", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "php-email-form", role = "form", name = "feedBackForm"}))
+                @using (Html.BeginForm("Index", "Home", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "php-email-form", role = "form", name = "feedBackForm" }))
 
                 {
                     @Html.AntiForgeryToken()
@@ -307,27 +302,13 @@
                         @*@Html.LabelFor(model => model.Message, new { @class = "col-md-2 control-label" })<br>*@
                         @Html.TextAreaFor(model => model.Message, new { @class = "form-control", required = "required", placeholder = Html.DisplayNameFor(model => model.Message) })
                         @Html.ValidationMessageFor(model => model.Message, "", new { @class = "text-danger" })
+                        <p>&nbsp;</p>
+                        @Html.GoogleCaptcha()
+                        @Html.InvalidGoogleCaptchaLabel("Captcha is not valid !")
+
                     </div>
-                    <div>
-                        @Html.Label("CaptchaCode", "Retype the code from the picture: ")
-                        @{ MvcCaptcha feedbackCaptcha = new MvcCaptcha("FeedbackCaptcha");
-                            feedbackCaptcha.UserInputID = "CaptchaCode";}
-                        @Html.Captcha(feedbackCaptcha)
-                    </div>
-                    <div class="actions">
-                        @Html.TextBox("CaptchaCode", "", new { required = "required" })
-                        @Html.ValidationMessage("CaptchaCode", new { @class = "text-danger" })
-                        @if ((Request.HttpMethod == "POST") && ViewData.ModelState.IsValid)
-                        {
-                            <span class="correct">Correct!</span>
-                        }
-                    </div>
-                    <div class="my-3">
-                        <div class="loading">Loading</div>
-                        <div class="error-message"></div>
-                        <div class="sent-message">Your message has been sent. Thank you!</div>
-                    </div>
-                    <div class="text-center"><button type="submit" id="feedbackBtn">Send Message</button></div>
+
+                    <div class="pt-3"><button type="submit" id="feedbackBtn">Send Message</button></div>
                 }
 
 
@@ -339,30 +320,56 @@
 </section><!-- End Contact Section -->
 @section scripts{
     <script>
+        function ReloadPage() {
+            location.reload();
+        }
+
         $(document).ready(function () {
             //$("[name=subscribeNow]").click((e) => e.preventDefault());
-            $("#feedbackBtn").click((e) => {
+           $("#feedbackBtn").click((e) => {
                 e.preventDefault();
 
 
                 let formData = $("[name=feedBackForm]").valid();
                 if (formData) {
-                    var feebBackFormData = $("[name=feedBackForm] :input").serialize();
+                    var feebBackFormData = $("[name=feedBackForm]").serialize();
+
 
                      $.ajax({
                         type: "POST",
                         url: '@Url.Action("index","home")',
                         data: feebBackFormData,
-                        success: function (result) {
-                            //console.log(result['data']);
-                            $("[name=feedBackForm] :input").val('');
-                            
-                            swal({
-                              title: "Success!",
-                               text: "Thanks for your feeback!",
-                              type: "success",
-                              dangerMode: false
-                           });
+                         success: function (result) {
+                            //var response = JSON.stringify(result);
+                             //console.log((result));
+                             var contactSection = $($.parseHTML(result)).filter('section#contact').html();
+                             var captchaResult = $($.parseHTML(contactSection)).find('span#captcha_code').html();
+                             //console.log(captchaResult);
+                             if (captchaResult) {
+                                 swal({
+                                     title: "Error!",
+                                     text: captchaResult,
+                                     type: "warning",
+                                     dangerMode: true
+                                 });
+                             } else {
+
+                                 $("[name=feedBackForm] :input").val('');
+
+                                  swal({
+                                      title: "Success!",
+                                       text: "Thanks for your feeback!",
+                                      type: "success",
+                                      dangerMode: false
+                                  });
+
+                                 setTimeout(
+                                    ReloadPage
+                                , 2000);
+                             }
+                             //console.log((contactSection.html()));
+
+
                         }
                     });
                 }
@@ -374,7 +381,7 @@
                 let plan = e.target.dataset;
                 let rateText = (plan.isFeature == "true") ? $("[name=rateText]").val() : e.target.innerText;
                 freq = (plan.isFeature == "true") ? plan.delFreq : freq;
-               
+
                 let rateType = plan.rateType + '|' + rateText + '|' + plan.rateDesc + '|' + plan.ratePrice + '|' + freq;
                 let rateId = plan.subId;
                 //console.log(rateType);

@@ -49,12 +49,6 @@
     <Reference Include="BCrypt.Net-Next, Version=4.0.3.0, Culture=neutral, PublicKeyToken=1e11be04b6288443, processorArchitecture=MSIL">
       <HintPath>packages\BCrypt.Net-Next.4.0.3\lib\net472\BCrypt.Net-Next.dll</HintPath>
     </Reference>
-    <Reference Include="BotDetect, Version=4.4.2.0, Culture=neutral, PublicKeyToken=74616036388b765f, processorArchitecture=MSIL">
-      <HintPath>packages\Captcha.4.4.2\lib\net35\BotDetect.dll</HintPath>
-    </Reference>
-    <Reference Include="BotDetect.Web.Mvc, Version=4.4.2.0, Culture=neutral, PublicKeyToken=74616036388b765f, processorArchitecture=MSIL">
-      <HintPath>packages\Captcha.4.4.2\lib\net35\BotDetect.Web.Mvc.dll</HintPath>
-    </Reference>
     <Reference Include="DeviceDetector.NET, Version=4.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\DeviceDetector.NET.4.3.2\lib\net461\DeviceDetector.NET.dll</HintPath>
     </Reference>
@@ -337,6 +331,7 @@
     <Compile Include="DBModel\subscriber_print.cs" />
     <Compile Include="DBModel\subscriber_tranx.cs" />
     <Compile Include="Filters\BasicAuthenticationAttribute.cs" />
+    <Compile Include="Filters\ValidateGoogleCaptchaAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -350,6 +345,7 @@
     <Compile Include="Models\Eusers.cs" />
     <Compile Include="Models\DeliveryAddress.cs" />
     <Compile Include="Models\AddressDetails.cs" />
+    <Compile Include="Models\GoogleRecaptcha.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\LoginDetails.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
@@ -391,6 +387,7 @@
     <Content Include="assets\img\cta-bg.jpg" />
     <Content Include="assets\img\epaper-jol-logo.png" />
     <Content Include="assets\img\epaper-logo.png" />
+    <Content Include="assets\img\epaper-print-logo.png" />
     <Content Include="assets\img\fac.jpg" />
     <Content Include="assets\img\favicon.png" />
     <Content Include="assets\img\features-1.png" />

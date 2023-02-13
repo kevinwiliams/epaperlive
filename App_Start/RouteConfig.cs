@@ -14,9 +14,6 @@ namespace ePaperLive
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapMvcAttributeRoutes();
-            // BotDetect requests must not be routed
-            routes.IgnoreRoute("{*botdetect}",
-            new { botdetect = @"(.*)BotDetectCaptcha\.ashx" });
 
             routes.MapRoute(
                 name: "Default",

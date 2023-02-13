@@ -54,7 +54,7 @@ namespace ePaperLive.Views.Admin.Rates
         [HttpPost]
         [Route("create")]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Rateid,Market,Type,RateDescr,PrintDayPattern,PrintTerm,PrintTermUnit,EDayPattern,ETerm,ETermUnit,Curr,Rate,SortOrder,Active,IntroRate,OfferIntroRate,IsFeatured,IsCTA,FeatureList,BestDealFlag")] printandsubrate printandsubrate)
+        public ActionResult Create([Bind(Include = "Rateid,Market,Type,RateDescr,PrintDayPattern,PrintTerm,PrintTermUnit,EDayPattern,ETerm,ETermUnit,Curr,Rate,SortOrder,Active,IntroRate,OfferIntroRate,IsFeatured,IsCTA,FeatureList,BestDealFlag,IsRenewalRate")] printandsubrate printandsubrate)
         {
             if (ModelState.IsValid)
             {
@@ -88,7 +88,7 @@ namespace ePaperLive.Views.Admin.Rates
         [HttpPost]
         [Route("edit/{id:int}")]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Rateid,Market,Type,RateDescr,PrintDayPattern,PrintTerm,PrintTermUnit,EDayPattern,ETerm,ETermUnit,Curr,Rate,SortOrder,Active,IntroRate,OfferIntroRate,IsFeatured,IsCTA,FeatureList,BestDealFlag")] printandsubrate printandsubrate)
+        public ActionResult Edit([Bind(Include = "Rateid,Market,Type,RateDescr,PrintDayPattern,PrintTerm,PrintTermUnit,EDayPattern,ETerm,ETermUnit,Curr,Rate,SortOrder,Active,IntroRate,OfferIntroRate,IsFeatured,IsCTA,FeatureList,BestDealFlag,IsRenewalRate")] printandsubrate printandsubrate)
         {
             if (ModelState.IsValid)
             {

@@ -8,7 +8,6 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using ePaperLive.Filters;
-using BotDetect.Web.Mvc;
 using Microsoft.AspNet.Identity;
 
 using System.Net.Mail;
@@ -16,6 +15,7 @@ using System.Net.Mime;
 using System.Web.Configuration;
 using System.IO;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace ePaperLive.Controllers
 {
@@ -31,24 +31,20 @@ namespace ePaperLive.Controllers
             };
 
             if (Request.IsAuthenticated) {
-                return RedirectToAction("Dashboard", "Account");
+                return RedirectToAction("dashboard", "account");
             }
 
             return View();
         }
 
+        
+
         [HttpPost]
-        [CaptchaValidationActionFilter("CaptchaCode", "FeedbackCaptcha", "Incorrect!")]
+        [ValidateAntiForgeryToken]
+        [ValidateGoogleCaptcha]
+        //[CaptchaValidationActionFilter("CaptchaCode", "FeedbackCaptcha", "Incorrect!")]
         public async System.Threading.Tasks.Task<ActionResult> Index(FeedbackFormModel model)
         {
-            //TODO: Send Mail
-            //var accCtrl = new AccountController();
-            var user = model.Email;
-            string subject = model.Subject;
-            string body = model.Message;
-            //await accCtrl.UserManager.SendEmailAsync(user, subject, body);
-
-            MvcCaptcha.ResetCaptcha("FeedbackCaptcha");
 
             var jsonFile = System.IO.File.ReadAllText(System.Web.HttpContext.Current.Server.MapPath("~/App_Data/email_settings.json"));
             var settings = JObject.Parse(jsonFile);
@@ -64,29 +60,37 @@ namespace ePaperLive.Controllers
 
             int port;
 
-            SmtpClient smtp = new SmtpClient();
-            smtp.Host = smtp_host;
-            smtp.Port = (int.TryParse(portNumber, out port) ? port : 25);
-            smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
-            smtp.UseDefaultCredentials = true;
+            if (ModelState.IsValid)
+            {
+                //TODO: Send Mail
+                var user = model.Email;
+                string subject = model.Subject;
+                string body = model.Message;
 
-            var newMsg = new MailMessage();
-            var mailSubject = subject;
-            newMsg.To.Add(feedBackEmails);
+                SmtpClient smtp = new SmtpClient();
+                smtp.Host = smtp_host;
+                smtp.Port = (int.TryParse(portNumber, out port) ? port : 25);
+                smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                smtp.UseDefaultCredentials = true;
 
-           
-            newMsg.From = new MailAddress(user, model.Name);
-            newMsg.Subject = mailSubject;
-            newMsg.Body = body;
-            newMsg.IsBodyHtml = true;
+                var newMsg = new MailMessage();
+                var mailSubject = subject;
+                newMsg.To.Add(feedBackEmails);
 
-            var credentials = new NetworkCredential(userName, pwd);
-            smtp.Credentials = credentials;
-            smtp.EnableSsl = bool.Parse(ssl_enabled);
 
-            // Send
-            await smtp.SendMailAsync(newMsg);
+                newMsg.From = new MailAddress(user, model.Name);
+                newMsg.Subject = mailSubject;
+                newMsg.Body = body;
+                newMsg.IsBodyHtml = true;
 
+                var credentials = new NetworkCredential(userName, pwd);
+                smtp.Credentials = credentials;
+                smtp.EnableSsl = bool.Parse(ssl_enabled);
+
+                // Send
+                await smtp.SendMailAsync(newMsg);
+                return RedirectToAction("index");
+            }
 
             return View(model);
         }
