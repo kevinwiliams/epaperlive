@@ -178,6 +178,8 @@ else
                             @foreach (var plans in Model.Rates.Where(x => x.Type == "Bundle").OrderBy(s => s.SortOrder))
                             {
                                 var ratePrice = (plans.OfferIntroRate) ? plans.IntroRate : plans.Rate; 
+                                var newLine = plans.RateDescr.Split('/')[1];
+                                var discount = (newLine.Split('@').Count() > 1) ? "(" + newLine.Split('@')[1].Trim() + ")": "";
 
                             <div class="value p-2">
                                 <button class="btn btn-link" name="subscribeNow"
@@ -186,7 +188,7 @@ else
                                         data-rate-type="@(plans.Type)"
                                         data-rate-price="@(plans.Curr + " " + String.Format("{0:C}", ratePrice))"
                                         data-bs-toggle="tooltip" data-bs-placement="top" title="Subscribe now">
-                                    @(" " + plans.RateDescr.Split('/')[0]) <br /> @(plans.RateDescr.Split('/')[1])
+                                    @(" " + plans.RateDescr.Split('/')[0]) <br /> @(newLine.Split('@')[0]) <strong class="text-success">@(discount)</strong>
                                 </button>
                                 <br />
                                 @if (plans.OfferIntroRate == true)
