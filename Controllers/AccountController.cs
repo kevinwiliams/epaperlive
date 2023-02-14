@@ -2884,6 +2884,13 @@ namespace ePaperLive.Controllers
             }
 
         }
+        [AllowAnonymous]
+        public ActionResult DeliveryZones()
+        {
+            List<SelectListItem> Addressparishes = GetParishes();
+            ViewBag.Parishes = new SelectList(Addressparishes, "Value", "Text");
+            return View();
+        }
 
         private Subscriber GetSubscriber()
         {

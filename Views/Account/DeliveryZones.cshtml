@@ -1,0 +1,105 @@
+﻿
+@{
+    ViewBag.Title = "Delivery Zones";
+}
+
+    <div id="main">
+
+        <!-- ======= Breadcrumbs ======= -->
+        <section id="breadcrumbs" class="breadcrumbs">
+            <div class="container">
+
+                <ol>
+                    <li><a href="@Url.Action("index", "home")">Home</a></li>
+                    <li>@ViewData["Title"]</li>
+                </ol>
+                <h2>@ViewData["Title"]</h2>
+
+            </div>
+        </section><!-- End Breadcrumbs -->
+        <!-- ======= Wizard Section ======= -->
+        <section id="portfolio-details" class="portfolio-details">
+            <div class="container">
+
+                <div class="row gy-4">
+                    <div class="col-lg-8">
+                        <!-- start:wizrd -->
+                        <div class="row form-horizontal">
+
+                            <div class="col-md-12">
+                                <div class="form-group p-2">
+                                    <div class="col-md-12">
+                                        <p>Select your parish below to see the available/current delivery zones</p>
+                                        @Html.DropDownList("StateParish", ViewBag.Parishes as SelectList, "Select a parish", new { @class = "form-control", id = "StateParish" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 pt-3">
+                                <table class="table table-striped" id="zoneTable">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                Current Delivery Zones
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="zoneList">
+                                        <tr>
+                                            <td>Please select a parish to view available delivery options</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                                
+
+
+                            </div>
+                        <!-- end:wizrd -->
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="portfolio-info">
+                            <h3 class="text-danger">Notice</h3>
+                            <p class="p-3 small">Contact us at <a href="mailto:circulation@jamaicaobserver.com">circulation@jamaicaobserver.com</a> if your district/town is not listed.</p>
+                        </div>
+                     
+                    </div>
+
+                </div>
+
+            </div>
+        </section><!-- End Wizard Section -->
+
+    </div>
+
+@section scripts {
+    <script type="text/jscript">
+
+    $(function () {
+
+        $('#StateParish').change(function () {
+            let parish = $('#StateParish').val();
+            var items = '';
+
+            if (parish) {
+                $.getJSON('@Url.Action("DistrictList","Account")?Id=' + parish, function (data) {
+
+                    $("#zoneTable").DataTable().clear();
+                    var row = 1;
+
+                      $.each(data, function (i, district) {
+                       $('#zoneTable').dataTable().fnAddData( [
+                                district.Text
+                              ]);
+
+                           row++;
+                    });
+
+                });
+            }
+
+        });
+    });
+    </script>
+    }
+
