@@ -21,6 +21,10 @@ using FACGatewayService;
 using FACGatewayService.FACPG;
 using System.Runtime.Caching;
 using System.IO;
+using Newtonsoft.Json.Linq;
+using ePaperLive.Filters;
+using System.Net.Mail;
+using System.Net;
 
 namespace ePaperLive.Controllers
 {
@@ -595,66 +599,67 @@ namespace ePaperLive.Controllers
 
                             //Epaper subscriptions
                         if (tableData.Subscriber_Epaper.Count() > 0)
+                        {
+                            foreach (var epaper in tableData.Subscriber_Epaper)
                             {
-                                foreach (var epaper in tableData.Subscriber_Epaper)
+                                SubscriptionDetails subscriptionDetails = new SubscriptionDetails { 
+                                    RateID = epaper.RateID,
+                                    StartDate = epaper.StartDate,
+                                    EndDate = epaper.EndDate,
+                                    RateDescription = epaper.PlanDesc,
+                                    SubType = (ratesList.Where(X => X.Rateid == epaper.RateID).Count() > 0) ? ratesList.FirstOrDefault(X => X.Rateid == epaper.RateID).Type : "Epaper",
+                                    isActive = epaper.IsActive,
+                                    SubscriptionID = epaper.Subscriber_EpaperID,
+                                    RateType = "Epaper",
+                                    OrderNumber = epaper.OrderNumber
+                                };
+                                SubscriptionList.Add(subscriptionDetails);
+                            }
+                        }
+                        //Print Subscriptions
+                        if (tableData.Subscriber_Print.Count() > 0)
+                        {
+                            foreach (var print in tableData.Subscriber_Print)
+                            {
+                                if (SubscriptionList.FirstOrDefault(X => X.RateID == print.RateID) == null)
                                 {
                                     SubscriptionDetails subscriptionDetails = new SubscriptionDetails { 
-                                        RateID = epaper.RateID,
-                                        StartDate = epaper.StartDate,
-                                        EndDate = epaper.EndDate,
-                                        RateDescription = epaper.PlanDesc,
-                                        SubType = (ratesList.Where(X => X.Rateid == epaper.RateID).Count() > 0) ? ratesList.FirstOrDefault(X => X.Rateid == epaper.RateID).Type : "Epaper",
-                                        isActive = epaper.IsActive,
-                                        SubscriptionID = epaper.Subscriber_EpaperID,
-                                        RateType = "Epaper"
-                                    };
-                                    SubscriptionList.Add(subscriptionDetails);
-                                }
-                            }
-                            //Print Subscriptions
-                            if (tableData.Subscriber_Print.Count() > 0)
-                            {
-                                foreach (var print in tableData.Subscriber_Print)
-                                {
-                                    if (SubscriptionList.FirstOrDefault(X => X.RateID == print.RateID) == null)
-                                    {
-                                        SubscriptionDetails subscriptionDetails = new SubscriptionDetails { 
                                         RateID = print.RateID,
                                         StartDate = print.StartDate,
                                         EndDate = print.EndDate,
                                         RateDescription = print.PlanDesc,
                                         isActive = print.IsActive,
                                         SubscriptionID = print.Subscriber_PrintID,
-                                        RateType = "Print"
+                                        RateType = "Print",
+                                        OrderNumber = print.OrderNumber
                                     };
-
-                                        SubscriptionList.Add(subscriptionDetails);
-                                    }
-
+                                SubscriptionList.Add(subscriptionDetails);
                                 }
 
                             }
-                            //Addresses
-                            if (tableData.Subscriber_Address.Count() > 0)
+
+                        }
+                        //Addresses
+                        if (tableData.Subscriber_Address.Count() > 0)
+                        {
+                            foreach (var address in tableData.Subscriber_Address)
                             {
-                                foreach (var address in tableData.Subscriber_Address)
-                                {
-                                    AddressDetails addressDetails = new AddressDetails { 
-                                        AddressLine1 = address.AddressLine1,
-                                        AddressLine2 = address.AddressLine2,
-                                        AddressType = address.AddressType,
-                                        CityTown = address.CityTown,
-                                        StateParish = address.StateParish,
-                                        CountryCode = address.CountryCode,
-                                        ZipCode = address.ZipCode,
-                                        AddressID = address.AddressID
-                                    };
+                                AddressDetails addressDetails = new AddressDetails { 
+                                    AddressLine1 = address.AddressLine1,
+                                    AddressLine2 = address.AddressLine2,
+                                    AddressType = address.AddressType,
+                                    CityTown = address.CityTown,
+                                    StateParish = address.StateParish,
+                                    CountryCode = address.CountryCode,
+                                    ZipCode = address.ZipCode,
+                                    AddressID = address.AddressID
+                                };
 
-                                    AddressList.Add(addressDetails);
-                                }
+                                AddressList.Add(addressDetails);
                             }
-                            //Transactions
-                            if (tableData.Subscriber_Tranx.Count() > 0)
+                        }
+                        //Transactions
+                        if (tableData.Subscriber_Tranx.Count() > 0)
                             {
                                 foreach (var payments in tableData.Subscriber_Tranx)
                                 {
@@ -666,10 +671,11 @@ namespace ePaperLive.Controllers
                                         CardType = payments.CardType,
                                         TranxDate = payments.TranxDate,
                                         RateDescription = payments.PlanDesc,
-                                        TransactionID = payments.Subscriber_TranxID
+                                        TransactionID = payments.Subscriber_TranxID,
+                                        OrderNumber = payments.OrderID
                                     };
                                     PaymentsList.Add(paymentDetails);
-
+                                SubscriptionList.FirstOrDefault(x => x.OrderNumber == payments.OrderID).RefundRequested = payments.RefundRequested;
                                 }
                             }
 
@@ -689,10 +695,14 @@ namespace ePaperLive.Controllers
                 ViewBag.payments = authSubcriber.PaymentDetails.ToList();
             if (authSubcriber.SubscriptionDetails != null)
             {
-                var startDate = authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).StartDate;
-                var endDate = authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).EndDate;
                 ViewBag.plans = authSubcriber.SubscriptionDetails;
-                ViewBag.dates = startDate.GetWeekdayInRange(endDate, DayOfWeek.Monday);
+                if(authSubcriber.SubscriptionDetails.Where(x => x.isActive == true).Count() > 0)
+                {
+                    var startDate = authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).StartDate;
+                    var endDate = authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).EndDate;
+                    ViewBag.dates = startDate.GetWeekdayInRange(endDate, DayOfWeek.Monday);
+                }
+                
             }
                 
            
@@ -711,6 +721,12 @@ namespace ePaperLive.Controllers
                 List<SubscriptionDetails> subscriptionDetails = authSubcriber.SubscriptionDetails;
                 if (subscriptionDetails != null)
                 {
+
+                    ViewData["FeedBackFormModelData"] = new FeedbackFormModel { 
+                        Name = authSubcriber.FirstName + " " + authSubcriber.LastName,
+                        Email = authSubcriber.EmailAddress
+                    };
+
                     return View(subscriptionDetails);
                 }
                 else 
@@ -723,6 +739,117 @@ namespace ePaperLive.Controllers
                 return View("dashboard");
             }
             
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ValidateGoogleCaptcha]
+        public async Task<ActionResult> Orders(FeedbackFormModel model)
+        {
+
+            var jsonFile = System.IO.File.ReadAllText(System.Web.HttpContext.Current.Server.MapPath("~/App_Data/email_settings.json"));
+            var settings = JObject.Parse(jsonFile);
+            // Credentials
+            string userName = (string)settings["email_address_username"],
+                pwd = (string)settings["email_password"],
+                smtp_host = (string)settings["smtp_host"],
+                ssl_enabled = (string)settings["ssl_enabled"],
+                password = (string)settings["email_password"],
+                domain = (string)settings["email_address_domain"],
+                portNumber = (string)settings["email_port_number"],
+                feedBackEmails = (string)settings["feedback_email"];
+
+            int port;
+
+            if (ModelState.IsValid)
+            {
+                //TODO: Send Mail
+                var user = model.Email;
+                string subject = model.Subject;
+                string body = model.Message;
+
+                SmtpClient smtp = new SmtpClient();
+                smtp.Host = smtp_host;
+                smtp.Port = (int.TryParse(portNumber, out port) ? port : 25);
+                smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                smtp.UseDefaultCredentials = true;
+
+                var newMsg = new MailMessage();
+                var mailSubject = "Refund Request: " + subject;
+                newMsg.To.Add(feedBackEmails);
+
+
+                newMsg.From = new MailAddress(user, model.Name);
+                newMsg.Subject = mailSubject;
+                newMsg.Body = body;
+                newMsg.IsBodyHtml = true;
+
+                var credentials = new NetworkCredential(userName, pwd);
+                smtp.Credentials = credentials;
+                smtp.EnableSsl = bool.Parse(ssl_enabled);
+
+                // Send
+                await smtp.SendMailAsync(newMsg);
+
+               
+                var orderNumber = subject.Split(':')[1].Trim();
+
+                using (var context = new ApplicationDbContext())
+                {
+                    var result = context.subscriber_tranx.FirstOrDefault(x => x.EmailAddress == user && x.OrderID == orderNumber);
+
+                    if (result != null)
+                    {
+                        result.RefundRequested = true;
+                        await context.SaveChangesAsync();
+                    }
+
+                    var type = orderNumber.Split('-')[0].Trim();
+                    /*
+                    switch (type)
+                    {
+
+                        case "EP":
+                            var epaperSub = context.subscriber_epaper.FirstOrDefault(x => x.EmailAddress == user && x.OrderNumber == orderNumber);
+                            if (epaperSub != null)
+                            {
+                                epaperSub.IsActive = false;
+                                await context.SaveChangesAsync();
+                            }
+                            break;
+                        case "PR":
+                            var printSub = context.subscriber_print.FirstOrDefault(x => x.EmailAddress == user && x.OrderNumber == orderNumber);
+                            if (printSub != null)
+                            {
+                                printSub.IsActive = false;
+                                await context.SaveChangesAsync();
+                            }
+                            break;
+                        case "BU":
+                            var printSubB = context.subscriber_print.FirstOrDefault(x => x.EmailAddress == user && x.OrderNumber == orderNumber);
+                            if (printSubB != null)
+                            {
+                                printSubB.IsActive = false;
+                                await context.SaveChangesAsync();
+                            }
+                            var epaperSubB = context.subscriber_epaper.FirstOrDefault(x => x.EmailAddress == user && x.OrderNumber == orderNumber);
+                            if (epaperSubB != null)
+                            {
+                                epaperSubB.IsActive = false;
+                                await context.SaveChangesAsync();
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+
+                    */
+                }
+
+                return RedirectToAction("orders");
+                //below code to be implemented if business decides to automatically deactivate after request
+            }
+
+            return View(model);
         }
 
         public ActionResult UserProfile()
@@ -836,17 +963,22 @@ namespace ePaperLive.Controllers
 
             if (authSubcriber.SubscriptionDetails != null)
             {
-                var startDate = authSubcriber.SubscriptionDetails.FirstOrDefault().StartDate;
-                var endDate = authSubcriber.SubscriptionDetails.FirstOrDefault().EndDate;
                 ViewBag.plans = authSubcriber.SubscriptionDetails;
-                ViewBag.dates = startDate.GetWeekdayInRange(endDate, DayOfWeek.Monday);
 
-                subscription = new SubscriptionDetails
+                if (authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true) != null)
                 {
-                    StartDate = (authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).EndDate != null) ? authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).EndDate : DateTime.Now,
-                    RateType = authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).RateType,
-                    RateID = authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).RateID
-                };
+                    var startDate = authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).StartDate;
+                    var endDate = authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).EndDate;
+                    ViewBag.dates = startDate.GetWeekdayInRange(endDate, DayOfWeek.Monday);
+
+                    subscription = new SubscriptionDetails
+                    {
+                        StartDate = (authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).EndDate != null) ? authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).EndDate : DateTime.Now,
+                        RateType = authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).RateType,
+                        RateID = authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).RateID
+                    };
+                }
+                
             }
             //load parishes
             List<SelectListItem> parishes = GetParishes();
@@ -861,7 +993,11 @@ namespace ePaperLive.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult ExtendSubscription(SubscriptionDetails data, string nextBtn)
         {
-            
+            //load parishes
+            List<SelectListItem> parishes = GetParishes();
+            ViewBag.Parishes = new SelectList(parishes, "Value", "Text");
+            ViewBag.CountryList = GetCountryList();
+
             if (nextBtn != null)
             {
                 if (ModelState.IsValid)
@@ -870,7 +1006,6 @@ namespace ePaperLive.Controllers
                     try
                     {
                         ApplicationDbContext db = new ApplicationDbContext();
-
                         Subscriber objSub = GetSubscriber();
                         DeliveryAddress objDelv = GetSubscriberDeliveryAddress();
                         Subscriber_Epaper objEp = GetEpaperDetails();
@@ -880,7 +1015,7 @@ namespace ePaperLive.Controllers
                         List<SubscriptionDetails> subscriptionDetails = new List<SubscriptionDetails>();
                         List<PaymentDetails> paymentDetailsList = new List<PaymentDetails>();
                         //List<AddressDetails> addressDetails = new List<AddressDetails>();
-
+                        authUser.SubscriptionDetails.RemoveAll(x => x.SubscriptionID == 0);
                         objTran.RateID = data.RateID;
 
                         var selectedPlan = db.printandsubrates.FirstOrDefault(x => x.Rateid == data.RateID);
@@ -888,10 +1023,18 @@ namespace ePaperLive.Controllers
                         if (selectedPlan.Type == "Print")
                         {
 
-                            var existingPrintPlan = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.isActive == true);
-                            data.StartDate = existingPrintPlan.EndDate;
-                            // This code doesn't extend the subscription fully.
-                            var endDate = data.EndDate = existingPrintPlan.EndDate.AddDays((double)selectedPlan.PrintTerm * 7);
+                            var existingPrintPlan = new SubscriptionDetails();
+                            var endDate = DateTime.Now;
+                            if (authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.isActive == true) != null)
+                            {
+                                existingPrintPlan = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.isActive == true);
+                                data.StartDate = existingPrintPlan.EndDate;
+                                endDate = data.EndDate = existingPrintPlan.EndDate.AddDays((double)selectedPlan.PrintTerm * 7);
+                            }
+                            else
+                            {
+                                endDate = data.StartDate.AddDays((double)selectedPlan.PrintTerm * 7);
+                            }
 
                             SubscriptionDetails printSubscription = new SubscriptionDetails
                             {
@@ -919,17 +1062,25 @@ namespace ePaperLive.Controllers
                         }
                         if (selectedPlan.Type == "Epaper")
                         {
-                            var existingEpaperPlan = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.isActive == true);
-                            data.StartDate = existingEpaperPlan.EndDate;
-                            // This code doesn't extend the subscription fully.
-                            var endDate = data.EndDate = existingEpaperPlan.EndDate.AddDays((double)selectedPlan.ETerm);
-                            //endDate.
+                            var existingEpaperPlan = new SubscriptionDetails();
+                            var endDat = DateTime.Now;
+                            if (authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.isActive == true) != null)
+                            {
+                                existingEpaperPlan = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.isActive == true);
+                                data.StartDate = existingEpaperPlan.EndDate;
+                                endDat = data.EndDate = existingEpaperPlan.EndDate.AddDays((double)selectedPlan.ETerm);
+                            }
+                            else
+                            {
+                                endDat = data.StartDate.AddDays((double)selectedPlan.ETerm);
+                            }
+                            
                             SubscriptionDetails epaperSubscription = new SubscriptionDetails
                             {
                                 StartDate = data.StartDate,
-                                EndDate = endDate,
+                                EndDate = endDat,
                                 RateID = data.RateID,
-                                SubType = data.SubType,
+                                SubType = selectedPlan.Type,
                                 RateType = selectedPlan.Type
                             };
 
@@ -940,10 +1091,18 @@ namespace ePaperLive.Controllers
                         }
                         if (selectedPlan.Type == "Bundle")
                         {
-                            var existingPrintPlan = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.isActive == true);
-                            data.StartDate = existingPrintPlan.EndDate;
-                            // This code doesn't extend the subscription fully.
-                            var pEndDate = data.EndDate = existingPrintPlan.EndDate.AddDays((double)selectedPlan.PrintTerm * 7);
+                            var existingPrintPlan = new SubscriptionDetails();
+                            var pEndDate = DateTime.Now;
+                            if (authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.isActive == true) != null)
+                            {
+                                existingPrintPlan = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.isActive == true);
+                                data.StartDate = existingPrintPlan.EndDate;
+                                pEndDate = data.EndDate = existingPrintPlan.EndDate.AddDays((double)selectedPlan.PrintTerm * 7);
+                            }
+                            else
+                            {
+                                pEndDate = data.StartDate.AddDays((double)selectedPlan.PrintTerm * 7);
+                            }
                             SubscriptionDetails printSubscription = new SubscriptionDetails
                             {
                                 StartDate = data.StartDate,
@@ -954,10 +1113,18 @@ namespace ePaperLive.Controllers
                             //print subscription
 
                             subscriptionDetails.Add(printSubscription);
-                            var existingEpaperPlan = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.isActive == true);
-                            var eEndDate = data.StartDate = existingEpaperPlan.EndDate;
-                            // This code doesn't extend the subscription fully.
-                            var endDate = data.EndDate = existingEpaperPlan.EndDate.AddDays((double)selectedPlan.ETerm);
+                            var existingEpaperPlan = new SubscriptionDetails();
+                            var eEndDate = DateTime.Now;
+                            if (authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.isActive == true) != null)
+                            {
+                                existingEpaperPlan = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.isActive == true);
+                                data.StartDate = existingEpaperPlan.EndDate;
+                                eEndDate = data.EndDate = existingEpaperPlan.EndDate.AddDays((double)selectedPlan.ETerm);
+                            }
+                            else
+                            {
+                                eEndDate = data.StartDate.AddDays((double)selectedPlan.ETerm);
+                            }
                             SubscriptionDetails epaperSubscription = new SubscriptionDetails
                             {
                                 StartDate = data.StartDate,
@@ -1010,6 +1177,18 @@ namespace ePaperLive.Controllers
 
                         paymentDetailsList.Add(pd);
                         authUser.PaymentDetails.Add(pd);
+
+                        if (authUser.SubscriptionDetails != null)
+                        {
+                            ViewBag.plans = authUser.SubscriptionDetails;
+
+                            if (authUser.SubscriptionDetails.FirstOrDefault(x => x.isActive == true) != null)
+                            {
+                                var startDate = authUser.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).StartDate;
+                                var endDate = authUser.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).EndDate;
+                                ViewBag.dates = startDate.GetWeekdayInRange(endDate, DayOfWeek.Monday);
+                            }
+                        }
 
                         return View("ExtendPayment", pd);
                     }
@@ -1104,11 +1283,15 @@ namespace ePaperLive.Controllers
 
             if (authSubcriber.SubscriptionDetails != null)
             {
-                var startDate = authSubcriber.SubscriptionDetails.FirstOrDefault().StartDate;
-                var endDate = authSubcriber.SubscriptionDetails.FirstOrDefault().EndDate;
                 ViewBag.plans = authSubcriber.SubscriptionDetails;
-                ViewBag.dates = startDate.GetWeekdayInRange(endDate, DayOfWeek.Monday);
-            }
+
+                if (authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true) != null)
+                {
+                    var startDate = authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).StartDate;
+                    var endDate = authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).EndDate;
+                    ViewBag.dates = startDate.GetWeekdayInRange(endDate, DayOfWeek.Monday);
+                }
+             }
 
             ViewBag.CountryList = GetCountryList();
             return View(data);
@@ -1127,7 +1310,7 @@ namespace ePaperLive.Controllers
             };
             return View("LoginDetails", ld);
         }
-
+        
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -1898,15 +2081,25 @@ namespace ePaperLive.Controllers
                                     {
                                         //result.DeliveryInstructions = objP.DeliveryInstructions;
                                         //result.RateID = objP.RateID;
-                                        result.EndDate = objP.EndDate.AddDays((double)selectedPlan.PrintTerm * 7);
+                                        result.IsActive = false;
                                         await context.SaveChangesAsync();
                                     }
+
+                                    //save print subscription
+                                    objP.AddressID = addressID;
+                                    objP.SubscriberID = SubscriberID;
+                                    objP.OrderNumber = objTran.OrderID;
+                                    objP.StartDate = result.StartDate;
+                                    objP.EndDate = result.EndDate.AddDays((double)selectedPlan.PrintTerm * 7);
+                                    context.subscriber_print.Add(objP);
+                                    await context.SaveChangesAsync();
                                 }
                                 else
                                 {
                                     //save print subscription
                                     objP.AddressID = addressID;
                                     objP.SubscriberID = SubscriberID;
+                                    objP.OrderNumber = objTran.OrderID;
                                     context.subscriber_print.Add(objP);
                                     await context.SaveChangesAsync();
                                 }
@@ -1920,16 +2113,27 @@ namespace ePaperLive.Controllers
                                     if (result != null)
                                     {
                                         //result.RateID = (int)rateID;
-                                        result.EndDate = objE.EndDate.AddDays((double)selectedPlan.ETerm);
+                                        //result.EndDate = objE.EndDate.AddDays((double)selectedPlan.ETerm);
+                                        result.IsActive = false;
                                         await context.SaveChangesAsync();
                                     }
+                                    //save epaper subscription
+                                    var subType = (selectedPlan.RateDescr.Contains("Coupon") || selectedPlan.RateDescr.Contains("Free")) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString();
+                                    objE.SubType = subType;
+                                    objE.SubscriberID = SubscriberID;
+                                    objE.OrderNumber = objTran.OrderID;
+                                    objE.StartDate = result.StartDate;
+                                    objE.EndDate = result.EndDate.AddDays((double)selectedPlan.ETerm);
+                                    context.subscriber_epaper.Add(objE);
+                                    await context.SaveChangesAsync();
                                 }
                                 else
                                 {
                                     //save epaper subscription
-                                    var subType = (selectedPlan.RateDescr.Contains("Coupon")) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString();
+                                    var subType = (selectedPlan.RateDescr.Contains("Coupon") || selectedPlan.RateDescr.Contains("Free")) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString();
                                     objE.SubType = subType;
                                     objE.SubscriberID = SubscriberID;
+                                    objE.OrderNumber = objTran.OrderID;
                                     context.subscriber_epaper.Add(objE);
                                     await context.SaveChangesAsync();
                                 }
@@ -1944,15 +2148,26 @@ namespace ePaperLive.Controllers
                                     {
                                         //result.DeliveryInstructions = objP.DeliveryInstructions;
                                         //result.RateID = objP.RateID;
-                                        result.EndDate = objP.EndDate.AddDays((double)selectedPlan.PrintTerm * 7);
+                                        //result.EndDate = objP.EndDate.AddDays((double)selectedPlan.PrintTerm * 7);
+                                        result.IsActive = false;
                                         await context.SaveChangesAsync();
                                     }
+                                    //save print subscription
+                                    objP.AddressID = addressID;
+                                    objP.SubscriberID = SubscriberID;
+                                    objP.OrderNumber = objTran.OrderID;
+                                    objP.StartDate = result.StartDate;
+                                    objP.EndDate = result.EndDate.AddDays((double)selectedPlan.PrintTerm * 7);
+                                    context.subscriber_print.Add(objP);
+                                    await context.SaveChangesAsync();
+
                                 }
                                 else
                                 {
                                     //save print subscription
                                     objP.AddressID = addressID;
                                     objP.SubscriberID = SubscriberID;
+                                    objP.OrderNumber = objTran.OrderID;
                                     context.subscriber_print.Add(objP);
                                     await context.SaveChangesAsync();
                                 }
@@ -1964,15 +2179,27 @@ namespace ePaperLive.Controllers
                                     if (result != null)
                                     {
                                         //result.RateID = (int)rateID;
-                                        result.EndDate = objE.EndDate.AddDays((double)selectedPlan.ETerm);
+                                        //result.EndDate = objE.EndDate.AddDays((double)selectedPlan.ETerm);
+                                        result.IsActive = false;
                                         await context.SaveChangesAsync();
                                     }
+                                    //save epaper subscription
+                                    var subType = (selectedPlan.RateDescr.Contains("Coupon") || selectedPlan.RateDescr.Contains("Free")) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString();
+                                    objE.SubType = subType;
+                                    objE.SubscriberID = SubscriberID;
+                                    objE.OrderNumber = objTran.OrderID;
+                                    objE.StartDate = result.StartDate;
+                                    objE.EndDate = result.EndDate.AddDays((double)selectedPlan.ETerm);
+                                    context.subscriber_epaper.Add(objE);
+                                    await context.SaveChangesAsync();
                                 }
                                 else
                                 {
                                     //save epaper subscription
-                                    objE.SubType = SubscriptionType.Paid.ToString();
+                                    var subType = (selectedPlan.RateDescr.Contains("Coupon") || selectedPlan.RateDescr.Contains("Free")) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString();
+                                    objE.SubType = subType;
                                     objE.SubscriberID = SubscriberID;
+                                    objE.OrderNumber = objTran.OrderID;
                                     context.subscriber_epaper.Add(objE);
                                     await context.SaveChangesAsync();
                                 }
@@ -2543,7 +2770,7 @@ namespace ePaperLive.Controllers
                                 .Include(x => x.Subscriber_Epaper)
                                 .Include(x => x.Subscriber_Print)
                                 .Include(x => x.Subscriber_Tranx)
-                                .FirstOrDefault(u => u.EmailAddress == emailAddress && u.Subscriber_Tranx.FirstOrDefault().OrderID == orderNumber);
+                                .FirstOrDefault(u => u.EmailAddress == emailAddress && u.Subscriber_Tranx.FirstOrDefault(x => x.IsMadeLiveSuccessful == false).OrderID == orderNumber);
 
                             if (clientData != null)
                             {
@@ -2558,10 +2785,10 @@ namespace ePaperLive.Controllers
 
                                 //make subscription active
                                 if (currentTransaction.SubType == "Epaper" || currentTransaction.SubType == "Bundle")
-                                    clientData.Subscriber_Epaper.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID).IsActive = true;
+                                    clientData.Subscriber_Epaper.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID && x.OrderNumber == orderNumber).IsActive = true;
 
                                 if (currentTransaction.SubType == "Print" || currentTransaction.SubType == "Bundle")
-                                    clientData.Subscriber_Print.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID).IsActive = true;
+                                    clientData.Subscriber_Print.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID && x.OrderNumber == orderNumber).IsActive = true;
                                 
                                 await context.SaveChangesAsync();
                             }

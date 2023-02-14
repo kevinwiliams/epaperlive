@@ -1,4 +1,6 @@
-﻿@model IEnumerable<ePaperLive.Models.SubscriptionDetails>
+﻿@using ePaperLive.Models
+
+@model IEnumerable<ePaperLive.Models.SubscriptionDetails>
 <!-- ======= Breadcrumbs ======= -->
 <section id="breadcrumbs" class="breadcrumbs">
     <div class="container">
@@ -15,7 +17,7 @@
     <p>
         @*@Html.ActionLink("Add Subsription", "Create")*@
     </p>
-    <table class="table">
+    <table class="table table-hover table-striped small">
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.RateDescription)
@@ -48,13 +50,39 @@
                 <td>
                     @Convert.ToDateTime(item.EndDate).ToString("dd MMMM yyyy")
                 </td>
-                @*<td>
-                    @Html.ActionLink("Details", "Details", new { id = item.RateID }) |
-                    @Html.ActionLink("Cancel Subscription", "Cancel", new { id = item.RateID })
-                </td>*@
+                <td>
+                    @*@Html.ActionLink("Details", "Details", new { id = item.RateID }) |*@
+
+                    @if (!item.RefundRequested && item.isActive && (item.OrderNumber.Contains("EP") || item.OrderNumber.Contains("PR") || item.OrderNumber.Contains("BU")))
+                    {
+                        <a href="#" class="" name="cancelBtn" id="@(item.OrderNumber)" data-bs-toggle="modal" data-bs-target="#request-refund">Refund Subscription</a>
+                    }
+                    @if(item.RefundRequested)
+                    {
+                        <span class="text-warning" id="refundSent">Refund Requested</span>
+                    }
+
+                </td>
             </tr>
         }
 
     </table>
 
 </div>
+
+<!-- Delivery Modal -->
+@{Html.RenderPartial("_RefundForm", ViewData["FeedBackFormModelData"]); }
+<!-- end: Delivery Modal -->
+@section scripts{
+    <script>
+        $('[name=cancelBtn]').on("click", function (e) {
+            let orderNum = e.currentTarget.id;
+            $('[name=Subject]').val('Refund Request: ' + orderNum);
+
+            console.log(e.currentTarget.id)
+        });
+
+    </script>
+
+
+    }

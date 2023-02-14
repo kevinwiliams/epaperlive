@@ -123,37 +123,36 @@
                 </div>
                 <div class="col-lg-4">
                     <div class="portfolio-info">
-                        <h3>Current Subscription: <span class="text-success">Active</span> </h3>
+                        @{
+
+                            var plans = (List<ePaperLive.Models.SubscriptionDetails>)ViewBag.plans;
+
+                            var stat = (plans.Where(x => x.isActive == true).Count() > 0) ? "<span class=\"text-success\">Active</span>" : "<span class=\"text-danger\">Inactive</span>";
+                        }
+                        <h3>Current Subscription: @Html.Raw(stat) </h3>
                         @if (ViewBag.plans != null)
                         {
                             foreach (var item in (List<ePaperLive.Models.SubscriptionDetails>)ViewBag.plans)
                             {
-                                <p>@item.RateDescription</p>
-                                <small>
-                                    <strong>Start:</strong> @Convert.ToDateTime(item.StartDate).ToString("dd MMMM yyyy") <br />
-                                    <strong>End:&nbsp;&nbsp;</strong> @Convert.ToDateTime(item.EndDate).ToString("dd MMMM yyyy") <br />
-                                    <!-- <a href="#">Cancel</a> -->
-                                </small>
+                                if (item.isActive)
+                                {
+                                    <p>@item.RateDescription</p>
+                                    <small>
+                                        <strong>Start:</strong> @Convert.ToDateTime(item.StartDate).ToString("dd MMMM yyyy") <br />
+                                        <strong>End:&nbsp;&nbsp;</strong> @Convert.ToDateTime(item.EndDate).ToString("dd MMMM yyyy") <br />
+                                        <!-- <a href="#">Cancel</a> -->
+                                    </small>
+                                }
+
 
                             }
                         }
                         <br />
-
                     </div>
                 </div>
 
 
-                @if ((Dictionary<string, int>)ViewData["preloadSub"] != null)
-                {
-                    var preloadSub = (Dictionary<string, int>)ViewData["preloadSub"];
-                    foreach (var plans in preloadSub)
-                    {
-                        @Html.Hidden("preloadPlan", plans.Key.Split('|')[0])
-                        @Html.Hidden("preloadRate", plans.Value)
-                        @Html.Hidden("preloadRateDesc", plans.Key.Split('|')[2])
-
-                    }
-                }
+                
 
             </div>
 

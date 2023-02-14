@@ -74,22 +74,32 @@
                 </div>
                 <div class="col-lg-4">
                     <div class="portfolio-info">
-                        <h3>Current Subscription: <span class="text-success">Active</span> </h3>
+                        @{ 
+
+                            var plans = (List<ePaperLive.Models.SubscriptionDetails>)ViewBag.plans;
+
+                            var stat = (plans.Where(x => x.isActive == true).Count() > 0) ? "<span class=\"text-success\">Active</span>" : "<span class=\"text-danger\">Inactive</span>";
+                        }
+                        <h3>Current Subscription: @Html.Raw(stat) </h3>
                         @if (ViewBag.plans != null)
                         {
-                            foreach (var item in (List<ePaperLive.Models.SubscriptionDetails>)ViewBag.plans)
+                            foreach (var item in plans.Where(x => x.isActive == true))
                             {
-                                <p>@item.RateDescription</p>
-                                <small>
-                                    <strong>Start:</strong> @Convert.ToDateTime(item.StartDate).ToString("dd MMMM yyyy") <br />
-                                    <strong>End:&nbsp;&nbsp;</strong> @Convert.ToDateTime(item.EndDate).ToString("dd MMMM yyyy") <br />
-                                    <!-- <a href="#">Cancel</a> -->
-                                </small>
+                                if (item.isActive == true)
+                                {
+                                    <p>@item.RateDescription</p>
+                                    <small>
+                                        <strong>Start:</strong> @Convert.ToDateTime(item.StartDate).ToString("dd MMMM yyyy") <br />
+                                        <strong>End:&nbsp;&nbsp;</strong> @Convert.ToDateTime(item.EndDate).ToString("dd MMMM yyyy") <br />
+                                        <!-- <a href="#">Cancel</a> -->
+                                    </small>
+                                }
+
 
                             }
                         }
                         <br />
-                        <a href="@Url.Action("ExtendSubscription", "Account")" class="btn-get-started scrollto">Extend Subscription</a>
+                        <a href="@Url.Action("ExtendSubscription", "Account")" class="btn-get-started scrollto">Add/Extend Subscription</a>
                     </div>
                    
                 </div>

@@ -31,5 +31,7 @@ namespace ePaperLive.DBModel
 
         }
         public string PlanDesc { get; set; }
+        public string OrderNumber { get; set; }
+
     }
 }

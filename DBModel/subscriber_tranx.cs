@@ -44,5 +44,6 @@ namespace ePaperLive.DBModel
         [ForeignKey("SubscriberID")]
         public virtual Subscriber Subscriber { get; set; }
         public string PlanDesc { get; set; }
+        public bool RefundRequested { get; set; }
     }
 }

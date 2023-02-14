@@ -42,7 +42,6 @@ namespace ePaperLive.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ValidateGoogleCaptcha]
-        //[CaptchaValidationActionFilter("CaptchaCode", "FeedbackCaptcha", "Incorrect!")]
         public async System.Threading.Tasks.Task<ActionResult> Index(FeedbackFormModel model)
         {
 
@@ -74,7 +73,7 @@ namespace ePaperLive.Controllers
                 smtp.UseDefaultCredentials = true;
 
                 var newMsg = new MailMessage();
-                var mailSubject = subject;
+                var mailSubject = "Contact Form: " + subject;
                 newMsg.To.Add(feedBackEmails);
 
 

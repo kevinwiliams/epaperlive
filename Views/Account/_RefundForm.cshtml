@@ -1,0 +1,107 @@
+﻿@using ePaperLive.Models
+@model ePaperLive.Models.FeedbackFormModel
+
+<div class="modal fade" id="request-refund">
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"><strong>Send Refund Request</strong></h4>
+
+            </div>
+            <div class="modal-body">
+                <!-- form start -->
+                @using (Html.BeginForm("Orders", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "php-email-form", role = "form", name = "feedBackForm" }))
+
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(model => model.Name)
+                    @Html.HiddenFor(model => model.Email)
+
+                    <div class="form-group mt-3">
+                        @*@Html.LabelFor(model => model.Subject, new { @class = "col-md-2 control-label" })<br>*@
+                        @Html.TextBoxFor(model => model.Subject, new { @class = "form-control", required = "required", @readonly = "readonly",  placeholder = Html.DisplayNameFor(model => model.Subject) })
+                        @Html.ValidationMessageFor(model => model.Subject, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group mt-3">
+                        @*@Html.LabelFor(model => model.Message, new { @class = "col-md-2 control-label" })<br>*@
+                        @Html.TextAreaFor(model => model.Message, new { @class = "form-control", required = "required", placeholder = "Why would you like to cancel your refund?" })
+                        @Html.ValidationMessageFor(model => model.Message, "", new { @class = "text-danger" })
+                        <p>&nbsp;</p>
+                        @Html.GoogleCaptcha()
+                        @Html.InvalidGoogleCaptchaLabel("Captcha is not valid !")
+
+                    </div>
+
+                    <div class="pt-3"><button type="submit" class="btn-sign-in" id="feedbackBtn">Send Message</button></div>
+                }
+                <!-- form end -->
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" data-bs-dismiss="modal">Close</button>
+               
+            </div>
+        </div>
+
+
+        </div>
+</div>
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+<script type="text/jscript">
+    $(function () {
+
+        $("#feedbackBtn").click((e) => {
+                e.preventDefault();
+
+
+                let formData = $("[name=feedBackForm]").valid();
+                if (formData) {
+                    var feebBackFormData = $("[name=feedBackForm]").serialize();
+
+
+                     $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("orders","account")',
+                        data: feebBackFormData,
+                         success: function (result) {
+                            //var response = JSON.stringify(result);
+                             console.log(($($.parseHTML(result))));
+                             var contactSection = $($.parseHTML(result)).filter('div#request-refund').html();
+                             var captchaResult = $($.parseHTML(contactSection)).find('span#captcha_code').html();
+                             console.log(captchaResult);
+                             if (captchaResult) {
+                                 swal({
+                                     title: "Error!",
+                                     text: captchaResult,
+                                     type: "warning",
+                                     dangerMode: true
+                                 });
+                             } else {
+
+                                 $("[name=feedBackForm] :input").val('');
+
+                                  swal({
+                                      title: "Success!",
+                                       text: "Your Request has been sent for processing",
+                                      type: "success",
+                                      dangerMode: false
+                                  }, ()=> {
+                                          var myModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('request-refund'));
+                                          myModal.hide();
+                                          $('[name=cancelBtn]').hide();
+                                          $('#refundSent').show();
+                                      
+                                  });
+
+                             }
+
+                        }
+                    });
+                }
+            });
+
+    });
+
+</script>

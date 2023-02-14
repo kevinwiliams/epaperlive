@@ -52,6 +52,9 @@ namespace ePaperLive.Models
         public DeliveryAddress DeliveryAddress { get; set; }
         public bool isActive { get; set; }
         public int SubscriptionID { get; set; }
+        public string OrderNumber { get; set; }
+        public bool RefundRequested { get; set; }
+
 
     }
 
