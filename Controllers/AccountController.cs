@@ -1196,6 +1196,8 @@ namespace ePaperLive.Controllers
                     {
 
                         LogError(ex);
+                        return View("dashboard");
+
                     }
 
                 }

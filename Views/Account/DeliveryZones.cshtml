@@ -83,11 +83,13 @@
             if (parish) {
                 $.getJSON('@Url.Action("DistrictList","Account")?Id=' + parish, function (data) {
 
-                    $("#zoneTable").DataTable().clear();
+                    $("#zoneTable").DataTable({
+                              "pageLength": 25
+                            }).clear();
                     var row = 1;
 
                       $.each(data, function (i, district) {
-                       $('#zoneTable').dataTable().fnAddData( [
+                          $('#zoneTable').dataTable().fnAddData([
                                 district.Text
                               ]);
 
