@@ -13,7 +13,7 @@
                 <div>
                     <h1>The paper at your doorstep or the <span class="text-danger">e</span>Paper on the  GO!</h1>
                     <h2>
-                        Subscribe to the Jamaica Observer digital replica of the printed newspaper or have it delivered nationwide* directly at your doorstep.
+                        Subscribe to the Jamaica Observer digital replica of the printed newspaper or have it delivered  <a href="@Url.Action("deliveryzones", "account")">nationwide*</a> directly at your doorstep.
                     </h2>
                     @*<a href="@Url.Action("Subscribe", "Account")" class="btn-get-started scrollto">Subscribe Now</a>*@
                     <a href="#pricing" class="btn-get-started scrollto mb-2">Subscribe Now</a>
@@ -188,7 +188,7 @@
             </li>
 
             <li>
-                <div data-bs-toggle="collapse" href="#faq2" class="collapsed question">Can I cancel my subscription?? <i class="bi bi-chevron-down icon-show"></i><i class="bi bi-chevron-up icon-close"></i></div>
+                <div data-bs-toggle="collapse" href="#faq2" class="collapsed question">Can I cancel my subscription? <i class="bi bi-chevron-down icon-show"></i><i class="bi bi-chevron-up icon-close"></i></div>
                 <div id="faq2" class="collapse" data-bs-parent=".faq-list">
                     <p>
                         You can cancel your subscription by calling Customer Services on 876 926 7655. Call us Monday – Friday 8:30am to 5:00pm. If you wish to cancel your subscription after your minimum term, you must call us at least 2 days before your next billing date. For print subscriptions, please contact us at least 15 days before your next billing date.
@@ -203,7 +203,7 @@
                 <div data-bs-toggle="collapse" href="#faq3" class="collapsed question">I think I might already have a subscription. How can I check? <i class="bi bi-chevron-down icon-show"></i><i class="bi bi-chevron-up icon-close"></i></div>
                 <div id="faq3" class="collapse" data-bs-parent=".faq-list">
                     <p>
-                        If you have a current subscription or previously had a subscription, we will already recognise your email address. Please click <a href="#" data-bs-toggle="modal" data-bs-target="#login-modal">sign in</a> and use forget password to continue.
+                        If you have a current subscription or previously had a subscription, we will already recognise your email address. Please click <a href="#" data-bs-toggle="modal" data-bs-target="#login-modal">sign in</a> and use @Html.ActionLink("forget your password option", "ForgotPassword", "account") to continue.
                     </p>
                 </div>
             </li>
@@ -212,7 +212,7 @@
                 <div data-bs-toggle="collapse" href="#faq4" class="collapsed question">Do you deliver print outside of Jamaica? <i class="bi bi-chevron-down icon-show"></i><i class="bi bi-chevron-up icon-close"></i></div>
                 <div id="faq4" class="collapse" data-bs-parent=".faq-list">
                     <p>
-                        No we don’t delivery out of Jamaica. Currently we only offer the ePaper for our international subscribers.
+                        No we don’t delivery out of Jamaica. Currently we only offer the ePaper for our international subscribers. Please see our @Html.ActionLink("delivery zones", "deliveryzones", "account") for the current areas we operate in.
                     </p>
                 </div>
             </li>
@@ -221,7 +221,7 @@
                 <div data-bs-toggle="collapse" href="#faq5" class="collapsed question">I am outside of Jamaica, can I susbcribe to print to be delievered at an address in Jamaica? <i class="bi bi-chevron-down icon-show"></i><i class="bi bi-chevron-up icon-close"></i></div>
                 <div id="faq5" class="collapse" data-bs-parent=".faq-list">
                     <p>
-                        Yes. Whether you are in or outside of Jamaica you may subscribe to print as long as the delivery address is here in Jamaica.
+                        Yes. Whether you are in or outside of Jamaica you may subscribe to print as long as the delivery address is here in Jamaica. Please see our @Html.ActionLink("delivery zones", "deliveryzones", "account") for the current areas we operate in.
                     </p>
                 </div>
             </li>
