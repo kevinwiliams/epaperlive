@@ -79,7 +79,6 @@
 
         $('#StateParish').change(function () {
             let parish = $('#StateParish').val();
-            var items = '';
 
             if (parish) {
                 $.getJSON('@Url.Action("DistrictList","Account")?Id=' + parish, function (data) {
