@@ -27,8 +27,9 @@
                         </div>
                         <div class="form-group p-2">
                             @*@Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })*@
-                            <div class="col-md-10">
+                            <div class="col-md-10 position-relative">
                                 @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.Password) })
+                                <i class="fa-solid fa-eye" id="eye"></i>
                                 @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
                             </div>
                         </div>
@@ -66,4 +67,16 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    
+    <script>
+        const passwordInput = $("#Password");
+        const eye = $("#eye");
+
+        $(eye).click(function() {
+          $(this).toggleClass("fa-eye-slash");
+          const type = $(passwordInput).attr("type") === "password" ? "text" : "password";
+          $(passwordInput).attr("type", type);
+        });
+
+     </script>
 }
