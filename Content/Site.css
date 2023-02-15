@@ -467,3 +467,8 @@
         cursor: pointer;
         color: lightgray;
     }
+
+.active > .page-link, .page-link.active {
+    background-color: #E62B34;
+    border-color: #E62B34
+}

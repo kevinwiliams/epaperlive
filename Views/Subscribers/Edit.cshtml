@@ -34,27 +34,36 @@
                     {
                         @Html.AntiForgeryToken()
 
-                        <div class="form-horizontal">
-                            <h4>UsersWithRoles</h4>
+                        <div class=" row form-horizontal">
+                            <h4>Update User with Role</h4>
                             <hr />
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            @Html.HiddenFor(model => model.SubscriberID)
+                            @Html.HiddenFor(model => model.RoleID)
+                            @Html.HiddenFor(model => model.AddressID)
                             <div class="form-group">
-                                @Html.LabelFor(model => model.FullName, htmlAttributes: new { @class = "control-label col-md-2" })
-                                <div class="col-md-10">
-                                    @Html.EditorFor(model => model.FullName, new { htmlAttributes = new { @class = "form-control" } })
-                                    @Html.ValidationMessageFor(model => model.FullName, "", new { @class = "text-danger" })
+                                @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <div class="col-md-5">
+                                    @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                                </div>
+                      
+                                @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <div class="col-md-5">
+                                    @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
                                 </div>
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group pt-1">
                                 @Html.LabelFor(model => model.UserName, htmlAttributes: new { @class = "control-label col-md-2" })
-                                <div class="col-md-10">
+                                <div class="col-md-5">
                                     @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control" } })
                                     @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
                                 </div>
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group pt-1">
                                 @Html.LabelFor(model => model.Role, htmlAttributes: new { @class = "control-label col-md-2" })
                                 <div class="col-md-10">
                                     @Html.EditorFor(model => model.Role, new { htmlAttributes = new { @class = "form-control hidden" } })
@@ -63,25 +72,19 @@
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                @Html.LabelFor(model => model.AddressID, htmlAttributes: new { @class = "control-label col-md-2" })
-                                <div class="col-md-10">
-                                    @Html.EditorFor(model => model.AddressID, new { htmlAttributes = new { @class = "form-control" } })
-                                    @Html.ValidationMessageFor(model => model.AddressID, "", new { @class = "text-danger" })
-                                </div>
-                            </div>
+                           
 
-                            <div class="form-group">
+                            <div class="form-group pt-1">
                                 @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-md-2" })
-                                <div class="col-md-10">
+                                <div class="col-md-2">
                                     @Html.EditorFor(model => model.IsActive, new { htmlAttributes = new { @class = "form-control" } })
                                     @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
                                 </div>
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group pt-3">
                                 <div class="col-md-offset-2 col-md-10">
-                                    <input type="submit" value="Save" class="btn btn-default" />
+                                    <input type="submit" value="Update User" class="btn btn-sign-in" />
                                 </div>
                             </div>
                         </div>
@@ -105,6 +108,11 @@
         $(document).ready(function () {
             var role = $("#Role").val();
             $("#Roles").val(role).trigger('change');
+        });
+
+        $('#Roles').on('change', (e) => {
+            console.log(e.currentTarget.value);
+            $("#Role").val(e.currentTarget.value);
         });
     </script>
 }

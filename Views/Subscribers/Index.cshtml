@@ -33,16 +33,14 @@
                         <thead>
                             <tr>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.FullName)
+                                    @Html.DisplayNameFor(model => model.FirstName)&nbsp;
+                                    @Html.DisplayNameFor(model => model.LastName)
                                 </th>
                                 <th>
                                     @Html.DisplayNameFor(model => model.UserName)
                                 </th>
                                 <th>
                                     @Html.DisplayNameFor(model => model.Role)
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.AddressID)
                                 </th>
                                 <th>
                                     @Html.DisplayNameFor(model => model.IsActive)
@@ -55,7 +53,8 @@
                             {
                                 <tr>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.FullName)
+                                        @Html.DisplayFor(modelItem => item.FirstName) 
+                                        @Html.DisplayFor(modelItem => item.LastName)
                                     </td>
                                     <td>
                                         @Html.DisplayFor(modelItem => item.UserName)
@@ -64,15 +63,11 @@
                                         @Html.DisplayFor(modelItem => item.Role)
                                     </td>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.AddressID)
-                                    </td>
-                                    <td>
                                         @Html.DisplayFor(modelItem => item.IsActive)
                                     </td>
                                     <td>
-                                        @Html.ActionLink("Edit", "Edit", new {  id=item.SubscriberID  }) |
-                                        @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                                        @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                                        @Html.ActionLink("Edit", "Edit", new {  id=item.SubscriberID  }) 
+                                    
                                     </td>
                                 </tr>
                             }

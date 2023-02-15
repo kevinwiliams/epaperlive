@@ -477,12 +477,31 @@ namespace ePaperLive
             }
             else
             {
-                string url = string.Format("https://api.ip2location.io/?ip={0}&key={1}", ipAddress, "0d4f60641cd9b95ff5ac9b4d866a0655");
-                using (WebClient client = new WebClient())
+                try
                 {
-                    string json = client.DownloadString(url);
-                    location = new JavaScriptSerializer().Deserialize<UserLocation>(json);
+                    //string apiUrl = string.Format("https://api.ip2location.io/?ip={0}&key={1}", ipAddress, "D799EE85BF1EC31305E91E2AF1F6B166");
+                    string apiUrl = String.Format("http://ip-api.com/json/{0}", ipAddress);
+                    using (WebClient client = new WebClient())
+                    {
+                        string json = client.DownloadString(apiUrl);
+                        //location = new JavaScriptSerializer().Deserialize<UserLocation>(json);
+                        dynamic jsonResult = new JavaScriptSerializer().Deserialize<dynamic>(json);
+                        if (jsonResult["countryCode"] == "success")
+                        {
+                            location.Country_Code = jsonResult["countryCode"];
+                        }
+                        else
+                        {
+                            location.Country_Code = "JM";
+                        }
+                    }
                 }
+                catch (Exception ex)
+                {
+                    LogError(ex);
+                    location.Country_Code = "JM";
+                }
+                
             }
 
             return location;
