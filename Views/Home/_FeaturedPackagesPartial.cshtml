@@ -3,7 +3,7 @@
 @{
     var tabClass = "";
     int delay = 0;
-    foreach (var plans in Model.Rates.Where(x => x.IsFeatured == true))
+    foreach (var plans in Model.Rates.Where(x => x.IsFeatured == true).OrderByDescending(x => x.Rate))
     {
         var isCTA = (plans.IsCTA == true) ? "featured" : "";
         var featureList = plans.FeatureList.Split(',');
