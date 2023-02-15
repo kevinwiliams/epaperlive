@@ -75,29 +75,29 @@
 @section scripts {
     <script type="text/jscript">
 
+
     $(function () {
-
+        var zones = $("#zoneTable").DataTable({ "pageLength": 25 });
         $('#StateParish').change(function () {
+            
             let parish = $('#StateParish').val();
-
             if (parish) {
                 $.getJSON('@Url.Action("DistrictList","Account")?Id=' + parish, function (data) {
 
-                    $("#zoneTable").DataTable({
-                              "pageLength": 25
-                            }).clear();
+                    zones.clear();
+
                     var row = 1;
 
-                      $.each(data, function (i, district) {
-                          $('#zoneTable').dataTable().fnAddData([
-                                district.Text
-                              ]);
+                    $.each(data, function (i, district) {
+                        $('#zoneTable').dataTable().fnAddData([
+                            district.Text
+                        ]);
 
-                           row++;
+                        row++;
                     });
 
                 });
-            }
+            } 
 
         });
     });
