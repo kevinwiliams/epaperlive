@@ -74,11 +74,14 @@
                         }
                         @if (User.IsInRole("Admin"))
                         {
+                            <li>@Html.ActionLink("ePaper Subscriptions", "epapersub", "admin")</li>
+                            
                             <li>@Html.ActionLink("Subscription Rates", "rates", "admin")</li>
+                            
                             <li>@Html.ActionLink("Transactions", "transactions", "admin")</li>
                             <li>@Html.ActionLink("Coupons", "coupons", "admin")</li>
                             <li>@Html.ActionLink("Addresses", "address", "admin")</li>
-                            <li>@Html.ActionLink("Subscribers", "subscribers", "admin")</li>
+                            <li>@Html.ActionLink("Users", "subscribers", "admin")</li>
 
                         }
                     </ul>

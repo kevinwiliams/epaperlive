@@ -16,7 +16,11 @@ namespace ePaperLive.DBModel
         [StringLength(50)]
         public string EmailAddress { get; set; }
         public int RateID { get; set; }
+        [DataType(DataType.Date)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
         public System.DateTime StartDate { get; set; }
+        [DataType(DataType.Date)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
         public System.DateTime EndDate { get; set; }
         public bool IsActive { get; set; }
         [StringLength(50)]

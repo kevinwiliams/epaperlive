@@ -58,12 +58,7 @@
                                     <th>
                                         @Html.DisplayNameFor(model => model.OrderID)
                                     </th>
-                                    <th>
-                                        @Html.DisplayNameFor(model => model.AuthCode)
-                                    </th>
-                                    <th>
-                                        @Html.DisplayNameFor(model => model.ConfirmationNo)
-                                    </th>
+                          
                                     <th>Options</th>
                                 </tr>
                             </thead>
@@ -100,12 +95,7 @@
                                             @Html.DisplayFor(modelItem => item.OrderID)
                                         </td>
 
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.AuthCode)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.ConfirmationNo)
-                                        </td>
+                               
                                         <td>
                                             @Html.ActionLink("Edit", "Edit", new { id = item.Subscriber_TranxID }) |
                                             @Html.ActionLink("View", "Details", new { id = item.Subscriber_TranxID }) 

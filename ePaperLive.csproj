@@ -312,6 +312,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\EpaperSubController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\PaymentsController.cs" />
@@ -642,6 +643,11 @@
     <Content Include="Views\Account\FreeMonth.cshtml" />
     <Content Include="Views\Account\DeliveryZones.cshtml" />
     <Content Include="Views\Account\_RefundForm.cshtml" />
+    <Content Include="Views\EpaperSub\Create.cshtml" />
+    <Content Include="Views\EpaperSub\Delete.cshtml" />
+    <Content Include="Views\EpaperSub\Details.cshtml" />
+    <Content Include="Views\EpaperSub\Edit.cshtml" />
+    <Content Include="Views\EpaperSub\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\roslyn\" />

@@ -1,0 +1,145 @@
+﻿@model ePaperLive.DBModel.Subscriber_Epaper
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<div id="main">
+
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+        <div class="container">
+
+            <ol>
+                <li><a href="@Url.Action("index", "home")">Home</a></li>
+                <li><a href="@Url.Action("epapersub", "admin")">ePaper Subscribers</a></li>
+                <li>@ViewData["Title"]</li>
+            </ol>
+            <h2>@ViewData["Title"]</h2>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+    <!-- ======= Wizard Section ======= -->
+    <section id="portfolio-details" class="portfolio-details">
+        <div class="container">
+
+            <div class="row gy-4">
+                <div class="col-lg-12">
+
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-horizontal">
+                            <h4>@Html.DisplayFor(model => model.EmailAddress)</h4>
+                            <hr />
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            @Html.HiddenFor(model => model.Subscriber_EpaperID)
+                            @Html.HiddenFor(model => model.SubscriberID)
+                            @Html.HiddenFor(model => model.RateID)
+                            @Html.HiddenFor(model => model.OrderNumber)
+                            @Html.HiddenFor(model => model.CreatedAt)
+                            @Html.HiddenFor(model => model.SubType)
+
+
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.EmailAddress, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.EmailAddress, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                                    @Html.ValidationMessageFor(model => model.EmailAddress, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.PlanDesc, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.PlanDesc, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.PlanDesc, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group pt-3">
+                                @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <div class="col-md-4">
+                                    @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group pt-3">
+                                @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-md-2" , @type = "date"})
+                                <div class="col-md-4">
+                                    @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+                                    @Html.DropDownList("DaysList", ViewBag.daysList as SelectList, "Add Days", new { @class = "form-control", id = "DaysList" })
+
+                                </div>
+                            </div>
+
+                            <div class="form-group pt-3">
+                                @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <div class="col-md-2">
+                                    <div class="checkbox">
+                                        @Html.EditorFor(model => model.IsActive)
+                                        @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.NotificationEmail, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <div class="col-md-2">
+                                    <div class="checkbox">
+                                        @Html.EditorFor(model => model.NotificationEmail)
+                                        @Html.ValidationMessageFor(model => model.NotificationEmail, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group py-5">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <input type="submit" value="Update" class="btn btn-sign-in" />
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <div>
+                        @Html.ActionLink("Back to List", "Index")
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section><!-- End Wizard Section -->
+
+</div>
+
+@section scripts{
+    <script>
+        let orginalDate = $('#EndDate').val();
+        let endDate = $('#EndDate').val();
+        endDate = moment(endDate);
+
+        //var endDate = moment($('#EndDate').val());
+
+        $('#DaysList').on('change', (e) => {
+            let dDate = moment(orginalDate);
+            let days = e.currentTarget.value;
+            let newDate = dDate.add(days, 'days').format('YYYY-MM-DD');
+            console.log(days);
+            if (days) {
+            $('#EndDate').val(newDate);
+
+            }
+            else {
+            $('#EndDate').val(orginalDate);
+
+            }
+            console.log(newDate);
+        });
+
+
+    </script>
+}

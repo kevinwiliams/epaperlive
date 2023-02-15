@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<ePaperLive.Models.UsersWithRoles>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Users";
 }
 
 <div id="main">
@@ -12,6 +12,8 @@
 
             <ol>
                 <li><a href="@Url.Action("index", "home")">Home</a></li>
+                <li><a href="@Url.Action("subscribers", "admin")">Users</a></li>
+
                 <li>@ViewData["Title"]</li>
             </ol>
             <h2>@ViewData["Title"]</h2>
