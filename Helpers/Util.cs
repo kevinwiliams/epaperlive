@@ -477,31 +477,45 @@ namespace ePaperLive
             }
             else
             {
+
                 try
                 {
-                    //string apiUrl = string.Format("https://api.ip2location.io/?ip={0}&key={1}", ipAddress, "D799EE85BF1EC31305E91E2AF1F6B166");
                     string apiUrl = String.Format("http://ip-api.com/json/{0}", ipAddress);
                     using (WebClient client = new WebClient())
                     {
                         string json = client.DownloadString(apiUrl);
-                        //location = new JavaScriptSerializer().Deserialize<UserLocation>(json);
+
                         dynamic jsonResult = new JavaScriptSerializer().Deserialize<dynamic>(json);
-                        if (jsonResult["countryCode"] == "success")
+                        if (jsonResult["status"] == "success")
                         {
                             location.Country_Code = jsonResult["countryCode"];
                         }
                         else
                         {
-                            location.Country_Code = "JM";
+                            try
+                            {
+                                string url = string.Format("https://api.ip2location.io/?ip={0}&key={1}", ipAddress, "D799EE85BF1EC31305E91E2AF1F6B166"); //
+                                using (WebClient webClient = new WebClient())
+                                {
+                                    string jsonRes = webClient.DownloadString(url);
+                                    location = new JavaScriptSerializer().Deserialize<UserLocation>(jsonRes);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                LogError(ex);
+                                location.Country_Code = "JM";
+                            }
                         }
+
                     }
                 }
-                catch (Exception ex)
+                catch (Exception exs)
                 {
-                    LogError(ex);
+                    LogError(exs);
                     location.Country_Code = "JM";
                 }
-                
+
             }
 
             return location;
