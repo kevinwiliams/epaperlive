@@ -25,6 +25,7 @@ using Newtonsoft.Json.Linq;
 using ePaperLive.Filters;
 using System.Net.Mail;
 using System.Net;
+using System.Web.Routing;
 
 namespace ePaperLive.Controllers
 {
@@ -1525,6 +1526,49 @@ namespace ePaperLive.Controllers
 
                     var nratesList = (rateType != null) ? ratesList.Where(x => x.Type == rateType).ToList() : ratesList;
      
+                    foreach (var item in nratesList.Where(x => x.PrintDayPattern != null))
+                    {
+                        item.PrintDayPattern = DeliveryFreqToDate(item.PrintDayPattern);
+                    }
+
+                    model.Rates = nratesList;
+                    model.RateType = rateType;
+                    model.IsRenewal = isRenewal;
+
+                    return PartialView("_RatesPartial", model);
+                }
+                catch (Exception e)
+                {
+                    //handle exception
+                    throw e;
+                }
+            }
+
+            return PartialView("_RatesPartial", model);
+        }
+        [HttpPost]
+        [AllowAnonymous]
+        public ActionResult GetRatesListAdmin(string rateType, bool isRenewal = false)
+        {
+            //rateType = (rateType != null) ? rateType : "Epaper";
+            PrintSubRates model = new PrintSubRates();
+            /*return View(model);*/
+
+            if (rateType != null)
+            {
+                try
+                {
+                    UserLocation objLoc = GetSubscriberLocation();
+                    var market = (objLoc.Country_Code == "JM") ? "Local" : "International";
+
+                    ApplicationDbContext db = new ApplicationDbContext();
+                    List<printandsubrate> ratesList = db.printandsubrates.ToList();
+                                        //.Where(x => x.Market == market)
+                                        //.Where(x => x.Active == true).ToList();
+
+
+                    var nratesList = (rateType != null) ? ratesList.Where(x => x.Type == rateType).ToList() : ratesList;
+
                     foreach (var item in nratesList.Where(x => x.PrintDayPattern != null))
                     {
                         item.PrintDayPattern = DeliveryFreqToDate(item.PrintDayPattern);
@@ -3139,7 +3183,7 @@ namespace ePaperLive.Controllers
             return (Subscriber_Address)Session["subscriber_address"];
         }
 
-        private DeliveryAddress GetSubscriberDeliveryAddress()
+        public DeliveryAddress GetSubscriberDeliveryAddress()
         {
             if (Session["subscriber_del_address"] == null)
             {
@@ -3210,10 +3254,10 @@ namespace ePaperLive.Controllers
             return (Dictionary<string, int>)Session["preloadSub"];
         }
 
-        private List<SelectListItem> GetCountryList()
+        public List<SelectListItem> GetCountryList()
         {
        
-            if (Session["CountryList"] == null)
+            if (Session["CountryList"] == null || Session == null)
             {
                 //Generate Country list
                 List<SelectListItem> CountryList = new List<SelectListItem>();
@@ -3243,7 +3287,7 @@ namespace ePaperLive.Controllers
 
         public List<SelectListItem> GetParishes()
         {
-            if(Session["Parishes"] == null) 
+            if(Session["Parishes"] == null || Session == null ) 
             {
                 var parishes = new List<SelectListItem>();
                 var parishList = new List<SelectListItem>();
@@ -3309,6 +3353,11 @@ namespace ePaperLive.Controllers
                     context.SaveChanges();
                 }
             }
+        }
+
+        public void InitializeController(RequestContext context)
+        {
+            base.Initialize(context);
         }
 
         #region Helpers

@@ -648,6 +648,7 @@
     <Content Include="Views\EpaperSub\Details.cshtml" />
     <Content Include="Views\EpaperSub\Edit.cshtml" />
     <Content Include="Views\EpaperSub\Index.cshtml" />
+    <Content Include="Views\EpaperSub\AddSubscriber.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\roslyn\" />
