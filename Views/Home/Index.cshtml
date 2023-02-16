@@ -3,7 +3,6 @@
 
 @{ ViewBag.Title = "Home Page"; }
 
-
 <!-- ======= Hero Section ======= -->
 <section id="hero">
 
@@ -42,7 +41,7 @@
     <img src="@Url.Content("~/assets/img/clients/lw-300x250.jfif")">
 </div>
 <!-- end: adspot -->
-<!-- ======= Pricing Section ======= -->
+<!-- ======= Featured Section ======= -->
 <section id="pricing" class="pricing section-bg">
     <div class="container">
 
@@ -60,7 +59,7 @@
 
     </div>
 </section>
-<!-- End Pricing Section -->
+<!-- End Featured Section -->
 <!-- start: adspot -->
 <div id="adspot" class="p-lg-5 text-center d-none d-md-none d-lg-block">
     <img src="@Url.Content("~/assets/img/clients/lw-970x90.jfif")">
@@ -68,13 +67,14 @@
 <div id="adspot" class="p-3 text-center d-block d-sm-none d-md-block d-lg-none">
     <img src="@Url.Content("~/assets/img/clients/lw-300x250.jfif")">
 </div>
-<!-- ======= Features Section ======= -->
+<!-- end: adspot -->
+<!-- ======= Packages Section ======= -->
 <section id="features" class="features">
     <div class="container">
         <div class="section-title" data-aos="fade-up">
             <h2>Subscription Packages</h2>
             <p>
-                Subscribe to trusted, insightful journalism and enjoy unlimited access online or offline. We offer various packages from that will give you acces to our media whereever in the world you are.
+                Subscribe to trusted, insightful journalism and enjoy unlimited access online or offline. We offer various packages that will give you access to our media where ever in the world you are.
                 View our options below to see what best fits into your lifestyle.
             </p>
         </div>
@@ -84,8 +84,9 @@
         <!-- end packages-->
 
     </div>
-</section><!-- End Features Section -->
-<!-- ======= Cta Section ======= -->
+</section>
+<!-- End Packages Section -->
+<!-- ======= APP Section ======= -->
 <section id="cta" class="cta">
     <div class="container">
 
@@ -107,7 +108,8 @@
         </div>
 
     </div>
-</section><!-- End Cta Section -->
+</section>
+<!-- End APP Section -->
 <!-- start: adspot -->
 <div id="adspot" class="p-lg-5 text-center d-none d-md-none d-lg-block">
     <img src="@Url.Content("~/assets/img/clients/jdx-970x90.jfif")">
@@ -164,7 +166,8 @@
         </div>
 
     </div>
-</section><!-- End Services Section -->
+</section>
+<!-- End Services Section -->
 <!-- ======= F.A.Q Section ======= -->
 <section id="faq" class="faq">
     <div class="container">
@@ -238,7 +241,8 @@
         </ul>
 
     </div>
-</section><!-- End Frequently Asked Questions Section -->
+</section>
+<!-- End Frequently Asked Questions Section -->
 <!-- ======= Contact Section ======= -->
 <section id="contact" class="contact section-bg">
     <div class="container">
@@ -317,7 +321,8 @@
         </div>
 
     </div>
-</section><!-- End Contact Section -->
+</section>
+<!-- End Contact Section -->
 @section scripts{
     <script>
         function ReloadPage() {
@@ -379,7 +384,7 @@
                 e.preventDefault();
                 var freq = $(this).parent().children(".small").html();
                 let plan = e.target.dataset;
-                let rateText = (plan.isFeature == "true") ? $("[name=rateText]").val() : e.target.innerText;
+                let rateText = (plan.isFeature == "true") ? $(this).parent('.btn-wrap').next('input').val() : e.target.innerText;
                 freq = (plan.isFeature == "true") ? plan.delFreq : freq;
 
                 let rateType = plan.rateType + '|' + rateText + '|' + plan.rateDesc + '|' + plan.ratePrice + '|' + freq;
@@ -387,7 +392,7 @@
                 //console.log(rateType);
                 //console.log(rateId);
                 //console.log(e);
-
+                
                 $.ajax({
                     type: "POST",
                     url: '@Url.Action("preloadsubscription","home")',
@@ -401,6 +406,5 @@
 
         });
     </script>
-
 
 }
