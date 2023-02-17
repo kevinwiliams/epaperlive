@@ -1,7 +1,7 @@
 ﻿@model ePaperLive.Models.AuthSubcriber
 
 @{
-    ViewBag.Title = "Redeem Coupon";
+    ViewBag.Title = "Add Subscriber";
 }
 
 <div id="main">
@@ -82,20 +82,14 @@
                                 </div>
 
 
-
-
-
-
-
-
                             </div>
                             <div class="row form-horizontal py-3">
-                                <h4>Mailing address </h4>
+                                <p>Mailing address </p>
                                 <hr />
                                 <div class="offset-md-1 form-group">
                                     @*@Html.LabelFor(model => model.AddressLine1, htmlAttributes: new { @class = "control-label" })*@
                                     <div class="col-md-10 p-2">
-                                        @Html.EditorFor(model => model.AddressDetails[0].AddressLine1, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.AddressDetails[0].AddressLine1) } })
+                                        @Html.EditorFor(model => model.AddressDetails.FirstOrDefault().AddressLine1, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.AddressDetails.FirstOrDefault().AddressLine1) } })
                                         @*@Html.ValidationMessageFor(model => model.AddressLine1, "", new { @class = "text-danger" })*@
                                     </div>
                                 </div>
@@ -103,7 +97,7 @@
                                 <div class="offset-md-1 form-group ">
                                     @*@Html.LabelFor(model => model.AddressLine2, htmlAttributes: new { @class = "control-label" })*@
                                     <div class="col-md-10 p-2">
-                                        @Html.EditorFor(model => model.AddressDetails[0].AddressLine2, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.AddressDetails[0].AddressLine2) } })
+                                        @Html.EditorFor(model => model.AddressDetails.FirstOrDefault().AddressLine2, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.AddressDetails.FirstOrDefault().AddressLine2) } })
                                         @*@Html.ValidationMessageFor(model => model.AddressLine2, "", new { @class = "text-danger" })*@
                                     </div>
                                 </div>
@@ -111,7 +105,7 @@
                                     <div class="form-group p-2">
                                         @*@Html.LabelFor(model => model.CityTown, htmlAttributes: new { @class = "control-label " })*@
                                         <div class="col-md-10">
-                                            @Html.EditorFor(model => model.AddressDetails[0].CityTown, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.AddressDetails[0].CityTown) } })
+                                            @Html.EditorFor(model => model.AddressDetails.FirstOrDefault().CityTown, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.AddressDetails.FirstOrDefault().CityTown) } })
                                             <select id="CityTownList" class="form-control pb-sm-3 hidden" name="CityTown" aria-label="District" required="required">
                                                 <option>Select a District</option>>
                                             </select>
@@ -122,7 +116,7 @@
                                     <div class="form-group p-2">
                                         @*@Html.LabelFor(model => model.StateParish, htmlAttributes: new { @class = "control-label " })*@
                                         <div class="col-md-10">
-                                            @Html.EditorFor(model => model.AddressDetails[0].StateParish, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.AddressDetails[0].StateParish) } })
+                                            @Html.EditorFor(model => model.AddressDetails.FirstOrDefault().StateParish, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.AddressDetails.FirstOrDefault().StateParish) } })
                                             @Html.DropDownList("StateParish", ViewBag.Parishes as SelectList, "Select a parish", new { @class = "form-control", id = "StateParishList", @required = "required", @style = "display: none" })
                                             @*@Html.ValidationMessageFor(model => model.StateParish, "", new { @class = "text-danger" })*@
                                         </div>
@@ -133,7 +127,7 @@
                                     <div class="form-group p-2">
                                         @*@Html.LabelFor(model => model.ZipCode, htmlAttributes: new { @class = "control-label " })*@
                                         <div class="col-md-10">
-                                            @Html.EditorFor(model => model.AddressDetails[0].ZipCode, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.AddressDetails[0].ZipCode) } })
+                                            @Html.EditorFor(model => model.AddressDetails.FirstOrDefault().ZipCode, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.AddressDetails.FirstOrDefault().ZipCode) } })
                                             @*@Html.ValidationMessageFor(model => model.ZipCode, "", new { @class = "text-danger" })*@
                                         </div>
                                     </div>
@@ -145,7 +139,7 @@
                                             @if (ViewBag.CountryList != null)
                                             {
                                                 @*@Html.ValidationMessageFor(model => model.CountryCode, "", new { @class = "text-danger" })*@
-                                                @Html.DropDownListFor(model => model.AddressDetails[0].CountryCode, ViewBag.CountryList as List<SelectListItem>, "Select Country", new { @class = "form-control", @required = "required" })
+                                                @Html.DropDownListFor(model => model.AddressDetails.FirstOrDefault().CountryCode, ViewBag.CountryList as List<SelectListItem>, "Select Country", new { @class = "form-control", @required = "required" })
                                             }
                                         </div>
                                     </div>
@@ -154,12 +148,19 @@
                                 <div class="offset-md-1 form-group p-3">
                                     @*@Html.LabelFor(model => model.phone, htmlAttributes: new { @class = "control-label " })*@
                                     <div class="col-md-4">
-                                        @Html.EditorFor(model => model.AddressDetails[0].Phone, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.AddressDetails[0].Phone) } })
+                                        @Html.EditorFor(model => model.AddressDetails.FirstOrDefault().Phone, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.AddressDetails.FirstOrDefault().Phone) } })
                                         @*@Html.ValidationMessageFor(model => model.phone, "", new { @class = "text-danger" })*@
                                     </div>
                                 </div>
                                 <hr>
-
+                                <div class="form-group">
+                                    @Html.EditorFor(model => model.PaymentDetails.FirstOrDefault().CardAmount, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.PaymentDetails.FirstOrDefault().CardAmount) } })
+                                    <input type="hidden" id="originalAmount" />
+                                    @Html.EditorFor(model => model.PaymentDetails.FirstOrDefault().Currency, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.PaymentDetails.FirstOrDefault().Currency) } })
+                                    @Html.EditorFor(model => model.PaymentDetails.FirstOrDefault().SubType, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.PaymentDetails.FirstOrDefault().SubType) } })
+                                    @Html.EditorFor(model => model.PaymentDetails.FirstOrDefault().RateDescription, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.PaymentDetails.FirstOrDefault().RateDescription) } })
+                                    @*@Html.EditorFor(model => model.PaymentDetails.FirstOrDefault().RateTerm)*@
+                                </div>
 
                             </div>
 
@@ -179,9 +180,9 @@
                             <div id="search-form">
                                 <div class="plans pb-3">
                                     <div class="row justify-content-md-center">
-                                        <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.SubscriptionDetails[0].RateType, "Epaper", htmlAttributes: new { @autocomplete = "off", @id = "ePaper" })<label for="ePaper">ePaper Edition</label></div>
-                                        <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.SubscriptionDetails[0].RateType, "Print", htmlAttributes: new { @autocomplete = "off", @id = "Print" })<label for="Print">Print Edition</label></div>
-                                        <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.SubscriptionDetails[0].RateType, "Bundle", htmlAttributes: new { @autocomplete = "off", @id = "Bundle" })<label for="Bundle">Print & ePaper Bundle</label></div>
+                                        <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.SubscriptionDetails.FirstOrDefault().RateType, "Epaper", htmlAttributes: new { @autocomplete = "off", @id = "ePaper" })<label for="ePaper">ePaper Edition</label></div>
+                                        <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.SubscriptionDetails.FirstOrDefault().RateType, "Print", htmlAttributes: new { @autocomplete = "off", @id = "Print" })<label for="Print">Print Edition</label></div>
+                                        <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.SubscriptionDetails.FirstOrDefault().RateType, "Bundle", htmlAttributes: new { @autocomplete = "off", @id = "Bundle" })<label for="Bundle">Print & ePaper Bundle</label></div>
                                     </div>
                                 </div>
                                 @* @Html.Action("GetRatesList", "Account")*@
@@ -190,7 +191,7 @@
                                 <p>Loading...</p>
 
                             </div>
-                            @Html.HiddenFor(m => m.SubscriptionDetails[0].RateID, new { @class = ".do-not-ignore" })
+                            @Html.HiddenFor(m => m.SubscriptionDetails.FirstOrDefault().RateID, new { @class = ".do-not-ignore" })
 
                             <div class="form-group p-2" id="del-address" style="display: none">
                                 <hr />
@@ -205,44 +206,44 @@
                             <div id="delAddressDetails"> </div>
 
                             <div class="form-group p-2" id="del-instructions" style="display: none">
-                                @Html.LabelFor(model => model.SubscriptionDetails[0].DeliveryInstructions, htmlAttributes: new { @class = "form-label " })
+                                @Html.LabelFor(model => model.SubscriptionDetails.FirstOrDefault().DeliveryInstructions, htmlAttributes: new { @class = "form-label " })
                                 <div class="col-md-10">
-                                    @Html.TextAreaFor(model => model.SubscriptionDetails[0].DeliveryInstructions, new { htmlAttributes = new { @class = "form-control", @rows = 5 } })
+                                    @Html.TextAreaFor(model => model.SubscriptionDetails.FirstOrDefault().DeliveryInstructions, new { htmlAttributes = new { @class = "form-control", @rows = 5 } })
                                 </div>
                                 <hr />
 
                             </div>
 
                             <div class="form-group p-2">
-                                @Html.LabelFor(model => model.SubscriptionDetails[0].StartDate, htmlAttributes: new { @class = "control-label fw-bold hidden" })
+                                @Html.LabelFor(model => model.SubscriptionDetails.FirstOrDefault().StartDate, htmlAttributes: new { @class = "control-label fw-bold hidden" })
                                 <div class="col-md-4">
-                                    @Html.EditorFor(model => model.SubscriptionDetails[0].StartDate, "", new { htmlAttributes = new { @class = "form-control hidden", maxlength = 10, @required = "required" } })
+                                    @Html.EditorFor(model => model.SubscriptionDetails.FirstOrDefault().StartDate, "", new { htmlAttributes = new { @class = "form-control hidden", maxlength = 10, @required = "required" } })
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="row">
                                     <div class="col-md-4 p-3">
                                         <div class="form-check">
-                                            @Html.EditorFor(model => model.SubscriptionDetails[0].NewsletterSignUp, new { htmlAttributes = new { @class = "form-check-input" } })
-                                            @Html.LabelFor(model => model.SubscriptionDetails[0].NewsletterSignUp, htmlAttributes: new { @class = "form-check-label" })
+                                            @Html.EditorFor(model => model.SubscriptionDetails.FirstOrDefault().NewsletterSignUp, new { htmlAttributes = new { @class = "form-check-input" } })
+                                            @Html.LabelFor(model => model.SubscriptionDetails.FirstOrDefault().NewsletterSignUp, htmlAttributes: new { @class = "form-check-label" })
                                         </div>
                                     </div>
                                     <div class="col-md-8 p-3">
                                         <div class="form-check">
-                                            @Html.EditorFor(model => model.SubscriptionDetails[0].NotificationEmail, new { htmlAttributes = new { @class = "form-check-input" } })
-                                            @Html.LabelFor(model => model.SubscriptionDetails[0].NotificationEmail, htmlAttributes: new { @class = "form-check-label" })
+                                            @Html.EditorFor(model => model.SubscriptionDetails.FirstOrDefault().NotificationEmail, new { htmlAttributes = new { @class = "form-check-input" } })
+                                            @Html.LabelFor(model => model.SubscriptionDetails.FirstOrDefault().NotificationEmail, htmlAttributes: new { @class = "form-check-label" })
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group">
-
-                            </div>
+                            
 
 
                             <input type="hidden" id="AddressAdded" />
                             <!-- end:wizrd -->
                             <!-- Delivery Modal -->
+                            
+
                             <!-- end: Delivery Modal -->
                         </div>
                     </div>
@@ -291,7 +292,7 @@
                 let rateType = $('[name=RateType]:checked').val();
                 let deliveryAddress = $("#AddressAdded").val();
 
-                 if(!$('[name=SubscriptionDetails[0].RateType]').is(':checked')) {
+                 if(!$('[name=RateType]').is(':checked')) {
 
                    swal({
                       title: "Error!",
@@ -314,7 +315,7 @@
                     return false;
                 }
 
-                if ($('[name=SubscriptionDetails[0].RateType]').is(':checked')) {
+                if ($('[name=RateType]').is(':checked')) {
                      let formData = $("[name=subdetails]").valid();
                      if (formData) {
                          $('#loading').addClass('loading').removeClass('hidden');
@@ -322,7 +323,7 @@
                 }
               });
 
-            $("[name='SubscriptionDetails[0].StartDate']").on('change', function (e) {
+            $("[name='StartDate']").on('change', function (e) {
 
                 let givenDate = $(this).val();
                 givenDate = moment(givenDate);
@@ -346,7 +347,7 @@
                     
             });
 
-            $('[name="SubscriptionDetails[0].RateType"]').on("click", function () {
+            $('[name="RateType"]').on("click", function () {
 
                 today = moment();
                 console.log(today.format('YYYY-MM-DD'), ' day: ', today.isoWeekday(), ' hr: ', today.hours());
@@ -355,8 +356,8 @@
                 //console.log($(this).val());
                 if (rateType != "Epaper") {
                     $("#subtypedesc").html(rateType.toLowerCase());
-                    $("[name='SubscriptionDetails[0].StartDate']").removeClass('hidden');
-                    $("[for='SubscriptionDetails[0].StartDate']").removeClass('hidden');
+                    $("[name='StartDate']").removeClass('hidden');
+                    $("[for='StartDate']").removeClass('hidden');
                     // if (today is fri) and time of day <=  10am
                     today = moment();
                     if (today.isoWeekday() === 5 && today.hours() <= 10) {
@@ -377,7 +378,7 @@
                       currentDate = today.add(2, 'days').format('YYYY-MM-DD');
                     }
 
-                    $("[name='SubscriptionDetails[0].StartDate']").val(currentDate);
+                    $("[name='StartDate']").val(currentDate);
 
                     $("#del-address").show();
                     $("#del-instructions").show();
@@ -385,11 +386,11 @@
                     $("#deliveryAddressForm :input:not(#DeliveryAddress_AddressLine2):not([name=SameAsMailing])").attr("required", "required");
                 } else {
                     $("#subtypedesc").html('ePaper');
-                    $("[name='SubscriptionDetails[0].StartDate']").addClass('hidden');
-                    $("[for='SubscriptionDetails[0].StartDate']").addClass('hidden');
+                    $("[name='StartDate']").addClass('hidden');
+                    $("[for='StartDate']").addClass('hidden');
                     currentDate = today.format('YYYY-MM-DD');
 
-                    $("[name='SubscriptionDetails[0].StartDate']").val(currentDate);
+                    $("[name='StartDate']").val(currentDate);
 
                     $("#del-address").hide();
                     $("#del-instructions").hide();
@@ -401,7 +402,7 @@
 
             });
 
-            $("[name='SubscriptionDetails[0].RateType']").click(function (e) {
+            $("[name='RateType']").click(function (e) {
                 $("#rates-results").show();
                 var rateType = $(this).val();
                 e.preventDefault();
@@ -412,7 +413,7 @@
                     success: function (result) {
                         //console.log(result);
                         $("#rates-results").html(result);
-                        $("input[name='SubscriptionDetails[0].RateType'][value=" + rateType + "]").prop('checked', true);
+                        $("input[name='RateType'][value=" + rateType + "]").prop('checked', true);
 
                         //if (preRate) {
                         //    setTimeout(
@@ -422,6 +423,42 @@
                     }
                 });
             });
+        // Event delegation, waits until the elements are loaded on the page
+            $("#rates-results").on("click", "[name=RateID]", function (e) {
+                let rateDesc = $(this).parent().children().children().first().text();
+                let plan = e.target.dataset;
+                var desc = rateDesc.split("|")[0];
+                var freq = rateDesc.split("|")[1];
+
+                var frequency = rateDesc.split("|")[1] ? '<small>' + rateDesc.split("|")[1] + '</small>' : '';
+                let rateType = plan.rateType + '|' + desc + '|' + plan.rateDesc + '|' + plan.ratePrice + '|' + freq;
+                let rateId = plan.subId;
+
+                console.log('rateDesc', rateDesc);
+                $('#RateDescription').val(rateDesc);
+                console.log(plan.rateType);
+                $('#SubType').val(plan.rateType);
+                console.log(desc);
+                console.log(rateId);
+                $('#RateID').val(rateId);
+                console.log(plan.subId);
+                console.log(plan.rateDesc);
+                console.log(plan.ratePrice);
+                $('#Currency').val(plan.ratePrice.split(" ")[0]);
+                $('#CardAmount').val(plan.ratePrice.split("$")[1]);
+
+
+                @*$.ajax({
+                    type: "POST",
+                    url: '@Url.Action("PreloadSubscription", "Home")',
+                    data: { rateType: rateType, rateId: rateId },
+                    success: function (result) {
+                        var html = '<strong>' + plan.rateType.toUpperCase() + ' SUBSCRIPTION</strong><br />' + desc + '<br />' + frequency + '<p class="pt-1 text-success fw-semibold fs-3">' + plan.ratePrice + '</p>';
+                        $("#subSummary").html(html);
+                    }
+                });*@
+            });
+
 
             $("[name=deliveryAddressForm]").on('submit', function (e) {
                 e.preventDefault();

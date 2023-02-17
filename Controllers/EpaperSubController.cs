@@ -140,6 +140,16 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
             AccountController account = new AccountController();
             account.InitializeController(this.Request.RequestContext);
 
+            AuthSubcriber authUser = new AuthSubcriber();
+            //authUser.AddressDetails = new List<AddressDetails>();
+            //AddressDetails address = new AddressDetails();
+            //authUser.AddressDetails.Add(address);
+
+            authUser.SubscriptionDetails = new List<SubscriptionDetails>();
+            //SubscriptionDetails subscriptionDetails = new SubscriptionDetails();
+
+            //authUser.PaymentDetails = new List<PaymentDetails>();
+
             List<SelectListItem> Addressparishes = account.GetParishes();
             ViewBag.Parishes = new SelectList(Addressparishes, "Value", "Text");
             ViewBag.CountryList = account.GetCountryList();
@@ -150,60 +160,106 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
         [HttpPost]
         [Route("addSubscriber")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> AddSubscriber(AuthSubcriber authUser, string nextBtn)
+        public async Task<ActionResult> AddSubscriber(FormCollection form, string nextBtn)
         {
-            authUser.SubscriptionDetails = new List<SubscriptionDetails>();
-            authUser.PaymentDetails = new List<PaymentDetails>();
             AccountController account = new AccountController();
-
+            account.InitializeController(this.Request.RequestContext);
 
             if (nextBtn != null)
             {
                 if (ModelState.IsValid)
                 {
-                    var isExist = account.IsEmailExist(authUser.EmailAddress);
+
+                    var EmailAddress = form["EmailAddress"];
+                    var isExist = account.IsEmailExist(EmailAddress);
                     if (isExist)
                     {
                         ModelState.AddModelError("EmailExist", "Email address is already assigned. Please use forget password option to log in");
-                        return View(authUser);
+                        return View(form);
                     }
 
                     try
                     {
+
+
+                        AuthSubcriber authUser = new AuthSubcriber();
+                        authUser.FirstName = form["FirstName"];
+                        authUser.LastName = form["LastName"];
+                        authUser.Password = form["Password"];
+
+                        authUser.AddressDetails = new List<AddressDetails>();
+                        AddressDetails address = new AddressDetails {
+                            AddressType = "M",
+                            AddressLine1 = form["AddressLine1"],
+                            AddressLine2 = form["AddressLine2"],
+                            CityTown = form["CityTown"],
+                            StateParish = form["StateParish"],
+                            CountryCode = form["CountryCode"]
+                        };
+                        authUser.AddressDetails.Add(address);
+
+
+                        authUser.PaymentDetails = new List<PaymentDetails>();
+
                         DeliveryAddress objDelv = account.GetSubscriberDeliveryAddress();
 
-                        var RateID = authUser.SubscriptionDetails.FirstOrDefault().RateID;
-                        authUser.AddressDetails.FirstOrDefault().AddressType = "M";
-
-                        var paddedRateKey = Util.ZeroPadNumber(3, authUser.PaymentDetails.FirstOrDefault().RateID);
-                        // 2 Character Sub Type
-                        var reSubType = authUser.PaymentDetails.FirstOrDefault().SubType.ToUpper().Substring(0, 2);
-
-                        authUser.PaymentDetails.FirstOrDefault().OrderNumber = $"{reSubType}{"-"}{DateTime.Now.ToString("yyyyMMddhhmmssfffff")}{"-"}{authUser.PaymentDetails.FirstOrDefault().Currency}{"-"}{paddedRateKey}";
-
+                        int RateID = Int32.Parse(form["RateID"]);
                         var selectedPlan = db.printandsubrates.FirstOrDefault(x => x.Rateid == RateID);
+                        var currency = form["Currency"];
+
+                        var paddedRateKey = Util.ZeroPadNumber(3, RateID);
+                        // 2 Character Sub Type
+                        var reSubType = form["SubType"].ToUpper().Substring(0, 2);
+                        PaymentDetails payment = new PaymentDetails
+                        {
+                            OrderNumber = $"{reSubType}{"-"}{DateTime.Now.ToString("yyyyMMddhhmmssfffff")}{"-"}{currency}{"-"}{paddedRateKey}",
+                            RateID = RateID,
+                            RateDescription = form["RateDescription"].Trim(),
+                            Currency = form["Currency"],
+                            SubType = form["SubType"],
+                            CardType = "N/A",
+                            CardOwner = authUser.FirstName + " " + authUser.LastName,
+                            CardAmount = Decimal.Parse(form["CardAmount"]) // (decimal)selectedPlan.Rate
+                        };
+                        authUser.PaymentDetails.Add(payment);
+
+
+                        authUser.SubscriptionDetails = new List<SubscriptionDetails>();
 
                         if (selectedPlan.Type == "Epaper")
                         {
-                            var endDate = authUser.SubscriptionDetails.FirstOrDefault().StartDate.AddDays((double)selectedPlan.ETerm);
-                            authUser.SubscriptionDetails.FirstOrDefault().StartDate = DateTime.Now;
-                            authUser.SubscriptionDetails.FirstOrDefault().EndDate = endDate;
-                            authUser.SubscriptionDetails.FirstOrDefault().SubType = selectedPlan.Type;
-                            authUser.SubscriptionDetails.FirstOrDefault().RateType = selectedPlan.Type;
-                            authUser.SubscriptionDetails.FirstOrDefault().RateDescription = selectedPlan.RateDescr;
-                            authUser.SubscriptionDetails.FirstOrDefault().isActive = true;
+                            var endDate = DateTime.Parse(form["StartDate"]).AddDays((double)selectedPlan.ETerm);
+                            SubscriptionDetails subscription = new SubscriptionDetails
+                            {
+                                StartDate = DateTime.Now,
+                                EndDate = endDate,
+                                SubType = form["SubType"],
+                                RateType = form["RateType"],
+                                RateDescription = form["RateDescription"].Trim(),
+                                isActive = true,
+                                NotificationEmail = bool.Parse(form["NotificationEmail"]),
+                                NewsletterSignUp = bool.Parse(form["NewsletterSignUp"])
+                            };
+                            authUser.SubscriptionDetails.Add(subscription);
 
                         }
 
                         if (selectedPlan.Type == "Print")
                         {
-                            var endDate = authUser.SubscriptionDetails.FirstOrDefault().StartDate.AddDays((double)selectedPlan.PrintTerm * 7);
-                            authUser.SubscriptionDetails.FirstOrDefault().StartDate = DateTime.Now;
-                            authUser.SubscriptionDetails.FirstOrDefault().EndDate = endDate;
-                            authUser.SubscriptionDetails.FirstOrDefault().SubType = selectedPlan.Type;
-                            authUser.SubscriptionDetails.FirstOrDefault().RateType = selectedPlan.Type;
-                            authUser.SubscriptionDetails.FirstOrDefault().RateDescription = selectedPlan.RateDescr;
-                            authUser.SubscriptionDetails.FirstOrDefault().isActive = true;
+                            var endDate = DateTime.Parse(form["StartDate"]).AddDays((double)selectedPlan.PrintTerm * 7);
+                            SubscriptionDetails subscription = new SubscriptionDetails
+                            {
+                                StartDate = DateTime.Now,
+                                EndDate = endDate,
+                                SubType = form["SubType"],
+                                RateType = form["RateType"],
+                                RateDescription = form["RateDescription"].Trim(),
+                                isActive = true,
+                                NotificationEmail = bool.Parse(form["NotificationEmail"]),
+                                NewsletterSignUp = bool.Parse(form["NewsletterSignUp"]),
+                                DeliveryInstructions = form["DeliveryInstructions"]
+                            };
+                            authUser.SubscriptionDetails.Add(subscription);
 
                             AddressDetails deliveryAddress = new AddressDetails
                             {
@@ -220,27 +276,36 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
 
                         if (selectedPlan.Type == "Bundle")
                         {
-                            var pEndDate = authUser.SubscriptionDetails.FirstOrDefault().StartDate.AddDays((double)selectedPlan.PrintTerm * 7);
+                            var pEndDate = DateTime.Parse(form["StartDate"]).AddDays((double)selectedPlan.PrintTerm * 7);
                             SubscriptionDetails printSubscription = new SubscriptionDetails
                             {
                                 StartDate = authUser.SubscriptionDetails.FirstOrDefault().StartDate,
                                 EndDate = pEndDate,
-                                RateID = authUser.SubscriptionDetails.FirstOrDefault().RateID,
-                                DeliveryInstructions = authUser.SubscriptionDetails.FirstOrDefault().DeliveryInstructions,
-                                RateType = selectedPlan.Type,
+                                RateID = RateID,
+                                DeliveryInstructions = form["DeliveryInstructions"],
+                                RateType = form["RateType"],
                                 SubType = "Print",
-                                RateDescription = selectedPlan.RateDescr
+                                RateDescription = form["RateDescription"].Trim(),
+                                NotificationEmail = bool.Parse(form["NotificationEmail"]),
+                                NewsletterSignUp = bool.Parse(form["NewsletterSignUp"])
                             };
                             //print subscription
                             authUser.SubscriptionDetails.Add(printSubscription);
 
-                            var eEndDate = authUser.SubscriptionDetails.FirstOrDefault().StartDate.AddDays((double)selectedPlan.ETerm);
-                            authUser.SubscriptionDetails.FirstOrDefault().StartDate = DateTime.Now;
-                            authUser.SubscriptionDetails.FirstOrDefault().EndDate = eEndDate;
-                            authUser.SubscriptionDetails.FirstOrDefault().SubType = selectedPlan.Type;
-                            authUser.SubscriptionDetails.FirstOrDefault().RateType = selectedPlan.Type;
-                            authUser.SubscriptionDetails.FirstOrDefault().RateDescription = selectedPlan.RateDescr;
-                            authUser.SubscriptionDetails.FirstOrDefault().isActive = true;
+                            var eEndDate = DateTime.Now.AddDays((double)selectedPlan.ETerm);
+                            SubscriptionDetails subscription = new SubscriptionDetails
+                            {
+                                StartDate = DateTime.Now,
+                                RateID = RateID,
+                                EndDate = eEndDate,
+                                SubType = form["RateType"],
+                                RateType = "Epaper",
+                                RateDescription = form["RateDescription"],
+                                isActive = true,
+                                NotificationEmail = bool.Parse(form["NotificationEmail"]),
+                                NewsletterSignUp = bool.Parse(form["NewsletterSignUp"])
+                            };
+                            authUser.SubscriptionDetails.Add(subscription);
 
                             AddressDetails deliveryAddress = new AddressDetails
                             {
@@ -254,13 +319,6 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
 
                             authUser.AddressDetails.Add(deliveryAddress);
                         }
-
-                        authUser.PaymentDetails.FirstOrDefault().RateID = RateID;
-                        authUser.PaymentDetails.FirstOrDefault().RateDescription = selectedPlan.RateDescr;
-                        authUser.PaymentDetails.FirstOrDefault().Currency = selectedPlan.Curr;
-                        authUser.PaymentDetails.FirstOrDefault().SubType = selectedPlan.Type;
-                        authUser.PaymentDetails.FirstOrDefault().CardType = "N/A";
-                        authUser.PaymentDetails.FirstOrDefault().CardOwner = authUser.FirstName + " " + authUser.LastName;
 
                         JOL_UserSession session;
                         var sessionRepository = new SessionRepository();
@@ -278,9 +336,6 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
                         Util.LogError(ex);
                         return View();
                     }
-                    
-
-
                     
                 }
             }
