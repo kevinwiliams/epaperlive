@@ -2798,7 +2798,7 @@ namespace ePaperLive.Controllers
                         }
 
                         TransactionSummary transSummary = new TransactionSummary();
-                        if (customerData.RedeemCode == null)
+                        if (customerData.RedeemCode == null && customerData.AdminCreated == false)
                         {
                             var transactionResponse = await cardProcessor.GetGatewayTransactionStatus(orderNumber);
                             transSummary = cardProcessor.GetTransactionSummary(transactionResponse);
@@ -2820,7 +2820,7 @@ namespace ePaperLive.Controllers
 
                             if (clientData != null)
                             {
-                                if (customerData.RedeemCode == null)
+                                if (customerData.RedeemCode == null && customerData.AdminCreated == false)
                                 {
                                     //update transaction table with authcode and confirmation no.
                                     clientData.Subscriber_Tranx.FirstOrDefault(x => x.OrderID == orderNumber).AuthCode = transSummary.AuthCode;

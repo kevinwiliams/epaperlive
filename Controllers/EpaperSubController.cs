@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.Mvc;
 using ePaperLive.DBModel;
 using ePaperLive.Models;
+using System.IO;
 
 namespace ePaperLive.Controllers.Admin.EpaperSub
 {
@@ -153,6 +154,7 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
             List<SelectListItem> Addressparishes = account.GetParishes();
             ViewBag.Parishes = new SelectList(Addressparishes, "Value", "Text");
             ViewBag.CountryList = account.GetCountryList();
+            ViewBag.GetPaymentList = GetPaymentList();
 
             return View();
         }
@@ -164,6 +166,8 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
         {
             AccountController account = new AccountController();
             account.InitializeController(this.Request.RequestContext);
+            AuthSubcriber authUser = new AuthSubcriber();
+
 
             if (nextBtn != null)
             {
@@ -182,10 +186,11 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
                     {
 
 
-                        AuthSubcriber authUser = new AuthSubcriber();
                         authUser.FirstName = form["FirstName"];
                         authUser.LastName = form["LastName"];
+                        authUser.EmailAddress = form["EmailAddress"];
                         authUser.Password = form["Password"];
+                        authUser.AdminCreated = true;
 
                         authUser.AddressDetails = new List<AddressDetails>();
                         AddressDetails address = new AddressDetails {
@@ -203,23 +208,25 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
 
                         DeliveryAddress objDelv = account.GetSubscriberDeliveryAddress();
 
-                        int RateID = Int32.Parse(form["RateID"]);
+                        int RateID = Int32.Parse(form["RateID"].TrimStart().TrimEnd());
                         var selectedPlan = db.printandsubrates.FirstOrDefault(x => x.Rateid == RateID);
-                        var currency = form["Currency"];
-
+                        var currency = form["Currency"].Trim();
+                        var paymentType = form["PaymentType"].Trim();
                         var paddedRateKey = Util.ZeroPadNumber(3, RateID);
                         // 2 Character Sub Type
                         var reSubType = form["SubType"].ToUpper().Substring(0, 2);
+                        var OrderNumber = (paymentType.Contains("COMP") || paymentType.Contains("STAFF")) ? "COMPLIMENTARY-SUBSCRIPTION" : $"{reSubType}{"-"}{DateTime.Now.ToString("yyyyMMddhhmmssfffff")}{"-"}{currency}{"-"}{paddedRateKey}";
                         PaymentDetails payment = new PaymentDetails
                         {
-                            OrderNumber = $"{reSubType}{"-"}{DateTime.Now.ToString("yyyyMMddhhmmssfffff")}{"-"}{currency}{"-"}{paddedRateKey}",
+                            OrderNumber = OrderNumber,
                             RateID = RateID,
-                            RateDescription = form["RateDescription"].Trim(),
-                            Currency = form["Currency"],
-                            SubType = form["SubType"],
-                            CardType = "N/A",
+                            RateDescription = form["RateDescription"].TrimStart().Trim(),
+                            Currency = form["Currency"].Trim(),
+                            SubType = form["SubType"].Trim(),
+                            CardType = paymentType,
                             CardOwner = authUser.FirstName + " " + authUser.LastName,
-                            CardAmount = Decimal.Parse(form["CardAmount"]) // (decimal)selectedPlan.Rate
+                            CardAmount = Decimal.Parse(form["CardAmount"]),
+                            ConfirmationNumber = form["ConfirmationNumber"].Trim()
                         };
                         authUser.PaymentDetails.Add(payment);
 
@@ -233,12 +240,12 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
                             {
                                 StartDate = DateTime.Now,
                                 EndDate = endDate,
-                                SubType = form["SubType"],
-                                RateType = form["RateType"],
-                                RateDescription = form["RateDescription"].Trim(),
-                                isActive = true,
-                                NotificationEmail = bool.Parse(form["NotificationEmail"]),
-                                NewsletterSignUp = bool.Parse(form["NewsletterSignUp"])
+                                SubType = form["SubType"].Trim(),
+                                RateType = form["RateType"].Trim(),
+                                RateDescription = form["RateDescription"].Trim().TrimStart(),
+                                RateID = RateID,
+                                //NotificationEmail = bool.Parse(form["NotificationEmail"].Trim()),
+                                //NewsletterSignUp = bool.Parse(form["NewsletterSignUp"].Trim())
                             };
                             authUser.SubscriptionDetails.Add(subscription);
 
@@ -254,7 +261,7 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
                                 SubType = form["SubType"],
                                 RateType = form["RateType"],
                                 RateDescription = form["RateDescription"].Trim(),
-                                isActive = true,
+                                RateID = RateID,
                                 NotificationEmail = bool.Parse(form["NotificationEmail"]),
                                 NewsletterSignUp = bool.Parse(form["NewsletterSignUp"]),
                                 DeliveryInstructions = form["DeliveryInstructions"]
@@ -279,15 +286,15 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
                             var pEndDate = DateTime.Parse(form["StartDate"]).AddDays((double)selectedPlan.PrintTerm * 7);
                             SubscriptionDetails printSubscription = new SubscriptionDetails
                             {
-                                StartDate = authUser.SubscriptionDetails.FirstOrDefault().StartDate,
+                                StartDate = DateTime.Parse(form["StartDate"]),
                                 EndDate = pEndDate,
                                 RateID = RateID,
                                 DeliveryInstructions = form["DeliveryInstructions"],
                                 RateType = form["RateType"],
                                 SubType = "Print",
                                 RateDescription = form["RateDescription"].Trim(),
-                                NotificationEmail = bool.Parse(form["NotificationEmail"]),
-                                NewsletterSignUp = bool.Parse(form["NewsletterSignUp"])
+                                //NotificationEmail = bool.Parse(form["NotificationEmail"]),
+                                //NewsletterSignUp = bool.Parse(form["NewsletterSignUp"])
                             };
                             //print subscription
                             authUser.SubscriptionDetails.Add(printSubscription);
@@ -301,9 +308,8 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
                                 SubType = form["RateType"],
                                 RateType = "Epaper",
                                 RateDescription = form["RateDescription"],
-                                isActive = true,
-                                NotificationEmail = bool.Parse(form["NotificationEmail"]),
-                                NewsletterSignUp = bool.Parse(form["NewsletterSignUp"])
+                                //NotificationEmail = bool.Parse(form["NotificationEmail"]),
+                                //NewsletterSignUp = bool.Parse(form["NewsletterSignUp"])
                             };
                             authUser.SubscriptionDetails.Add(subscription);
 
@@ -328,7 +334,7 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
                         var saved = await account.SaveSubscriptionInfoAsync(authUser);
                         if (saved)
                         {
-                            return View("index");
+                            return RedirectToAction("index");
                         }
                     }
                     catch (Exception ex)
@@ -343,10 +349,31 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
             List<SelectListItem> Addressparishes = account.GetParishes();
             ViewBag.Parishes = new SelectList(Addressparishes, "Value", "Text");
             ViewBag.CountryList = account.GetCountryList();
+            ViewBag.GetPaymentList = GetPaymentList();
 
-            return View();
+            return View(authUser);
         }
 
+        public static string RenderViewToString<TModel>(ControllerContext controllerContext, string viewName, TModel model)
+        {
+            ViewEngineResult viewEngineResult = ViewEngines.Engines.FindView(controllerContext, viewName, null);
+            if (viewEngineResult.View == null)
+            {
+                throw new Exception("Could not find the View file. Searched locations:\r\n" + viewEngineResult.SearchedLocations);
+            }
+            else
+            {
+                IView view = viewEngineResult.View;
+
+                using (var stringWriter = new StringWriter())
+                {
+                    var viewContext = new ViewContext(controllerContext, view, new ViewDataDictionary<TModel>(model), new TempDataDictionary(), stringWriter);
+                    view.Render(viewContext, stringWriter);
+
+                    return stringWriter.ToString();
+                }
+            }
+        }
         public static List<SelectListItem> GetDaysList()
         {
             List<SelectListItem> daysList = new List<SelectListItem>();
@@ -360,6 +387,18 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
             daysList.Add(new SelectListItem { Text = "360 days", Value = "360" });
 
             return daysList;
+        }
+        public static List<SelectListItem> GetPaymentList()
+        {
+            List<SelectListItem> paymentList = new List<SelectListItem>();
+
+            paymentList.Add(new SelectListItem { Text = "Complimentary", Value = "COMP" });
+            paymentList.Add(new SelectListItem { Text = "Staff", Value = "STAFF" });
+            paymentList.Add(new SelectListItem { Text = "Cash", Value = "CASH" });
+            paymentList.Add(new SelectListItem { Text = "Check", Value = "CHECK" });
+            paymentList.Add(new SelectListItem { Text = "Bank Transfer", Value = "BANK" });
+
+            return paymentList;
         }
         protected override void Dispose(bool disposing)
         {

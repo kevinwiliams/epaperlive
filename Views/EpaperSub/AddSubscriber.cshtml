@@ -21,7 +21,7 @@
     <!-- ======= Wizard Section ======= -->
     <section id="portfolio-details" class="portfolio-details">
         <div class="container">
-            @using (Html.BeginForm())
+            @using (Html.BeginForm("AddSubscriber", "EpaperSub", FormMethod.Post,new { @class = "row g-3 needs-validation", novalidate = "novalidate", name = "subdetails" }))
             {
                 <div class="row gy-4">
 
@@ -33,7 +33,7 @@
 
                         <div class="form-horizontal">
                             <div class="row form-horizontal">
-                                <p>Please provide your basic information to get started.</p>
+                                <p>Step 1: Please provide your basic information.</p>
                                 <hr />
                                 @*@System.Globalization.RegionInfo.CurrentRegion.DisplayName*@
                                 <div class="offset-md-1 col-md-5 p-2">
@@ -154,11 +154,35 @@
                                 </div>
                                 <hr>
                                 <div class="form-group">
-                                    @Html.EditorFor(model => model.PaymentDetails.FirstOrDefault().CardAmount, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.PaymentDetails.FirstOrDefault().CardAmount) } })
-                                    <input type="hidden" id="originalAmount" />
-                                    @Html.EditorFor(model => model.PaymentDetails.FirstOrDefault().Currency, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.PaymentDetails.FirstOrDefault().Currency) } })
-                                    @Html.EditorFor(model => model.PaymentDetails.FirstOrDefault().SubType, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.PaymentDetails.FirstOrDefault().SubType) } })
-                                    @Html.EditorFor(model => model.PaymentDetails.FirstOrDefault().RateDescription, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.PaymentDetails.FirstOrDefault().RateDescription) } })
+                                    <fieldset>
+                                        <legend>Step 3: Update payment information</legend>
+
+                                        <div class="col-6">
+                                            @Html.DropDownList("GetPaymentList", ViewBag.GetPaymentList as SelectList, "Select Payment Type", new { @class = "form-control py-2", id = "PaymentList", @required = "required" })
+                                            @Html.EditorFor(model => model.PaymentDetails.FirstOrDefault().ConfirmationNumber, new { htmlAttributes = new { @class = "form-control py-2 hidden", placeholder = "Enter check number or transaction ref." } })
+                                            @Html.EditorFor(model => model.PaymentDetails.FirstOrDefault().PaymentType, new { htmlAttributes = new { @class = "form-control py-2 hidden", placeholder = Html.DisplayNameFor(model => model.PaymentDetails.FirstOrDefault().PaymentType) } })
+
+                                        </div>
+
+                                        <div class="row py-2">
+                                            <div class="col-2">
+                                                @Html.EditorFor(model => model.PaymentDetails.FirstOrDefault().Currency, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.PaymentDetails.FirstOrDefault().Currency) } })
+                                            </div>
+                                            <div class="col-4">
+                                                @Html.EditorFor(model => model.PaymentDetails.FirstOrDefault().CardAmount, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.PaymentDetails.FirstOrDefault().CardAmount) } })
+                                            </div>
+                                            <div class="col-4">
+                                                @Html.EditorFor(model => model.PaymentDetails.FirstOrDefault().SubType, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.PaymentDetails.FirstOrDefault().SubType) } })
+
+                                            </div>
+
+                                        </div>
+                                        <input type="hidden" id="originalAmount" />
+                                        @Html.EditorFor(model => model.PaymentDetails.FirstOrDefault().RateDescription, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.PaymentDetails.FirstOrDefault().RateDescription) } })
+
+                                    </fieldset>
+                                    
+
                                     @*@Html.EditorFor(model => model.PaymentDetails.FirstOrDefault().RateTerm)*@
                                 </div>
 
@@ -172,7 +196,7 @@
                     <div class="col-lg-6">
                         <!-- start:wizrd -->
                         <div class="form-horizontal">
-                            <p>Hi @(ViewBag.Name), choose from one of our subscription options</p>
+                            <p>Step 2: Choose from one of the subscription options</p>
                             <hr />
                             @*@Html.Partial("_Rates", Model)*@
 
@@ -191,7 +215,6 @@
                                 <p>Loading...</p>
 
                             </div>
-                            @Html.HiddenFor(m => m.SubscriptionDetails.FirstOrDefault().RateID, new { @class = ".do-not-ignore" })
 
                             <div class="form-group p-2" id="del-address" style="display: none">
                                 <hr />
@@ -254,7 +277,7 @@
                     <div class=" col-md-12 pt-3">
                         <div class="row">
                             <div class="col-12">
-                                <input type="submit" value="Redeem Coupon" name="nextBtn" id="nextBtn" class="btn btn-sign-in bx-pull-left" />
+                                <input type="submit" value="Create New Subscriber" name="nextBtn" id="nextBtn" class="btn btn-sign-in bx-pull-left" />
                             </div>
                         </div>
 
@@ -282,6 +305,61 @@
           $(this).toggleClass("fa-eye-slash");
           const typeC = $(passwordConfirmInput).attr("type") === "password" ? "text" : "password";
           $(passwordConfirmInput).attr("type", typeC);
+        });
+
+        let countryCode = $('#CountryCode').val();
+
+        if (countryCode == "JAM") {
+            $('#StateParishList').show();
+            $('#StateParishList').attr('required', true);
+            $('#StateParish').hide();
+            $('#ZipCode').attr('disabled', true);
+        }
+        else {
+            $('#StateParishList').hide();
+            $('#StateParishList').removeAttr('required');
+            $('#StateParish').show();
+            $('#ZipCode').attr('disabled', false);
+        }
+
+        $('#CountryCode').on('change', (e) => {
+            console.log($('#CountryCode').val());
+            countryCode = $('#CountryCode').val();
+
+            if (countryCode == "JAM") {
+                $('#StateParishList').show();
+                $('#StateParishList').attr('required', true);
+                $('#StateParish').hide();
+                $('#ZipCode').attr('disabled', true);
+            } else {
+
+                $('#StateParishList').hide();
+                $('#StateParishList').removeAttr('required');
+
+                $('#StateParish').show();
+                $('#ZipCode').attr('disabled', false);
+            }
+        });
+
+        $('#StateParishList').on('change', (e) => {
+            $('#StateParish').val($('#StateParishList option:selected').text());
+        });
+
+
+        $("[name='GetPaymentList']").on('change', function (e) {
+            let paymentType = $(this).val();
+            console.log(paymentType);
+            if (paymentType == "CHECK" || paymentType == "BANK") {
+                $("#ConfirmationNumber").removeClass("hidden");
+            } else {
+                $("#ConfirmationNumber").addClass("hidden");
+            }
+
+            if (paymentType == "COMP" || paymentType == "STAFF") {
+                $("[name='CardAmount']").val("0.00");
+            }
+
+            $("[name='PaymentType']").val(paymentType);
         });
 
 

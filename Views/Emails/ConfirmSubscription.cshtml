@@ -248,18 +248,30 @@
                                                             <td><strong>Email</strong></td>
                                                             <td>&nbsp;@Model.EmailAddress</td>
                                                         </tr>
+                                                        @if (Model.AdminCreated == true)
+                                                        {
+                                                            <tr>
+                                                                <td><strong>Password</strong></td>
+                                                                <td>&nbsp;@Model.Password</td>
+                                                            </tr>
+                                                        }
                                                         <tr>
                                                             <td><strong>Payment</strong></td>
                                                             <td>&nbsp;@String.Format("{0:C}", Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardAmount)</td>
                                                         </tr>
+
                                                         <tr>
-                                                            <td><strong>Card Number Ending</strong></td>
-                                                            <td>&nbsp;@Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardNumberLastFour ex: @Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardExp</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td><strong>Card Type</strong></td>
+                                                            <td><strong>Payment Type</strong></td>
                                                             <td>&nbsp;@Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardType.ToUpper()</td>
                                                         </tr>
+                                                        @if (Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardType.ToUpper() == "VISA" || Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardType.ToUpper() == "MASTERCARD")
+                                                        {
+                                                            <tr>
+                                                                <td><strong>Card Number Ending</strong></td>
+                                                                <td>&nbsp;@Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardNumberLastFour ex: @Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardExp</td>
+                                                            </tr>
+                                                        }
+
                                                     </tbody>
                                                 </table>
 

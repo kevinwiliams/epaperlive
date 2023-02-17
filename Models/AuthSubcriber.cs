@@ -39,6 +39,7 @@ namespace ePaperLive.Models
         public UserLoginInfo Login { get; set; }
         [Display(Name = "Coupon Code")]
         public string RedeemCode { get; set; }
+        public bool AdminCreated { get; set; }
 
     }
 }
