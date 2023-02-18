@@ -258,12 +258,12 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
                             {
                                 StartDate = DateTime.Now,
                                 EndDate = endDate,
-                                SubType = form["SubType"],
-                                RateType = form["RateType"],
+                                SubType = form["SubType"].Trim(),
+                                RateType = form["RateType"].Trim(),
                                 RateDescription = form["RateDescription"].Trim(),
                                 RateID = RateID,
-                                NotificationEmail = bool.Parse(form["NotificationEmail"]),
-                                NewsletterSignUp = bool.Parse(form["NewsletterSignUp"]),
+                                //NotificationEmail = bool.Parse(form["NotificationEmail"]),
+                                //NewsletterSignUp = bool.Parse(form["NewsletterSignUp"]),
                                 DeliveryInstructions = form["DeliveryInstructions"]
                             };
                             authUser.SubscriptionDetails.Add(subscription);
@@ -340,7 +340,7 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
                     catch (Exception ex)
                     {
                         Util.LogError(ex);
-                        return View();
+                        return View(authUser);
                     }
                     
                 }

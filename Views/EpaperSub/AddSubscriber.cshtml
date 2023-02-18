@@ -247,14 +247,14 @@
                                 <div class="row">
                                     <div class="col-md-4 p-3">
                                         <div class="form-check">
-                                            @Html.EditorFor(model => model.SubscriptionDetails.FirstOrDefault().NewsletterSignUp, new { htmlAttributes = new { @class = "form-check-input" } })
-                                            @Html.LabelFor(model => model.SubscriptionDetails.FirstOrDefault().NewsletterSignUp, htmlAttributes: new { @class = "form-check-label" })
+                                            @Html.EditorFor(model => model.SubscriptionDetails.FirstOrDefault().NewsletterSignUp, new { htmlAttributes = new { @class = "form-check-input hidden" } })
+                                            @Html.LabelFor(model => model.SubscriptionDetails.FirstOrDefault().NewsletterSignUp, htmlAttributes: new { @class = "form-check-label hidden" })
                                         </div>
                                     </div>
                                     <div class="col-md-8 p-3">
                                         <div class="form-check">
-                                            @Html.EditorFor(model => model.SubscriptionDetails.FirstOrDefault().NotificationEmail, new { htmlAttributes = new { @class = "form-check-input" } })
-                                            @Html.LabelFor(model => model.SubscriptionDetails.FirstOrDefault().NotificationEmail, htmlAttributes: new { @class = "form-check-label" })
+                                            @Html.EditorFor(model => model.SubscriptionDetails.FirstOrDefault().NotificationEmail, new { htmlAttributes = new { @class = "form-check-input hidden" } })
+                                            @Html.LabelFor(model => model.SubscriptionDetails.FirstOrDefault().NotificationEmail, htmlAttributes: new { @class = "form-check-label hidden" })
                                         </div>
                                     </div>
                                 </div>
@@ -290,6 +290,14 @@
 </div>
 @section scripts{
     <script>
+
+        $('#CountryCode').val('JAM');
+
+        $(document).ready(function () {
+            var parish = $("#StateParishList").val();
+            $("#StateParish").val(parish).trigger('change');
+        });
+
          const passwordInput = $("#Password");
         const passwordConfirmInput = $("#ConfirmPassword");
         const eye = $("#eye");
