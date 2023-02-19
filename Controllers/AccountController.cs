@@ -26,6 +26,7 @@ using ePaperLive.Filters;
 using System.Net.Mail;
 using System.Net;
 using System.Web.Routing;
+using System.Data.SqlClient;
 
 namespace ePaperLive.Controllers
 {
@@ -542,7 +543,7 @@ namespace ePaperLive.Controllers
             }
             else 
             {
-                return View("Dashboard");
+                return View("dashboard");
             }
             
 
@@ -562,109 +563,111 @@ namespace ePaperLive.Controllers
 
         public ActionResult Dashboard()
         {
-
-            string authUser = User.Identity.GetUserId();
-
-            AuthSubcriber authSubcriber = GetAuthSubscriber();
-
-            if (authSubcriber.SubscriptionDetails == null)
+            try
             {
-                authSubcriber.SubscriberID = authUser;
-                
+                string authUser = User.Identity.GetUserId();
 
-                using (var context = new ApplicationDbContext())
+                AuthSubcriber authSubcriber = GetAuthSubscriber();
+
+                if (authSubcriber.SubscriptionDetails == null)
                 {
+                    authSubcriber.SubscriberID = authUser;
 
-                    //load data and join via foriegn keys
-                    var tableData = context.subscribers.AsNoTracking()
-                        .Include(x => x.Subscriber_Address)
-                        .Include(x => x.Subscriber_Epaper)
-                        .Include(x => x.Subscriber_Print)
-                        .Include(x => x.Subscriber_Tranx)
-                        .FirstOrDefault(u => u.SubscriberID == authUser);
-
-                    List<printandsubrate> ratesList = context.printandsubrates
-                                            .Where(x => x.Active == true).ToList();
-
-
-                    AuthSubcriber obj = new AuthSubcriber();
-                    List<SubscriptionDetails> SubscriptionList = new List<SubscriptionDetails>();
-                    List<AddressDetails> AddressList = new List<AddressDetails>();
-                    List<PaymentDetails> PaymentsList = new List<PaymentDetails>();
-
-                    if (tableData != null)
+                    using (var context = new ApplicationDbContext())
                     {
-                        authSubcriber.FirstName = tableData.FirstName;
-                        authSubcriber.LastName = tableData.LastName;
-                        authSubcriber.EmailAddress = tableData.EmailAddress;
+                        //load data and join via foriegn keys
+                        var tableData = context.subscribers.AsNoTracking()
+                            .Include(x => x.Subscriber_Address)
+                            .Include(x => x.Subscriber_Epaper)
+                            .Include(x => x.Subscriber_Print)
+                            .Include(x => x.Subscriber_Tranx)
+                            .FirstOrDefault(u => u.SubscriberID == authUser);
+
+                        List<printandsubrate> ratesList = context.printandsubrates
+                                                .Where(x => x.Active == true).ToList();
+
+
+                        AuthSubcriber obj = new AuthSubcriber();
+                        List<SubscriptionDetails> SubscriptionList = authSubcriber.SubscriptionDetails = new List<SubscriptionDetails>();
+                        List<AddressDetails> AddressList = authSubcriber.AddressDetails = new List<AddressDetails>();
+                        List<PaymentDetails> PaymentsList = authSubcriber.PaymentDetails = new List<PaymentDetails>();
+
+                        if (tableData != null)
+                        {
+                            authSubcriber.FirstName = tableData.FirstName;
+                            authSubcriber.LastName = tableData.LastName;
+                            authSubcriber.EmailAddress = tableData.EmailAddress;
 
                             //Epaper subscriptions
-                        if (tableData.Subscriber_Epaper.Count() > 0)
-                        {
-                            foreach (var epaper in tableData.Subscriber_Epaper)
+                            if (tableData.Subscriber_Epaper.Count() > 0)
                             {
-                                SubscriptionDetails subscriptionDetails = new SubscriptionDetails { 
-                                    RateID = epaper.RateID,
-                                    StartDate = epaper.StartDate,
-                                    EndDate = epaper.EndDate,
-                                    RateDescription = epaper.PlanDesc,
-                                    SubType = (ratesList.Where(X => X.Rateid == epaper.RateID).Count() > 0) ? ratesList.FirstOrDefault(X => X.Rateid == epaper.RateID).Type : "Epaper",
-                                    isActive = epaper.IsActive,
-                                    SubscriptionID = epaper.Subscriber_EpaperID,
-                                    RateType = "Epaper",
-                                    OrderNumber = epaper.OrderNumber
-                                };
-                                SubscriptionList.Add(subscriptionDetails);
-                            }
-                        }
-                        //Print Subscriptions
-                        if (tableData.Subscriber_Print.Count() > 0)
-                        {
-                            foreach (var print in tableData.Subscriber_Print)
-                            {
-                                if (SubscriptionList.FirstOrDefault(X => X.RateID == print.RateID) == null)
+                                foreach (var epaper in tableData.Subscriber_Epaper)
                                 {
-                                    SubscriptionDetails subscriptionDetails = new SubscriptionDetails { 
-                                        RateID = print.RateID,
-                                        StartDate = print.StartDate,
-                                        EndDate = print.EndDate,
-                                        RateDescription = print.PlanDesc,
-                                        isActive = print.IsActive,
-                                        SubscriptionID = print.Subscriber_PrintID,
-                                        RateType = "Print",
-                                        OrderNumber = print.OrderNumber
+                                    SubscriptionDetails subscriptionDetails = new SubscriptionDetails
+                                    {
+                                        RateID = epaper.RateID,
+                                        StartDate = epaper.StartDate,
+                                        EndDate = epaper.EndDate,
+                                        RateDescription = epaper.PlanDesc,
+                                        SubType = (ratesList.Where(X => X.Rateid == epaper.RateID).Count() > 0) ? ratesList.FirstOrDefault(X => X.Rateid == epaper.RateID).Type : "Epaper",
+                                        isActive = epaper.IsActive,
+                                        SubscriptionID = epaper.Subscriber_EpaperID,
+                                        RateType = "Epaper",
+                                        OrderNumber = epaper.OrderNumber
                                     };
-                                SubscriptionList.Add(subscriptionDetails);
+                                    SubscriptionList.Add(subscriptionDetails);
+                                }
+                            }
+                            //Print Subscriptions
+                            if (tableData.Subscriber_Print.Count() > 0)
+                            {
+                                foreach (var print in tableData.Subscriber_Print)
+                                {
+                                    if (SubscriptionList.FirstOrDefault(X => X.RateID == print.RateID) == null)
+                                    {
+                                        SubscriptionDetails subscriptionDetails = new SubscriptionDetails
+                                        {
+                                            RateID = print.RateID,
+                                            StartDate = print.StartDate,
+                                            EndDate = print.EndDate,
+                                            RateDescription = print.PlanDesc,
+                                            isActive = print.IsActive,
+                                            SubscriptionID = print.Subscriber_PrintID,
+                                            RateType = "Print",
+                                            OrderNumber = print.OrderNumber
+                                        };
+                                        SubscriptionList.Add(subscriptionDetails);
+                                    }
+
                                 }
 
                             }
-
-                        }
-                        //Addresses
-                        if (tableData.Subscriber_Address.Count() > 0)
-                        {
-                            foreach (var address in tableData.Subscriber_Address)
+                            //Addresses
+                            if (tableData.Subscriber_Address.Count() > 0)
                             {
-                                AddressDetails addressDetails = new AddressDetails { 
-                                    AddressLine1 = address.AddressLine1,
-                                    AddressLine2 = address.AddressLine2,
-                                    AddressType = address.AddressType,
-                                    CityTown = address.CityTown,
-                                    StateParish = address.StateParish,
-                                    CountryCode = address.CountryCode,
-                                    ZipCode = address.ZipCode,
-                                    AddressID = address.AddressID
-                                };
-
-                                AddressList.Add(addressDetails);
+                                foreach (var address in tableData.Subscriber_Address)
+                                {
+                                    AddressDetails addressDetails = new AddressDetails
+                                    {
+                                        AddressLine1 = address.AddressLine1,
+                                        AddressLine2 = address.AddressLine2,
+                                        AddressType = address.AddressType,
+                                        CityTown = address.CityTown,
+                                        StateParish = address.StateParish,
+                                        CountryCode = address.CountryCode,
+                                        ZipCode = address.ZipCode,
+                                        AddressID = address.AddressID
+                                    };
+                                    AddressList.Add(addressDetails);
+                                }
                             }
-                        }
-                        //Transactions
-                        if (tableData.Subscriber_Tranx.Count() > 0)
+                            //Transactions
+                            if (tableData.Subscriber_Tranx.Count() > 0)
                             {
                                 foreach (var payments in tableData.Subscriber_Tranx)
                                 {
-                                    PaymentDetails paymentDetails = new PaymentDetails { 
+                                    PaymentDetails paymentDetails = new PaymentDetails
+                                    {
                                         CardAmount = (decimal)payments.TranxAmount,
                                         CardNumber = payments.CardLastFour,
                                         CardExp = payments.CardExp,
@@ -676,40 +679,45 @@ namespace ePaperLive.Controllers
                                         OrderNumber = payments.OrderID
                                     };
                                     PaymentsList.Add(paymentDetails);
-                                SubscriptionList.FirstOrDefault(x => x.OrderNumber == payments.OrderID).RefundRequested = payments.RefundRequested;
+
+                                    //Update subscription if user requested refund
+                                    SubscriptionList.FirstOrDefault(x => x.OrderNumber == payments.OrderID).RefundRequested = payments.RefundRequested;
                                 }
                             }
 
-                        authSubcriber.SubscriptionDetails = SubscriptionList;
-                        authSubcriber.PaymentDetails = PaymentsList;
-                        authSubcriber.AddressDetails = AddressList;
+                            //authSubcriber.SubscriptionDetails = SubscriptionList;
+                            //authSubcriber.PaymentDetails = PaymentsList;
+                            //authSubcriber.AddressDetails = AddressList;
+                        }
+
+                    }
+                }
+
+                ViewData["userFirstName"] = authSubcriber.FirstName;
+
+                if (authSubcriber.AddressDetails != null)
+                    ViewBag.address = authSubcriber.AddressDetails.ToList();
+                if (authSubcriber.PaymentDetails != null)
+                    ViewBag.payments = authSubcriber.PaymentDetails.ToList();
+                if (authSubcriber.SubscriptionDetails != null)
+                {
+                    ViewBag.plans = authSubcriber.SubscriptionDetails;
+                    if (authSubcriber.SubscriptionDetails.Where(x => x.isActive == true).Count() > 0)
+                    {
+                        var startDate = authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).StartDate;
+                        var endDate = authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).EndDate;
+                        ViewBag.dates = startDate.GetWeekdayInRange(endDate, DayOfWeek.Monday);
                     }
 
                 }
             }
-
-            ViewData["userFirstName"] = authSubcriber.FirstName;
-
-            if (authSubcriber.AddressDetails != null)
-                ViewBag.address = authSubcriber.AddressDetails.ToList();
-            if (authSubcriber.PaymentDetails != null)
-                ViewBag.payments = authSubcriber.PaymentDetails.ToList();
-            if (authSubcriber.SubscriptionDetails != null)
+            catch (Exception ex)
             {
-                ViewBag.plans = authSubcriber.SubscriptionDetails;
-                if(authSubcriber.SubscriptionDetails.Where(x => x.isActive == true).Count() > 0)
-                {
-                    var startDate = authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).StartDate;
-                    var endDate = authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).EndDate;
-                    ViewBag.dates = startDate.GetWeekdayInRange(endDate, DayOfWeek.Monday);
-                }
-                
+                LogError(ex);
+                return View("index", "home");
             }
+            
                 
-           
-
-
-
             return View();
         }
 
@@ -735,8 +743,9 @@ namespace ePaperLive.Controllers
                     return View("dashboard");
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                LogError(ex);
                 return View("dashboard");
             }
             
@@ -853,85 +862,154 @@ namespace ePaperLive.Controllers
             return View(model);
         }
 
-        public ActionResult UserProfile()
+        public async Task<ActionResult> UserProfile()
         {
-            AuthSubcriber authSubcriber = GetAuthSubscriber();
-            ViewBag.plans = authSubcriber.SubscriptionDetails;
-
-
-            return View(authSubcriber);
-        }
-        [HttpPost]
-        public ActionResult UserProfile(AuthSubcriber authSubcriber)
-        {
-            ViewBag.plans = authSubcriber.SubscriptionDetails;
-
-            string authUser = User.Identity.GetUserId();
-
-            using (var context = new ApplicationDbContext()) 
+            try
             {
-                //load data and join via foriegn keys
-                var tableData = context.subscribers
-                    .Include(x => x.Subscriber_Address)
-                    .FirstOrDefault(u => u.SubscriberID == authUser);
+                string authUser = User.Identity.GetUserName();
 
-
-                if (tableData != null)
+                using (var context = new ApplicationDbContext())
                 {
+                    var sql = @"
+                    SELECT s.SubscriberID, s.EmailAddress, s.FirstName, s.LastName, s.DateOfBirth, s.IsActive,
+                    sa.AddressID, sa. AddressLine1, sa.AddressLine2, sa.CityTown, sa.StateParish, sa.CountryCode
+                    FROM Subscribers s with(nolock)
+                    LEFT JOIN Subscriber_Address sa ON sa.AddressID = s.AddressID
+                    WHERE s.EmailAddress = @EmailAddress";
 
-                    try
-                    {
-                        AuthSubcriber localAuthSubcriber = GetAuthSubscriber();
+                    var idParam = new SqlParameter("EmailAddress", authUser);
 
-                        Subscriber_Address oldAddress = tableData.Subscriber_Address.FirstOrDefault();
-                        tableData.Subscriber_Address.Remove(oldAddress);
+                    var result = await context.Database.SqlQuery<UserProfile>(sql, idParam).FirstOrDefaultAsync();
 
-                        Subscriber_Address newAddress = new Subscriber_Address();
-                        newAddress = oldAddress;
+                    List<SelectListItem> Addressparishes = GetParishes();
+                    ViewBag.Parishes = new SelectList(Addressparishes, "Value", "Text");
+                    ViewBag.CountryList = GetCountryList();
 
-                        newAddress.AddressLine1 = authSubcriber.AddressDetails.FirstOrDefault().AddressLine1;
-                        newAddress.AddressLine2 = authSubcriber.AddressDetails.FirstOrDefault().AddressLine2;
-                        newAddress.CityTown = authSubcriber.AddressDetails.FirstOrDefault().CityTown;
-                        newAddress.StateParish = authSubcriber.AddressDetails.FirstOrDefault().StateParish;
-                        newAddress.ZipCode = authSubcriber.AddressDetails.FirstOrDefault().ZipCode;
-                        newAddress.CountryCode = authSubcriber.AddressDetails.FirstOrDefault().CountryCode;
-                        newAddress.AddressType = authSubcriber.AddressDetails.FirstOrDefault().AddressType;
-
-                        //update tables
-                        tableData.FirstName = authSubcriber.FirstName;
-                        tableData.LastName = authSubcriber.LastName;
-                        tableData.Subscriber_Address.Add(newAddress);
-                        context.SaveChanges();
-
-                        var dbAddress = localAuthSubcriber.AddressDetails.FirstOrDefault(x => x.AddressType == "M");
-                        localAuthSubcriber.AddressDetails.Remove(dbAddress);
-
-                        AddressDetails address = new AddressDetails
-                        {
-                            AddressLine1 = newAddress.AddressLine1,
-                            AddressLine2 = newAddress.AddressLine2,
-                            CityTown = newAddress.CityTown,
-                            StateParish = newAddress.StateParish,
-                            ZipCode = newAddress.ZipCode,
-                            CountryCode = newAddress.CountryCode,
-                            AddressType = newAddress.AddressType,
-                        };
-
-                        localAuthSubcriber.AddressDetails.Add(address);
-
-                        ViewBag.msg = "Profile updated successfully";
-                    }
-                    catch (Exception)
-                    {
-
-                        return RedirectToAction("UserProfile");
-
-                    }
-                    
-                    
+                    return View(result);
                 }
             }
-            return RedirectToAction("UserProfile");
+            catch (Exception ex)
+            {
+                LogError(ex);
+                return RedirectToAction("dashboard");
+            }
+            
+        }
+        [HttpPost]
+        public async Task<ActionResult> UserProfile(UserProfile userProfile)
+        {
+            try
+            {
+                AuthSubcriber authSubcriber = GetAuthSubscriber();
+                ViewBag.plans = authSubcriber.SubscriptionDetails;
+
+                string authUser = User.Identity.GetUserId();
+
+                using (var context = new ApplicationDbContext())
+                {
+                    //load data and join via foriegn keys
+                    var tableData = context.subscribers
+                        .Include(x => x.Subscriber_Address)
+                        .FirstOrDefault(u => u.SubscriberID == authUser);
+
+                    if (tableData != null)
+                    {
+
+                        try
+                        {
+                            AuthSubcriber localAuthSubcriber = GetAuthSubscriber();
+                            var newAddress = new Subscriber_Address();
+                            int oldAddressID = (tableData.Subscriber_Address.FirstOrDefault(i => i.AddressType == "M") != null) ? tableData.Subscriber_Address.FirstOrDefault(i => i.AddressType == "M").AddressID : 0;
+                            var oldAddress = context.subscriber_address.FirstOrDefault(x => x.AddressID == oldAddressID);
+                            if (oldAddress != null)
+                            {
+
+                                oldAddress.AddressLine1 = userProfile.AddressLine1;
+                                oldAddress.AddressLine2 = userProfile.AddressLine2;
+                                oldAddress.CityTown = userProfile.CityTown;
+                                oldAddress.StateParish = userProfile.StateParish;
+                                oldAddress.ZipCode = userProfile.ZipCode;
+                                oldAddress.CountryCode = userProfile.CountryCode;
+
+                                //tableData.Subscriber_Address.FirstOrDefault(x => x.AddressType == "M").AddressLine1 = userProfile.AddressLine1;
+                                //tableData.Subscriber_Address.FirstOrDefault(x => x.AddressType == "M").AddressLine2 = userProfile.AddressLine2;
+                                //tableData.Subscriber_Address.FirstOrDefault(x => x.AddressType == "M").CityTown = userProfile.CityTown;
+                                //tableData.Subscriber_Address.FirstOrDefault(x => x.AddressType == "M").StateParish = userProfile.StateParish;
+                                //tableData.Subscriber_Address.FirstOrDefault(x => x.AddressType == "M").ZipCode = userProfile.ZipCode;
+                                //tableData.Subscriber_Address.FirstOrDefault(x => x.AddressType == "M").CountryCode = userProfile.CountryCode;
+                                await context.SaveChangesAsync();
+                                newAddress = oldAddress;
+                            }
+                            else 
+                            {
+                                newAddress = new Subscriber_Address
+                                {
+                                    SubscriberID = authUser,
+                                    EmailAddress = User.Identity.GetUserName(),
+                                    AddressLine1 = userProfile.AddressLine1,
+                                    AddressLine2 = userProfile.AddressLine2,
+                                    CityTown = userProfile.CityTown,
+                                    StateParish = userProfile.StateParish,
+                                    ZipCode = userProfile.ZipCode,
+                                    CountryCode = userProfile.CountryCode,
+                                    AddressType = "M",
+                                    CreatedAt = DateTime.Now
+                                };
+                                context.subscriber_address.Add(newAddress);
+                                await context.SaveChangesAsync();
+                            }
+
+
+                            //update tables
+                            tableData.FirstName = userProfile.FirstName;
+                            tableData.LastName = userProfile.LastName;
+                            tableData.AddressID = newAddress.AddressID;
+                            await context.SaveChangesAsync();
+
+                            if (localAuthSubcriber.AddressDetails != null)
+                            {
+                                var dbAddress = localAuthSubcriber.AddressDetails.FirstOrDefault(x => x.AddressType == "M");
+                                if (dbAddress != null)
+                                {
+                                    localAuthSubcriber.AddressDetails.Remove(dbAddress);
+                                }
+
+                                AddressDetails address = new AddressDetails
+                                {
+                                    AddressID = newAddress.AddressID,
+                                    AddressLine1 = newAddress.AddressLine1,
+                                    AddressLine2 = newAddress.AddressLine2,
+                                    CityTown = newAddress.CityTown,
+                                    StateParish = newAddress.StateParish,
+                                    ZipCode = newAddress.ZipCode,
+                                    CountryCode = newAddress.CountryCode,
+                                    AddressType = newAddress.AddressType,
+                                };
+
+                                localAuthSubcriber.AddressDetails.Add(address);
+                            }
+                            
+
+                            ViewBag.msg = "Profile updated successfully";
+                        }
+                        catch (Exception ex)
+                        {
+                            LogError(ex);
+                            return RedirectToAction("UserProfile");
+
+                        }
+
+
+                    }
+                }
+                return RedirectToAction("UserProfile");
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+                return View("dashboard");
+            }
+            
         }
         public ActionResult UpdateProfile() 
         {

@@ -173,7 +173,6 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
             {
                 if (ModelState.IsValid)
                 {
-
                     var EmailAddress = form["EmailAddress"];
                     var isExist = account.IsEmailExist(EmailAddress);
                     if (isExist)
@@ -197,8 +196,8 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
                             AddressType = "M",
                             AddressLine1 = form["AddressLine1"],
                             AddressLine2 = form["AddressLine2"],
-                            CityTown = form["CityTown"],
-                            StateParish = form["StateParish"],
+                            CityTown = form["CityTown"].Split(',')[0],
+                            StateParish = form["StateParish"].Split(',')[0],
                             CountryCode = form["CountryCode"]
                         };
                         authUser.AddressDetails.Add(address);

@@ -67,7 +67,7 @@
                                 <div class="offset-md-1 form-group">
                                     @*@Html.LabelFor(model => model.AddressLine1, htmlAttributes: new { @class = "control-label" })*@
                                     <div class="col-md-10 p-2">
-                                        @Html.EditorFor(model => model.AddressDetails[0].AddressLine1, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.AddressDetails[0].AddressLine1) } })
+                                        @Html.EditorFor(model => model.AddressDetails.FirstOrDefault().AddressLine1, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.AddressDetails.FirstOrDefault().AddressLine1) } })
                                         @*@Html.ValidationMessageFor(model => model.AddressLine1, "", new { @class = "text-danger" })*@
                                     </div>
                                 </div>
@@ -75,7 +75,7 @@
                                 <div class="offset-md-1 form-group ">
                                     @*@Html.LabelFor(model => model.AddressLine2, htmlAttributes: new { @class = "control-label" })*@
                                     <div class="col-md-10 p-2">
-                                        @Html.EditorFor(model => model.AddressDetails[0].AddressLine2, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.AddressDetails[0].AddressLine2) } })
+                                        @Html.EditorFor(model => model.AddressDetails.FirstOrDefault().AddressLine2, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.AddressDetails.FirstOrDefault().AddressLine2) } })
                                         @*@Html.ValidationMessageFor(model => model.AddressLine2, "", new { @class = "text-danger" })*@
                                     </div>
                                 </div>
@@ -83,7 +83,7 @@
                                     <div class="form-group p-2">
                                         @*@Html.LabelFor(model => model.CityTown, htmlAttributes: new { @class = "control-label " })*@
                                         <div class="col-md-10">
-                                            @Html.EditorFor(model => model.AddressDetails[0].CityTown, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.AddressDetails[0].CityTown) } })
+                                            @Html.EditorFor(model => model.AddressDetails.FirstOrDefault().CityTown, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.AddressDetails.FirstOrDefault().CityTown) } })
                                             <select id="CityTownList" class="form-control pb-sm-3 hidden" name="CityTown" aria-label="District" required="required">
                                                 <option>Select a District</option>>
                                             </select>
@@ -94,7 +94,7 @@
                                     <div class="form-group p-2">
                                         @*@Html.LabelFor(model => model.StateParish, htmlAttributes: new { @class = "control-label " })*@
                                         <div class="col-md-10">
-                                            @Html.EditorFor(model => model.AddressDetails[0].StateParish, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.AddressDetails[0].StateParish) } })
+                                            @Html.EditorFor(model => model.AddressDetails.FirstOrDefault().StateParish, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.AddressDetails.FirstOrDefault().StateParish) } })
                                             @Html.DropDownList("StateParish", ViewBag.Parishes as SelectList, "Select a parish", new { @class = "form-control", id = "StateParishList", @required = "required", @style = "display: none" })
                                             @*@Html.ValidationMessageFor(model => model.StateParish, "", new { @class = "text-danger" })*@
                                         </div>
@@ -105,7 +105,7 @@
                                     <div class="form-group p-2">
                                         @*@Html.LabelFor(model => model.ZipCode, htmlAttributes: new { @class = "control-label " })*@
                                         <div class="col-md-10">
-                                            @Html.EditorFor(model => model.AddressDetails[0].ZipCode, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.AddressDetails[0].ZipCode) } })
+                                            @Html.EditorFor(model => model.AddressDetails.FirstOrDefault().ZipCode, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.AddressDetails.FirstOrDefault().ZipCode) } })
                                             @*@Html.ValidationMessageFor(model => model.ZipCode, "", new { @class = "text-danger" })*@
                                         </div>
                                     </div>
@@ -117,7 +117,7 @@
                                             @if (ViewBag.CountryList != null)
                                             {
                                                 @*@Html.ValidationMessageFor(model => model.CountryCode, "", new { @class = "text-danger" })*@
-                                                @Html.DropDownListFor(model => model.AddressDetails[0].CountryCode, ViewBag.CountryList as List<SelectListItem>, "Select Country", new { @class = "form-control", @required = "required" })
+                                                @Html.DropDownListFor(model => model.AddressDetails.FirstOrDefault().CountryCode, ViewBag.CountryList as List<SelectListItem>, "Select Country", new { @class = "form-control", @required = "required" })
                                             }
                                         </div>
                                     </div>
@@ -126,7 +126,7 @@
                                 <div class="offset-md-1 form-group p-3">
                                     @*@Html.LabelFor(model => model.phone, htmlAttributes: new { @class = "control-label " })*@
                                     <div class="col-md-4">
-                                        @Html.EditorFor(model => model.AddressDetails[0].Phone, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.AddressDetails[0].Phone) } })
+                                        @Html.EditorFor(model => model.AddressDetails.FirstOrDefault().Phone, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.AddressDetails.FirstOrDefault().Phone) } })
                                         @*@Html.ValidationMessageFor(model => model.phone, "", new { @class = "text-danger" })*@
                                     </div>
                                 </div>

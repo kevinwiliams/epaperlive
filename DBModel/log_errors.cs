@@ -17,7 +17,6 @@ namespace ePaperLive.DBModel
         public string err_time { get; set; }
         [StringLength(255)]
         public string err_name { get; set; }
-        [StringLength(500)]
         public string stacktrace { get; set; }
 
         

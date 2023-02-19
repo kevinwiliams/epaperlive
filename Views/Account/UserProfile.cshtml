@@ -1,4 +1,4 @@
-﻿@model ePaperLive.Models.AuthSubcriber
+﻿@model ePaperLive.Models.UserProfile
 
 @{
     ViewBag.Title = "Profile";
@@ -37,14 +37,8 @@
                         @Html.HiddenFor(model => model.SubscriberID)
 
                         <div class="form-group p-2">
-                            @Html.LabelFor(model => model.EmailAddress, htmlAttributes: new { @class = "control-label col-md-2" })
-                            <div class="col-md-5">
-                                <strong>@User.Identity.Name</strong>
-                            </div>
-                        </div>
-                        <div class="form-group p-2">
                             @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-md-2" })
-                            <div class="col-md-5">
+                            <div class="col-md-10">
                                 @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
                                 @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
                             </div>
@@ -52,83 +46,92 @@
 
                         <div class="form-group p-2">
                             @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-md-2" })
-                            <div class="col-md-5">
+                            <div class="col-md-10">
                                 @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
                                 @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
                             </div>
                         </div>
 
-                        <h5 class="pt-5">Mailing Address</h5>
+                        <div class="form-group p-2">
+                            @Html.LabelFor(model => model.EmailAddress, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.DisplayFor(model => model.EmailAddress, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.EmailAddress, "", new { @class = "text-danger" })
+                                @Html.HiddenFor(model => model.EmailAddress)
 
-                        @*@foreach (var model in Model.AddressDetails.Where(x => x.AddressType == "M"))*@
-                        @if (Model.AddressDetails != null)
-                        {
-                            for (int i = 0; i < Model.AddressDetails.Where(x => x.AddressType == "M").Count(); i++)
-                            {
-                                <div class="form-group">
-                                    @*@Html.LabelFor(model => model.AddressLine1, htmlAttributes: new { @class = "control-label" })*@
-                                    <div class="col-md-6 p-2">
-                                        @Html.EditorFor(x => x.AddressDetails[i].AddressLine1, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(x => x.AddressDetails[i].AddressLine1) } })
-                                        @*@Html.ValidationMessageFor(model => model.AddressLine1, "", new { @class = "text-danger" })*@
-                                    </div>
-                                </div>
-                                <div class="form-group p-2">
-                                    @*@Html.LabelFor(model => model.AddressLine2, htmlAttributes: new { @class = "control-label" })*@
-                                    <div class="col-md-6">
-                                        @Html.EditorFor(x => x.AddressDetails[i].AddressLine2, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(x => x.AddressDetails[i].AddressLine2) } })
-                                        @*@Html.ValidationMessageFor(model => model.AddressLine2, "", new { @class = "text-danger" })*@
-                                    </div>
-                                </div>
-                                <div class="col-md-5 p-2">
-                                    <div class="form-group">
-                                        @*@Html.LabelFor(model => model.CityTown, htmlAttributes: new { @class = "control-label " })*@
-                                        <div class="col-md-8">
-                                            @Html.EditorFor(x => x.AddressDetails[i].CityTown, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(x => x.AddressDetails[i].CityTown) } })
-                                            @*@Html.ValidationMessageFor(model => model.CityTown, "", new { @class = "text-danger" })*@
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group p-2">
-                                        @*@Html.LabelFor(model => model.StateParish, htmlAttributes: new { @class = "control-label " })*@
-                                        <div class="col-md-8">
-                                            @Html.EditorFor(x => x.AddressDetails[i].StateParish, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(x => x.AddressDetails[i].StateParish) } })
-                                            @*@Html.ValidationMessageFor(model => model.StateParish, "", new { @class = "text-danger" })*@
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-5">
-                                    <div class="form-group p-2">
-                                        @*@Html.LabelFor(model => model.ZipCode, htmlAttributes: new { @class = "control-label " })*@
-                                        <div class="col-md-5">
-                                            @Html.EditorFor(x => x.AddressDetails[i].ZipCode, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(x => x.AddressDetails[i].ZipCode) } })
-                                            @*@Html.ValidationMessageFor(model => model.ZipCode, "", new { @class = "text-danger" })*@
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-5">
-                                    <div class="form-group p-2">
-                                        @*@Html.LabelFor(model => model.CountryCode, htmlAttributes: new { @class = "control-label " })*@
-                                        <div class="col-md-5">
-                                            @Html.EditorFor(x => x.AddressDetails[i].CountryCode, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(x => x.AddressDetails[i].CountryCode) } })
-                                            @*@Html.ValidationMessageFor(model => model.CountryCode, "", new { @class = "text-danger" })*@
-                                        </div>
-                                    </div>
-                                </div>
-                                @Html.HiddenFor(x => x.AddressDetails[i].AddressType)
-
-                            }
-                        }
-
-
-
-                        <div class="form-group p-3">
-                            @*@Html.LabelFor(model => model.phone, htmlAttributes: new { @class = "control-label " })*@
-                            <div class="col-md-4">
-                                @*@Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.Phone) } })*@
-                                @*@Html.ValidationMessageFor(model => model.phone, "", new { @class = "text-danger" })*@
                             </div>
                         </div>
+
+
+                        @Html.HiddenFor(model => model.isActive)
+
+                        <div class="form-group p-2">
+                            @Html.LabelFor(model => model.DateOfBirth, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.DateOfBirth, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.DateOfBirth, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        @Html.HiddenFor(model => model.AddressID)
+
+                        <div class="form-group p-2">
+                            @Html.LabelFor(model => model.AddressLine1, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.AddressLine1, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.AddressLine1, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group p-2">
+                            @Html.LabelFor(model => model.AddressLine2, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.AddressLine2, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.AddressLine2, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group p-2">
+                            @Html.LabelFor(model => model.CityTown, htmlAttributes: new { @class = "control-label " })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.CityTown, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.CityTown) } })
+                                <select id="CityTownList" class="form-control pb-sm-3 hidden" name="CityTown" aria-label="District" required="required">
+                                    <option>Select a District</option>>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group p-2">
+                            @Html.LabelFor(model => model.StateParish, htmlAttributes: new { @class = "control-label " })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.StateParish, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.StateParish) } })
+                                @Html.DropDownList("StateParish", ViewBag.Parishes as SelectList, "Select a parish", new { @class = "form-control", id = "StateParishList", @style = "display: none" })
+                                @*@Html.ValidationMessageFor(model => model.StateParish, "", new { @class = "text-danger" })*@
+                                @Html.Hidden("stateParish", Model.StateParish)
+
+                            </div>
+                        </div>
+
+                        <div class="form-group p-2">
+                            @Html.LabelFor(model => model.ZipCode, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.ZipCode, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.ZipCode, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group p-2">
+                            @Html.LabelFor(model => model.CountryCode, htmlAttributes: new { @class = "control-label " })
+                            <div class="col-md-10">
+                                @if (ViewBag.CountryList != null)
+                                {
+                                    @*@Html.ValidationMessageFor(model => model.CountryCode, "", new { @class = "text-danger" })*@
+                                    @Html.DropDownListFor(model => model.CountryCode, ViewBag.CountryList as List<SelectListItem>, "Select Country", new { @class = "form-control", @required = "required" })
+                                    @Html.Hidden("country", Model.CountryCode)
+                                }
+                            </div>
+                        </div>
+
 
                         <div class="form-group">
                             <div class="col-md-offset-2 col-md-10">
@@ -165,3 +168,70 @@
         </div>
     </div>
 </section>
+@section scripts{
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+            console.log($("#stateParish").val());
+
+        $(document).ready(function () {
+            var parish = $("#stateParish").val();
+            //var parish = $("#StateParishList").val();
+            //$("#StateParish").val(parish).trigger('change');
+            //console.log($("#StateParish").val());
+            $("#StateParishList option:contains(" + parish + ")").attr('selected', 'selected');
+        });
+
+        let countryCode = $('#country').val();
+        $('#CountryCode').val(countryCode);
+
+        if (countryCode == "JAM") {
+            $('#StateParishList').show();
+            $('#StateParishList').attr('required', true);
+            $('#StateParish').hide();
+            $('#ZipCode').attr('disabled', true);
+        } else {
+            $('#StateParishList').hide();
+            $('#StateParishList').removeAttr('required');
+            $('#StateParish').show();
+            $('#ZipCode').attr('disabled', false);
+        }
+
+        $('#CountryCode').on('change', (e) => {
+            console.log($('#CountryCode').val());
+            countryCode = $('#CountryCode').val();
+
+            if (countryCode == "JAM") {
+                $('#StateParishList').show();
+                $('#StateParishList').attr('required', true);
+                $('#StateParish').hide();
+                $('#ZipCode').attr('disabled', true);
+            } else {
+
+                $('#StateParishList').hide();
+                $('#StateParishList').removeAttr('required');
+
+                $('#StateParish').show();
+                $('#ZipCode').attr('disabled', false);
+            }
+        });
+
+        $('#StateParishList').on('change', (e) => {
+            $('#StateParish').val($('#StateParishList option:selected').text());
+        });
+
+
+
+        $('[name=AddressDetails]').on('submit', (e) => {
+            let formData = $("[name=AddressDetails]").valid();
+                if (formData) {
+                    $('#loading').addClass('loading').removeClass('hidden');
+                    return true;
+            }
+        });
+
+      
+
+
+    </script>
+}
