@@ -354,6 +354,20 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
             return View(authUser);
         }
 
+        [Route("generatepassword")]
+        public JsonResult GeneratePassword()
+        {
+            var resultData = new Dictionary<string, object>();
+            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmopqrstuvwxyz0123456789";
+            var random = new Random();
+            var passwordCode = new string(
+                Enumerable.Repeat(chars, 12)
+                          .Select(s => s[random.Next(s.Length)])
+                          .ToArray());
+            resultData["data"] = passwordCode;
+
+            return Json(resultData);
+        }
         public static string RenderViewToString<TModel>(ControllerContext controllerContext, string viewName, TModel model)
         {
             ViewEngineResult viewEngineResult = ViewEngines.Engines.FindView(controllerContext, viewName, null);

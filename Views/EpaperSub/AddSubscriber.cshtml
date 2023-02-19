@@ -60,19 +60,26 @@
                                         @Html.EditorFor(model => model.EmailAddress, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.EmailAddress) } })
                                     </div>
                                 </div>
+                                @*<div class="form-group col-md-5">
+                                    <div class="input-group py-2 ">
+                                        @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
+                                        <button type="button" class="btn btn-danger btn-coupon-code">Generate Password</button>
 
-                                <div class="offset-md-1 col-md-5 p-2">
+                                    </div>
+                                </div>*@
+                                <div class="offset-md-1 col-md-8 p-2">
                                     <div class="form-group">
-                                        @*@Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label" })*@
-                                        <div class="col-md-10 position-relative">
+                                        <div class="col-md-10 input-group position-relative">
                                             @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.Password) } })
                                             <i class="fa-solid fa-eye" id="eye"></i>
+                                            <button type="button" class="btn btn-danger btn-coupon-code">Generate Password</button>
+
                                         </div>
                                     </div>
                                 </div>
+                                @*
                                 <div class="col-md-5 p-2">
                                     <div class="form-group">
-                                        @*@Html.LabelFor(model => model.ConfirmPassword, htmlAttributes: new { @class = "control-label" })*@
                                         <div class="col-md-10 position-relative">
                                             @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @autocomplete = "off", @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.ConfirmPassword) } })
                                             <i class="fa-solid fa-eye" id="eyeC"></i>
@@ -80,7 +87,7 @@
                                         </div>
                                     </div>
                                 </div>
-
+                                    *@
 
                             </div>
                             <div class="row form-horizontal py-3">
@@ -160,25 +167,25 @@
                                         <div class="col-6">
                                             @Html.DropDownList("GetPaymentList", ViewBag.GetPaymentList as SelectList, "Select Payment Type", new { @class = "form-control py-2", id = "PaymentList", @required = "required" })
                                             @Html.EditorFor(model => model.PaymentDetails.FirstOrDefault().ConfirmationNumber, new { htmlAttributes = new { @class = "form-control py-2 hidden", placeholder = "Enter check number or transaction ref." } })
-                                            @Html.EditorFor(model => model.PaymentDetails.FirstOrDefault().PaymentType, new { htmlAttributes = new { @class = "form-control py-2 hidden", placeholder = Html.DisplayNameFor(model => model.PaymentDetails.FirstOrDefault().PaymentType) } })
+                                            @Html.EditorFor(model => model.PaymentDetails.FirstOrDefault().PaymentType, new { htmlAttributes = new { @class = "form-control py-2 hidden", placeholder = Html.DisplayNameFor(model => model.PaymentDetails.FirstOrDefault().PaymentType), @required = "required" } })
 
                                         </div>
 
                                         <div class="row py-2">
                                             <div class="col-2">
-                                                @Html.EditorFor(model => model.PaymentDetails.FirstOrDefault().Currency, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.PaymentDetails.FirstOrDefault().Currency) } })
+                                                @Html.EditorFor(model => model.PaymentDetails.FirstOrDefault().Currency, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.PaymentDetails.FirstOrDefault().Currency), @required = "required" } })
                                             </div>
                                             <div class="col-4">
-                                                @Html.EditorFor(model => model.PaymentDetails.FirstOrDefault().CardAmount, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.PaymentDetails.FirstOrDefault().CardAmount) } })
+                                                @Html.EditorFor(model => model.PaymentDetails.FirstOrDefault().CardAmount, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.PaymentDetails.FirstOrDefault().CardAmount), @required = "required" } })
                                             </div>
                                             <div class="col-4">
-                                                @Html.EditorFor(model => model.PaymentDetails.FirstOrDefault().SubType, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.PaymentDetails.FirstOrDefault().SubType) } })
+                                                @Html.EditorFor(model => model.PaymentDetails.FirstOrDefault().SubType, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.PaymentDetails.FirstOrDefault().SubType), @required = "required" } })
 
                                             </div>
 
                                         </div>
                                         <input type="hidden" id="originalAmount" />
-                                        @Html.EditorFor(model => model.PaymentDetails.FirstOrDefault().RateDescription, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.PaymentDetails.FirstOrDefault().RateDescription) } })
+                                        @Html.EditorFor(model => model.PaymentDetails.FirstOrDefault().RateDescription, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.PaymentDetails.FirstOrDefault().RateDescription), @required = "required" } })
 
                                     </fieldset>
                                     
@@ -272,7 +279,6 @@
                     </div>
 
                 </div>
-                <p>here</p>
                 <div class="form-group">
                     <div class=" col-md-12 pt-3">
                         <div class="row">
@@ -294,25 +300,34 @@
         $('#CountryCode').val('JAM');
 
         $(document).ready(function () {
+            $("#eye").click();
             var parish = $("#StateParishList").val();
             $("#StateParish").val(parish).trigger('change');
         });
 
-         const passwordInput = $("#Password");
-        const passwordConfirmInput = $("#ConfirmPassword");
+        $(".btn-coupon-code").on('click', function (e) {
+            e.preventDefault();
+            var couponCode = $("[name=Password]").val();
+           // if (couponCode != "") {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GeneratePassword", "EpaperSub")',
+                    data: { couponCode: couponCode },
+                    success: function (result) {
+                        console.log(result.data);
+                        $("[name=Password]").val(result.data);
+                    }
+                });
+            //}
+        });
+
+        const passwordInput = $("#Password");
         const eye = $("#eye");
-        const eyeC = $("#eyeC");
 
         $(eye).click(function() {
           $(this).toggleClass("fa-eye-slash");
           const type = $(passwordInput).attr("type") === "password" ? "text" : "password";
           $(passwordInput).attr("type", type);
-        });
-
-        $(eyeC).click(function() {
-          $(this).toggleClass("fa-eye-slash");
-          const typeC = $(passwordConfirmInput).attr("type") === "password" ? "text" : "password";
-          $(passwordConfirmInput).attr("type", typeC);
         });
 
         let countryCode = $('#CountryCode').val();
