@@ -546,7 +546,6 @@ namespace ePaperLive.Controllers
                 return View("dashboard");
             }
             
-
         }
 
         [AllowAnonymous]
@@ -561,12 +560,34 @@ namespace ePaperLive.Controllers
             return PartialView("_DeliveryAddressModal");
         }
 
-        public ActionResult Dashboard()
+        public async Task<ActionResult> Dashboard()
         {
             try
             {
                 string authUser = User.Identity.GetUserId();
 
+                //check / update subscription
+                var activeEpaperSubscription = await _db.subscriber_epaper.FirstOrDefaultAsync(x => x.SubscriberID == authUser && x.IsActive == true);
+                if (activeEpaperSubscription != null)
+                {
+                    var endDate = activeEpaperSubscription.EndDate;
+                    if (endDate < DateTime.Now)
+                    {
+                        activeEpaperSubscription.IsActive = false;
+                        await _db.SaveChangesAsync();
+                    }
+                }
+                //check / update print subscription
+                var activePrintSubscription = await _db.subscriber_print.FirstOrDefaultAsync(x => x.SubscriberID == authUser && x.IsActive == true);
+                if (activePrintSubscription != null)
+                {
+                    var endDate = activePrintSubscription.EndDate;
+                    if (endDate < DateTime.Now)
+                    {
+                        activePrintSubscription.IsActive = false;
+                        await _db.SaveChangesAsync();
+                    }
+                }
                 AuthSubcriber authSubcriber = GetAuthSubscriber();
 
                 if (authSubcriber.SubscriptionDetails == null)
@@ -685,9 +706,6 @@ namespace ePaperLive.Controllers
                                 }
                             }
 
-                            //authSubcriber.SubscriptionDetails = SubscriptionList;
-                            //authSubcriber.PaymentDetails = PaymentsList;
-                            //authSubcriber.AddressDetails = AddressList;
                         }
 
                     }

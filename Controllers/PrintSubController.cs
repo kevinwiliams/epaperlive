@@ -13,7 +13,7 @@ using System.Data.SqlClient;
 
 namespace ePaperLive.Views.Admin.PrintSub
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Circulation")]
     [RoutePrefix("Admin/PrintSub")]
     [Route("action = index")]
     public class PrintSubController : Controller
