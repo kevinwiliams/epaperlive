@@ -9,20 +9,30 @@ else
     @:<div id="planSelection">
         var currentDesc = "";
     List<ePaperLive.DBModel.printandsubrate> rates = new List<ePaperLive.DBModel.printandsubrate>();
-    if (Model.RateType != "Print")
-    {
-        rates = Model.Rates.OrderBy(s => s.SortOrder).ToList();
-    }
-    else
-    {
 
-        rates = Model.Rates.ToList();
+    if (!Model.IsRenewal)
+    {
+        if (Model.RateType != "Print")
+        {
+            rates = Model.Rates.OrderBy(s => s.SortOrder).ToList();
+        }
+        else
+        {
+            rates = Model.Rates.ToList();
+        }
+    }
+    else 
+    { 
+        if (Model.RateType != "Print")
+        {
+            rates = Model.Rates.Where(x => x.IsRenewalRate == Model.IsRenewal).OrderBy(s => s.SortOrder).ToList();
+        }
+        else
+        {
+            rates = Model.Rates.Where(x => x.IsRenewalRate == Model.IsRenewal).ToList();
+        }
     }
 
-    if (Model.IsRenewal)
-    {
-        rates = Model.Rates.Where(x => x.IsRenewalRate == Model.IsRenewal).ToList();
-    }
 
     foreach (var plans in rates)
     {
