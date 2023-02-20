@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.Mvc;
 using ePaperLive.DBModel;
 using ePaperLive.Models;
+using System.Data.SqlClient;
 
 namespace ePaperLive.Views.Admin.PrintSub
 {
@@ -23,10 +24,22 @@ namespace ePaperLive.Views.Admin.PrintSub
         [Route]
         public async Task<ActionResult> Index()
         {
-            var subscriber_print = db.subscriber_print
-                                    .Include(s => s.Subscriber)
-                                    .Where(x => x.IsActive == true);
-            return View(await subscriber_print.ToListAsync());
+            //var subscriber_print = db.subscriber_print
+            //                        .Include(s => s.Subscriber)
+            //                        .Where(x => x.IsActive == true);
+            //return View(await subscriber_print.ToListAsync());
+            using (var context = new ApplicationDbContext())
+            {
+                var sql = @"
+                    SELECT s.SubscriberID, s.EmailAddress, s.FirstName, s.LastName, sp.OrderNumber, sp.Subscriber_PrintID as AddressID,
+                    sa. AddressLine1, sa.AddressLine2, sa.CityTown, sa.StateParish , sp.StartDate, sp.EndDate, sp.IsActive, sp.Circprosubid
+                    FROM Subscribers s with(nolock)
+                    JOIN Subscriber_Print sp ON s.SubscriberID = sp.SubscriberID 
+                    LEFT JOIN Subscriber_Address sa ON sa.AddressID = sp.AddressID";
+
+                var result = await context.Database.SqlQuery<PrintSubscribers>(sql).ToListAsync();
+                return View(result);
+            }
         }
 
         // GET: PrintSub/Details/5
@@ -37,12 +50,21 @@ namespace ePaperLive.Views.Admin.PrintSub
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Subscriber_Print subscriber_Print = await db.subscriber_print.FindAsync(id);
-            if (subscriber_Print == null)
+            var sql = @"
+                    SELECT s.SubscriberID, s.EmailAddress, s.FirstName, s.LastName, sp.OrderNumber, sp.Subscriber_PrintID as AddressID,
+                    sa. AddressLine1, sa.AddressLine2, sa.CityTown, sa.StateParish , sp.StartDate, sp.EndDate, sp.IsActive, sp.Circprosubid
+                    FROM Subscribers s with(nolock)
+                    JOIN Subscriber_Print sp ON s.SubscriberID = sp.SubscriberID 
+                    LEFT JOIN Subscriber_Address sa ON sa.AddressID = sp.AddressID
+                    WHERE sp.Subscriber_PrintID = @Id";
+            var idParam = new SqlParameter("Id", id);
+
+            PrintSubscribers result = await db.Database.SqlQuery<PrintSubscribers>(sql, idParam).FirstOrDefaultAsync();
+            if (result == null)
             {
                 return HttpNotFound();
             }
-            return View(subscriber_Print);
+            return View(result);
         }
 
         // GET: PrintSub/Create
@@ -85,10 +107,18 @@ namespace ePaperLive.Views.Admin.PrintSub
             {
                 return HttpNotFound();
             }
-            ViewBag.SubscriberID = new SelectList(db.subscribers, "SubscriberID", "EmailAddress", subscriber_Print.SubscriberID);
-            Subscriber_Address subadd = await db.subscriber_address.FirstOrDefaultAsync(x => x.AddressID == subscriber_Print.AddressID);
-            ViewBag.AddressDetails = subadd;
-            return View(subscriber_Print);
+            var sql = @"
+                    SELECT s.SubscriberID, s.EmailAddress, s.FirstName, s.LastName, sp.OrderNumber, sp.Subscriber_PrintID as AddressID,
+                    sa. AddressLine1, sa.AddressLine2, sa.CityTown, sa.StateParish , sp.StartDate, sp.EndDate, sp.IsActive, sp.Circprosubid
+                    FROM Subscribers s with(nolock)
+                    JOIN Subscriber_Print sp ON s.SubscriberID = sp.SubscriberID 
+                    LEFT JOIN Subscriber_Address sa ON sa.AddressID = sp.AddressID
+                    WHERE sp.Subscriber_PrintID = @Id";
+            var idParam = new SqlParameter("Id", id);
+
+            PrintSubscribers result = await db.Database.SqlQuery<PrintSubscribers>(sql, idParam).FirstOrDefaultAsync();
+           
+                return View(result);
         }
 
         // POST: PrintSub/Edit/5
@@ -97,16 +127,25 @@ namespace ePaperLive.Views.Admin.PrintSub
         [HttpPost]
         [Route("edit/{id:int}")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Subscriber_PrintID,SubscriberID,EmailAddress,RateID,AddressID,StartDate,EndDate,IsActive,DeliveryInstructions,Circprosubid,CreatedAt")] Subscriber_Print subscriber_Print)
+        public async Task<ActionResult> Edit(PrintSubscribers printSubscribers)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(subscriber_Print).State = EntityState.Modified;
-                await db.SaveChangesAsync();
+                var sql = @"
+                            UPDATE sp 
+                            SET sp.Circprosubid = @circProID
+                            FROM Subscribers s with(nolock)
+                            JOIN Subscriber_Print sp ON s.SubscriberID = sp.SubscriberID
+                            LEFT JOIN Subscriber_Address sa ON sa.AddressID = sp.AddressID
+                            WHERE sp.Subscriber_PrintID = @Id";
+
+                var newCircProID = new SqlParameter("@circProID", printSubscribers.Circprosubid);
+                var Id = new SqlParameter("@Id", printSubscribers.AddressID);
+
+                await db.Database.ExecuteSqlCommandAsync(sql, new[] { newCircProID, Id });
                 return RedirectToAction("Index");
             }
-            ViewBag.SubscriberID = new SelectList(db.subscribers, "SubscriberID", "EmailAddress", subscriber_Print.SubscriberID);
-            return View(subscriber_Print);
+            return View(printSubscribers);
         }
 
         // GET: PrintSub/Delete/5

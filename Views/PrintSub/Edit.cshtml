@@ -1,4 +1,4 @@
-﻿@model ePaperLive.DBModel.Subscriber_Print
+﻿@model ePaperLive.Models.PrintSubscribers
 
 @{
     ViewBag.Title = "Update Print subscriber";
@@ -34,98 +34,109 @@
                         <h4>Update CircPro Identication Number</h4>
                         <hr />
                         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                        @Html.HiddenFor(model => model.Subscriber_PrintID)
-                        @Html.HiddenFor(model => model.AddressID)
-                        @Html.HiddenFor(model => model.RateID)
-                        @Html.HiddenFor(model => model.SubscriberID)
-                        @Html.HiddenFor(model => model.CreatedAt)
-                        @Html.HiddenFor(model => model.IsActive)
 
-                        <div class="form-group py-3">
-                            @Html.LabelFor(model => model.Circprosubid, htmlAttributes: new { @class = "control-label col-md-2 fw-bold" })
-                            <div class="col-md-2">
+                        <div class="form-group py-2">
+                            @Html.LabelFor(model => model.Circprosubid, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-5">
                                 @Html.EditorFor(model => model.Circprosubid, new { htmlAttributes = new { @class = "form-control" } })
                                 @Html.ValidationMessageFor(model => model.Circprosubid, "", new { @class = "text-danger" })
                             </div>
                         </div>
-                        <div class="form-group hidden">
-                            @Html.LabelFor(model => model.SubscriberID, "SubscriberID", htmlAttributes: new { @class = "control-label col-md-2" })
-                            <div class="col-md-5">
-                                @Html.DropDownList("SubscriberID", null, htmlAttributes: new { @class = "form-control" })
-                                @Html.ValidationMessageFor(model => model.SubscriberID, "", new { @class = "text-danger" })
+                        @Html.HiddenFor(model => model.SubscriberID)
+                    <div class="row form-horizontal">
+                        <div class="col-md-3">
+                            <div class=" form-group py-2">
+                                @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label" })
+                                <div class="col-md-6">
+                                    @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                                    @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                                </div>
                             </div>
                         </div>
+                        <div class="col-md-3">
+                            <div class="form-group py-2">
+                                @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label" })
+                                <div class="col-md-6">
+                                    @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                                    @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                        
 
-                        <div class="form-group py-3">
-                            @Html.LabelFor(model => model.EmailAddress, htmlAttributes: new { @class = "control-label col-md-2 fw-bold" })
+                        
+
+                        <div class="form-group py-2">
+                            @Html.LabelFor(model => model.EmailAddress, htmlAttributes: new { @class = "control-label col-md-2" })
                             <div class="col-md-5">
                                 @Html.EditorFor(model => model.EmailAddress, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                                 @Html.ValidationMessageFor(model => model.EmailAddress, "", new { @class = "text-danger" })
                             </div>
                         </div>
 
-                        <div class="form-group hidden">
-                            @Html.LabelFor(model => model.RateID, htmlAttributes: new { @class = "control-label col-md-2" })
-                            <div class="col-md-10">
-                                @Html.EditorFor(model => model.RateID, new { htmlAttributes = new { @class = "form-control" } })
-                                @Html.ValidationMessageFor(model => model.RateID, "", new { @class = "text-danger" })
+                        @Html.HiddenFor(model => model.AddressID)
+
+                        <div class="form-group py-2">
+                            @Html.LabelFor(model => model.AddressLine1, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-5">
+                                @Html.EditorFor(model => model.AddressLine1, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                                @Html.ValidationMessageFor(model => model.AddressLine1, "", new { @class = "text-danger" })
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.AddressID, htmlAttributes: new { @class = "control-label col-md-2 fw-bold" })
-                            <div class="col-md-10">
-                                @*@Html.EditorFor(model => model.AddressID, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.AddressID, "", new { @class = "text-danger" })*@
-
-                                @if (ViewBag.AddressDetails != null)
-                                {
-                                    var address = (ePaperLive.DBModel.Subscriber_Address)ViewBag.AddressDetails;
-                                    <p>@(address.AddressLine1)</p>
-                                    <p>@(address.AddressLine2)</p>
-                                    <p>@(address.CityTown)</p>
-                                    <p>@(address.StateParish)</p>
-                                }
+                        <div class="form-group py-2">
+                            @Html.LabelFor(model => model.AddressLine2, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-5">
+                                @Html.EditorFor(model => model.AddressLine2, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                                @Html.ValidationMessageFor(model => model.AddressLine2, "", new { @class = "text-danger" })
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.DeliveryInstructions, htmlAttributes: new { @class = "control-label col-md-2 fw-bold" })
-                            <div class="col-md-10">
-                                @Html.EditorFor(model => model.DeliveryInstructions, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
-                                @Html.ValidationMessageFor(model => model.DeliveryInstructions, "", new { @class = "text-danger" })
+                        <div class="form-group py-2">
+                            @Html.LabelFor(model => model.CityTown, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-5">
+                                @Html.EditorFor(model => model.CityTown, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                                @Html.ValidationMessageFor(model => model.CityTown, "", new { @class = "text-danger" })
                             </div>
                         </div>
 
-                   
+                        <div class="form-group py-2">
+                            @Html.LabelFor(model => model.StateParish, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-5">
+                                @Html.EditorFor(model => model.StateParish, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                                @Html.ValidationMessageFor(model => model.StateParish, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
 
-                        <div class="form-group py-3">
-                            <div class="row">
-                                <div class="col-md-5">
-                                    @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-md-2 fw-bold" })
-
-                                    @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
-                                    @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
-                                </div>
-                                <div class="col-md-5">
-                                    @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-md-2 fw-bold" })
-
-                                    @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
-                                    @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+                        <div class="row">
+                            <div class="col-5">
+                                <div class="form-group py-2">
+                                    @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label" })
+                                    <div class="col-md-3">
+                                        @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                                        @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="form-group py-3 hidden">
-                            @Html.LabelFor(model => model.CreatedAt, htmlAttributes: new { @class = "control-label col-md-2" })
-                            <div class="col-md-3">
-                                @Html.EditorFor(model => model.CreatedAt, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
-                                @Html.ValidationMessageFor(model => model.CreatedAt, "", new { @class = "text-danger" })
+                            <div class="col-5">
+                                <div class="form-group py-2">
+                                    @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    <div class="col-md-4">
+                                        @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                                        @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
                             </div>
+
                         </div>
+                        @Html.HiddenFor(model => model.isActive)
+                       
+
+
 
                         <div class="form-group">
-                            <div class="col-md-offset-2 col-md-10">
+                            <div class="col-md-offset-2 col-md-5">
                                 <input type="submit" value="Update" class="btn btn-sign-in" />
                             </div>
                         </div>

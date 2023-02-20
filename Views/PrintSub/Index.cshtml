@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ePaperLive.DBModel.Subscriber_Print>
+﻿@model IEnumerable<ePaperLive.Models.PrintSubscribers>
 
 @{
     ViewBag.Title = "Print Subscribers";
@@ -26,20 +26,33 @@
                     <div class="col-lg-12">
 
                         <p>
-                           *@Html.ActionLink("Create New", "addsubscriber")
+                           @Html.ActionLink("Create New", "addsubscriber")
                         </p>
                         <!-- start:wizrd -->
                         <table class="table table-hover table-responsive table-striped small" id="printSubList">
                             <thead>
                                 <tr>
-
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.FirstName)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.LastName)
+                                    </th>
                                     <th>
                                         @Html.DisplayNameFor(model => model.EmailAddress)
                                     </th>
                                     <th>
-                                        @Html.DisplayNameFor(model => model.PlanDesc)
+                                        @Html.DisplayNameFor(model => model.AddressLine1)
                                     </th>
-
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.AddressLine2)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.CityTown)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.StateParish)
+                                    </th>
                                     <th>
                                         @Html.DisplayNameFor(model => model.StartDate)
                                     </th>
@@ -47,16 +60,12 @@
                                         @Html.DisplayNameFor(model => model.EndDate)
                                     </th>
                                     <th>
-                                        @Html.DisplayNameFor(model => model.IsActive)
-                                    </th>
-
-                                    <th>
-                                        CircPro ID
+                                        @Html.DisplayNameFor(model => model.isActive)
                                     </th>
                                     <th>
-                                        Date Added
+                                        @Html.DisplayNameFor(model => model.Circprosubid)
                                     </th>
-                                    <th>Options</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -65,34 +74,42 @@
                                     <tr>
 
                                         <td>
+                                            @Html.DisplayFor(modelItem => item.FirstName)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.LastName)
+                                        </td>
+                                        <td>
                                             @Html.DisplayFor(modelItem => item.EmailAddress)
                                         </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.PlanDesc)
-                                        </td>
 
                                         <td>
-                                            @*@Html.DisplayFor(modelItem => item.StartDate)*@
-                                            @Convert.ToDateTime(item.StartDate).ToString("dd MMM yyyy")
+                                            @Html.DisplayFor(modelItem => item.AddressLine1)
                                         </td>
                                         <td>
-                                            @Convert.ToDateTime(item.EndDate).ToString("dd MMM yyyy")
-                                            @*@Html.DisplayFor(modelItem => item.EndDate)*@
+                                            @Html.DisplayFor(modelItem => item.AddressLine2)
                                         </td>
                                         <td>
-                                            @Html.DisplayFor(modelItem => item.IsActive)
+                                            @Html.DisplayFor(modelItem => item.CityTown)
                                         </td>
-
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.StateParish)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.StartDate)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.EndDate)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.isActive)
+                                        </td>
                                         <td>
                                             @Html.DisplayFor(modelItem => item.Circprosubid)
                                         </td>
                                         <td>
-                                            @Html.DisplayFor(modelItem => item.CreatedAt)
-                                        </td>
-                                        <td>
-                                            @Html.ActionLink("Update", "Edit", new { id = item.Subscriber_PrintID }) 
-                                            @*@Html.ActionLink("Details", "Details", new { id = item.Subscriber_PrintID })*@
-                                            @*@Html.ActionLink("Delete", "Delete", new { id = item.Subscriber_PrintID })*@
+                                            @Html.ActionLink("Update", "Edit", new { id = item.AddressID })
+
                                         </td>
                                     </tr>
                                 }
