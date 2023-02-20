@@ -11,6 +11,8 @@ using ePaperLive.DBModel;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity;
 using System.Data.Entity;
+using System.Configuration;
+using System.Data;
 
 namespace ePaperLive.Controllers.Admin.Subscribers
 {
@@ -125,6 +127,42 @@ namespace ePaperLive.Controllers.Admin.Subscribers
             }
 
             return View();
+        }
+
+
+        // POST: Subscribers/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [Route("delete/{emailAddress}")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Delete(string emailAddress)
+        {
+            SqlCommand cmd = new SqlCommand();
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DBEntities"].ConnectionString);
+            bool result = false;
+
+            try
+            {
+
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "dbo.ResetSubscriber";
+                cmd.Parameters.AddWithValue("EmailAddress", emailAddress);
+
+                cmd.Connection = con;
+                con.Open();
+
+                await cmd.ExecuteNonQueryAsync();
+
+                con.Close();
+                result = true;
+
+            }
+            catch (Exception ex)
+            {
+                result = false;
+                Util.LogErrror(ex);
+            }
+
+            return RedirectToAction("Index");
         }
     }
 }

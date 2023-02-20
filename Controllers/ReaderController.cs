@@ -138,7 +138,7 @@ namespace ePaperLive.Controllers
                 var subscriptionCode = WebConfigurationManager.AppSettings["SubcriptionCode"];
 
                 //set subscription code is epaper valid
-                if (daysLeft > 1)
+                if (daysLeft >= 1)
                 {
                     mb.userID = result.SubscriberID;
                     mb.email = result.EmailAddress;
