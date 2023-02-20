@@ -12,7 +12,7 @@ using ePaperLive.Models;
 
 namespace ePaperLive.Views.Admin.PrintSub
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [RoutePrefix("Admin/PrintSub")]
     [Route("action = index")]
     public class PrintSubController : Controller

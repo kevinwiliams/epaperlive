@@ -12,7 +12,7 @@ using ePaperLive.Models;
 
 namespace ePaperLive.Views.Admin.Coupon
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [RoutePrefix("Admin/Coupons")]
     [Route("action = index")]
     public class CouponsController : Controller

@@ -12,7 +12,7 @@ using ePaperLive.Models;
 
 namespace ePaperLive.Views.Admin.Transactions
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [RoutePrefix("Admin/Transactions")]
     [Route("action = index")]
     public class TransactionsController : Controller

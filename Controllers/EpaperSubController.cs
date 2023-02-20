@@ -13,7 +13,7 @@ using System.IO;
 
 namespace ePaperLive.Controllers.Admin.EpaperSub
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [RoutePrefix("Admin/EpaperSub")]
     [Route("action = index")]
     public class EpaperSubController : Controller

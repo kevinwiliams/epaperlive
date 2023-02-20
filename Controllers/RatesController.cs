@@ -11,7 +11,7 @@ using ePaperLive.Models;
 
 namespace ePaperLive.Views.Admin.Rates
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [RoutePrefix("Admin/Rates")]
     [Route("action = index")]
     public class RatesController : Controller

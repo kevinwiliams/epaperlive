@@ -14,7 +14,7 @@ using System.Data.Entity;
 
 namespace ePaperLive.Controllers.Admin.Subscribers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [RoutePrefix("Admin/Subscribers")]
     [Route("action = index")]
     public class SubscribersController : Controller

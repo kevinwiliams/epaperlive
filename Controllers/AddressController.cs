@@ -12,7 +12,7 @@ using ePaperLive.Models;
 
 namespace ePaperLive.Views.Admin.Address
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [RoutePrefix("Admin/Address")]
     [Route("action = index")]
     public class AddressController : Controller
