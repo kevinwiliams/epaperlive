@@ -92,67 +92,76 @@ namespace ePaperLive.Controllers.Admin.Subscribers
                 var store = new UserStore<ApplicationUser>(db);
                 var manager = new UserManager<ApplicationUser>(store);
                 ApplicationUser user = new ApplicationUser();
-                
-                //AspnetUser
-                user = manager.FindById(usersWithRoles.SubscriberID);
-                user.Email = usersWithRoles.UserName;
-                user.UserName = usersWithRoles.UserName;
-                await manager.UpdateAsync(user);
 
-                //Subscribers
-                Subscriber subscriber = await db.subscribers.FindAsync(usersWithRoles.SubscriberID);
-                if (subscriber != null)
+                try
                 {
-                    subscriber.FirstName = usersWithRoles.FirstName;
-                    subscriber.LastName = usersWithRoles.LastName;
-                    subscriber.EmailAddress = usersWithRoles.UserName;
-                    subscriber.IsActive = (bool)usersWithRoles.IsActive;
-                    db.Entry(subscriber).State = EntityState.Modified;
-                }
+                    //AspnetUser
+                    user = manager.FindById(usersWithRoles.SubscriberID);
+                    user.Email = usersWithRoles.UserName;
+                    user.UserName = usersWithRoles.UserName;
+                    await manager.UpdateAsync(user);
 
-                //Epaper
-                List<Subscriber_Epaper> subscriber_Epaper = await db.subscriber_epaper.Where(x => x.SubscriberID == usersWithRoles.SubscriberID).ToListAsync();
-                if (subscriber_Epaper != null)
-                {
-                    foreach (var item in subscriber_Epaper)
+                    //Subscribers
+                    Subscriber subscriber = await db.subscribers.FindAsync(usersWithRoles.SubscriberID);
+                    if (subscriber != null)
                     {
-                        item.EmailAddress = usersWithRoles.UserName;
+                        subscriber.FirstName = usersWithRoles.FirstName;
+                        subscriber.LastName = usersWithRoles.LastName;
+                        subscriber.EmailAddress = usersWithRoles.UserName;
+                        subscriber.IsActive = (bool)usersWithRoles.IsActive;
+                        db.Entry(subscriber).State = EntityState.Modified;
                     }
-                }
 
-                //Print
-                List<Subscriber_Print> subscriber_Print = await db.subscriber_print.Where(x => x.SubscriberID == usersWithRoles.SubscriberID).ToListAsync();
-                if (subscriber_Print != null)
-                {
-                    foreach (var item in subscriber_Print)
+                    //Epaper
+                    List<Subscriber_Epaper> subscriber_Epaper = await db.subscriber_epaper.Where(x => x.SubscriberID == usersWithRoles.SubscriberID).ToListAsync();
+                    if (subscriber_Epaper != null)
                     {
-                        item.EmailAddress = usersWithRoles.UserName;
+                        foreach (var item in subscriber_Epaper)
+                        {
+                            item.EmailAddress = usersWithRoles.UserName;
+                        }
                     }
-                }
 
-                //Transactions
-                List<Subscriber_Tranx> subscriber_Tranx = await db.subscriber_tranx.Where(x => x.SubscriberID == usersWithRoles.SubscriberID).ToListAsync();
-                if (subscriber_Tranx != null)
-                {
-                    foreach (var item in subscriber_Tranx)
+                    //Print
+                    List<Subscriber_Print> subscriber_Print = await db.subscriber_print.Where(x => x.SubscriberID == usersWithRoles.SubscriberID).ToListAsync();
+                    if (subscriber_Print != null)
                     {
-                        item.EmailAddress = usersWithRoles.UserName;
+                        foreach (var item in subscriber_Print)
+                        {
+                            item.EmailAddress = usersWithRoles.UserName;
+                        }
                     }
+
+                    //Transactions
+                    List<Subscriber_Tranx> subscriber_Tranx = await db.subscriber_tranx.Where(x => x.SubscriberID == usersWithRoles.SubscriberID).ToListAsync();
+                    if (subscriber_Tranx != null)
+                    {
+                        foreach (var item in subscriber_Tranx)
+                        {
+                            item.EmailAddress = usersWithRoles.UserName;
+                            item.CardOwner = usersWithRoles.FirstName + " " + usersWithRoles.LastName;
+                        }
+                    }
+
+
+                    //AspNetUserRoles
+                    var role = db.Roles.SingleOrDefault(r => r.Id == usersWithRoles.RoleID).Name;
+                    if (role != usersWithRoles.Role)
+                    {
+                        await manager.RemoveFromRoleAsync(user.Id, role);
+                        await manager.AddToRoleAsync(user.Id, usersWithRoles.Role);
+                    }
+                    db.Entry(user).State = EntityState.Modified;
+
+
+                    await db.SaveChangesAsync();
+                    return RedirectToAction("Index");
                 }
-
-
-                //AspNetUserRoles
-                var role = db.Roles.SingleOrDefault(r => r.Id == usersWithRoles.RoleID).Name;
-                if (role != usersWithRoles.Role)
+                catch (Exception ex)
                 {
-                    await manager.RemoveFromRoleAsync(user.Id, role);
-                    await manager.AddToRoleAsync(user.Id, usersWithRoles.Role);
+                    Util.LogError(ex);
+                    return View();
                 }
-                db.Entry(user).State = EntityState.Modified;
-
-
-                await db.SaveChangesAsync();
-                return RedirectToAction("Index");
             }
 
             return View();
