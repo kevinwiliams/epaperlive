@@ -107,10 +107,40 @@ namespace ePaperLive.Controllers.Admin.Subscribers
                     subscriber.LastName = usersWithRoles.LastName;
                     subscriber.EmailAddress = usersWithRoles.UserName;
                     subscriber.IsActive = (bool)usersWithRoles.IsActive;
-
+                    db.Entry(subscriber).State = EntityState.Modified;
                 }
-                db.Entry(subscriber).State = EntityState.Modified;
-                
+
+                //Epaper
+                List<Subscriber_Epaper> subscriber_Epaper = await db.subscriber_epaper.Where(x => x.SubscriberID == usersWithRoles.SubscriberID).ToListAsync();
+                if (subscriber_Epaper != null)
+                {
+                    foreach (var item in subscriber_Epaper)
+                    {
+                        item.EmailAddress = usersWithRoles.UserName;
+                    }
+                }
+
+                //Print
+                List<Subscriber_Print> subscriber_Print = await db.subscriber_print.Where(x => x.SubscriberID == usersWithRoles.SubscriberID).ToListAsync();
+                if (subscriber_Print != null)
+                {
+                    foreach (var item in subscriber_Print)
+                    {
+                        item.EmailAddress = usersWithRoles.UserName;
+                    }
+                }
+
+                //Transactions
+                List<Subscriber_Tranx> subscriber_Tranx = await db.subscriber_tranx.Where(x => x.SubscriberID == usersWithRoles.SubscriberID).ToListAsync();
+                if (subscriber_Tranx != null)
+                {
+                    foreach (var item in subscriber_Tranx)
+                    {
+                        item.EmailAddress = usersWithRoles.UserName;
+                    }
+                }
+
+
                 //AspNetUserRoles
                 var role = db.Roles.SingleOrDefault(r => r.Id == usersWithRoles.RoleID).Name;
                 if (role != usersWithRoles.Role)
@@ -118,7 +148,6 @@ namespace ePaperLive.Controllers.Admin.Subscribers
                     await manager.RemoveFromRoleAsync(user.Id, role);
                     await manager.AddToRoleAsync(user.Id, usersWithRoles.Role);
                 }
-
                 db.Entry(user).State = EntityState.Modified;
 
 
