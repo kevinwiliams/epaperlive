@@ -26,7 +26,7 @@ else
 
     foreach (var plans in rates)
     {
-        var ratePrice = (plans.OfferIntroRate) ? plans.IntroRate : plans.Rate;
+        var ratePrice = (plans.OfferIntroRate && Model.IsRenewal == false) ? plans.IntroRate : plans.Rate;
         var printWeeks = (plans.Type != "Epaper") ? "  [" + plans.PrintTerm + " " + plans.PrintTermUnit + "] " : "";
         var frequency = "Delivery Freq.: " + plans.PrintDayPattern;
 
@@ -75,7 +75,7 @@ else
                     </span>
                     
                     <span style="margin-left: auto">
-                        @if (plans.OfferIntroRate == true)
+                        @if (plans.OfferIntroRate == true && Model.IsRenewal == false)
                         {
                             <span class="d-none d-lg-inline-block mx-2 text-black-50 text-decoration-line-through float-start">@(plans.Curr + " " + String.Format("{0:C}", plans.Rate)) </span>
                         }
