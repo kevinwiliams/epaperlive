@@ -2210,7 +2210,7 @@ namespace ePaperLive.Controllers
                                     }
 
                                     //save print subscription
-                                    objP.AddressID = addressID;
+                                    objP.AddressID = objDelAdd.AddressID;
                                     objP.SubscriberID = SubscriberID;
                                     objP.OrderNumber = objTran.OrderID;
                                     objP.StartDate = result.StartDate;
@@ -2221,7 +2221,7 @@ namespace ePaperLive.Controllers
                                 else
                                 {
                                     //save print subscription
-                                    objP.AddressID = addressID;
+                                    objP.AddressID = objDelAdd.AddressID;
                                     objP.SubscriberID = SubscriberID;
                                     objP.OrderNumber = objTran.OrderID;
                                     context.subscriber_print.Add(objP);
@@ -2277,7 +2277,7 @@ namespace ePaperLive.Controllers
                                         await context.SaveChangesAsync();
                                     }
                                     //save print subscription
-                                    objP.AddressID = addressID;
+                                    objP.AddressID = objDelAdd.AddressID;
                                     objP.SubscriberID = SubscriberID;
                                     objP.OrderNumber = objTran.OrderID;
                                     objP.StartDate = result.StartDate;
@@ -2289,7 +2289,7 @@ namespace ePaperLive.Controllers
                                 else
                                 {
                                     //save print subscription
-                                    objP.AddressID = addressID;
+                                    objP.AddressID = objDelAdd.AddressID;
                                     objP.SubscriberID = SubscriberID;
                                     objP.OrderNumber = objTran.OrderID;
                                     context.subscriber_print.Add(objP);
