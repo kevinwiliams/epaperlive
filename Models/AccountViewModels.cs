@@ -109,5 +109,6 @@ namespace ePaperLive.Models
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }
+        public string CallBackUrl { get; set; }
     }
 }

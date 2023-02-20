@@ -166,32 +166,54 @@ namespace ePaperLive.Controllers.Admin.Subscribers
 
             return View();
         }
+        // GET: Subscribers/Delete/5
+        [Route("delete/{id}")]
+        public async Task<ActionResult> Delete(string id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var sql = @"
+                    SELECT s.SubscriberID, s.FirstName, s.LastName, u.UserName,r.Id as RoleID, r.Name As Role, sa.AddressID, s.IsActive
+                    FROM AspNetUsers u
+                    LEFT JOIN AspNetUserRoles ur ON  ur.UserId = u.Id 
+                    LEFT JOIN AspNetRoles r ON r.Id = ur.RoleId
+                    LEFT JOIN Subscribers s ON s.SubscriberID = u.Id			
+                    LEFT JOIN Subscriber_Address sa ON sa.AddressID = s.AddressID
+                    WHERE u.Id = @Id";
+            var idParam = new SqlParameter("Id", id);
 
+            UsersWithRoles result = await db.Database.SqlQuery<UsersWithRoles>(sql, idParam).FirstOrDefaultAsync();
+            if (result == null)
+            {
+                return HttpNotFound();
+            }
+            return View(result);
+        }
 
         // POST: Subscribers/Delete/5
         [HttpPost, ActionName("Delete")]
         [Route("delete/{emailAddress}")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(string emailAddress)
+        public async Task<ActionResult> DeleteConfirmed(string emailAddress)
         {
-            SqlCommand cmd = new SqlCommand();
-            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DBEntities"].ConnectionString);
             bool result = false;
 
             try
             {
-
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.CommandText = "dbo.ResetSubscriber";
-                cmd.Parameters.AddWithValue("EmailAddress", emailAddress);
-
-                cmd.Connection = con;
-                con.Open();
-
-                await cmd.ExecuteNonQueryAsync();
-
-                con.Close();
-                result = true;
+                using (var connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DBEntities"].ConnectionString))
+                {
+                    using (var command = new SqlCommand("dbo.ResetSubscriber", connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.Add("@EmailAddress", SqlDbType.NVarChar).Value = emailAddress;
+                        connection.Open();
+                        await command.ExecuteNonQueryAsync();
+                        connection.Close();
+                        result = true;
+                    }
+                }
 
             }
             catch (Exception ex)
