@@ -168,6 +168,10 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
             account.InitializeController(this.Request.RequestContext);
             AuthSubcriber authUser = new AuthSubcriber();
             //FormCollection form = new FormCollection();
+            List<SelectListItem> Addressparishes = account.GetParishes();
+            ViewBag.Parishes = new SelectList(Addressparishes, "Value", "Text");
+            ViewBag.CountryList = account.GetCountryList();
+            ViewBag.GetPaymentList = GetPaymentList();
 
             if (nextBtn != null)
             {
@@ -175,16 +179,9 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
                 {
                     var EmailAddress = form["EmailAddress"];
                     var isExist = account.IsEmailExist(EmailAddress);
-                    if (isExist)
-                    {
-                        ModelState.AddModelError("EmailExist", "Email address is already assigned. Please use forget password option to log in");
-                        return View();
-                    }
-
+                    
                     try
                     {
-
-
                         authUser.FirstName = form["FirstName"];
                         authUser.LastName = form["LastName"];
                         authUser.EmailAddress = form["EmailAddress"];
@@ -201,7 +198,6 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
                             CountryCode = form["CountryCode"]
                         };
                         authUser.AddressDetails.Add(address);
-
 
                         authUser.PaymentDetails = new List<PaymentDetails>();
 
@@ -228,7 +224,6 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
                             ConfirmationNumber = form["ConfirmationNumber"].Trim()
                         };
                         authUser.PaymentDetails.Add(payment);
-
 
                         authUser.SubscriptionDetails = new List<SubscriptionDetails>();
 
@@ -325,6 +320,12 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
                             authUser.AddressDetails.Add(deliveryAddress);
                         }
 
+                        if (isExist)
+                        {
+                            ModelState.AddModelError("EmailExist", "Email address is already assigned. Please use forget password option to log in");
+                            return View(authUser);
+                        }
+
                         JOL_UserSession session;
                         var sessionRepository = new SessionRepository();
                         session = sessionRepository.CreateObject(authUser);
@@ -345,10 +346,7 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
                 }
             }
 
-            List<SelectListItem> Addressparishes = account.GetParishes();
-            ViewBag.Parishes = new SelectList(Addressparishes, "Value", "Text");
-            ViewBag.CountryList = account.GetCountryList();
-            ViewBag.GetPaymentList = GetPaymentList();
+            
 
             return View(authUser);
         }
