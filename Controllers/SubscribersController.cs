@@ -194,14 +194,20 @@ namespace ePaperLive.Controllers.Admin.Subscribers
 
         // POST: Subscribers/Delete/5
         [HttpPost, ActionName("Delete")]
-        [Route("delete/{emailAddress}")]
+        [Route("delete/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteConfirmed(string emailAddress)
+        public async Task<ActionResult> DeleteConfirmed(string id)
         {
             bool result = false;
 
             try
             {
+                AccountController account = new AccountController();
+                account.InitializeController(this.Request.RequestContext);
+
+                var applicationUser = await account.UserManager.FindByIdAsync(id);
+                string emailAddress = applicationUser.UserName;
+
                 using (var connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DBEntities"].ConnectionString))
                 {
                     using (var command = new SqlCommand("dbo.ResetSubscriber", connection))
