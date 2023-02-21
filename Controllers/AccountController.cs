@@ -1997,14 +1997,38 @@ namespace ePaperLive.Controllers
                     try
                     {
                         //get all session variables
-                        //AuthSubcriber authUser = GetAuthSubscriber();
                         Subscriber objSub = GetSubscriber();
-                        //Subscriber_Address objAdd = GetSubscriberAddress();
-                        //Subscriber_Epaper objE = GetEpaperDetails();
-                        //Subscriber_Print objP = GetPrintDetails();
                         Subscriber_Tranx objTran = GetTransaction();
-                        //ApplicationUser user = GetAppUser();
-                        
+
+                        decimal originalAmount = data.CardAmount;
+                        var selectedPlan = _db.printandsubrates.FirstOrDefault(x => x.Rateid == data.RateID);
+                        var rate = (selectedPlan.OfferIntroRate) ? selectedPlan.IntroRate : selectedPlan.Rate;
+
+                        if (data.PromoCode != null)
+                        {
+                            using (var context = new ApplicationDbContext())
+                            {
+                                var discount = context.promocodes.FirstOrDefault(q => q.PromoCode == data.PromoCode);
+
+                                if (discount != null)
+                                {
+                                    if (discount.EndDate > DateTime.Now && discount.Active == true)
+                                    {
+                                        if (selectedPlan != null)
+                                        {
+                                            originalAmount = (decimal)rate - ((decimal)rate * (decimal)discount.Discount);
+                                            data.PromoCode = discount.PromoCode;
+                                            data.CardAmount = originalAmount;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            data.CardAmount = (decimal)rate;
+                        }
+
                         objTran.CardType = data.CardType;
                         objTran.CardOwner = data.CardOwner;
                         objTran.TranxAmount = (double)data.CardAmount;
@@ -2969,31 +2993,33 @@ namespace ePaperLive.Controllers
 
                             if (clientData != null)
                             {
-                                if (customerData.RedeemCode == null && customerData.AdminCreated == false)
+                                Subscriber_Tranx curTransaction = context.subscriber_tranx.FirstOrDefault(x => x.OrderID == orderNumber && x.EmailAddress == emailAddress);
+                                //update transaction table with authcode and confirmation no.
+                                if (curTransaction != null)
                                 {
+                                    curTransaction.IsMadeLiveSuccessful = true;
 
-                                    //update transaction table with authcode and confirmation no.
-                                    Subscriber_Tranx curTransaction = context.subscriber_tranx.FirstOrDefault(x => x.OrderID == orderNumber);
-                                    context.Entry(curTransaction).State = EntityState.Modified;
-
-                                    if (curTransaction != null)
+                                    if (customerData.RedeemCode == null && customerData.AdminCreated == false)
                                     {
                                         curTransaction.AuthCode = transSummary.AuthCode;
-                                        curTransaction.ConfirmationNo = transSummary.ReferenceNo;
-                                        curTransaction.IsMadeLiveSuccessful = true;
-                                        await context.SaveChangesAsync();
+                                        curTransaction.ConfirmationNo = transSummary.ReferenceNo; 
                                     }
+
+                                    context.Entry(curTransaction).State = EntityState.Modified;
+
+                                    await context.SaveChangesAsync();
                                 }
-                                
+                               
                                 //make subscription active
                                 if (currentTransaction.SubType == "Epaper" || currentTransaction.SubType == "Bundle") 
                                 { 
                                     Subscriber_Epaper curESubscription = context.subscriber_epaper.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID && x.OrderNumber == orderNumber);
-                                    context.Entry(curESubscription).State = EntityState.Modified;
 
                                     if (curESubscription != null)
                                     {
                                         curESubscription.IsActive = true;
+                                        context.Entry(curESubscription).State = EntityState.Modified;
+                                        
                                         await context.SaveChangesAsync();
                                     }
 
@@ -3001,11 +3027,12 @@ namespace ePaperLive.Controllers
                                 if (currentTransaction.SubType == "Print" || currentTransaction.SubType == "Bundle") 
                                 {
                                     Subscriber_Print curPSubscription = context.subscriber_print.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID && x.OrderNumber == orderNumber);
-                                    context.Entry(curPSubscription).State = EntityState.Modified;
 
                                     if (curPSubscription != null)
                                     {
                                         curPSubscription.IsActive = true;
+                                        context.Entry(curPSubscription).State = EntityState.Modified;
+
                                         await context.SaveChangesAsync();
                                     }
                                 }

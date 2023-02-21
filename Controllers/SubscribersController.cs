@@ -103,10 +103,11 @@ namespace ePaperLive.Controllers.Admin.Subscribers
 
                     //Subscribers
                     Subscriber subscriber = await db.subscribers.FindAsync(usersWithRoles.SubscriberID);
-                    db.Entry(subscriber).State = EntityState.Modified;
 
                     if (subscriber != null)
                     {
+                        db.Entry(subscriber).State = EntityState.Modified;
+
                         subscriber.FirstName = usersWithRoles.FirstName;
                         subscriber.LastName = usersWithRoles.LastName;
                         subscriber.EmailAddress = usersWithRoles.UserName;
@@ -115,10 +116,11 @@ namespace ePaperLive.Controllers.Admin.Subscribers
 
                     //Epaper
                     List<Subscriber_Epaper> subscriber_Epaper = await db.subscriber_epaper.Where(x => x.SubscriberID == usersWithRoles.SubscriberID).ToListAsync();
-                    db.Entry(subscriber_Epaper).State = EntityState.Modified;
 
                     if (subscriber_Epaper != null)
                     {
+                        db.Entry(subscriber_Epaper).State = EntityState.Modified;
+
                         foreach (var item in subscriber_Epaper)
                         {
                             item.EmailAddress = usersWithRoles.UserName;
@@ -127,9 +129,10 @@ namespace ePaperLive.Controllers.Admin.Subscribers
 
                     //Print
                     List<Subscriber_Print> subscriber_Print = await db.subscriber_print.Where(x => x.SubscriberID == usersWithRoles.SubscriberID).ToListAsync();
-                    db.Entry(subscriber_Print).State = EntityState.Modified;
                     if (subscriber_Print != null)
                     {
+                        db.Entry(subscriber_Print).State = EntityState.Modified;
+
                         foreach (var item in subscriber_Print)
                         {
                             item.EmailAddress = usersWithRoles.UserName;
@@ -138,9 +141,10 @@ namespace ePaperLive.Controllers.Admin.Subscribers
 
                     //Transactions
                     List<Subscriber_Tranx> subscriber_Tranx = await db.subscriber_tranx.Where(x => x.SubscriberID == usersWithRoles.SubscriberID).ToListAsync();
-                    db.Entry(subscriber_Tranx).State = EntityState.Modified;
                     if (subscriber_Tranx != null)
                     {
+                        db.Entry(subscriber_Tranx).State = EntityState.Modified;
+
                         foreach (var item in subscriber_Tranx)
                         {
                             item.EmailAddress = usersWithRoles.UserName;
