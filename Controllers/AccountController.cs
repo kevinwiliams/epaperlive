@@ -3012,7 +3012,7 @@ namespace ePaperLive.Controllers
                             }
 
                             //send confirmation email
-                            await SendConfirmationEmail(customerData, currentTransaction.SubType, false);
+                            await SendConfirmationEmail(customerData, currentTransaction.SubType);
                             ClearDBSession(emailAddress);
                             return Json(true);
 
