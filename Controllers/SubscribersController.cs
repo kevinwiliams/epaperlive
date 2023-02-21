@@ -225,7 +225,7 @@ namespace ePaperLive.Controllers.Admin.Subscribers
             catch (Exception ex)
             {
                 result = false;
-                Util.LogErrror(ex);
+                Util.LogError(ex);
             }
 
             return RedirectToAction("Index");

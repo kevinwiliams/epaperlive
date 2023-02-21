@@ -142,21 +142,21 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
             account.InitializeController(this.Request.RequestContext);
 
             AuthSubcriber authUser = new AuthSubcriber();
-            //authUser.AddressDetails = new List<AddressDetails>();
+            authUser.AddressDetails = new List<AddressDetails>();
             //AddressDetails address = new AddressDetails();
             //authUser.AddressDetails.Add(address);
 
             authUser.SubscriptionDetails = new List<SubscriptionDetails>();
             //SubscriptionDetails subscriptionDetails = new SubscriptionDetails();
 
-            //authUser.PaymentDetails = new List<PaymentDetails>();
+            authUser.PaymentDetails = new List<PaymentDetails>();
 
             List<SelectListItem> Addressparishes = account.GetParishes();
             ViewBag.Parishes = new SelectList(Addressparishes, "Value", "Text");
             ViewBag.CountryList = account.GetCountryList();
             ViewBag.GetPaymentList = GetPaymentList();
 
-            return View();
+            return View(authUser);
         }
 
         [HttpPost]
@@ -167,7 +167,7 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
             AccountController account = new AccountController();
             account.InitializeController(this.Request.RequestContext);
             AuthSubcriber authUser = new AuthSubcriber();
-
+            //FormCollection form = new FormCollection();
 
             if (nextBtn != null)
             {
@@ -178,7 +178,7 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
                     if (isExist)
                     {
                         ModelState.AddModelError("EmailExist", "Email address is already assigned. Please use forget password option to log in");
-                        return View(form);
+                        return View();
                     }
 
                     try
