@@ -770,13 +770,13 @@ namespace ePaperLive.Controllers
                 }
                 else 
                 {
-                    return View("dashboard");
+                    return RedirectToAction("dashboard");
                 }
             }
             catch (Exception ex)
             {
                 LogError(ex);
-                return View("dashboard");
+                return RedirectToAction("dashboard");
             }
             
         }
@@ -1309,7 +1309,7 @@ namespace ePaperLive.Controllers
                     {
 
                         LogError(ex);
-                        return View("dashboard");
+                        return RedirectToAction("dashboard");
 
                     }
 
