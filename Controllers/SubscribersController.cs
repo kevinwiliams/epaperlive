@@ -103,17 +103,20 @@ namespace ePaperLive.Controllers.Admin.Subscribers
 
                     //Subscribers
                     Subscriber subscriber = await db.subscribers.FindAsync(usersWithRoles.SubscriberID);
+                    db.Entry(subscriber).State = EntityState.Modified;
+
                     if (subscriber != null)
                     {
                         subscriber.FirstName = usersWithRoles.FirstName;
                         subscriber.LastName = usersWithRoles.LastName;
                         subscriber.EmailAddress = usersWithRoles.UserName;
                         subscriber.IsActive = (bool)usersWithRoles.IsActive;
-                        db.Entry(subscriber).State = EntityState.Modified;
                     }
 
                     //Epaper
                     List<Subscriber_Epaper> subscriber_Epaper = await db.subscriber_epaper.Where(x => x.SubscriberID == usersWithRoles.SubscriberID).ToListAsync();
+                    db.Entry(subscriber_Epaper).State = EntityState.Modified;
+
                     if (subscriber_Epaper != null)
                     {
                         foreach (var item in subscriber_Epaper)
@@ -124,6 +127,7 @@ namespace ePaperLive.Controllers.Admin.Subscribers
 
                     //Print
                     List<Subscriber_Print> subscriber_Print = await db.subscriber_print.Where(x => x.SubscriberID == usersWithRoles.SubscriberID).ToListAsync();
+                    db.Entry(subscriber_Print).State = EntityState.Modified;
                     if (subscriber_Print != null)
                     {
                         foreach (var item in subscriber_Print)
@@ -134,6 +138,7 @@ namespace ePaperLive.Controllers.Admin.Subscribers
 
                     //Transactions
                     List<Subscriber_Tranx> subscriber_Tranx = await db.subscriber_tranx.Where(x => x.SubscriberID == usersWithRoles.SubscriberID).ToListAsync();
+                    db.Entry(subscriber_Tranx).State = EntityState.Modified;
                     if (subscriber_Tranx != null)
                     {
                         foreach (var item in subscriber_Tranx)
@@ -151,8 +156,8 @@ namespace ePaperLive.Controllers.Admin.Subscribers
                         await manager.RemoveFromRoleAsync(user.Id, role);
                         await manager.AddToRoleAsync(user.Id, usersWithRoles.Role);
                     }
-                    db.Entry(user).State = EntityState.Modified;
 
+                    db.Entry(user).State = EntityState.Modified;
 
                     await db.SaveChangesAsync();
                     return RedirectToAction("Index");

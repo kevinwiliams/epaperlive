@@ -71,20 +71,6 @@ namespace ePaperLive.Models
                                 existingTransactionData.SubscriptionDetails.Add(currentSubscription);
                             }
 
-                            //if (currentTransaction.EnrolledIn3DSecure)
-                            //{
-                            //    if (!existingTransactionData.PaymentDetails.Any(c => c.OrderNumber == orderNumber))
-                            //    {
-                            //        existingTransactionData.PaymentDetails.Add(currentTransaction);
-                            //    }
-                            //    else
-                            //    {
-                            //        // Remove and re add
-                            //        var index = existingTransactionData.PaymentDetails.FindIndex(t => t.OrderID == rateID);
-                            //        existingTransactionData.PaymentDetails.RemoveAt(index);
-                            //        existingTransactionData.PaymentDetails.Add(currentTransaction);
-                            //    }
-                            //}
                         }
                         else
                         {
@@ -103,54 +89,6 @@ namespace ePaperLive.Models
                         var updatedClientData = (CreateObject(existingTransactionData)).RootObject;
                         lastSession.RootObject = updatedClientData;
 
-                        /*
-
-                        // Overwrite only if new.
-                        if (!string.IsNullOrWhiteSpace(currentTransactionData.Client.ProofOfId))
-                        {
-                            if (!existingTransactionData.Client.ProofOfId.Equals(currentTransactionData.Client.ProofOfId))
-                            {
-                                newTransactionData = currentTransactionData;
-                                newTransactionData.PaymentDetails = existingTransactionData.PaymentDetails;
-                                var updatedClientData = (CreateObject(newTransactionData)).RootObject;
-                                lastSession.RootObject = updatedClientData;
-                            }
-                        }
-                        else
-                        {
-                            newTransactionData = currentTransactionData;
-                            newTransactionData.Client.ProofOfId = existingTransactionData.Client.ProofOfId;
-                            newTransactionData.PaymentDetails = existingTransactionData.PaymentDetails;
-                            var updatedClientData = (CreateObject(newTransactionData)).RootObject;
-                            lastSession.RootObject = updatedClientData;
-                        }
-
-                        // Overwrite only if new.
-                        if (!string.IsNullOrWhiteSpace(currentTransactionData.Client.ProofOfAddress))
-                        {
-                            if (!existingTransactionData.Client.ProofOfAddress.Equals(currentTransactionData.Client.ProofOfAddress))
-                            {
-                                newTransactionData = currentTransactionData;
-                                newTransactionData.PaymentDetails = existingTransactionData.PaymentDetails;
-                                var updatedClientData = (CreateObject(newTransactionData)).RootObject;
-                                lastSession.RootObject = updatedClientData;
-                            }
-                        }
-                        else
-                        {
-                            newTransactionData = currentTransactionData;
-                            newTransactionData.Client.ProofOfAddress = existingTransactionData.Client.ProofOfAddress;
-                            newTransactionData.PaymentDetails = existingTransactionData.PaymentDetails;
-                            var updatedClientData = (CreateObject(newTransactionData)).RootObject;
-                            lastSession.RootObject = updatedClientData;
-                        }
-
-                        if (data != null)
-                        {
-                            lastSession.ClientKey = data.Client.ClientKey;
-                            lastSession.ClientCode = data.Client.ShortName;
-                        }
-                        */
                     }
 
                     await db.SaveChangesAsync();

@@ -1095,7 +1095,7 @@ namespace ePaperLive.Controllers
             ViewBag.CountryList = GetCountryList();
             
 
-            return View(subscription);
+            return View();
         }
         [HttpPost]
         [AllowAnonymous]
@@ -1355,8 +1355,8 @@ namespace ePaperLive.Controllers
                 }
                 catch (Exception ex)
                 {
-
-                    throw ex;
+                    LogError(ex);
+                    return View(data);
                 }
 
             }
@@ -1384,6 +1384,7 @@ namespace ePaperLive.Controllers
                     catch (Exception ex)
                     {
                         LogError(ex);
+                        return View(data);
                     }
 
                     dynamic summary = await ChargeCard(data);
@@ -1487,8 +1488,9 @@ namespace ePaperLive.Controllers
                     }
                     catch (Exception ex)
                     {
+                        LogError(ex);
+                        return View(data);
 
-                        throw ex;
                     }
 
                 }
@@ -1587,13 +1589,13 @@ namespace ePaperLive.Controllers
                     }
                     catch (Exception ex)
                     {
-
-                        throw ex;
+                        LogError(ex);
+                        return View(data);
                     }
 
                 }
             }
-            return View();
+            return View(data);
         }
 
         [HttpGet]
@@ -1652,7 +1654,7 @@ namespace ePaperLive.Controllers
                 catch (Exception e)
                 {
                     //handle exception
-                    throw e;
+                    LogError(e);
                 }
             }
 
@@ -1695,7 +1697,7 @@ namespace ePaperLive.Controllers
                 catch (Exception e)
                 {
                     //handle exception
-                    throw e;
+                    LogError(e);
                 }
             }
 
@@ -1736,8 +1738,7 @@ namespace ePaperLive.Controllers
                 }
                 catch (Exception ex)
                 {
-
-                    throw ex;
+                    LogError(ex);
                 }
 
 
@@ -1908,7 +1909,7 @@ namespace ePaperLive.Controllers
                 }
             }
 
-            return View();
+            return View(data);
         }
         [HttpPost]
         [AllowAnonymous]
@@ -1983,8 +1984,7 @@ namespace ePaperLive.Controllers
                 }
                 catch (Exception ex)
                 {
-
-                    throw ex;
+                    LogError(ex);
                 }
 
             }
@@ -2387,10 +2387,8 @@ namespace ePaperLive.Controllers
             }
             catch (Exception ex)
             {
-
                 LogError(ex);
             }
-
             
             return false;
         }
@@ -2581,14 +2579,16 @@ namespace ePaperLive.Controllers
                                 var sessionRepository = new SessionRepository();
                                 session = sessionRepository.CreateObject(authUser);
                                 var isSaved = await sessionRepository.AddOrUpdate(pd.OrderNumber, session, rateID, authUser);
-
-                                var saved = await SaveSubscriptionInfoAsync(authUser);
-                                if (saved)
+                                if (isSaved)
                                 {
-                                    //await CompleteTransactionProcess(pd.RateID, pd.OrderNumber, authUser.EmailAddress);
-                                    return View("PaymentSuccess", authUser);
+                                    var saved = await SaveSubscriptionInfoAsync(authUser);
+                                    if (saved)
+                                    {
+                                        return View("PaymentSuccess", authUser);
+                                    }
                                 }
                             }
+
                             ModelState.AddModelError("InvalidCode", "Invalid Code");
 
                         }
@@ -2909,6 +2909,7 @@ namespace ePaperLive.Controllers
             try
             {
                 var savedTransaction = await appDbOther.subscriber_tranx.FirstOrDefaultAsync(t => t.OrderID == orderNumber && t.EmailAddress == emailAddress);
+                Session["userEmail"] = emailAddress;
 
                 if (savedTransaction != null)
                 {
@@ -2949,16 +2950,22 @@ namespace ePaperLive.Controllers
 
                         using (var context = new ApplicationDbContext())
                         {
-                            
+
                             var clientData = (from s in context.subscribers
-                                        join st in context.subscriber_tranx on s.SubscriberID equals st.SubscriberID
-                                        join se in context.subscriber_epaper on st.OrderID equals se.OrderNumber into seGroup
-                                        from se in seGroup.DefaultIfEmpty()
-                                        join sp in context.subscriber_print on st.OrderID equals sp.OrderNumber into spGroup
-                                        from sp in spGroup.DefaultIfEmpty()
-                                        //where st.OrderID == orderNumber
-                                        select new { subscriber = s, eSubscription = se, pSubscription = sp, tranasction = st })
-                                        .FirstOrDefault(x=> x.tranasction.OrderID == orderNumber);
+                                              join st in context.subscriber_tranx on s.SubscriberID equals st.SubscriberID
+                                              join se in context.subscriber_epaper on st.OrderID equals se.OrderNumber into seGroup
+                                              from se in seGroup.DefaultIfEmpty()
+                                              join sp in context.subscriber_print on st.OrderID equals sp.OrderNumber into spGroup
+                                              from sp in spGroup.DefaultIfEmpty()
+                                              select new { subscriber = s, eSubscription = se, pSubscription = sp, tranasction = st })
+                                        .FirstOrDefault(x => x.tranasction.OrderID == orderNumber);
+
+                            //var clientData = context.subscribers
+                            //    .Include(s => s.Subscriber_Tranx)
+                            //    .Include(s => s.Subscriber_Epaper)
+                            //    .Include(s => s.Subscriber_Print)
+                            //    //.FirstOrDefault(s => s.Subscriber_Tranx.FirstOrDefault(x => x.EmailAddress == emailAddress).OrderID == orderNumber);
+                            //    .FirstOrDefault(u => u.EmailAddress == emailAddress && u.Subscriber_Tranx.FirstOrDefault(x => x.IsMadeLiveSuccessful == false).OrderID == orderNumber);
 
                             if (clientData != null)
                             {
@@ -2966,25 +2973,47 @@ namespace ePaperLive.Controllers
                                 {
 
                                     //update transaction table with authcode and confirmation no.
-                                    clientData.tranasction.AuthCode = transSummary.AuthCode;
-                                    clientData.tranasction.ConfirmationNo = transSummary.ReferenceNo;
+                                    Subscriber_Tranx curTransaction = context.subscriber_tranx.FirstOrDefault(x => x.OrderID == orderNumber);
+                                    context.Entry(curTransaction).State = EntityState.Modified;
+
+                                    if (curTransaction != null)
+                                    {
+                                        curTransaction.AuthCode = transSummary.AuthCode;
+                                        curTransaction.ConfirmationNo = transSummary.ReferenceNo;
+                                        curTransaction.IsMadeLiveSuccessful = true;
+                                        await context.SaveChangesAsync();
+                                    }
                                 }
                                 
-                                clientData.tranasction.IsMadeLiveSuccessful = true;
-
                                 //make subscription active
-                                if (currentTransaction.SubType == "Epaper" || currentTransaction.SubType == "Bundle")
-                                    clientData.eSubscription.IsActive = true;
+                                if (currentTransaction.SubType == "Epaper" || currentTransaction.SubType == "Bundle") 
+                                { 
+                                    Subscriber_Epaper curESubscription = context.subscriber_epaper.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID && x.OrderNumber == orderNumber);
+                                    context.Entry(curESubscription).State = EntityState.Modified;
 
-                                if (currentTransaction.SubType == "Print" || currentTransaction.SubType == "Bundle")
-                                    clientData.pSubscription.IsActive = true;
-                                
-                                await context.SaveChangesAsync();
+                                    if (curESubscription != null)
+                                    {
+                                        curESubscription.IsActive = true;
+                                        await context.SaveChangesAsync();
+                                    }
+
+                                }
+                                if (currentTransaction.SubType == "Print" || currentTransaction.SubType == "Bundle") 
+                                {
+                                    Subscriber_Print curPSubscription = context.subscriber_print.FirstOrDefault(x => x.EmailAddress == emailAddress && x.RateID == rateID && x.OrderNumber == orderNumber);
+                                    context.Entry(curPSubscription).State = EntityState.Modified;
+
+                                    if (curPSubscription != null)
+                                    {
+                                        curPSubscription.IsActive = true;
+                                        await context.SaveChangesAsync();
+                                    }
+                                }
                             }
 
                             //send confirmation email
-                            await SendConfirmationEmail(customerData, currentTransaction.SubType);
-
+                            await SendConfirmationEmail(customerData, currentTransaction.SubType, false);
+                            ClearDBSession(emailAddress);
                             return Json(true);
 
                         }
@@ -3488,14 +3517,18 @@ namespace ePaperLive.Controllers
             using (var context = new ApplicationDbContext())
             {
                 var email = Session["userEmail"];
-                var remove = context.JOL_UserSession.Where(x => x.Email == email.ToString()).FirstOrDefault();
-                if (remove != null)
+                if (email !=null)
                 {
-                    context.JOL_UserSession.Remove(remove);
-                    context.SaveChanges();
+                    var remove = context.JOL_UserSession.Where(x => x.Email == email.ToString()).FirstOrDefault();
+                    if (remove != null)
+                    {
+                        context.JOL_UserSession.Remove(remove);
+                        context.SaveChanges();
+                    }
+                    AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
                 }
-            }
 
+            }
             Dispose(true);
         }
 
