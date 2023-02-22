@@ -317,6 +317,7 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\PaymentsController.cs" />
     <Compile Include="Controllers\ReaderController.cs" />
+    <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\SubscribersController.cs" />
     <Compile Include="Controllers\TransactionsController.cs" />
     <Compile Include="DBModel\ClientSnapShot.cs" />
@@ -664,6 +665,7 @@
     <Folder Include="bin\roslyn\" />
     <Folder Include="Views\Admin\Rates\" />
     <Folder Include="Views\Payments\" />
+    <Folder Include="Views\Reports\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />
