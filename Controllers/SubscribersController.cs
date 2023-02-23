@@ -112,44 +112,49 @@ namespace ePaperLive.Controllers.Admin.Subscribers
                         subscriber.LastName = usersWithRoles.LastName;
                         subscriber.EmailAddress = usersWithRoles.UserName;
                         subscriber.IsActive = (bool)usersWithRoles.IsActive;
+                        await db.SaveChangesAsync();
+
                     }
 
                     //Epaper
                     List<Subscriber_Epaper> subscriber_Epaper = await db.subscriber_epaper.Where(x => x.SubscriberID == usersWithRoles.SubscriberID).ToListAsync();
 
                     if (subscriber_Epaper != null)
-                    {
-                        db.Entry(subscriber_Epaper).State = EntityState.Modified;
-
+                    {              
                         foreach (var item in subscriber_Epaper)
                         {
+                            db.Entry(item).State = EntityState.Modified;
                             item.EmailAddress = usersWithRoles.UserName;
                         }
+                        await db.SaveChangesAsync();
                     }
 
                     //Print
                     List<Subscriber_Print> subscriber_Print = await db.subscriber_print.Where(x => x.SubscriberID == usersWithRoles.SubscriberID).ToListAsync();
                     if (subscriber_Print != null)
                     {
-                        db.Entry(subscriber_Print).State = EntityState.Modified;
-
+                        
                         foreach (var item in subscriber_Print)
                         {
+                            db.Entry(item).State = EntityState.Modified;
                             item.EmailAddress = usersWithRoles.UserName;
                         }
+                        await db.SaveChangesAsync();
                     }
 
                     //Transactions
                     List<Subscriber_Tranx> subscriber_Tranx = await db.subscriber_tranx.Where(x => x.SubscriberID == usersWithRoles.SubscriberID).ToListAsync();
                     if (subscriber_Tranx != null)
                     {
-                        db.Entry(subscriber_Tranx).State = EntityState.Modified;
+                        
 
                         foreach (var item in subscriber_Tranx)
                         {
+                            db.Entry(item).State = EntityState.Modified;
                             item.EmailAddress = usersWithRoles.UserName;
                             item.CardOwner = usersWithRoles.FirstName + " " + usersWithRoles.LastName;
                         }
+                        await db.SaveChangesAsync();
                     }
 
 
