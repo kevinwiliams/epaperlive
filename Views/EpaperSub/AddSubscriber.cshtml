@@ -650,18 +650,7 @@
             });
 
          $("#rates-results").on("click", "[name=RateID]", function (e) {
-                let rateDesc = $(this).parent().children().children().first().text();
-                let plan = e.target.dataset;
-                var desc = rateDesc.split("|")[0];
-                var freq = rateDesc.split("|")[1];
-
-                var frequency = rateDesc.split("|")[1] ? '<small>' + rateDesc.split("|")[1] + '</small>' : '';
-                let rateType = plan.rateType + '|' + desc + '|' + plan.rateDesc + '|' + plan.ratePrice + '|' + freq;
-             let rateId = plan.subId;
              $('#PaymentList').trigger('change');
-
-
-               
-            });
+          });
     </script>
 }
