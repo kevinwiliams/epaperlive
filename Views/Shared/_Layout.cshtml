@@ -73,15 +73,16 @@
                             <li>@Html.ActionLink("Create New User", "addsubscriber", "epapersub")</li>
                             <li>@Html.ActionLink("Users & Roles", "subscribers", "admin")</li>
                             <li>@Html.ActionLink("ePaper Subscriptions", "epapersub", "admin")</li>
+                            <li>@Html.ActionLink("Print Subscriptions", "printsub", "admin")</li>
                             <li>@Html.ActionLink("Transactions", "transactions", "admin")</li>
                             <li>@Html.ActionLink("Coupons", "coupons", "admin")</li>
                             <li>@Html.ActionLink("Addresses", "address", "admin")</li>
                             <li>@Html.ActionLink("Rates", "rates", "admin")</li>
                             <li>@Html.ActionLink("Logs", "logs", "admin")</li>
                         }
-                        @if (User.IsInRole("Circulation") || User.IsInRole("Admin"))
+                        @if (User.IsInRole("Circulation"))
                         {
-                            <li>@Html.ActionLink("New Subscription", "addsubscriber", "epapersub")</li>
+                            <li>@Html.ActionLink("Add New Subscription", "addsubscriber", "epapersub")</li>
                             <li>@Html.ActionLink("Print Subscriptions", "printsub", "admin")</li>
                         }
 

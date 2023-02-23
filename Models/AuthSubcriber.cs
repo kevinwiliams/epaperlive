@@ -40,6 +40,7 @@ namespace ePaperLive.Models
         [Display(Name = "Coupon Code")]
         public string RedeemCode { get; set; }
         public bool AdminCreated { get; set; }
+        [Display(Name = "Notify User")]
         public bool SendMail { get; set; }
 
     }
