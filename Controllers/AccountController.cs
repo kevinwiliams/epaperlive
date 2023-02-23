@@ -2774,15 +2774,17 @@ namespace ePaperLive.Controllers
                             case PaymentStatus.Failed:
                                 // TODO: Add Friendly Message property to Card Processor to display to user.
                                 //return View("PaymentDetails", paymentDetails);
+                                ClearDBSession(paymentDetails.EmailAddress);
                                 return Json(paymentDetails);
 
                             case PaymentStatus.GatewayError:
                             case PaymentStatus.InternalError:
-                                break;
+                                ClearDBSession(paymentDetails.EmailAddress);
+                                return Json(paymentDetails);
                         }
                         //TODO: Remove only cookies?
                         RemoveSubscriber();
-
+                        
                         paymentDetails.TransactionSummary = summary;
                         await SaveSubscriptionInfoAsync(clientData);
                         //return View("PaymentDetails", paymentDetails);
@@ -3038,8 +3040,10 @@ namespace ePaperLive.Controllers
                                 }
                             }
 
+                            bool sendMail = (customerData.AdminCreated) ? customerData.SendMail : true;
+
                             //send confirmation email
-                            await SendConfirmationEmail(customerData, currentTransaction.SubType);
+                            await SendConfirmationEmail(customerData, currentTransaction.SubType, sendMail);
                             ClearDBSession(emailAddress);
                             return Json(true);
 

@@ -58,6 +58,11 @@
                                     @*@Html.LabelFor(model => model.EmailAddress, htmlAttributes: new { @class = "control-label col-md-4" })*@
                                     <div class="offset-md-1 col-md-8">
                                         @Html.EditorFor(model => model.EmailAddress, new { htmlAttributes = new { @class = "form-control", @required = "required", placeholder = Html.DisplayNameFor(model => model.EmailAddress) } })
+                                        @Html.EditorFor(model => model.SendMail, new { htmlAttributes = new { @class = "form-check-input" } })
+                                        @Html.LabelFor(model => model.SendMail, htmlAttributes: new { @class = "form-check-label" })
+
+
+
                                     </div>
                                 </div>
                                 @*<div class="form-group col-md-5">
@@ -266,14 +271,17 @@
                                     </div>
                                 </div>
                             </div>
-                            
 
+                            @{ 
+                                var role = (User.IsInRole("Circulation")) ? "Circulation" : "Admin";
+                            }
+                                
+                                <input type="hidden" id="UserRole" value="@role" />
+                            @Html.Hidden("mailSend")
+                          
 
-                            <input type="hidden" id="AddressAdded" />
                             <!-- end:wizrd -->
                             <!-- Delivery Modal -->
-                            
-
                             <!-- end: Delivery Modal -->
                         </div>
                     </div>
@@ -298,11 +306,44 @@
     <script>
 
         $('#CountryCode').val('JAM');
+        $('#SendMail').prop('checked', true);
+        var sendMail = $('#SendMail').val();
+        $('#mailSend').val(sendMail.toString());
+
+        //console.log(sendMail);
 
         $(document).ready(function () {
+            console.log($('#mailSend').val())
+
             $("#eye").click();
             var parish = $("#StateParishList").val();
             $("#StateParish").val(parish).trigger('change');
+
+            var UserRole = $("#UserRole").val();
+
+            console.log(UserRole);
+            if (UserRole != "Admin") {
+                
+                $('[name=RateType]').each(function() {
+                    if ( $(this).val() != 'Epaper' ) {
+                        $(this).remove();
+                    }
+                });
+
+                $('#PaymentList option').each(function() {
+                    if ( $(this).val() != 'HC-COMP' ) {
+                        $(this).remove();
+                    }
+                });
+
+                $('#PaymentList').val('HC-COMP').trigger('change');
+            }
+        });
+
+        $('#SendMail').on('click', (e) => {
+            var mail = e.currentTarget.checked;
+            $('#mailSend').val(mail.toString());
+            console.log(e.currentTarget.checked);
         });
 
         $(".btn-coupon-code").on('click', function (e) {
@@ -372,7 +413,14 @@
         $("[name='GetPaymentList']").on('change', function (e) {
             let paymentType = $(this).val();
             console.log(paymentType);
-            if (paymentType == "CHECK" || paymentType == "BANK") {
+            if (paymentType == "CHECK" || paymentType == "BANK" || paymentType == "HC-COMP") {
+                if (paymentType == "HC-COMP") {
+                    $("#ConfirmationNumber").attr("placeholder", "Circulationpro Subscription Acct");
+                } else
+                {
+                    $("#ConfirmationNumber").attr("placeholder", "Transaction Number");
+                }
+
                 $("#ConfirmationNumber").removeClass("hidden");
             } else {
                 $("#ConfirmationNumber").addClass("hidden");

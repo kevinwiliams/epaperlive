@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Refresh" content="600; url=https://janus.jamaicaobserver.com/subscribe/" />
+    <meta http-equiv="Refresh" content="900; url=https://janus.jamaicaobserver.com/subscribe/" />
     <title>@ViewBag.Title - Jamaica Observer</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
@@ -78,11 +78,10 @@
                             <li>@Html.ActionLink("Addresses", "address", "admin")</li>
                             <li>@Html.ActionLink("Rates", "rates", "admin")</li>
                             <li>@Html.ActionLink("Logs", "logs", "admin")</li>
-
-
                         }
                         @if (User.IsInRole("Circulation") || User.IsInRole("Admin"))
                         {
+                            <li>@Html.ActionLink("New Subscription", "addsubscriber", "epapersub")</li>
                             <li>@Html.ActionLink("Print Subscriptions", "printsub", "admin")</li>
                         }
 

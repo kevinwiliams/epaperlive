@@ -79,7 +79,11 @@
                                         </td>
 
                                         <td>
-                                            @Html.ActionLink("Edit", "Edit", new { id = item.Subscriber_EpaperID }) 
+                                            @if (User.IsInRole("Admin"))
+                                            {
+                                                @Html.ActionLink("Edit", "Edit", new { id = item.Subscriber_EpaperID })
+                                            }
+
                                         </td>
                                     </tr>
                                 }

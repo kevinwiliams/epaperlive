@@ -13,7 +13,7 @@ using System.IO;
 
 namespace ePaperLive.Controllers.Admin.EpaperSub
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Circulation")]
     [RoutePrefix("Admin/EpaperSub")]
     [Route("action = index")]
     public class EpaperSubController : Controller
@@ -182,6 +182,8 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
                     
                     try
                     {
+                        authUser.SendMail = bool.Parse(form["mailSend"]);
+                        
                         authUser.FirstName = form["FirstName"];
                         authUser.LastName = form["LastName"];
                         authUser.EmailAddress = form["EmailAddress"];
@@ -210,7 +212,23 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
                         var paddedRateKey = Util.ZeroPadNumber(3, RateID);
                         // 2 Character Sub Type
                         var reSubType = form["SubType"].ToUpper().Substring(0, 2);
-                        var OrderNumber = (paymentType.Contains("COMP") || paymentType.Contains("STAFF")) ? "COMPLIMENTARY-SUBSCRIPTION" : $"{reSubType}{"-"}{DateTime.Now.ToString("yyyyMMddhhmmssfffff")}{"-"}{currency}{"-"}{paddedRateKey}";
+
+                        var OrderNum = "";
+
+                        if (paymentType.Contains("COMP") || paymentType.Contains("STAFF"))
+                        {
+                            OrderNum = "COMPLIMENTARY-SUBSCRIPTION";
+                        }
+                        if(paymentType.Contains("HC-COMP"))
+                        {
+                            OrderNum = "HC-COMPLIMENTARY-SUBSCRIPTION";
+                        }
+                        else
+                        {
+                            OrderNum = $"{reSubType}{"-"}{DateTime.Now.ToString("yyyyMMddhhmmssfffff")}{"-"}{currency}{"-"}{paddedRateKey}";
+                        }
+
+                        var OrderNumber = OrderNum;
                         PaymentDetails payment = new PaymentDetails
                         {
                             OrderNumber = OrderNumber,
@@ -401,14 +419,17 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
         }
         public static List<SelectListItem> GetPaymentList()
         {
+           
+
             List<SelectListItem> paymentList = new List<SelectListItem>();
 
+            paymentList.Add(new SelectListItem { Text = "Hard Copy Complimentary", Value = "HC-COMP" });
             paymentList.Add(new SelectListItem { Text = "Complimentary", Value = "COMP" });
             paymentList.Add(new SelectListItem { Text = "Staff", Value = "STAFF" });
             paymentList.Add(new SelectListItem { Text = "Cash", Value = "CASH" });
             paymentList.Add(new SelectListItem { Text = "Check", Value = "CHECK" });
             paymentList.Add(new SelectListItem { Text = "Bank Transfer", Value = "BANK" });
-
+            
             return paymentList;
         }
         protected override void Dispose(bool disposing)
