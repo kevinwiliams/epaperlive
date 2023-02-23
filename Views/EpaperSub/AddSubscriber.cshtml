@@ -33,7 +33,7 @@
 
                         <div class="form-horizontal">
                             <div class="row form-horizontal">
-                                <p>Step 1: Please provide your basic information.</p>
+                                <h5>Step 1: Please provide the basic information.</h5>
                                 <hr />
                                 @*@System.Globalization.RegionInfo.CurrentRegion.DisplayName*@
                                 <div class="offset-md-1 col-md-5 p-2">
@@ -96,7 +96,7 @@
 
                             </div>
                             <div class="row form-horizontal py-3">
-                                <p>Mailing address </p>
+                                <p><strong>Mailing address</strong> </p>
                                 <hr />
                                 <div class="offset-md-1 form-group">
                                     @*@Html.LabelFor(model => model.AddressLine1, htmlAttributes: new { @class = "control-label" })*@
@@ -171,7 +171,9 @@
 
                                         <div class="col-6">
                                             @Html.DropDownList("GetPaymentList", ViewBag.GetPaymentList as SelectList, "Select Payment Type", new { @class = "form-control py-2", id = "PaymentList", @required = "required" })
-                                            @Html.EditorFor(model => model.PaymentDetails.FirstOrDefault().ConfirmationNumber, new { htmlAttributes = new { @class = "form-control py-2 hidden", placeholder = "Enter check number or transaction ref." } })
+                                            @Html.EditorFor(model => model.PaymentDetails.FirstOrDefault().ConfirmationNumber, new { htmlAttributes = new { @class = "form-control my-3 hidden", placeholder = "Enter check number or transaction ref." } })
+                                            @Html.ValidationMessageFor(model => model.PaymentDetails.FirstOrDefault().ConfirmationNumber, "", new { @class = "text-danger" })
+
                                             @Html.EditorFor(model => model.PaymentDetails.FirstOrDefault().PaymentType, new { htmlAttributes = new { @class = "form-control py-2 hidden", placeholder = Html.DisplayNameFor(model => model.PaymentDetails.FirstOrDefault().PaymentType), @required = "required" } })
 
                                         </div>
@@ -208,7 +210,7 @@
                     <div class="col-lg-6">
                         <!-- start:wizrd -->
                         <div class="form-horizontal">
-                            <p>Step 2: Choose from one of the subscription options</p>
+                            <h5>Step 2: Choose from one of the subscription options</h5>
                             <hr />
                             @*@Html.Partial("_Rates", Model)*@
 
@@ -323,20 +325,30 @@
 
             console.log(UserRole);
             if (UserRole != "Admin") {
+                $('[name=Currency]').attr("readonly", "readonly");
+                $('[name=CardAmount]').attr("readonly", "readonly");
+                $('[name=SubType]').attr("readonly", "readonly");
+                $('[name=PaymentType]').attr("readonly", "readonly");
+                $('[name=RateDescription]').attr("readonly", "readonly");
+
+                $('[name=ConfirmationNumber]').attr("required", "required");
+                $('[name=ConfirmationNumber]').attr("maxlength", "7");
+                $('[name=ConfirmationNumber]').attr("minlength", "5");
+
                 
                 $('[name=RateType]').each(function() {
-                    if ( $(this).val() != 'Epaper' ) {
-                        $(this).remove();
+                    if ($(this).val() != 'Epaper') {
+                        $(this).attr("disabled", "disabled");
                     }
                 });
 
                 $('#PaymentList option').each(function() {
-                    if ( $(this).val() != 'HC-COMP' ) {
+                    if ( $(this).val() != 'HC-COMP' &&  $(this).val() != '') {
                         $(this).remove();
                     }
                 });
 
-                $('#PaymentList').val('HC-COMP').trigger('change');
+                //$('#PaymentList').val('HC-COMP').trigger('change');
             }
         });
 
@@ -426,7 +438,7 @@
                 $("#ConfirmationNumber").addClass("hidden");
             }
 
-            if (paymentType == "COMP" || paymentType == "STAFF") {
+            if (paymentType == "COMP" || paymentType == "STAFF" || paymentType == "HC-COMP") {
                 $("[name='CardAmount']").val("0.00");
             }
 
@@ -635,6 +647,21 @@
                     });
                 }
 
+            });
+
+         $("#rates-results").on("click", "[name=RateID]", function (e) {
+                let rateDesc = $(this).parent().children().children().first().text();
+                let plan = e.target.dataset;
+                var desc = rateDesc.split("|")[0];
+                var freq = rateDesc.split("|")[1];
+
+                var frequency = rateDesc.split("|")[1] ? '<small>' + rateDesc.split("|")[1] + '</small>' : '';
+                let rateType = plan.rateType + '|' + desc + '|' + plan.rateDesc + '|' + plan.ratePrice + '|' + freq;
+             let rateId = plan.subId;
+             $('#PaymentList').trigger('change');
+
+
+               
             });
     </script>
 }
