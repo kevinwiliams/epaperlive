@@ -513,7 +513,20 @@ namespace ePaperLive
                 catch (Exception exs)
                 {
                     LogError(exs);
-                    location.Country_Code = "JM";
+                    try
+                    {
+                        string url = string.Format("https://api.ip2location.io/?ip={0}&key={1}", ipAddress, "D799EE85BF1EC31305E91E2AF1F6B166"); //
+                        using (WebClient webClient = new WebClient())
+                        {
+                            string jsonRes = webClient.DownloadString(url);
+                            location = new JavaScriptSerializer().Deserialize<UserLocation>(jsonRes);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        LogError(ex);
+                        location.Country_Code = "JM";
+                    }
                 }
 
             }
