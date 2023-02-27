@@ -177,11 +177,12 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
             {
                 if (ModelState.IsValid)
                 {
-                    var EmailAddress = form["EmailAddress"];
-                    var isExist = account.IsEmailExist(EmailAddress);
                     
                     try
                     {
+                        var EmailAddress = form["EmailAddress"];
+                        var isExist = account.IsEmailExist(EmailAddress);
+
                         authUser.SendMail = bool.Parse(form["mailSend"]);
                         
                         authUser.FirstName = form["FirstName"];
@@ -340,7 +341,7 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
 
                         if (isExist)
                         {
-                            ModelState.AddModelError("EmailExist", "Email address is already assigned. Please use forget password option to log in");
+                            ModelState.AddModelError("EmailExist", "Email address is already assigned. Please contact IT to extend the subscription.");
                             return View(authUser);
                         }
 

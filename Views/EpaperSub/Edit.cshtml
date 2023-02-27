@@ -118,26 +118,48 @@
 
 @section scripts{
     <script>
-        let orginalDate = $('#EndDate').val();
+        let orginalEndDate = $('#EndDate').val();
+        let orginalStartDate = $('#StartDate').val();
         let endDate = $('#EndDate').val();
+        let startDate = $('#StartDate').val();
         endDate = moment(endDate);
-
-        //var endDate = moment($('#EndDate').val());
+        let dDate;
+        let days;
+        let newDate;
 
         $('#DaysList').on('change', (e) => {
-            let dDate = moment(orginalDate);
-            let days = e.currentTarget.value;
-            let newDate = dDate.add(days, 'days').format('YYYY-MM-DD');
-            console.log(days);
-            if (days) {
-            $('#EndDate').val(newDate);
+            let sDate = moment(orginalEndDate);
+            let today = moment();
+            let checkdays = sDate.diff(today);
 
-            }
-            else {
-            $('#EndDate').val(orginalDate);
+            if (checkdays < 0) {
 
+                dDate = moment(today);
+                days = e.currentTarget.value;
+                newDate = dDate.add(days, 'days').format('YYYY-MM-DD');
+                console.log(days);
+                if (days) {
+                    $('#EndDate').val(newDate);
+                }
+                else {
+                    $('#EndDate').val(orginalEndDate);
+                }
             }
-            console.log(newDate);
+            else
+            {
+                dDate = moment(orginalEndDate);
+                days = e.currentTarget.value;
+                newDate = dDate.add(days, 'days').format('YYYY-MM-DD');
+                console.log(days);
+                if (days) {
+                    $('#EndDate').val(newDate);
+                }
+                else {
+                    $('#EndDate').val(orginalEndDate);
+                }
+            }
+            console.log(sDate.diff(today), 'days');
+            
         });
 
 
