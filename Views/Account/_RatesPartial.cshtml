@@ -69,6 +69,7 @@ else
                                         @data_rate_type = plans.Type,
                                         @data_rate_price = plans.Curr + " " + String.Format("{0:C}", ratePrice),
                                         @data_rate_desc = mainDesc.Replace(" ", "").Replace("&", ""),
+                                        @data_request_url = Url.Action("preloadsubscription","home"),
                                         id = $"RateID{rates.IndexOf(plans)}"
                                          })
                 <span class="value rateLine">

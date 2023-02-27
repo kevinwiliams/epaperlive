@@ -552,6 +552,13 @@
     <Content Include="Scripts\moment-with-locales.min.js" />
     <Content Include="Scripts\moment.js" />
     <Content Include="Scripts\moment.min.js" />
+    <Content Include="Scripts\site\address.js" />
+    <Content Include="Scripts\site\extendpayment.js" />
+    <Content Include="Scripts\site\extendsubscription.js" />
+    <Content Include="Scripts\site\home.js" />
+    <Content Include="Scripts\site\logindetails.js" />
+    <Content Include="Scripts\site\paymentdetails.js" />
+    <Content Include="Scripts\site\subscriptiondetails.js" />
     <Content Include="Scripts\sweetalert-dev.js" />
     <Content Include="Scripts\sweetalert.min.js" />
     <Content Include="Styles\sweetalert.css" />

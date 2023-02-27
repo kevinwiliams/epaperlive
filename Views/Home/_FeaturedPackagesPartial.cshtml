@@ -73,6 +73,8 @@
                        data-rate-price="@(plans.Curr + " " + String.Format("{0:C}", ratePrice))"
                        data-bs-toggle="tooltip"
                        data-bs-placement="top"
+                       data-request-url="@Url.Action("preloadsubscription","home")"
+                       data-success-url="@Url.Action("subscribe","account")"
                        title="Subscribe now">Subscribe</a>
                 </div>
                 <input type="hidden" name="rateText" value="@plans.RateDescr" />

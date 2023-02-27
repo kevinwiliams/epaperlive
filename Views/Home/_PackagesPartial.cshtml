@@ -65,6 +65,8 @@ else
                                         data-rate-price="@(plans.Curr + " " + String.Format("{0:C}", ratePrice))"
                                         data-bs-toggle="tooltip"
                                         data-bs-placement="top"
+                                        data-request-url="@Url.Action("preloadsubscription","home")"
+                                        data-success-url="@Url.Action("subscribe","account")"
                                         title="Subscribe now">
                                     @(" " + plans.RateDescr)
                                 </button>
@@ -136,6 +138,8 @@ else
                                                     data-rate-type="@(plans.Type)" 
                                                     data-rate-price="@(plans.Curr + " " + String.Format("{0:C}", ratePrice))" 
                                                     data-rate-desc="@mainDesc.Replace(" ", "").Replace("&", "")" 
+                                                    data-request-url="@Url.Action("preloadsubscription","home")"
+                                                    data-success-url="@Url.Action("subscribe","account")"
                                                     data-bs-toggle="tooltip" data-bs-placement="top" title="Subscribe now">
                                                 @(" " + printWeeks)<br />
                                             </button>
@@ -187,6 +191,8 @@ else
                                         data-sub-id="@(plans.Rateid)"
                                         data-rate-type="@(plans.Type)"
                                         data-rate-price="@(plans.Curr + " " + String.Format("{0:C}", ratePrice))"
+                                        data-request-url="@Url.Action("preloadsubscription","home")"
+                                        data-success-url="@Url.Action("subscribe","account")"
                                         data-bs-toggle="tooltip" data-bs-placement="top" title="Subscribe now">
                                     @(" " + plans.RateDescr.Split('/')[0]) <br /> @(newLine.Split('@')[0]) <strong class="text-success">@(discount)</strong>
                                 </button>
