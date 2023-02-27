@@ -27,6 +27,7 @@ using System.Net.Mail;
 using System.Net;
 using System.Web.Routing;
 using System.Data.SqlClient;
+using System.Web.Configuration;
 
 namespace ePaperLive.Controllers
 {
@@ -675,7 +676,8 @@ namespace ePaperLive.Controllers
                                     PaymentsList.Add(paymentDetails);
 
                                     //Update subscription if user requested refund
-                                    SubscriptionList.FirstOrDefault(x => x.OrderNumber == payments.OrderID).RefundRequested = payments.RefundRequested;
+                                    if (SubscriptionList.FirstOrDefault(x => x.OrderNumber == payments.OrderID).RefundRequested)
+                                        SubscriptionList.FirstOrDefault(x => x.OrderNumber == payments.OrderID).RefundRequested = payments.RefundRequested;
                                 }
                             }
 
@@ -701,6 +703,10 @@ namespace ePaperLive.Controllers
                     }
 
                 }
+
+                authSubcriber.AddressDetails.RemoveAll(x => x.AddressID == 0);
+                authSubcriber.PaymentDetails.RemoveAll(x => x.TransactionID == 0);
+                authSubcriber.SubscriptionDetails.RemoveAll(x => x.SubscriptionID == 0);
             }
             catch (Exception ex)
             {
@@ -1063,10 +1069,17 @@ namespace ePaperLive.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ExtendSubscription(SubscriptionDetails data, string nextBtn)
         {
+            ViewData["preloadSub"] = GetPreloadSub();
+            
+
             //load parishes
             List<SelectListItem> parishes = GetParishes();
             ViewBag.Parishes = new SelectList(parishes, "Value", "Text");
             ViewBag.CountryList = GetCountryList();
+
+            UserLocation objLoc = GetSubscriberLocation();
+
+            var countryCode = (objLoc.Country_Code == "JM") ? "JAM" : "";
 
             if (nextBtn != null)
             {
@@ -1083,7 +1096,7 @@ namespace ePaperLive.Controllers
                         Subscriber_Tranx objTran = GetTransaction();
                         AuthSubcriber authUser = GetAuthSubscriber();
                         List<SubscriptionDetails> subscriptionDetails = new List<SubscriptionDetails>();
-                        List<PaymentDetails> paymentDetailsList = new List<PaymentDetails>();
+                        List<PaymentDetails> paymentDetailsList = authUser.PaymentDetails = new List<PaymentDetails>();
                         //List<AddressDetails> addressDetails = new List<AddressDetails>();
                         authUser.SubscriptionDetails.RemoveAll(x => x.SubscriptionID == 0);
                         objTran.RateID = data.RateID;
@@ -1159,7 +1172,6 @@ namespace ePaperLive.Controllers
                             subscriptionDetails.Add(epaperSubscription);
                             authUser.SubscriptionDetails.Add(epaperSubscription);
 
-
                         }
                         if (selectedPlan.Type == "Bundle")
                         {
@@ -1186,6 +1198,8 @@ namespace ePaperLive.Controllers
                             //print subscription
 
                             subscriptionDetails.Add(printSubscription);
+                            authUser.SubscriptionDetails.Add(printSubscription);
+
                             var existingEpaperPlan = new SubscriptionDetails();
                             var eEndDate = DateTime.Now;
                             if (authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.isActive == true) != null)
@@ -1213,7 +1227,6 @@ namespace ePaperLive.Controllers
                             subscriptionDetails.Add(epaperSubscription);
                             authUser.SubscriptionDetails.Add(epaperSubscription);
 
-
                             AddressDetails deliveryAddress = new AddressDetails
                             {
                                 AddressLine1 = objDelv.AddressLine1,
@@ -1234,13 +1247,19 @@ namespace ePaperLive.Controllers
 
                         AddressDetails billingAddress = new AddressDetails
                         {
+                            CountryCode = countryCode,
                             CountryList = GetCountryList()
                         };
 
 
+                        var printTerm = selectedPlan.PrintTerm + " " + selectedPlan.PrintTermUnit;
+                        var epaperTerm = selectedPlan.ETerm + " " + selectedPlan.ETermUnit;
+                        var rateTerm = (selectedPlan.Type == "Print") ? printTerm : epaperTerm;
+                        var ratePrice = (selectedPlan.OfferIntroRate) ? selectedPlan.IntroRate : selectedPlan.Rate;
                         PaymentDetails pd = new PaymentDetails
                         {
                             RateID = data.RateID,
+                            RateTerm = rateTerm,
                             RateDescription = selectedPlan.RateDescr,
                             Currency = selectedPlan.Curr,
                             CardAmount = (decimal)selectedPlan.Rate,
@@ -1250,7 +1269,6 @@ namespace ePaperLive.Controllers
                         };
 
                         paymentDetailsList.Add(pd);
-                        authUser.PaymentDetails.Add(pd);
 
                         if (authUser.SubscriptionDetails != null)
                         {
@@ -1266,10 +1284,11 @@ namespace ePaperLive.Controllers
 
                         if (selectedPlan.Rate == 0)
                         {
-
+                            //TODo: Set Coupon COode in WebConfig
+                            var couponCode = WebConfigurationManager.AppSettings["zeroRatedCouponCode"];
                             authUser.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardType = "N/A";
                             authUser.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardOwner = authUser.FirstName + " " + authUser.LastName;
-                            authUser.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).OrderNumber = "FreeTrial:Coupon";
+                            authUser.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).OrderNumber = couponCode;
 
                             JOL_UserSession session;
                             var sessionRepository = new SessionRepository();
@@ -1284,6 +1303,9 @@ namespace ePaperLive.Controllers
                                 }
                             }
                         }
+
+                        AuthSubcriber authSubcriber = GetAuthSubscriber();
+                        ViewBag.plans = authSubcriber.SubscriptionDetails;
 
                         return View("ExtendPayment", pd);
                     }
@@ -1307,6 +1329,7 @@ namespace ePaperLive.Controllers
         {
             ViewData["preloadSub"] = GetPreloadSub();
             AuthSubcriber authSubcriber = GetAuthSubscriber();
+            ViewBag.plans = authSubcriber.SubscriptionDetails;
 
             var cardType = data.CardType;
 
@@ -2090,7 +2113,7 @@ namespace ePaperLive.Controllers
                     };
                 }
 
-                SubscriptionDetails epaperSub = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubscriptionID == 0 && (x.RateType == "Epaper" || x.RateType == "Bundle" && x.SubType == "Epaper"));
+                SubscriptionDetails epaperSub = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubscriptionID == 0 && (x.RateType == "Epaper" || x.RateType == "Bundle"/* && x.SubType == "Epaper"*/));
                 Subscriber_Epaper objE = new Subscriber_Epaper();
                 if (epaperSub != null)
                 {
@@ -2108,7 +2131,7 @@ namespace ePaperLive.Controllers
                     };
                 }
 
-                SubscriptionDetails printSub = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubscriptionID == 0 && (x.RateType == "Print" || x.RateType == "Bundle" && x.SubType == "Print"));
+                SubscriptionDetails printSub = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubscriptionID == 0 && (x.RateType == "Print" || x.RateType == "Bundle" /*&& x.SubType == "Print"*/));
                 Subscriber_Print objP = new Subscriber_Print();
                 if (printSub != null)
                 {
@@ -2244,6 +2267,8 @@ namespace ePaperLive.Controllers
                                     var result = context.subscriber_print.FirstOrDefault(x => x.SubscriberID == SubscriberID && x.IsActive == true);
                                     if (result != null)
                                     {
+                                        context.Entry(result).State = EntityState.Modified;
+
                                         //result.DeliveryInstructions = objP.DeliveryInstructions;
                                         //result.RateID = objP.RateID;
                                         result.IsActive = false;
@@ -2279,11 +2304,14 @@ namespace ePaperLive.Controllers
                                     var result = context.subscriber_epaper.FirstOrDefault(x => x.SubscriberID == SubscriberID && x.IsActive == true);
                                     if (result != null)
                                     {
+                                        context.Entry(result).State = EntityState.Modified;
+
                                         //result.RateID = (int)rateID;
                                         //result.EndDate = objE.EndDate.AddDays((double)selectedPlan.ETerm);
                                         result.IsActive = false;
                                         await context.SaveChangesAsync();
                                     }
+
                                     //save epaper subscription
                                     var subType = (selectedPlan.RateDescr.Contains("Coupon") || selectedPlan.RateDescr.Contains("Free") || selectedPlan.Rate == 0) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString();
                                     objE.SubType = subType;
@@ -2315,6 +2343,8 @@ namespace ePaperLive.Controllers
                                     var result = context.subscriber_print.FirstOrDefault(x => x.SubscriberID == SubscriberID && x.IsActive == true);
                                     if (result != null)
                                     {
+                                        context.Entry(result).State = EntityState.Modified;
+
                                         //result.DeliveryInstructions = objP.DeliveryInstructions;
                                         //result.RateID = objP.RateID;
                                         //result.EndDate = objP.EndDate.AddDays((double)selectedPlan.PrintTerm * 7);
@@ -2349,6 +2379,8 @@ namespace ePaperLive.Controllers
                                     var result = context.subscriber_epaper.FirstOrDefault(x => x.SubscriberID == SubscriberID && x.IsActive == true);
                                     if (result != null)
                                     {
+                                        context.Entry(result).State = EntityState.Modified;
+
                                         //result.RateID = (int)rateID;
                                         //result.EndDate = objE.EndDate.AddDays((double)selectedPlan.ETerm);
                                         result.IsActive = false;

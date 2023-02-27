@@ -52,7 +52,7 @@ else
                 <div class="tab-pane active show" id="tab-1">
                     <div class="row">
                         <div class=" col-md-7 col-sm-12 float-left">
-                            @foreach (var plans in Model.Rates.Where(x => x.Type == "Epaper").OrderBy(s => s.SortOrder))
+                            @foreach (var plans in Model.Rates.Where(x => x.Type == "Epaper" && x.IntroRate != -1).OrderBy(s => s.SortOrder))
                             {
                                  
                                 var ratePrice = (plans.OfferIntroRate) ? plans.IntroRate : plans.Rate;

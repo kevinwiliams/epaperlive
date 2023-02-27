@@ -148,6 +148,28 @@
                             }
                         }
                         <br />
+
+                        @if ((Dictionary<string, int>)ViewData["preloadSub"] != null)
+                        {
+                            var preloadSub = (Dictionary<string, int>)ViewData["preloadSub"];
+                            <div id="subSummary" class="text-center pb-4">
+                                @foreach (var selectedPlan in preloadSub)
+                                {
+                                    ViewData["rateType"] = selectedPlan.Key.Split('|')[0];
+                                    var freq = selectedPlan.Key.Split('|')[4];
+                                    freq = (freq != "undefined" && freq != null) ? freq.Split(':')[0] + "<br>" + freq.Split(':')[1] : String.Empty;
+
+                                    <strong>@selectedPlan.Key.Split('|')[0].ToUpper() SUBSCRIPTION</strong><br />
+                                    @selectedPlan.Key.Split('|')[1];<br />
+                                    if (selectedPlan.Key.Split('|')[0].ToUpper() != "EPAPER")
+                                    {
+                                        <small>@Html.Raw(freq)</small>
+                                    }
+                                    <p id="subRate" class="pt-1 text-success fw-semibold fs-3">@selectedPlan.Key.Split('|')[3]</p>
+
+                                }
+                            </div>
+                        }
                     </div>
                 </div>
 
