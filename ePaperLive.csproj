@@ -667,6 +667,7 @@
     <Content Include="Views\LogErrors\Index.cshtml" />
     <Content Include="Views\Subscribers\Delete.cshtml" />
     <Content Include="Views\Emails\PasswordReset.cshtml" />
+    <Content Include="Views\Account\FreeAnniversaryMonth.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\roslyn\" />

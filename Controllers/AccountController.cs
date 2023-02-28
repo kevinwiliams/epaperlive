@@ -2939,6 +2939,108 @@ namespace ePaperLive.Controllers
             return View(authUser);
         }
 
+        [AllowAnonymous]
+        public ActionResult FreeAnniversaryMonth()
+        {
+            AuthSubcriber authUser = new AuthSubcriber();
+
+            authUser.RedeemCode = "READFORFREE30DAYS";
+            return View(authUser);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> FreeAnniversaryMonth(AuthSubcriber authUser, string nextBtn)
+        {
+            authUser.SubscriptionDetails = new List<SubscriptionDetails>();
+            authUser.PaymentDetails = new List<PaymentDetails>();
+
+            if (nextBtn != null)
+            {
+                if (ModelState.IsValid)
+                {
+                    try
+                    {
+                        var isExist = IsEmailExist(authUser.EmailAddress);
+                        if (isExist)
+                        {
+                            ModelState.AddModelError("EmailExist", "Email address is already assigned. Please click sign in above and use forget password option to log in.");
+                            return View(authUser);
+                        }
+
+                        using (var context = new ApplicationDbContext())
+                        {
+                            var result = context.coupons.FirstOrDefault(x => x.CouponCode == authUser.RedeemCode && x.UsedDate == null && x.ExpiryDate >= DateTime.Now);
+                            if (result != null)
+                            {
+                                var market = GetUserLocation().Country_Code;
+                                var rateID = (market == "JM") ? 32 : 2;
+                                var currency = (market == "JM") ? "JMD" : "USD";
+
+                                var selectedPlan = context.printandsubrates.FirstOrDefault(x => x.Rateid == rateID);
+
+
+                                var endDate = DateTime.Now.AddDays((double)result.SubDays);
+
+                                SubscriptionDetails subscriptionDetails = new SubscriptionDetails
+                                {
+                                    StartDate = DateTime.Now,
+                                    EndDate = endDate,
+                                    RateID = rateID,
+                                    SubType = "Epaper",
+                                    NotificationEmail = false,
+                                    RateType = "Epaper",
+                                    RateDescription = "1 Month (30 Days) - Free"
+
+                                };
+                                authUser.SubscriptionDetails.Add(subscriptionDetails);
+
+                                PaymentDetails pd = new PaymentDetails
+                                {
+                                    RateID = rateID,
+                                    RateDescription = "1 Month (30 Days) - Free",
+                                    RateTerm = "",
+                                    Currency = currency,
+                                    CardAmount = 0,
+                                    SubType = "Epaper",
+                                    CardType = "N/A",
+                                    //test data
+                                    CardOwner = authUser.FirstName + " " + authUser.LastName,
+                                    OrderNumber = "AnniversaryFreeTrial:Coupon",
+                                };
+                                authUser.PaymentDetails.Add(pd);
+
+
+                                JOL_UserSession session;
+                                var sessionRepository = new SessionRepository();
+                                session = sessionRepository.CreateObject(authUser);
+                                var isSaved = await sessionRepository.AddOrUpdate(pd.OrderNumber, session, rateID, authUser);
+                                if (isSaved)
+                                {
+                                    var saved = await SaveSubscriptionInfoAsync(authUser);
+                                    if (saved)
+                                    {
+                                        return View("PaymentSuccess", authUser);
+                                    }
+                                }
+                            }
+
+                            ModelState.AddModelError("InvalidCode", "Invalid Code");
+
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        LogError(ex);
+                        return View(authUser);
+                    }
+
+                }
+            }
+
+            return View(authUser);
+        }
 
         [HttpGet]
         [AllowAnonymous]
@@ -3189,7 +3291,7 @@ namespace ePaperLive.Controllers
         }
 
         [AllowAnonymous]
-        public async Task<bool> MigrateUsers()
+        public async Task<bool> MigrateUsersQ()
         {
             ApplicationDbContext db = new ApplicationDbContext();
             try
