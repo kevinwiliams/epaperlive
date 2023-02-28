@@ -1096,7 +1096,7 @@ namespace ePaperLive.Controllers
                         Subscriber_Tranx objTran = GetTransaction();
                         AuthSubcriber authUser = GetAuthSubscriber();
                         List<SubscriptionDetails> subscriptionDetails = new List<SubscriptionDetails>();
-                        List<PaymentDetails> paymentDetailsList = authUser.PaymentDetails = new List<PaymentDetails>();
+                        List<PaymentDetails> paymentDetailsList = new List<PaymentDetails>();
                         //List<AddressDetails> addressDetails = new List<AddressDetails>();
                         authUser.SubscriptionDetails.RemoveAll(x => x.SubscriptionID == 0);
                         objTran.RateID = data.RateID;
@@ -1269,6 +1269,7 @@ namespace ePaperLive.Controllers
                         };
 
                         paymentDetailsList.Add(pd);
+                        authUser.PaymentDetails.Add(pd);
 
                         if (authUser.SubscriptionDetails != null)
                         {
