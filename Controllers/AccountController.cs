@@ -1040,6 +1040,19 @@ namespace ePaperLive.Controllers
             if (authSubcriber.SubscriptionDetails != null)
             {
                 ViewBag.plans = authSubcriber.SubscriptionDetails;
+                bool acceptedAnniversaryMonth = false;
+                var rateID = 0;
+                foreach (var item in authSubcriber.SubscriptionDetails)
+                {
+                    if (item.OrderNumber.Contains("Anniversary"))
+                    { 
+                        acceptedAnniversaryMonth = true;
+                        rateID = item.RateID;
+                    }
+                }
+
+                ViewBag.RemoveFreeCoupon = acceptedAnniversaryMonth;
+                ViewBag.CouponRateID = rateID;
 
                 if (authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true) != null)
                 {

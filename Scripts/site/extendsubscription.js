@@ -190,6 +190,10 @@ $(document).ready(function () {
                 $("#rates-results").html(result);
                 $("input[name=RateType][value=" + rateType + "]").prop('checked', true);
 
+                if ($('#removeFreeCoupon').val() == "True") {
+                    $("#rates-results :input[value=" + $('#couponRateID').val() + "]").parent().addClass("hidden");
+                }
+
                 if (preRate) {
                     setTimeout(
                         selectRate
