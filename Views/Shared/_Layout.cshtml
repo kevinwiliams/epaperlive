@@ -124,7 +124,7 @@
     try
     {
         var url = Request.Url.ToString();
-        if (!Request.IsAuthenticated && !url.Contains("Payment"))
+        if (!Request.IsAuthenticated && (!url.Contains("Payment") && !url.Contains("freemonth")) )
         {
             <div class="d-flex m-3 text-center">
                 <a href="#" class="btn-sign-in" data-bs-toggle="modal" data-bs-target="#login-modal">Sign In</a>

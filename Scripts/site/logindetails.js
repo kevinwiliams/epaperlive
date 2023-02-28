@@ -1,7 +1,7 @@
-﻿const passwordInput = $("#Password");
-const passwordConfirmInput = $("#ConfirmPassword");
-const eye = $("#eye");
-const eyeC = $("#eyeC");
+﻿let passwordInput = $("#Password");
+let passwordConfirmInput = $("#ConfirmPassword");
+let eye = $("#eye");
+let eyeC = $("#eyeC");
 
 $(eye).click(function () {
     $(this).toggleClass("fa-eye-slash");
