@@ -553,6 +553,7 @@
     <Content Include="Scripts\moment.js" />
     <Content Include="Scripts\moment.min.js" />
     <Content Include="Scripts\site\address.js" />
+    <Content Include="Scripts\site\addSubscriber.js" />
     <Content Include="Scripts\site\extendpayment.js" />
     <Content Include="Scripts\site\extendsubscription.js" />
     <Content Include="Scripts\site\home.js" />
