@@ -3094,7 +3094,7 @@ namespace ePaperLive.Controllers
                         }
 
                         TransactionSummary transSummary = new TransactionSummary();
-                        if (customerData.RedeemCode == null && customerData.AdminCreated == false)
+                        if (customerData.RedeemCode == null && customerData.AdminCreated == false && previousTransactions.OrderByDescending(t => t.TranxDate).FirstOrDefault().CardAmount > 0)
                         {
                             var transactionResponse = await cardProcessor.GetGatewayTransactionStatus(orderNumber);
                             transSummary = cardProcessor.GetTransactionSummary(transactionResponse);
@@ -3176,6 +3176,7 @@ namespace ePaperLive.Controllers
                             //send confirmation email
                             await SendConfirmationEmail(customerData, currentTransaction.SubType, sendMail);
                             ClearDBSession(emailAddress);
+                            Session["auth_subscriber"] = null;
                             return Json(true);
 
                         }
