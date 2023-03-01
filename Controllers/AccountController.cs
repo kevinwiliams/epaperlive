@@ -1124,12 +1124,12 @@ namespace ePaperLive.Controllers
                             if (authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.isActive == true) != null)
                             {
                                 existingPrintPlan = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.isActive == true);
-                                data.StartDate = existingPrintPlan.EndDate;
+                                data.StartDate = (existingPrintPlan.EndDate > DateTime.Now) ? existingPrintPlan.EndDate : DateTime.Now; 
                                 endDate = data.EndDate = existingPrintPlan.EndDate.AddDays((double)selectedPlan.PrintTerm * 7);
                             }
                             else
                             {
-                                endDate = data.StartDate.AddDays((double)selectedPlan.PrintTerm * 7);
+                                endDate = DateTime.Now.AddDays((double)selectedPlan.PrintTerm * 7);
                             }
 
                             SubscriptionDetails printSubscription = new SubscriptionDetails
@@ -1160,17 +1160,15 @@ namespace ePaperLive.Controllers
                         {
                             var existingEpaperPlan = new SubscriptionDetails();
                             var endDat = DateTime.Now;
-
-                            var startDate = (existingEpaperPlan.EndDate > DateTime.Now) ? existingEpaperPlan.EndDate : DateTime.Now;
                             if (authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.isActive == true) != null)
                             {
                                 existingEpaperPlan = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.isActive == true);
-                                data.StartDate = startDate;
+                                data.StartDate = (existingEpaperPlan.EndDate > DateTime.Now) ? existingEpaperPlan.EndDate : DateTime.Now;
                                 endDat = data.EndDate = existingEpaperPlan.EndDate.AddDays((double)selectedPlan.ETerm);
                             }
                             else
                             {
-                                endDat = data.StartDate.AddDays((double)selectedPlan.ETerm);
+                                endDat = DateTime.Now.AddDays((double)selectedPlan.ETerm);
                             }
                             
                             SubscriptionDetails epaperSubscription = new SubscriptionDetails
@@ -1192,14 +1190,13 @@ namespace ePaperLive.Controllers
                             var pEndDate = DateTime.Now;
                             if (authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.isActive == true) != null)
                             {
-
                                 existingPrintPlan = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.isActive == true);
-                                data.StartDate = existingPrintPlan.EndDate;
+                                data.StartDate = (existingPrintPlan.EndDate > DateTime.Now) ? existingPrintPlan.EndDate : DateTime.Now;
                                 pEndDate = data.EndDate = existingPrintPlan.EndDate.AddDays((double)selectedPlan.PrintTerm * 7);
                             }
                             else
                             {
-                                pEndDate = data.StartDate.AddDays((double)selectedPlan.PrintTerm * 7);
+                                pEndDate = DateTime.Now.AddDays((double)selectedPlan.PrintTerm * 7);
                             }
                             SubscriptionDetails printSubscription = new SubscriptionDetails
                             {
@@ -1217,14 +1214,13 @@ namespace ePaperLive.Controllers
                             var eEndDate = DateTime.Now;
                             if (authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.isActive == true) != null)
                             {
-                                var startDate = (existingEpaperPlan.EndDate > DateTime.Now) ? existingEpaperPlan.EndDate : DateTime.Now;
                                 existingEpaperPlan = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.isActive == true);
-                                data.StartDate = startDate;
+                                data.StartDate = (existingEpaperPlan.EndDate > DateTime.Now) ? existingEpaperPlan.EndDate : DateTime.Now;
                                 eEndDate = data.EndDate = existingEpaperPlan.EndDate.AddDays((double)selectedPlan.ETerm);
                             }
                             else
                             {
-                                eEndDate = data.StartDate.AddDays((double)selectedPlan.ETerm);
+                                eEndDate = DateTime.Now.AddDays((double)selectedPlan.ETerm);
                             }
                             SubscriptionDetails epaperSubscription = new SubscriptionDetails
                             {
@@ -1300,9 +1296,9 @@ namespace ePaperLive.Controllers
                         {
                             //TODo: Set Coupon COode in WebConfig
                             var couponCode = WebConfigurationManager.AppSettings["zeroRatedCouponCode"];
-                            authUser.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardType = "N/A";
-                            authUser.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardOwner = authUser.FirstName + " " + authUser.LastName;
-                            authUser.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).OrderNumber = couponCode;
+                            authUser.PaymentDetails.OrderByDescending(t => t.TranxDate).FirstOrDefault(x => x.TransactionID == 0).CardType = "N/A";
+                            authUser.PaymentDetails.OrderByDescending(t => t.TranxDate).FirstOrDefault(x => x.TransactionID == 0).CardOwner = authUser.FirstName + " " + authUser.LastName;
+                            authUser.PaymentDetails.OrderByDescending(t => t.TranxDate).FirstOrDefault(x => x.TransactionID == 0).OrderNumber = couponCode;
 
                             JOL_UserSession session;
                             var sessionRepository = new SessionRepository();
@@ -2127,7 +2123,7 @@ namespace ePaperLive.Controllers
                     };
                 }
 
-                SubscriptionDetails epaperSub = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubscriptionID == 0 && (x.RateType == "Epaper" || x.RateType == "Bundle"/* && x.SubType == "Epaper"*/));
+                SubscriptionDetails epaperSub = authUser.SubscriptionDetails.OrderByDescending(t => t.EndDate).FirstOrDefault(x => x.SubscriptionID == 0 && (x.RateType == "Epaper" || x.RateType == "Bundle"/* && x.SubType == "Epaper"*/));
                 Subscriber_Epaper objE = new Subscriber_Epaper();
                 if (epaperSub != null)
                 {
@@ -2145,7 +2141,7 @@ namespace ePaperLive.Controllers
                     };
                 }
 
-                SubscriptionDetails printSub = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubscriptionID == 0 && (x.RateType == "Print" || x.RateType == "Bundle" /*&& x.SubType == "Print"*/));
+                SubscriptionDetails printSub = authUser.SubscriptionDetails.OrderByDescending(t => t.EndDate).FirstOrDefault(x => x.SubscriptionID == 0 && (x.RateType == "Print" || x.RateType == "Bundle" /*&& x.SubType == "Print"*/));
                 Subscriber_Print objP = new Subscriber_Print();
                 if (printSub != null)
                 {
@@ -3176,7 +3172,6 @@ namespace ePaperLive.Controllers
                             //send confirmation email
                             await SendConfirmationEmail(customerData, currentTransaction.SubType, sendMail);
                             ClearDBSession(emailAddress);
-                            Session["auth_subscriber"] = null;
                             return Json(true);
 
                         }

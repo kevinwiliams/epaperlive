@@ -3,6 +3,7 @@
 @{
     ViewBag.Title = "Thank you";
     var subtype = Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).SubType;
+    Session["auth_subscriber"] = null;
 
 }
 

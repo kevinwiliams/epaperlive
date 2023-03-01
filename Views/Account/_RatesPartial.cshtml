@@ -14,7 +14,7 @@ else
     {
         if (Model.RateType != "Print")
         {
-            rates = Model.Rates.OrderBy(s => s.SortOrder).ToList();
+            rates = Model.Rates.OrderBy(s => s.SortOrder).Where(x => x.IntroRate != -1).ToList();
         }
         else
         {
