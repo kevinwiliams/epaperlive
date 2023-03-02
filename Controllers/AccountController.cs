@@ -797,6 +797,7 @@ namespace ePaperLive.Controllers
                 // Send
                 await smtp.SendMailAsync(newMsg);
 
+                AuthSubcriber authSubcriber = GetAuthSubscriber();
                
                 var orderNumber = subject.Split(':')[1].Trim();
 
@@ -806,8 +807,10 @@ namespace ePaperLive.Controllers
 
                     if (result != null)
                     {
+                        context.Entry(result).State = EntityState.Modified;
                         result.RefundRequested = true;
                         await context.SaveChangesAsync();
+                        authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.OrderNumber == orderNumber).RefundRequested = true;
                     }
 
                     var type = orderNumber.Split('-')[0].Trim();
