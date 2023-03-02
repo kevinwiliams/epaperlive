@@ -24,7 +24,7 @@ namespace ePaperLive.Views.Admin.Transactions
         public async Task<ActionResult> Index()
         {
             var subscriber_tranx = db.subscriber_tranx.Include(s => s.Subscriber);
-            return View(await subscriber_tranx.ToListAsync());
+            return View(await subscriber_tranx.AsNoTracking().ToListAsync());
         }
 
         // GET: Transactions/Details/5
