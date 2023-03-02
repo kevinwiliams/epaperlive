@@ -149,13 +149,16 @@
     </div>
 
     @RenderBody()
+    @{var _url = Request.Url.ToString();
 
-    @if (!Request.IsAuthenticated)
-    {
-        <!-- Login Modal -->
-        Html.RenderAction("LoginModal", "Account");
-        <!-- end: Login Modal -->
-    }
+        if (!Request.IsAuthenticated && (!_url.Contains("Payment") && !_url.Contains("freemonth") && !_url.Contains("Extend")))
+        {
+            <!-- Login Modal -->
+            Html.RenderAction("LoginModal", "Account");
+            <!-- end: Login Modal -->
+        }
+
+    };
 
     <!-- ======= Footer ======= -->
     <footer id="footer">
