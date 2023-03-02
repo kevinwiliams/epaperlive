@@ -207,7 +207,7 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
                         DeliveryAddress objDelv = account.GetSubscriberDeliveryAddress();
 
                         int RateID = Int32.Parse(form["RateID"].TrimStart().TrimEnd());
-                        var selectedPlan = db.printandsubrates.FirstOrDefault(x => x.Rateid == RateID);
+                        var selectedPlan = db.printandsubrates.AsNoTracking().FirstOrDefault(x => x.Rateid == RateID);
                         var currency = form["Currency"].Trim();
                         var paymentType = form["PaymentType"].Trim();
                         var paddedRateKey = Util.ZeroPadNumber(3, RateID);

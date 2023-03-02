@@ -538,6 +538,7 @@ namespace ePaperLive.Controllers
                 var activeEpaperSubscription = await _db.subscriber_epaper.FirstOrDefaultAsync(x => x.SubscriberID == authUser && x.IsActive == true);
                 if (activeEpaperSubscription != null)
                 {
+                    _db.Entry(activeEpaperSubscription).State = EntityState.Modified;
                     TimeSpan t = activeEpaperSubscription.EndDate - today;
                     var endDate = activeEpaperSubscription.EndDate;
                     double daysLeft = t.TotalDays;
@@ -552,6 +553,7 @@ namespace ePaperLive.Controllers
                 var activePrintSubscription = await _db.subscriber_print.FirstOrDefaultAsync(x => x.SubscriberID == authUser && x.IsActive == true);
                 if (activePrintSubscription != null)
                 {
+                    _db.Entry(activePrintSubscription).State = EntityState.Modified;
                     TimeSpan t = activePrintSubscription.EndDate - today;
                     var endDate = activePrintSubscription.EndDate;
                     double daysLeft = t.TotalDays;
@@ -578,7 +580,7 @@ namespace ePaperLive.Controllers
                             .Include(x => x.Subscriber_Tranx)
                             .FirstOrDefault(u => u.SubscriberID == authUser);
 
-                        List<printandsubrate> ratesList = context.printandsubrates
+                        List<printandsubrate> ratesList = context.printandsubrates.AsNoTracking()
                                                 .Where(x => x.Active == true).ToList();
 
 
@@ -676,8 +678,7 @@ namespace ePaperLive.Controllers
                                     PaymentsList.Add(paymentDetails);
 
                                     //Update subscription if user requested refund
-                                    if (SubscriptionList.FirstOrDefault(x => x.OrderNumber == payments.OrderID).RefundRequested)
-                                        SubscriptionList.FirstOrDefault(x => x.OrderNumber == payments.OrderID).RefundRequested = payments.RefundRequested;
+                                    SubscriptionList.FirstOrDefault(x => x.OrderNumber == payments.OrderID).RefundRequested = payments.RefundRequested;
                                 }
                             }
 
@@ -1117,7 +1118,7 @@ namespace ePaperLive.Controllers
                         authUser.SubscriptionDetails.RemoveAll(x => x.SubscriptionID == 0);
                         objTran.RateID = data.RateID;
 
-                        var selectedPlan = db.printandsubrates.FirstOrDefault(x => x.Rateid == data.RateID);
+                        var selectedPlan = db.printandsubrates.AsNoTracking().FirstOrDefault(x => x.Rateid == data.RateID);
 
                         if (selectedPlan.Type == "Print")
                         {
@@ -1365,7 +1366,7 @@ namespace ePaperLive.Controllers
                         RateID = objEp.RateID,
                         DeliveryInstructions = objPr.DeliveryInstructions,
                         SubType = objEp.SubType,
-                        RatesList = db.printandsubrates.Where(x => x.Market == market).Where(x => x.Active == true).ToList(),
+                        RatesList = db.printandsubrates.AsNoTracking().Where(x => x.Market == market).Where(x => x.Active == true).ToList(),
                         Market = market
                     };
 
@@ -1651,7 +1652,7 @@ namespace ePaperLive.Controllers
                     var market = (objLoc.Country_Code == "JM") ? "Local" : "International";
 
                     ApplicationDbContext db = new ApplicationDbContext();
-                    List<printandsubrate> ratesList = db.printandsubrates
+                    List<printandsubrate> ratesList = db.printandsubrates.AsNoTracking()
                                         .Where(x => x.Market == market)
                                         .Where(x => x.Active == true).ToList();
 
@@ -1994,7 +1995,7 @@ namespace ePaperLive.Controllers
                         NewsletterSignUp = objSub.Newsletter ?? false,
                         NotificationEmail = objEp.NotificationEmail,
                         SubType = objEp.SubType,
-                        RatesList = db.printandsubrates.Where(x => x.Market == market).Where(x => x.Active == true).ToList(),
+                        RatesList = db.printandsubrates.AsNoTracking().Where(x => x.Market == market).Where(x => x.Active == true).ToList(),
                         Market = market
                     };
 
@@ -2019,7 +2020,7 @@ namespace ePaperLive.Controllers
                         Subscriber_Tranx objTran = GetTransaction();
 
                         decimal originalAmount = data.CardAmount;
-                        var selectedPlan = _db.printandsubrates.FirstOrDefault(x => x.Rateid == data.RateID);
+                        var selectedPlan = _db.printandsubrates.AsNoTracking().FirstOrDefault(x => x.Rateid == data.RateID);
                         var rate = (selectedPlan.OfferIntroRate) ? selectedPlan.IntroRate : selectedPlan.Rate;
 
                         if (data.PromoCode != null)
@@ -2450,7 +2451,7 @@ namespace ePaperLive.Controllers
         {
             AuthSubcriber authSubcriber = GetAuthSubscriber();
             RemoveSubscriber();
-            Session["auth_subscriber"] = authSubcriber;
+            Session["auth_subscriber"] = null;
 
             return View("PaymentSuccess", authSubcriber);
         }
@@ -2888,7 +2889,7 @@ namespace ePaperLive.Controllers
                                 var rateID = (market == "JM") ? 32 : 2;
                                 var currency = (market == "JM") ? "JMD" : "USD";
 
-                                var selectedPlan = context.printandsubrates.FirstOrDefault(x => x.Rateid == rateID);
+                                var selectedPlan = context.printandsubrates.AsNoTracking().FirstOrDefault(x => x.Rateid == rateID);
 
 
                                 var endDate = DateTime.Now.AddDays((double)result.SubDays);
@@ -2991,7 +2992,7 @@ namespace ePaperLive.Controllers
                                 var rateID = (market == "JM") ? 32 : 2;
                                 var currency = (market == "JM") ? "JMD" : "USD";
 
-                                var selectedPlan = context.printandsubrates.FirstOrDefault(x => x.Rateid == rateID);
+                                var selectedPlan = context.printandsubrates.AsNoTracking().FirstOrDefault(x => x.Rateid == rateID);
 
 
                                 var endDate = DateTime.Now.AddDays((double)result.SubDays);
@@ -3113,7 +3114,7 @@ namespace ePaperLive.Controllers
                                               from se in seGroup.DefaultIfEmpty()
                                               join sp in context.subscriber_print on st.OrderID equals sp.OrderNumber into spGroup
                                               from sp in spGroup.DefaultIfEmpty()
-                                              select new { subscriber = s, eSubscription = se, pSubscription = sp, tranasction = st })
+                                              select new { subscriber = s, eSubscription = se, pSubscription = sp, tranasction = st }).AsNoTracking()
                                         .FirstOrDefault(x => x.tranasction.OrderID == orderNumber);
 
                             //var clientData = context.subscribers
@@ -3641,7 +3642,7 @@ namespace ePaperLive.Controllers
 
                 using (var context = new ApplicationDbContext())
                 {
-                    var result = context.delivery_zones.Select(x => x.Parish).Distinct();
+                    var result = context.delivery_zones.AsNoTracking().Select(x => x.Parish).Distinct();
 
                     if (result != null)
                     {
