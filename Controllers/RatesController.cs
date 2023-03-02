@@ -22,7 +22,7 @@ namespace ePaperLive.Views.Admin.Rates
         [Route]
         public ActionResult Index()
         {
-            return View(db.printandsubrates.ToList());
+            return View(db.printandsubrates.AsNoTracking().ToList());
         }
 
         // GET: Rates/Details/5

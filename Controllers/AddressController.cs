@@ -23,7 +23,7 @@ namespace ePaperLive.Views.Admin.Address
         [Route]
         public async Task<ActionResult> Index()
         {
-            var subscriber_address = db.subscriber_address.Include(s => s.Subscriber);
+            var subscriber_address = db.subscriber_address.Include(s => s.Subscriber).AsNoTracking();
             return View(await subscriber_address.ToListAsync());
         }
 

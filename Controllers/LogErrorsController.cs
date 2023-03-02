@@ -23,7 +23,7 @@ namespace ePaperLive.Views
         [Route]
         public async Task<ActionResult> Index()
         {
-            return View(await db.log_errors.ToListAsync());
+            return View(await db.log_errors.AsNoTracking().ToListAsync());
         }
 
         // GET: LogErrors/Details/5

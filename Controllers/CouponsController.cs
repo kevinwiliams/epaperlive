@@ -23,7 +23,7 @@ namespace ePaperLive.Views.Admin.Coupon
         [Route]
         public async Task<ActionResult> Index()
         {
-            return View(await db.coupons.ToListAsync());
+            return View(await db.coupons.AsNoTracking().ToListAsync());
         }
         // generate coupon
         [Route("generatecoupon")]

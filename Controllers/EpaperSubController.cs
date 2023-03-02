@@ -24,7 +24,7 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
         [Route]
         public async Task<ActionResult> Index()
         {
-            var subscriber_epaper = db.subscriber_epaper.Include(s => s.Subscriber);
+            var subscriber_epaper = db.subscriber_epaper.Include(s => s.Subscriber).AsNoTracking();
             return View(await subscriber_epaper.ToListAsync());
         }
 
