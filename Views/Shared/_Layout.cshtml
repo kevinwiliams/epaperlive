@@ -36,230 +36,234 @@
                             if (!Request.IsAuthenticated)
                             {
                                 <!-- <li>@Html.ActionLink("Home", "index", "home")</li> -->
-                    <li><a class="nav-link scrollto" href="~/#hero">Home</a></li>
-                    <li><a class="nav-link scrollto" href="~/#pricing">Featured Packages</a></li>
-                    <li><a class="nav-link scrollto" href="~/#features">Subscriptions</a></li>
-                    <li><a class="nav-link scrollto" href="~/#cta">ePaper App</a></li>
-                    <li><a class="nav-link scrollto" href="~/#faq">FAQs</a></li>
-                    <li><a class="nav-link scrollto" href="~/#contact">Contact Us</a></li>
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-}
-
-@{
-    try
-    {
-        //if (!String.IsNullOrEmpty(@HttpContext.Current.User.Identity.Name))
-        if (Request.IsAuthenticated)
-        {
-
-            <li>@Html.ActionLink("Home", "dashboard", "account")</li>
-
-            <li>@Html.ActionLink("Orders", "orders", "account")</li>
-
-            if (User.IsInRole("Circulation") || User.IsInRole("Admin"))
-            {
-                <li class="dropdown">
-                    <a href="#"><span>System</span> <i class="bi bi-chevron-down"></i></a>
-                    <ul>
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <li>@Html.ActionLink("Create New User", "addsubscriber", "epapersub")</li>
-                            <li>@Html.ActionLink("Users & Roles", "subscribers", "admin")</li>
-                            <li>@Html.ActionLink("ePaper Subscriptions", "epapersub", "admin")</li>
-                            <li>@Html.ActionLink("Print Subscriptions", "printsub", "admin")</li>
-                            <li>@Html.ActionLink("Transactions", "transactions", "admin")</li>
-                            <li>@Html.ActionLink("Coupons", "coupons", "admin")</li>
-                            <li>@Html.ActionLink("Addresses", "address", "admin")</li>
-                            <li>@Html.ActionLink("Rates", "rates", "admin")</li>
-                            <li>@Html.ActionLink("Logs", "logs", "admin")</li>
+                                <li><a class="nav-link scrollto" href="~/#hero">Home</a></li>
+                                <li><a class="nav-link scrollto" href="~/#pricing">Featured Packages</a></li>
+                                <li><a class="nav-link scrollto" href="~/#features">Subscriptions</a></li>
+                                <li><a class="nav-link scrollto" href="~/#cta">ePaper App</a></li>
+                                <li><a class="nav-link scrollto" href="~/#faq">FAQs</a></li>
+                                <li><a class="nav-link scrollto" href="~/#contact">Contact Us</a></li>
+                            }
                         }
-                        @if (User.IsInRole("Circulation"))
+                        catch (Exception)
                         {
-                            <li>@Html.ActionLink("Add New Subscription", "addsubscriber", "epapersub")</li>
-                            <li>@Html.ActionLink("Print Subscriptions", "printsub", "admin")</li>
+
+                            throw;
                         }
-
-                    </ul>
-                </li>
-            }
-
-            <li class="dropdown">
-                <a href="#"><span>My Account</span> <i class="bi bi-chevron-down"></i></a>
-                <ul>
-                    @*<li>@Html.ActionLink(User.Identity.Name, "Dashboard", new { controller = "Account" }, new { area = "" })</li>*@
-                    <li>@Html.ActionLink("Change Password", "changepassword", "manage")</li>
-                    <li>@Html.ActionLink("Update Profile", "userprofile", "account")</li>
-                    <li>@Html.ActionLink("Request Refund", "orders", "account")</li>
-                    <li>@Html.ActionLink("Extend Subscription", "extendsubscription", "account")</li>
-                    @using (Html.BeginForm("logoff", "account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
-                    {
-                        @Html.AntiForgeryToken()
-                        <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
                     }
 
+                    @{
+                        try
+                        {
+                            //if (!String.IsNullOrEmpty(@HttpContext.Current.User.Identity.Name))
+                            if (Request.IsAuthenticated)
+                            {
 
+                                <li>@Html.ActionLink("Home", "dashboard", "account")</li>
+
+                                <li>@Html.ActionLink("Orders", "orders", "account")</li>
+
+                                if (User.IsInRole("Circulation") || User.IsInRole("Admin"))
+                                {
+                                    <li class="dropdown">
+                                        <a href="#"><span>System</span> <i class="bi bi-chevron-down"></i></a>
+                                        <ul>
+                                            @if (User.IsInRole("Admin"))
+                                            {
+                                                <li>@Html.ActionLink("Create New User", "addsubscriber", "epapersub")</li>
+                                                <li>@Html.ActionLink("Users & Roles", "subscribers", "admin")</li>
+                                                <li>@Html.ActionLink("ePaper Subscriptions", "epapersub", "admin")</li>
+                                                <li>@Html.ActionLink("Print Subscriptions", "printsub", "admin")</li>
+                                                <li>@Html.ActionLink("Transactions", "transactions", "admin")</li>
+                                                <li>@Html.ActionLink("Coupons", "coupons", "admin")</li>
+                                                <li>@Html.ActionLink("Addresses", "address", "admin")</li>
+                                                <li>@Html.ActionLink("Rates", "rates", "admin")</li>
+                                                <li>@Html.ActionLink("Logs", "logs", "admin")</li>
+                                            }
+                                            @if (User.IsInRole("Circulation"))
+                                            {
+                                                <li>@Html.ActionLink("Add New Subscription", "addsubscriber", "epapersub")</li>
+                                                <li>@Html.ActionLink("Print Subscriptions", "printsub", "admin")</li>
+                                            }
+
+                                        </ul>
+                                    </li>
+                                }
+
+                                <li class="dropdown">
+                                    <a href="#"><span>My Account</span> <i class="bi bi-chevron-down"></i></a>
+                                    <ul>
+                                        @*<li>@Html.ActionLink(User.Identity.Name, "Dashboard", new { controller = "Account" }, new { area = "" })</li>*@
+                                        <li>@Html.ActionLink("Change Password", "changepassword", "manage")</li>
+                                        <li>@Html.ActionLink("Update Profile", "userprofile", "account")</li>
+                                        <li>@Html.ActionLink("Request Refund", "orders", "account")</li>
+                                        <li>@Html.ActionLink("Extend Subscription", "extendsubscription", "account")</li>
+                                        @using (Html.BeginForm("logoff", "account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+                                        }
+
+
+                                    </ul>
+                                </li>
+
+
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+
+                            throw ex;
+                        }
+                    }
                 </ul>
-            </li>
+
+                <i class="bi bi-list mobile-nav-toggle"></i>
+            </nav><!-- .navbar -->
+            @{
+                try
+                {
+                    var url = Request.Url.ToString();
+                    if (!Request.IsAuthenticated && (!url.Contains("Payment") && !url.Contains("freemonth") && !url.Contains("Extend")))
+                    {
+                        <div class="d-flex m-3 text-center">
+                            <a href="#" class="btn-sign-in" data-bs-toggle="modal" data-bs-target="#login-modal">Sign In</a>
+                        </div>
+                    }
+
+                }
+                catch (Exception ex)
+                {
+
+                    throw ex;
+                }
+            }
 
 
-        }
-    }
-    catch (Exception ex)
-    {
-
-        throw ex;
-    }
-}
-</ul>
-
-<i class="bi bi-list mobile-nav-toggle"></i>
-</nav><!-- .navbar -->
-@{
-    try
-    {
-        var url = Request.Url.ToString();
-        if (!Request.IsAuthenticated && (!url.Contains("Payment") && !url.Contains("freemonth") && !url.Contains("Extend")) )
-        {
-            <div class="d-flex m-3 text-center">
-                <a href="#" class="btn-sign-in" data-bs-toggle="modal" data-bs-target="#login-modal">Sign In</a>
-            </div>
-        }
-
-    }
-    catch (Exception ex)
-    {
-
-        throw ex;
-    }
-}
-
-
-</div>
-</header><!-- End Header -->
-<div id="loading" class="invisible">
-    <div class='uil-ring-css' style='transform:scale(0.79);'>
-        <div></div>
+        </div>
+    </header><!-- End Header -->
+    <div id="loading" class="invisible">
+        <div class='uil-ring-css' style='transform:scale(0.79);'>
+            <div></div>
+        </div>
     </div>
-</div>
 
-@RenderBody()
+    @RenderBody()
 
-<!-- Login Modal -->
-@{Html.RenderAction("LoginModal", "Account");}
-<!-- end: Login Modal -->
-<!-- ======= Footer ======= -->
-<footer id="footer">
-    <div class="footer-top">
-        <div class="container">
-            <div class="row">
+    @if (!Request.IsAuthenticated)
+    {
+        <!-- Login Modal -->
+        Html.RenderAction("LoginModal", "Account");
+        <!-- end: Login Modal -->
+    }
 
-                <div class="col-lg-3 col-md-6">
-                    <div class="footer-info">
-                        <a href="https://www.jamaicaobserver.com/"><img src="@Url.Content("~/assets/img/jol-logo-sm.png")" alt="" width="235" class="img-fluid"></a>
+    <!-- ======= Footer ======= -->
+    <footer id="footer">
+        <div class="footer-top">
+            <div class="container">
+                <div class="row">
 
-                        <p>
-                            40-42 1/2 Beechwood Avenue <br>
-                            Kingston 5,<br>
-                            Jamaica, W.I.<br><br>
-                            <strong>Phone:</strong> +1 876 926-7655<br>
-                            <strong>Email:</strong> userhelp@jamaicaobserver.com<br>
-                        </p>
-                        <div class="social-links mt-3">
-                            <a href="https://twitter.com/jamaicaobserver" target="_blank" class="twitter"><i class="bx bxl-twitter"></i></a>
-                            <a href="https://www.facebook.com/jamaicaobserver" target="_blank" class="facebook"><i class="bx bxl-facebook"></i></a>
-                            <a href="https://www.instagram.com/jamaicaobserver/" target="_blank" class="instagram"><i class="bx bxl-instagram"></i></a>
-                            <a href="https://www.linkedin.com/company/the-jamaica-observer/" target="_blank" class="linkedin"><i class="bx bxl-linkedin"></i></a>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="footer-info">
+                            <a href="https://www.jamaicaobserver.com/"><img src="@Url.Content("~/assets/img/jol-logo-sm.png")" alt="" width="235" class="img-fluid"></a>
+
+                            <p>
+                                40-42 1/2 Beechwood Avenue <br>
+                                Kingston 5,<br>
+                                Jamaica, W.I.<br><br>
+                                <strong>Phone:</strong> +1 876 926-7655<br>
+                                <strong>Email:</strong> userhelp@jamaicaobserver.com<br>
+                            </p>
+                            <div class="social-links mt-3">
+                                <a href="https://twitter.com/jamaicaobserver" target="_blank" class="twitter"><i class="bx bxl-twitter"></i></a>
+                                <a href="https://www.facebook.com/jamaicaobserver" target="_blank" class="facebook"><i class="bx bxl-facebook"></i></a>
+                                <a href="https://www.instagram.com/jamaicaobserver/" target="_blank" class="instagram"><i class="bx bxl-instagram"></i></a>
+                                <a href="https://www.linkedin.com/company/the-jamaica-observer/" target="_blank" class="linkedin"><i class="bx bxl-linkedin"></i></a>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="col-lg-2 col-md-6 footer-links">
-                    <h4>Useful Links</h4>
-                    <ul>
-                        <li><i class="bx bx-chevron-right"></i>@Html.ActionLink("Home", "index", "home")</li>
-                        <li><i class="bx bx-chevron-right"></i> <a href="#">About us</a></li>
-                        <li><i class="bx bx-chevron-right"></i>@Html.ActionLink("Service Level Agreement", "ServiceLevelAgreement", "home")</li>
-                        <li><i class="bx bx-chevron-right"></i>@Html.ActionLink("Terms of service", "TermsCondition", "home")</li>
-                        <li><i class="bx bx-chevron-right"></i>@Html.ActionLink("Privacy policy", "PrivacyPolicy", "home")</li>
-                    </ul>
-                </div>
+                    <div class="col-lg-2 col-md-6 footer-links">
+                        <h4>Useful Links</h4>
+                        <ul>
+                            <li><i class="bx bx-chevron-right"></i>@Html.ActionLink("Home", "index", "home")</li>
+                            <li><i class="bx bx-chevron-right"></i> <a href="#">About us</a></li>
+                            <li><i class="bx bx-chevron-right"></i>@Html.ActionLink("Service Level Agreement", "ServiceLevelAgreement", "home")</li>
+                            <li><i class="bx bx-chevron-right"></i>@Html.ActionLink("Terms of service", "TermsCondition", "home")</li>
+                            <li><i class="bx bx-chevron-right"></i>@Html.ActionLink("Privacy policy", "PrivacyPolicy", "home")</li>
+                        </ul>
+                    </div>
 
-                <div class="col-lg-4 col-md-6 footer-newsletter">
-                    <h4>Our Newsletter</h4>
-                    <p>Subscribe to our newsletter to get the latest updates</p>
-                    <form action="~/home/newsletter" method="post">
-                        @Html.AntiForgeryToken()
-                        <input type="email" name="email"><input type="submit" value="Subscribe">
-                    </form>
+                    <div class="col-lg-4 col-md-6 footer-newsletter">
+                        <h4>Our Newsletter</h4>
+                        <p>Subscribe to our newsletter to get the latest updates</p>
+                        <form action="~/home/newsletter" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="email" name="email"><input type="submit" value="Subscribe">
+                        </form>
 
-                </div>
+                    </div>
 
-                <div class="col-lg-3 col-md-6">
-                    <div class="footer-info text-center pt-3">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="footer-info text-center pt-3">
 
-                        @*<div class="social-links mt-3">*@
-                        <a href="#"><img src="@Url.Content("~/assets/img/visa.png")" alt="" class="img-fluid"></a> &middot;
-                        <a href="#"><img src="@Url.Content("~/assets/img/master.png")" alt="" class="img-fluid"></a>
-                        <a href="#"><img src="@Url.Content("~/assets/img/fac.jpg")" alt="" class="img-fluid" width="135"></a><br />
-                        <a href="https://www.symantec.com/page.jsp?id=ssl-information-center" target="_blank">About SSL Certificates</a>
+                            @*<div class="social-links mt-3">*@
+                            <a href="#"><img src="@Url.Content("~/assets/img/visa.png")" alt="" class="img-fluid"></a> &middot;
+                            <a href="#"><img src="@Url.Content("~/assets/img/master.png")" alt="" class="img-fluid"></a>
+                            <a href="#"><img src="@Url.Content("~/assets/img/fac.jpg")" alt="" class="img-fluid" width="135"></a><br />
+                            <a href="https://www.symantec.com/page.jsp?id=ssl-information-center" target="_blank">About SSL Certificates</a>
 
-                        @*</div>*@
+                            @*</div>*@
+                        </div>
+
                     </div>
 
                 </div>
-
             </div>
         </div>
-    </div>
 
-    <div class="container">
-        <div class="copyright">
-            &copy; Copyright @DateTime.Now.Year <br><strong><span>Jamaica Observer Limited</span></strong>. All Rights Reserved
+        <div class="container">
+            <div class="copyright">
+                &copy; Copyright @DateTime.Now.Year <br><strong><span>Jamaica Observer Limited</span></strong>. All Rights Reserved
+            </div>
+
         </div>
+    </footer><!-- End Footer -->
 
-    </div>
-</footer><!-- End Footer -->
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/Scripts/js")
+    @Scripts.Render("~/Scripts/bootstrap")
+    <!-- script src="//cdn.datatables.net/1.13.1/js/jquery.dataTables.bootstrap5.min.js"></!-script -->
+    <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script> -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.13.1/b-2.3.3/b-colvis-2.3.3/b-html5-2.3.3/b-print-2.3.3/date-1.2.0/fc-4.2.1/fh-3.3.1/r-2.4.0/sc-2.0.7/sb-1.4.0/sl-1.5.0/datatables.min.js"></script>
+    @RenderSection("scripts", required: false)
 
-<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/jqueryval")
-@Scripts.Render("~/Scripts/js")
-@Scripts.Render("~/Scripts/bootstrap")
-<!-- script src="//cdn.datatables.net/1.13.1/js/jquery.dataTables.bootstrap5.min.js"></!-script -->
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.13.1/b-2.3.3/b-colvis-2.3.3/b-html5-2.3.3/b-print-2.3.3/date-1.2.0/fc-4.2.1/fh-3.3.1/r-2.4.0/sc-2.0.7/sb-1.4.0/sl-1.5.0/datatables.min.js"></script>
-@RenderSection("scripts", required: false)
+    <script>
+        // Example starter JavaScript for disabling form submissions if there are invalid fields
+        (() => {
+            'use strict'
 
-<script>
-    // Example starter JavaScript for disabling form submissions if there are invalid fields
-    (() => {
-        'use strict'
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            const forms = document.querySelectorAll('.needs-validation')
 
-        // Fetch all the forms we want to apply custom Bootstrap validation styles to
-        const forms = document.querySelectorAll('.needs-validation')
+            // Loop over them and prevent submission
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
 
-        // Loop over them and prevent submission
-        Array.from(forms).forEach(form => {
-            form.addEventListener('submit', event => {
-                if (!form.checkValidity()) {
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })();
 
-                form.classList.add('was-validated')
-            }, false)
-        })
-    })();
-
-</script>
+    </script>
 
 
 
