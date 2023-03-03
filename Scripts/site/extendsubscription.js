@@ -110,7 +110,7 @@ $(document).ready(function () {
 
     $('[name=RateType]').on("click", function () {
         today = moment();
-        console.log(today.format('YYYY-MM-DD'), ' day: ', today.isoWeekday(), ' hr: ', today.hours());
+        //console.log(today.format('YYYY-MM-DD'), ' day: ', today.isoWeekday(), ' hr: ', today.hours());
 
         rateType = $(this).val();
         //console.log($(this).val());

@@ -58,7 +58,7 @@ $(document).ready(function () {
         var freq = $(this).parent().children(".small").html();
         var url = $(this).data("request-url");
         var successUrl = $(this).data("success-url");
-        console.log(url);
+        //console.log(url);
         let plan = e.target.dataset;
         let rateText = (plan.isFeature == "true") ? $(this).parent('.btn-wrap').next('input').val() : e.target.innerText;
         freq = (plan.isFeature == "true") ? plan.delFreq : freq;

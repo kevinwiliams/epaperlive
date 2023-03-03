@@ -678,7 +678,8 @@ namespace ePaperLive.Controllers
                                     PaymentsList.Add(paymentDetails);
 
                                     //Update subscription if user requested refund
-                                    SubscriptionList.FirstOrDefault(x => x.OrderNumber == payments.OrderID).RefundRequested = payments.RefundRequested;
+                                    if (SubscriptionList.FirstOrDefault(x => x.OrderNumber == payments.OrderID) != null)
+                                        SubscriptionList.FirstOrDefault(x => x.OrderNumber == payments.OrderID).RefundRequested = payments.RefundRequested;
                                 }
                             }
 

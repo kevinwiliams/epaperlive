@@ -560,6 +560,7 @@
     <Content Include="Scripts\site\logindetails.js" />
     <Content Include="Scripts\site\paymentdetails.js" />
     <Content Include="Scripts\site\subscriptiondetails.js" />
+    <Content Include="Scripts\site\_loginmodal.js" />
     <Content Include="Scripts\sweetalert-dev.js" />
     <Content Include="Scripts\sweetalert.min.js" />
     <Content Include="Styles\sweetalert.css" />
