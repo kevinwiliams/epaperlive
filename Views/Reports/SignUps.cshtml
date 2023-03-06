@@ -1,0 +1,93 @@
+﻿@model List<ePaperLive.Models.SignUpsList>
+
+@{
+    ViewBag.Title = "SignUps";
+}
+
+<h2>SignUps</h2>
+
+<div class="container pt-5">
+    <h2>Sign Ups Report</h2>
+    @using (Html.BeginForm("SignUps", "Reports", FormMethod.Post))
+    {
+        <div class="row p-4">
+            <div class="col-lg-3 col-md-6 form-group">
+                @Html.Label("Order:")
+                @Html.DropDownList("orderNumber", new SelectList(new[] {
+                    new { Text = "Epaper", Value = "EP" },
+                    new { Text = "Print", Value = "PR" },
+                    new { Text = "Bundle", Value = "BU" },
+                    new { Text = "Coupons", Value = "Coupon" }
+                }, "Value", "Text"), "All", new { @class = "form-control" })
+            </div>
+            <div class="col-lg-3 col-md-6 form-group">
+                @Html.Label("Start Date:")
+                @Html.TextBox("startDate", null, new { @class = "form-control datepicker", @type = "date", @required = "required" })
+            </div>
+            <div class="col-lg-3 col-md-6 form-group">
+                @Html.Label("End Date:")
+                @Html.TextBox("endDate", null, new { @class = "form-control datepicker", @type = "date", @required = "required" })
+            </div>
+            <div class="col-lg-3 col-md-6 form-group">
+                <button id="filterBtn" type="submit" class="btn btn-primary mt-4">Filter</button>
+            </div>
+        </div>
+    }
+
+    <table id="dataTable" class="table">
+        <thead>
+            <tr>
+                <th>SignUpDate</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.SignUpDate</td>
+                    <td>@item.Total</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@Scripts.Render("~/bundles/jquery")
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" />
+<script>
+
+    //$('[name=startDate]').val(moment().startOf('month').format('YYYY-MM-DD'));
+    //$('[name=endDate]').val(moment().endOf('month').format('YYYY-MM-DD'));
+
+        // Submit form on button click
+    $('#filterBtn').click(function (e) {
+        e.preventDefault();
+        var orderNumber = $('#orderNumber').val();
+        var startDate = $('[name=startDate]').val();
+        var endDate = $('[name=endDate]').val();
+
+        if (startDate == '' || endDate == '') {
+            alert('Please select a start and end date.');
+            return false;
+        }
+
+        if (moment(startDate).isAfter(endDate)) {
+            alert('The end date must be after the start date.');
+            return false;
+        }
+
+        // Submit form
+        $('form').submit();
+    });
+  
+</script>
+<script>
+    $(document).ready(function () {
+        $('#dataTable').DataTable();
+        //flatpickr('.datepicker', {
+        //    dateFormat: "Y-m-d",
+        //    disableMobile: true,
+        //});
+    });
+</script>

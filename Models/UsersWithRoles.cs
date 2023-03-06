@@ -19,4 +19,10 @@ namespace ePaperLive.Models
         public Nullable<bool> IsActive { get; set; }
 
     }
+
+    public class SignUpsList
+    {
+        public string SignUpDate { get; set; }
+        public int Total { get; set; }
+    }
 }

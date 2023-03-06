@@ -670,12 +670,12 @@
     <Content Include="Views\Subscribers\Delete.cshtml" />
     <Content Include="Views\Emails\PasswordReset.cshtml" />
     <Content Include="Views\Account\FreeAnniversaryMonth.cshtml" />
+    <Content Include="Views\Reports\SignUps.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\roslyn\" />
     <Folder Include="Views\Admin\Rates\" />
     <Folder Include="Views\Payments\" />
-    <Folder Include="Views\Reports\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />
