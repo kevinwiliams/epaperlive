@@ -1,7 +1,9 @@
 ﻿@model ePaperLive.Models.AuthSubcriber
 @{
     Layout = "";
-    var subtype = Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).SubType;
+    var transDetails = Model.PaymentDetails.OrderByDescending(t => t.TranxDate).FirstOrDefault(x => x.TransactionID == 0);
+    var subDetails = Model.SubscriptionDetails.FirstOrDefault(x => x.SubscriptionID == 0);
+    var subtype = transDetails.SubType;
 }
 <!doctype html>
 <html>
@@ -184,7 +186,7 @@
                                                     <tbody>
                                                         <tr>
                                                             <td><strong>Order Number</strong></td>
-                                                            <td>&nbsp;@Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).OrderNumber</td>
+                                                            <td>&nbsp;@transDetails.OrderNumber</td>
                                                         </tr>
                                                         <tr>
                                                             <td><strong>Subscriber </strong></td>
@@ -197,10 +199,10 @@
                                                                 {
                                                                     case "Epaper":
                                                                     case "Print":
-                                                                        @Html.Raw("&nbsp;" + Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).SubType + " Only")
+                                                                        @Html.Raw("&nbsp;" + transDetails.SubType + " Only")
                                                                         break;
                                                                     case "Bundle":
-                                                                        @Html.Raw("&nbsp;Print &amp; ePaper " + Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).SubType);
+                                                                        @Html.Raw("&nbsp;Print &amp; ePaper " + transDetails.SubType);
                                                                         break;
                                                                     default:
                                                                         break;
@@ -209,8 +211,8 @@
                                                             </td>
                                                         </tr>
                                                         @{
-                                                            var desc = Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).RateDescription;
-                                                            var term = Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).RateTerm;
+                                                            var desc = transDetails.RateDescription;
+                                                            var term = transDetails.RateTerm;
 
                                                             if (subtype == "Print")
                                                             {
@@ -257,18 +259,18 @@
                                                         }
                                                         <tr>
                                                             <td><strong>Payment</strong></td>
-                                                            <td>&nbsp;@String.Format("{0:C}", Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardAmount)</td>
+                                                            <td>&nbsp;@String.Format("{0:C}", transDetails.CardAmount)</td>
                                                         </tr>
 
                                                         <tr>
                                                             <td><strong>Payment Type</strong></td>
-                                                            <td>&nbsp;@Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardType.ToUpper()</td>
+                                                            <td>&nbsp;@transDetails.CardType.ToUpper()</td>
                                                         </tr>
-                                                        @if (Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardType.ToUpper() == "VISA" || Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardType.ToUpper() == "MASTERCARD")
+                                                        @if (transDetails.CardType.ToUpper() == "VISA" || transDetails.CardType.ToUpper() == "MASTERCARD")
                                                         {
                                                             <tr>
                                                                 <td><strong>Card Number Ending</strong></td>
-                                                                <td>&nbsp;@Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardNumberLastFour ex: @Model.PaymentDetails.FirstOrDefault(x => x.TransactionID == 0).CardExp</td>
+                                                                <td>&nbsp;@transDetails.CardNumberLastFour ex: @transDetails.CardExp</td>
                                                             </tr>
                                                         }
 
@@ -277,7 +279,7 @@
 
                                                 @if (Model.AddressDetails != null)
                                                 {
-                                                    if (Model.AddressDetails.Any(x => x.AddressType == "D"))
+                                                    if (Model.AddressDetails.Any(x => x.AddressType == "D" && x.AddressID == 0))
                                                     {
                                                         <br />
                                                         <h3>Delivery Address</h3>

@@ -2267,8 +2267,8 @@ namespace ePaperLive.Controllers
                     context.subscriber_tranx.Add(objTran);
                     await context.SaveChangesAsync();
 
-                    var existingEpaperPlan = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.isActive == true);
-                    var existingPrintPlan = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.isActive == true);
+                    var existingEpaperPlan = authUser.SubscriptionDetails.FirstOrDefault(x => x.isActive == true && (x.SubType == "Epaper" || x.SubType == "Bundle"));
+                    var existingPrintPlan = authUser.SubscriptionDetails.FirstOrDefault(x => x.isActive == true && (x.SubType == "Print" || x.SubType == "Bundle"));
 
                     //save based on subscription
                     if (selectedPlan != null)
@@ -2278,27 +2278,31 @@ namespace ePaperLive.Controllers
                             case "Print":
                                 if (existingPrintPlan != null)
                                 {
-                                    //update existing subscription
-                                    var result = context.subscriber_print.FirstOrDefault(x => x.SubscriberID == SubscriberID && x.IsActive == true);
-                                    if (result != null)
+                                    if (printSub != null)
                                     {
-                                        context.Entry(result).State = EntityState.Modified;
+                                        //update existing subscription
+                                        var result = context.subscriber_print.FirstOrDefault(x => x.SubscriberID == SubscriberID && x.IsActive == true);
+                                        if (result != null)
+                                        {
+                                            context.Entry(result).State = EntityState.Modified;
 
-                                        //result.DeliveryInstructions = objP.DeliveryInstructions;
-                                        //result.RateID = objP.RateID;
-                                        result.IsActive = false;
+                                            //result.DeliveryInstructions = objP.DeliveryInstructions;
+                                            //result.RateID = objP.RateID;
+                                            result.IsActive = false;
+                                            await context.SaveChangesAsync();
+                                        }
+
+                                        //save print subscription
+                                        objP.AddressID = objDelAdd.AddressID;
+                                        objP.SubscriberID = SubscriberID;
+                                        objP.OrderNumber = objTran.OrderID;
+                                        objP.PlanDesc = selectedPlan.RateDescr;
+                                        objP.StartDate = result.StartDate;
+                                        objP.EndDate = result.EndDate.AddDays((double)selectedPlan.PrintTerm * 7);
+                                        context.subscriber_print.Add(objP);
                                         await context.SaveChangesAsync();
                                     }
-
-                                    //save print subscription
-                                    objP.AddressID = objDelAdd.AddressID;
-                                    objP.SubscriberID = SubscriberID;
-                                    objP.OrderNumber = objTran.OrderID;
-                                    objP.PlanDesc = selectedPlan.RateDescr;
-                                    objP.StartDate = result.StartDate;
-                                    objP.EndDate = result.EndDate.AddDays((double)selectedPlan.PrintTerm * 7);
-                                    context.subscriber_print.Add(objP);
-                                    await context.SaveChangesAsync();
+                                   
                                 }
                                 else
                                 {
@@ -2315,33 +2319,37 @@ namespace ePaperLive.Controllers
                             case "Epaper":
                                 if (existingEpaperPlan != null)
                                 {
-                                    //update existing subscription
-                                    var result = context.subscriber_epaper.FirstOrDefault(x => x.SubscriberID == SubscriberID && x.IsActive == true);
-                                    if (result != null)
+                                    if (epaperSub != null)
                                     {
-                                        context.Entry(result).State = EntityState.Modified;
+                                        //update existing subscription
+                                        var result = context.subscriber_epaper.FirstOrDefault(x => x.SubscriberID == SubscriberID && x.IsActive == true);
+                                        if (result != null)
+                                        {
+                                            context.Entry(result).State = EntityState.Modified;
 
-                                        //result.RateID = (int)rateID;
-                                        //result.EndDate = objE.EndDate.AddDays((double)selectedPlan.ETerm);
-                                        result.IsActive = false;
+                                            //result.RateID = (int)rateID;
+                                            //result.EndDate = objE.EndDate.AddDays((double)selectedPlan.ETerm);
+                                            result.IsActive = false;
+                                            await context.SaveChangesAsync();
+                                        }
+
+                                        //save epaper subscription
+                                        var subType = (selectedPlan.RateDescr.Contains("Coupon") || selectedPlan.Rate == 0) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString();
+                                        objE.SubType = subType;
+                                        objE.SubscriberID = SubscriberID;
+                                        objE.OrderNumber = objTran.OrderID;
+                                        objE.PlanDesc = selectedPlan.RateDescr;
+                                        objE.StartDate = result.StartDate;
+                                        objE.EndDate = result.EndDate.AddDays((double)selectedPlan.ETerm);
+                                        context.subscriber_epaper.Add(objE);
                                         await context.SaveChangesAsync();
                                     }
-
-                                    //save epaper subscription
-                                    var subType = (selectedPlan.RateDescr.Contains("Coupon") || selectedPlan.RateDescr.Contains("Free") || selectedPlan.Rate == 0) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString();
-                                    objE.SubType = subType;
-                                    objE.SubscriberID = SubscriberID;
-                                    objE.OrderNumber = objTran.OrderID;
-                                    objE.PlanDesc = selectedPlan.RateDescr;
-                                    objE.StartDate = result.StartDate;
-                                    objE.EndDate = result.EndDate.AddDays((double)selectedPlan.ETerm);
-                                    context.subscriber_epaper.Add(objE);
-                                    await context.SaveChangesAsync();
+                                    
                                 }
                                 else
                                 {
                                     //save epaper subscription
-                                    var subType = (selectedPlan.RateDescr.Contains("Coupon") || selectedPlan.RateDescr.Contains("Free") || selectedPlan.Rate == 0) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString();
+                                    var subType = (selectedPlan.RateDescr.Contains("Coupon") || selectedPlan.Rate == 0) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString();
                                     objE.SubType = subType;
                                     objE.SubscriberID = SubscriberID;
                                     objE.PlanDesc = selectedPlan.RateDescr;
@@ -2402,7 +2410,7 @@ namespace ePaperLive.Controllers
                                         await context.SaveChangesAsync();
                                     }
                                     //save epaper subscription
-                                    var subType = (selectedPlan.RateDescr.Contains("Coupon") || selectedPlan.RateDescr.Contains("Free") || selectedPlan.Rate == 0) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString();
+                                    var subType = (selectedPlan.RateDescr.Contains("Coupon") || selectedPlan.Rate == 0) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString();
                                     objE.SubType = subType;
                                     objE.SubscriberID = SubscriberID;
                                     objE.PlanDesc = selectedPlan.RateDescr;
@@ -2415,7 +2423,7 @@ namespace ePaperLive.Controllers
                                 else
                                 {
                                     //save epaper subscription
-                                    var subType = (selectedPlan.RateDescr.Contains("Coupon") || selectedPlan.RateDescr.Contains("Free") || selectedPlan.Rate == 0) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString();
+                                    var subType = (selectedPlan.RateDescr.Contains("Coupon") || selectedPlan.Rate == 0) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString();
                                     objE.SubType = subType;
                                     objE.SubscriberID = SubscriberID;
                                     objE.PlanDesc = selectedPlan.RateDescr;
