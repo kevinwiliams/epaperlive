@@ -31,7 +31,6 @@
                     <div class="form-horizontal">
                         <h4>Update your information below</h4>
                         <hr />
-
                         <h2 class="text-success">@ViewBag.msg</h2>
                         @Html.ValidationSummary(false, "", new { @class = "text-danger" })
                         @Html.HiddenFor(model => model.SubscriberID)
@@ -138,7 +137,7 @@
                                 @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
                             </div>
                         </div>
-
+                        <input type="hidden" id="profileUpdated" value="@ViewBag.ProfileUpdate" />
 
                         <div class="form-group">
                             <div class="col-md-offset-2 col-md-10">
@@ -153,18 +152,26 @@
             </div>
             <div class="col-lg-4">
                 <div class="portfolio-info">
-                    <h3>Current Subscription: <span class="text-success">Active</span> </h3>
+                    @{
+
+                        var plans = (List<ePaperLive.Models.SubscriptionDetails>)ViewBag.plans;
+
+                        var stat = (plans.Where(x => x.isActive == true).Count() > 0) ? "<span class=\"text-success\">Active</span>" : "<span class=\"text-danger\">Inactive</span>";
+                    }
+                    <h3>Current Subscription: @Html.Raw(stat) </h3>
                     @if (ViewBag.plans != null)
                     {
                         foreach (var item in (List<ePaperLive.Models.SubscriptionDetails>)ViewBag.plans)
                         {
-                            <p>@item.RateDescription</p>
-                            <small>
-                                <strong>Start:</strong> @Convert.ToDateTime(item.StartDate).ToString("dd MMMM yyyy") <br />
-                                <strong>End:&nbsp;&nbsp;</strong> @Convert.ToDateTime(item.EndDate).ToString("dd MMMM yyyy") <br />
-                                <!-- <a href="#">Cancel</a> -->
-                            </small>
-
+                            if (item.isActive)
+                            {
+                                <p>@item.RateDescription</p>
+                                <small>
+                                    <strong>Start:</strong> @Convert.ToDateTime(item.StartDate).ToString("dd MMMM yyyy") <br />
+                                    <strong>End:&nbsp;&nbsp;</strong> @Convert.ToDateTime(item.EndDate).ToString("dd MMMM yyyy") <br />
+                                    <!-- <a href="#">Cancel</a> -->
+                                </small>
+                            }
                         }
                     }
                     <br />

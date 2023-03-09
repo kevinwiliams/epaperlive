@@ -868,6 +868,19 @@ namespace ePaperLive.Controllers
         {
             try
             {
+                AuthSubcriber authSubcriber = GetAuthSubscriber();
+                if (authSubcriber.SubscriptionDetails != null)
+                {
+                    ViewBag.plans = authSubcriber.SubscriptionDetails;
+                    if (authSubcriber.SubscriptionDetails.Where(x => x.isActive == true).Count() > 0)
+                    {
+                        var startDate = authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).StartDate;
+                        var endDate = authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).EndDate;
+                        ViewBag.dates = startDate.GetWeekdayInRange(endDate, DayOfWeek.Monday);
+                    }
+
+                }
+
                 string authUser = User.Identity.GetUserName();
 
                 using (var context = new ApplicationDbContext())
@@ -901,10 +914,25 @@ namespace ePaperLive.Controllers
         [HttpPost]
         public async Task<ActionResult> UserProfile(UserProfile userProfile)
         {
+            
+
             try
             {
                 AuthSubcriber authSubcriber = GetAuthSubscriber();
-                ViewBag.plans = authSubcriber.SubscriptionDetails;
+                if (authSubcriber.SubscriptionDetails != null)
+                {
+                    ViewBag.plans = authSubcriber.SubscriptionDetails;
+                    if (authSubcriber.SubscriptionDetails.Where(x => x.isActive == true).Count() > 0)
+                    {
+                        var startDate = authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).StartDate;
+                        var endDate = authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).EndDate;
+                        ViewBag.dates = startDate.GetWeekdayInRange(endDate, DayOfWeek.Monday);
+                    }
+
+                }
+                List<SelectListItem> Addressparishes = GetParishes();
+                ViewBag.Parishes = new SelectList(Addressparishes, "Value", "Text");
+                ViewBag.CountryList = GetCountryList();
 
                 string authUser = User.Identity.GetUserId();
 
@@ -1001,7 +1029,7 @@ namespace ePaperLive.Controllers
 
                     }
                 }
-                return RedirectToAction("UserProfile");
+                return View(userProfile);
             }
             catch (Exception ex)
             {
