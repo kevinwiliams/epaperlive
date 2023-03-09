@@ -913,6 +913,7 @@ namespace ePaperLive.Controllers
                     //load data and join via foriegn keys
                     var tableData = context.subscribers
                         .Include(x => x.Subscriber_Address)
+                        .Include(a => a.ApplicationUser)
                         .FirstOrDefault(u => u.SubscriberID == authUser);
 
                     if (tableData != null)
