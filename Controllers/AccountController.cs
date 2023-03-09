@@ -2226,7 +2226,7 @@ namespace ePaperLive.Controllers
                     {
                         UserName = emailAddress,
                         Email = emailAddress,
-                        PhoneNumber = mailingAddress.Phone,
+                        PhoneNumber = (mailingAddress != null) ? mailingAddress.Phone : null,
                         Subscriber = objSub
                     };
 
