@@ -32,8 +32,9 @@ namespace ePaperLive.Views.Admin.PrintSub
             {
                 var sql = @"
                     SELECT s.SubscriberID, s.EmailAddress, s.FirstName, s.LastName, sp.OrderNumber, sp.Subscriber_PrintID as AddressID,
-                    sa. AddressLine1, sa.AddressLine2, sa.CityTown, sa.StateParish , sp.StartDate, sp.EndDate, sp.IsActive, sp.Circprosubid
+                    sa. AddressLine1, sa.AddressLine2, sa.CityTown, sa.StateParish , anu.PhoneNumber, sp.StartDate, sp.EndDate, sp.IsActive, sp.Circprosubid
                     FROM Subscribers s with(nolock)
+                    JOIN AspNetUsers anu ON s.SubscriberID = anu.Id 
                     JOIN Subscriber_Print sp ON s.SubscriberID = sp.SubscriberID 
                     LEFT JOIN Subscriber_Address sa ON sa.AddressID = sp.AddressID";
 
@@ -52,8 +53,9 @@ namespace ePaperLive.Views.Admin.PrintSub
             }
             var sql = @"
                     SELECT s.SubscriberID, s.EmailAddress, s.FirstName, s.LastName, sp.OrderNumber, sp.Subscriber_PrintID as AddressID,
-                    sa. AddressLine1, sa.AddressLine2, sa.CityTown, sa.StateParish , sp.StartDate, sp.EndDate, sp.IsActive, sp.Circprosubid
+                    sa. AddressLine1, sa.AddressLine2, sa.CityTown, sa.StateParish , anu.PhoneNumber, sp.StartDate, sp.EndDate, sp.IsActive, sp.Circprosubid
                     FROM Subscribers s with(nolock)
+                    JOIN AspNetUsers anu ON s.SubscriberID = anu.Id 
                     JOIN Subscriber_Print sp ON s.SubscriberID = sp.SubscriberID 
                     LEFT JOIN Subscriber_Address sa ON sa.AddressID = sp.AddressID
                     WHERE sp.Subscriber_PrintID = @Id";
@@ -109,8 +111,9 @@ namespace ePaperLive.Views.Admin.PrintSub
             }
             var sql = @"
                     SELECT s.SubscriberID, s.EmailAddress, s.FirstName, s.LastName, sp.OrderNumber, sp.Subscriber_PrintID as AddressID,
-                    sa. AddressLine1, sa.AddressLine2, sa.CityTown, sa.StateParish , sp.StartDate, sp.EndDate, sp.IsActive, sp.Circprosubid
+                    sa. AddressLine1, sa.AddressLine2, sa.CityTown, sa.StateParish , anu.PhoneNumber, sp.StartDate, sp.EndDate, sp.IsActive, sp.Circprosubid
                     FROM Subscribers s with(nolock)
+                    JOIN AspNetUsers anu ON s.SubscriberID = anu.Id 
                     JOIN Subscriber_Print sp ON s.SubscriberID = sp.SubscriberID 
                     LEFT JOIN Subscriber_Address sa ON sa.AddressID = sp.AddressID
                     WHERE sp.Subscriber_PrintID = @Id";

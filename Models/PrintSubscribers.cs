@@ -27,6 +27,8 @@ namespace ePaperLive.Models
         public string CityTown { get; set; }
         [Display(Name = "State/Province")]
         public string StateParish { get; set; }
+        [Display(Name = "Contact Number")]
+        public string PhoneNumber { get; set; }
         [Display(Name = "Start Date")]
         [DataType(DataType.Date)]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
