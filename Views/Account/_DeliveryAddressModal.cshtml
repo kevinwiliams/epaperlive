@@ -33,14 +33,16 @@
 
                         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-                        <div class="form-group">
+                        @*<div class="form-group">
                             <div class="col-md-10 p-3">
                                 <div class="form-check">
                                     @Html.EditorFor(model => model.SameAsMailing, new { htmlAttributes = new { @class = "form-check-input" } })
                                     @Html.LabelFor(model => model.SameAsMailing, htmlAttributes: new { @class = "form-check-label" })
                                 </div>
                             </div>
-                        </div>
+                        </div>*@
+                        @Html.HiddenFor(model => model.SameAsMailing)
+
                         <div class="col-md-6">
                             <div class="form-group p-2">
                                 <div class="col-md-12">
@@ -141,7 +143,7 @@
              //alert('modal');
              var parish = $("#DeliveryAddress_StateParish").val();
              var town = $("#DeliveryAddress_CityTown").val();
-             $("#DeliveryAddress_StateParish").val(parish);
+             $("#DeliveryAddress_StateParish").val(parish).trigger('change');
              $("#DeliveryAddress_CityTown").val(town);
          });
 

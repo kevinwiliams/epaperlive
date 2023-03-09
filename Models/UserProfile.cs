@@ -35,9 +35,9 @@ namespace ePaperLive.Models
         public string StateParish { get; set; }
         [Display(Name = "Zip Code")]
         public string ZipCode { get; set; }
-
         [Display(Name = "Country")]
         public string CountryCode { get; set; }
-
+        [Display(Name = "Contact Number")]
+        public string PhoneNumber { get; set; }
     }
 }

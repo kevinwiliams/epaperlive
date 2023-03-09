@@ -8,7 +8,7 @@
 
 <div class="container pt-5">
     <h2>Sign Ups Report</h2>
-    @using (Html.BeginForm("SignUps", "Reports", FormMethod.Post))
+    @using (Html.BeginForm("SignUps", "Reports", FormMethod.Post, new { @name = "signUpsReport" }))
     {
         <div class="row p-4">
             <div class="col-lg-3 col-md-6 form-group">
@@ -35,6 +35,9 @@
     }
 
     <table id="dataTable" class="table">
+        <caption id="dateRange">
+            <strong>From:</strong> <span id="sDate"></span> - <strong>To:</strong> <span id="eDate"></span>
+        </caption>
         <thead>
             <tr>
                 <th>SignUpDate</th>
@@ -50,6 +53,12 @@
                 </tr>
             }
         </tbody>
+        <tfoot>
+            <tr>
+                <th>Total</th>
+                <th></th>
+            </tr>
+        </tfoot>
     </table>
 </div>
 @Scripts.Render("~/bundles/jquery")
@@ -60,7 +69,19 @@
     //$('[name=startDate]').val(moment().startOf('month').format('YYYY-MM-DD'));
     //$('[name=endDate]').val(moment().endOf('month').format('YYYY-MM-DD'));
 
-        // Submit form on button click
+    $('[name=startDate]').change(function (e) {
+        var s = $(this).val();
+        var sDate = moment(s).format('LL');
+        $('#sDate').html(sDate);
+    });
+
+    $('[name=endDate]').change(function (e) {
+        var d = $(this).val();
+        var eDate = moment(d).format('LL');
+        $('#eDate').html(eDate);
+    });
+
+    // Submit form on button click
     $('#filterBtn').click(function (e) {
         e.preventDefault();
         var orderNumber = $('#orderNumber').val();
@@ -78,13 +99,45 @@
         }
 
         // Submit form
-        $('form').submit();
+        $('[name=signUpsReport]').submit();
     });
-  
+
 </script>
 <script>
     $(document).ready(function () {
-        $('#dataTable').DataTable();
+        $('#sDate').html(moment($('[name=startDate]').val()).format('LL'));
+        $('#eDate').html(moment($('[name=endDate]').val()).format('LL'));
+
+        $('#dataTable').DataTable({
+            footerCallback: function (row, data, start, end, display) {
+                var api = this.api();
+
+                // Remove the formatting to get integer data for summation
+                var intVal = function (i) {
+                    return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
+                };
+
+                // Total over all pages
+                var total = api
+                    .column(1)
+                    .data()
+                    .reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                // Total over this page
+                var pageTotal = api
+                    .column(1, { page: 'current' })
+                    .data()
+                    .reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                // Update footer
+                $(api.column(1).footer()).html(pageTotal + ' (' + total + ' total)');
+            },
+
+        });
         //flatpickr('.datepicker', {
         //    dateFormat: "Y-m-d",
         //    disableMobile: true,

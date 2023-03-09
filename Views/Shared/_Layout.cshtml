@@ -78,6 +78,13 @@
                                                 <li>@Html.ActionLink("Addresses", "address", "admin")</li>
                                                 <li>@Html.ActionLink("Subscription Rates", "rates", "admin")</li>
                                                 <li>@Html.ActionLink("Error Logs", "logs", "admin")</li>
+                                                <li class="dropdown">
+                                                    <a href="#"><span>Reports</span> <i class="bi bi-chevron-right"></i></a>
+                                                    <ul>
+                                                        <li>@Html.ActionLink("Sign Ups", "signups", "reports")</li>
+
+                                                    </ul>
+                                                </li>
                                             }
                                             @if (User.IsInRole("Circulation"))
                                             {

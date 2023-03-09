@@ -3,6 +3,8 @@
     Layout = "";
     var transDetails = Model.PaymentDetails.OrderByDescending(t => t.TranxDate).FirstOrDefault(x => x.TransactionID == 0);
     var subDetails = Model.SubscriptionDetails.FirstOrDefault(x => x.SubscriptionID == 0);
+    var mailingInfo = Model.AddressDetails.FirstOrDefault(x => x.AddressType == "M");
+    var phoneNumber = (mailingInfo != null) ? mailingInfo.Phone : "N/A";
     var subtype = transDetails.SubType;
 }
 <!doctype html>
@@ -249,6 +251,10 @@
                                                         <tr>
                                                             <td><strong>Email</strong></td>
                                                             <td>&nbsp;@Model.EmailAddress</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><strong>Contact Number</strong></td>
+                                                            <td>&nbsp;@phoneNumber</td>
                                                         </tr>
                                                         @if (Model.AdminCreated == true)
                                                         {

@@ -4,6 +4,8 @@
     ViewBag.Title = "Thank you";
     var transDetails = Model.PaymentDetails.OrderByDescending(t => t.TranxDate).FirstOrDefault(x => x.TransactionID == 0);
     var subDetails = Model.SubscriptionDetails.FirstOrDefault(x => x.SubscriptionID == 0);
+    var mailingInfo = Model.AddressDetails.FirstOrDefault(x => x.AddressType == "M");
+    var phoneNumber = (mailingInfo != null) ? mailingInfo.Phone : "N/A";
     var subtype = transDetails.SubType;
     Session["auth_subscriber"] = null;
 
@@ -94,28 +96,27 @@
                         <li><strong>Order Number:</strong>: <a href="#">@transDetails.OrderNumber</a></li>
                         <li><strong>@subDetails.RateType Plan</strong>: @Html.Raw(desc)</li>
                         <li><strong>Subscriber</strong>: @(Model.LastName + ", " + Model.FirstName)</li>
-                        </tr>
+                        
                         @if (Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.SubscriptionID == 0) != null)
                         {
-                            <tr>
-                                <td><strong>ePaper Subscription Period</strong></td>
-                                <td>&nbsp;@Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.SubscriptionID == 0).StartDate.ToString("dd/MM/yyyy") - @Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.SubscriptionID == 0).EndDate.ToString("dd/MM/yyyy")</td>
-                            </tr>
+                            <li><strong>ePaper Subscription Period</strong>: 
+                                &nbsp;@Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.SubscriptionID == 0).StartDate.ToString("dd/MM/yyyy") - @Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.SubscriptionID == 0).EndDate.ToString("dd/MM/yyyy")
+                            </li>
                         }
                         @if (Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.SubscriptionID == 0) != null)
                         {
-                            <tr>
-                                <td><strong>Print Subscription Period</strong></td>
-                                <td>&nbsp;@Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.SubscriptionID == 0).StartDate.ToString("dd/MM/yyyy") - @Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.SubscriptionID == 0).EndDate.ToString("dd/MM/yyyy")</td>
-                            </tr>
+                            <li><strong>Print Subscription Period</strong>:
+                                &nbsp;@Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.SubscriptionID == 0).StartDate.ToString("dd/MM/yyyy") - @Model.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.SubscriptionID == 0).EndDate.ToString("dd/MM/yyyy")
+                            </li>
                         }
                         <li><strong>Email</strong>: <span class="text-danger">@Model.EmailAddress</span></li>
+                        <li><strong>Phone</strong>: <span class="">@phoneNumber</span></li>
                         <li><strong>Amount</strong>: <span class="text-success">@String.Format("{0:C}", transDetails.CardAmount)</span></li>
                         <li>
                             <strong>Card</strong>: <span class="">
                                 @transDetails.CardType :
                                 @transDetails.CardNumberLastFour
-                                EXP: @transDetails.CardExp
+                                ex: @transDetails.CardExp
                             </span>
                         </li>
                     </ul>
