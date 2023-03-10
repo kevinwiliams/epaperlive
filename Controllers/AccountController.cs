@@ -43,10 +43,12 @@ namespace ePaperLive.Controllers
         private readonly ObjectCache cache = MemoryCache.Default;
         private readonly CacheItemPolicy cachePolicy = new CacheItemPolicy() { AbsoluteExpiration = DateTimeOffset.Now.AddSeconds(120) };
         private readonly TempData tempData = new TempData();
+        private ActivityLog _actLog;
 
         public AccountController()
         {
             _db = new ApplicationDbContext();
+            _actLog = new ActivityLog();
         }
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, ApplicationRoleManager roleManager)
@@ -754,6 +756,10 @@ namespace ePaperLive.Controllers
         [ValidateGoogleCaptcha]
         public async Task<ActionResult> Orders(FeedbackFormModel model)
         {
+            AuthSubcriber authSubcriber = GetAuthSubscriber();
+            _actLog.SubscriberID = authSubcriber.SubscriberID;
+            _actLog.EmailAddress = authSubcriber.EmailAddress;
+            _actLog.Role = (User.IsInRole("Staff") ? "Staff" : "Subscriber");
 
             var jsonFile = System.IO.File.ReadAllText(System.Web.HttpContext.Current.Server.MapPath("~/App_Data/email_settings.json"));
             var settings = JObject.Parse(jsonFile);
@@ -771,93 +777,105 @@ namespace ePaperLive.Controllers
 
             if (ModelState.IsValid)
             {
-                //TODO: Send Mail
-                var user = model.Email;
-                string subject = model.Subject;
-                string body = model.Message;
-
-                SmtpClient smtp = new SmtpClient();
-                smtp.Host = smtp_host;
-                smtp.Port = (int.TryParse(portNumber, out port) ? port : 25);
-                smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
-                smtp.UseDefaultCredentials = true;
-
-                var newMsg = new MailMessage();
-                var mailSubject = "Refund Request: " + subject;
-                newMsg.To.Add(feedBackEmails);
-
-
-                newMsg.From = new MailAddress(user, model.Name);
-                newMsg.Subject = mailSubject;
-                newMsg.Body = body;
-                newMsg.IsBodyHtml = true;
-
-                var credentials = new NetworkCredential(userName, pwd);
-                smtp.Credentials = credentials;
-                smtp.EnableSsl = bool.Parse(ssl_enabled);
-
-                // Send
-                await smtp.SendMailAsync(newMsg);
-
-                AuthSubcriber authSubcriber = GetAuthSubscriber();
-               
-                var orderNumber = subject.Split(':')[1].Trim();
-
-                using (var context = new ApplicationDbContext())
+                try
                 {
-                    var result = context.subscriber_tranx.FirstOrDefault(x => x.EmailAddress == user && x.OrderID == orderNumber);
+                    //TODO: Send Mail
+                    var user = model.Email;
+                    string subject = model.Subject;
+                    string body = model.Message;
 
-                    if (result != null)
+                    SmtpClient smtp = new SmtpClient();
+                    smtp.Host = smtp_host;
+                    smtp.Port = (int.TryParse(portNumber, out port) ? port : 25);
+                    smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                    smtp.UseDefaultCredentials = true;
+
+                    var newMsg = new MailMessage();
+                    var mailSubject = "Refund Request: " + subject;
+                    newMsg.To.Add(feedBackEmails);
+
+
+                    newMsg.From = new MailAddress(user, model.Name);
+                    newMsg.Subject = mailSubject;
+                    newMsg.Body = body;
+                    newMsg.IsBodyHtml = true;
+
+                    var credentials = new NetworkCredential(userName, pwd);
+                    smtp.Credentials = credentials;
+                    smtp.EnableSsl = bool.Parse(ssl_enabled);
+
+                    // Send
+                    await smtp.SendMailAsync(newMsg);
+
+                    var orderNumber = subject.Split(':')[1].Trim();
+
+                    //log
+                    _actLog.LogInformation = "Requested refund - " + orderNumber;
+                    LogUserActivity(_actLog);
+
+                    //update transactions
+                    using (var context = new ApplicationDbContext())
                     {
-                        context.Entry(result).State = EntityState.Modified;
-                        result.RefundRequested = true;
-                        await context.SaveChangesAsync();
-                        authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.OrderNumber == orderNumber).RefundRequested = true;
+                        var result = context.subscriber_tranx.FirstOrDefault(x => x.EmailAddress == user && x.OrderID == orderNumber);
+
+                        if (result != null)
+                        {
+                            context.Entry(result).State = EntityState.Modified;
+                            result.RefundRequested = true;
+                            await context.SaveChangesAsync();
+                            authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.OrderNumber == orderNumber).RefundRequested = true;
+                        }
+
+                        var type = orderNumber.Split('-')[0].Trim();
+                        /*
+                        switch (type)
+                        {
+
+                            case "EP":
+                                var epaperSub = context.subscriber_epaper.FirstOrDefault(x => x.EmailAddress == user && x.OrderNumber == orderNumber);
+                                if (epaperSub != null)
+                                {
+                                    epaperSub.IsActive = false;
+                                    await context.SaveChangesAsync();
+                                }
+                                break;
+                            case "PR":
+                                var printSub = context.subscriber_print.FirstOrDefault(x => x.EmailAddress == user && x.OrderNumber == orderNumber);
+                                if (printSub != null)
+                                {
+                                    printSub.IsActive = false;
+                                    await context.SaveChangesAsync();
+                                }
+                                break;
+                            case "BU":
+                                var printSubB = context.subscriber_print.FirstOrDefault(x => x.EmailAddress == user && x.OrderNumber == orderNumber);
+                                if (printSubB != null)
+                                {
+                                    printSubB.IsActive = false;
+                                    await context.SaveChangesAsync();
+                                }
+                                var epaperSubB = context.subscriber_epaper.FirstOrDefault(x => x.EmailAddress == user && x.OrderNumber == orderNumber);
+                                if (epaperSubB != null)
+                                {
+                                    epaperSubB.IsActive = false;
+                                    await context.SaveChangesAsync();
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+
+                        */
                     }
 
-                    var type = orderNumber.Split('-')[0].Trim();
-                    /*
-                    switch (type)
-                    {
-
-                        case "EP":
-                            var epaperSub = context.subscriber_epaper.FirstOrDefault(x => x.EmailAddress == user && x.OrderNumber == orderNumber);
-                            if (epaperSub != null)
-                            {
-                                epaperSub.IsActive = false;
-                                await context.SaveChangesAsync();
-                            }
-                            break;
-                        case "PR":
-                            var printSub = context.subscriber_print.FirstOrDefault(x => x.EmailAddress == user && x.OrderNumber == orderNumber);
-                            if (printSub != null)
-                            {
-                                printSub.IsActive = false;
-                                await context.SaveChangesAsync();
-                            }
-                            break;
-                        case "BU":
-                            var printSubB = context.subscriber_print.FirstOrDefault(x => x.EmailAddress == user && x.OrderNumber == orderNumber);
-                            if (printSubB != null)
-                            {
-                                printSubB.IsActive = false;
-                                await context.SaveChangesAsync();
-                            }
-                            var epaperSubB = context.subscriber_epaper.FirstOrDefault(x => x.EmailAddress == user && x.OrderNumber == orderNumber);
-                            if (epaperSubB != null)
-                            {
-                                epaperSubB.IsActive = false;
-                                await context.SaveChangesAsync();
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-
-                    */
+                    return RedirectToAction("orders");
                 }
-
-                return RedirectToAction("orders");
+                catch (Exception ex)
+                {
+                    LogError(ex);
+                    return View();
+                }
+               
                 //below code to be implemented if business decides to automatically deactivate after request
             }
 
@@ -914,7 +932,9 @@ namespace ePaperLive.Controllers
         [HttpPost]
         public async Task<ActionResult> UserProfile(UserProfile userProfile)
         {
-            
+            _actLog.SubscriberID = userProfile.SubscriberID;
+            _actLog.EmailAddress = userProfile.EmailAddress;
+            _actLog.Role = (User.IsInRole("Staff") ? "Staff" : "Subscriber");
 
             try
             {
@@ -1015,7 +1035,10 @@ namespace ePaperLive.Controllers
 
                                 localAuthSubcriber.AddressDetails.Add(address);
                             }
-                            
+
+                            //log
+                            _actLog.LogInformation = "Updated profile information";
+                            LogUserActivity(_actLog);
 
                             ViewBag.msg = "Profile updated successfully";
                         }
@@ -1070,6 +1093,8 @@ namespace ePaperLive.Controllers
             if (authSubcriber.SubscriptionDetails != null)
             {
                 ViewBag.plans = authSubcriber.SubscriptionDetails;
+                
+                //check if user acccepted anniversary extension
                 bool acceptedAnniversaryMonth = false;
                 var rateID = 0;
                 foreach (var item in authSubcriber.SubscriptionDetails)
@@ -1517,14 +1542,8 @@ namespace ePaperLive.Controllers
                         ViewBag.CountryList = GetCountryList();
                         ViewBag.Name = data.FirstName;
 
-                        //Test Data
                         AddressDetails ad = new AddressDetails
                         {
-                            //AddressLine1 = "Lot 876 Scheme Steet",
-                            //CityTown = "Hope Bay",
-                            //StateParish = "Portland",
-                            //ZipCode = "JAMWI",
-                            //Phone = "876-875-8651",
                             CountryCode = countryCode,
                             CountryList = GetCountryList(),
                         };
@@ -1571,10 +1590,9 @@ namespace ePaperLive.Controllers
                 }
                 catch (Exception ex)
                 {
-
-                    throw ex;
+                    LogError(ex);
+                    return View(data);
                 }
-
             }
 
             if (nextBtn != null)
@@ -1784,8 +1802,8 @@ namespace ePaperLive.Controllers
                 catch (Exception ex)
                 {
                     LogError(ex);
+                    return View(data);
                 }
-
 
             }
 
@@ -2229,11 +2247,10 @@ namespace ePaperLive.Controllers
                         PhoneNumber = (mailingAddress != null) ? mailingAddress.Phone : null,
                         Subscriber = objSub
                     };
-
+                    //TODO: Modify to handle email confirmation
                     //create application user
                     createAccount = (authUser.Login != null) ? await UserManager.CreateAsync(newAccount) : await UserManager.CreateAsync(newAccount, authUser.Password);
 
-                    //
                     //create oauthuser login
                     if (authUser.Login != null)
                         await UserManager.AddLoginAsync(newAccount.Id, authUser.Login);
@@ -2261,7 +2278,6 @@ namespace ePaperLive.Controllers
                             context.subscriber_address.Add(objAdd);
                             await context.SaveChangesAsync();
                         }
-                        
                     }
 
                     //save delivery address
@@ -2779,7 +2795,6 @@ namespace ePaperLive.Controllers
         [AllowAnonymous]
         public ActionResult RedeemCoupon()
         {
-
             List<SelectListItem> Addressparishes = GetParishes();
             ViewBag.Parishes = new SelectList(Addressparishes, "Value", "Text");
             ViewBag.CountryList = GetCountryList();
@@ -3221,30 +3236,39 @@ namespace ePaperLive.Controllers
         [NonAction]
         public async Task<bool> SendConfirmationEmail(AuthSubcriber authSubcriber, string SubType, bool send = true) 
         {
+            _actLog.SubscriberID = authSubcriber.SubscriberID;
+            _actLog.EmailAddress = authSubcriber.EmailAddress;
+            _actLog.Role = (User.IsInRole("Staff") ? "Staff" : "Subscriber");
+
             var sent = false;
             if (send)
             {
-                var emailAddress = authSubcriber.EmailAddress;
-                //send confirmation email
-                var user = await UserManager.FindByNameAsync(emailAddress);
-                var lastTransaction = authSubcriber.PaymentDetails.OrderByDescending(x => x.TranxDate).FirstOrDefault(x => x.TransactionID == 0);
-                var isRenewal = (lastTransaction.IsExtension) ? "RN" : (lastTransaction.CardAmount == 0) ? "COMP" : "NB";
+                try
+                {
+                    var emailAddress = authSubcriber.EmailAddress;
+                    //send confirmation email
+                    var user = await UserManager.FindByNameAsync(emailAddress);
+                    var lastTransaction = authSubcriber.PaymentDetails.OrderByDescending(x => x.TranxDate).FirstOrDefault(x => x.TransactionID == 0);
+                    var isRenewal = (lastTransaction.IsExtension) ? "RN" : (lastTransaction.CardAmount == 0) ? "COMP" : "NB";
+                    //log
+                    _actLog.LogInformation = isRenewal + " Subscription - " + SubType + " / " + lastTransaction.RateDescription;
+                    LogUserActivity(_actLog);
+                    
+                    //set up email
+                    string subject = "Subscription Confirmation (" + SubType + ") - " + isRenewal;
+                    string body = RenderViewToString(this.ControllerContext, "~/Views/Emails/ConfirmSubscription.cshtml", authSubcriber);
+                    await UserManager.SendEmailAsync(user.Id, subject, body);
+                    sent = true;
 
-                var actLog = new ActivityLog();
-                actLog.SubscriberID = authSubcriber.SubscriberID;
-                actLog.EmailAddress = authSubcriber.EmailAddress;
-                actLog.Role = (User.IsInRole("Staff") ? "Staff" : "Subscriber");
-                actLog.SystemInformation = Util.GetBrowserName() + " / " + Util.GetOSName(Request.UserAgent);
-                actLog.LogInformation = isRenewal + " Subscription";
-                LogUserActivity(actLog);
-
-                string subject = "Subscription Confirmation (" + SubType + ") - " + isRenewal;
-                string body = RenderViewToString(this.ControllerContext, "~/Views/Emails/ConfirmSubscription.cshtml", authSubcriber);
-                await UserManager.SendEmailAsync(user.Id, subject, body);
-                sent = true;
-
-                actLog.LogInformation = "Confirmation email sent";
-                LogUserActivity(actLog);
+                    //log
+                    _actLog.LogInformation = "Confirmation email sent";
+                    LogUserActivity(_actLog);
+                }
+                catch (Exception ex)
+                {
+                    LogError(ex);
+                }
+                
             }
 
             return sent;
@@ -3392,6 +3416,7 @@ namespace ePaperLive.Controllers
                             {
                                 UserName = emailAddress,
                                 Email = emailAddress,
+                                PhoneNumber = item.Phone,
                                 Subscriber = objSub
                             };
                             //create application user

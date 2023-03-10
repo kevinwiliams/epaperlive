@@ -911,7 +911,7 @@ namespace ePaperLive
                 cmd.Parameters.AddWithValue("EmailAddress", actLog.EmailAddress);
                 cmd.Parameters.AddWithValue("IPAddress", GetIPAddress());
                 cmd.Parameters.AddWithValue("LogInformation", actLog.LogInformation);
-                cmd.Parameters.AddWithValue("SystemInformation", actLog.SystemInformation);
+                cmd.Parameters.AddWithValue("SystemInformation", Util.GetBrowserName() + " / " + Util.GetOSName(HttpContext.Current.Request.UserAgent));
                 cmd.Parameters.AddWithValue("CreatedAt", DateTime.Now);
 
                 cmd.Connection = con;
