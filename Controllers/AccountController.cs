@@ -3227,10 +3227,24 @@ namespace ePaperLive.Controllers
                 var emailAddress = authSubcriber.EmailAddress;
                 //send confirmation email
                 var user = await UserManager.FindByNameAsync(emailAddress);
-                string subject = "Subscription Confirmation (" + SubType + ")";
+                var lastTransaction = authSubcriber.PaymentDetails.OrderByDescending(x => x.TranxDate).FirstOrDefault(x => x.TransactionID == 0);
+                var isRenewal = (lastTransaction.IsExtension) ? "RN" : (lastTransaction.CardAmount == 0) ? "COMP" : "NB";
+
+                var actLog = new ActivityLog();
+                actLog.SubscriberID = authSubcriber.SubscriberID;
+                actLog.EmailAddress = authSubcriber.EmailAddress;
+                actLog.Role = (User.IsInRole("Staff") ? "Staff" : "Subscriber");
+                actLog.SystemInformation = Util.GetBrowserName() + " / " + Util.GetOSName(Request.UserAgent);
+                actLog.LogInformation = isRenewal + " Subscription";
+                LogUserActivity(actLog);
+
+                string subject = "Subscription Confirmation (" + SubType + ") - " + isRenewal;
                 string body = RenderViewToString(this.ControllerContext, "~/Views/Emails/ConfirmSubscription.cshtml", authSubcriber);
                 await UserManager.SendEmailAsync(user.Id, subject, body);
                 sent = true;
+
+                actLog.LogInformation = "Confirmation email sent";
+                LogUserActivity(actLog);
             }
 
             return sent;

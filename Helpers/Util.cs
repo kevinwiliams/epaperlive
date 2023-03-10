@@ -896,6 +896,41 @@ namespace ePaperLive
             return null;
         }
 
+        public static bool LogUserActivity(ActivityLog actLog)
+        {
+            SqlCommand cmd = new SqlCommand();
+            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DBEntities"].ConnectionString);
+            bool result = false;
+
+            try
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandText = "dbo.JOL_User_Activity_Log";
+                cmd.Parameters.AddWithValue("SubscriberID", actLog.SubscriberID);
+                cmd.Parameters.AddWithValue("Role", actLog.Role);
+                cmd.Parameters.AddWithValue("EmailAddress", actLog.EmailAddress);
+                cmd.Parameters.AddWithValue("IPAddress", GetIPAddress());
+                cmd.Parameters.AddWithValue("LogInformation", actLog.LogInformation);
+                cmd.Parameters.AddWithValue("SystemInformation", actLog.SystemInformation);
+                cmd.Parameters.AddWithValue("CreatedAt", DateTime.Now);
+
+                cmd.Connection = con;
+                con.Open();
+
+                cmd.ExecuteNonQuery();
+
+                con.Close();
+                result = true;
+
+            }
+            catch (Exception ex)
+            {
+                result = false;
+                Util.LogErrror(ex);
+            }
+
+            return result;
+        }
     }
 
     

@@ -321,6 +321,7 @@
     <Compile Include="Controllers\SubscribersController.cs" />
     <Compile Include="Controllers\TransactionsController.cs" />
     <Compile Include="DBModel\ClientSnapShot.cs" />
+    <Compile Include="DBModel\user_activity_logs.cs" />
     <Compile Include="DBModel\delivery_zones.cs" />
     <Compile Include="DBModel\JOL_UserSession.cs" />
     <Compile Include="DBModel\log_errors.cs" />
@@ -344,6 +345,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\ActivityLog.cs" />
     <Compile Include="Models\Eusers.cs" />
     <Compile Include="Models\DeliveryAddress.cs" />
     <Compile Include="Models\AddressDetails.cs" />
