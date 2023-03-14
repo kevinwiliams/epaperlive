@@ -14,9 +14,11 @@ namespace ePaperLive.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private ActivityLog _actLog;
 
         public ManageController()
         {
+            _actLog = new ActivityLog();
         }
 
         public ManageController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
@@ -235,6 +237,13 @@ namespace ePaperLive.Controllers
                 var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
                 if (user != null)
                 {
+                    //log
+                    _actLog.SubscriberID = user.Id;
+                    _actLog.EmailAddress = user.UserName;
+                    _actLog.Role = (User.IsInRole("Staff") ? "Staff" : "Subscriber");
+                    _actLog.LogInformation = "Changed login password";
+                    Util.LogUserActivity(_actLog);
+                    
                     await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                 }
                 return RedirectToAction("Index", new { Message = ManageMessageId.ChangePasswordSuccess });

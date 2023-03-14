@@ -1166,7 +1166,10 @@ namespace ePaperLive.Controllers
                         List<SubscriptionDetails> subscriptionDetails = new List<SubscriptionDetails>();
                         List<PaymentDetails> paymentDetailsList = new List<PaymentDetails>();
                         //List<AddressDetails> addressDetails = new List<AddressDetails>();
-                        authUser.SubscriptionDetails.RemoveAll(x => x.SubscriptionID == 0);
+                        //remove unused subs from session
+                        if(authUser.SubscriptionDetails != null)
+                            authUser.SubscriptionDetails.RemoveAll(x => x.SubscriptionID == 0);
+                        
                         objTran.RateID = data.RateID;
 
                         var selectedPlan = db.printandsubrates.AsNoTracking().FirstOrDefault(x => x.Rateid == data.RateID);
@@ -2113,6 +2116,9 @@ namespace ePaperLive.Controllers
 
         public async Task<bool> SaveSubscriptionInfoAsync(AuthSubcriber authUser)
         {
+            _actLog.SubscriberID = authUser.SubscriberID;
+            _actLog.EmailAddress = authUser.EmailAddress;
+            _actLog.Role = (User.IsInRole("Staff") ? "Staff" : "Subscriber");
 
             //AuthSubcriber authUser = new AuthSubcriber();
             var emailAddress = authUser.EmailAddress;
@@ -2270,7 +2276,7 @@ namespace ePaperLive.Controllers
                 using (var context = new ApplicationDbContext())
                 {
                     //save address
-                    if(!trxDetails.IsExtension)
+                    if (!trxDetails.IsExtension)
                     {
                         if (mailingAddress != null)
                         {
@@ -2292,7 +2298,7 @@ namespace ePaperLive.Controllers
                     addressID = objAdd.AddressID;
 
                     //update subscribers table w/ address ID
-                    if (!trxDetails.IsExtension) 
+                    if (!trxDetails.IsExtension)
                     {
                         var result = context.subscribers.SingleOrDefault(b => b.SubscriberID == SubscriberID);
                         if (result != null)
@@ -2304,6 +2310,24 @@ namespace ePaperLive.Controllers
 
                     var selectedPlan = context.printandsubrates.SingleOrDefault(b => b.Rateid == rateID);
 
+                    //save transaction log
+                    var lastTransaction = authUser.PaymentDetails.OrderByDescending(x => x.TranxDate).FirstOrDefault(x => x.TransactionID > 0);
+                    if (lastTransaction != null)
+                    {
+                        if ((lastTransaction.OrderNumber.ToLower().Contains("coupon") || lastTransaction.OrderNumber.ToLower().Contains("comp")) && !objTran.OrderID.ToLower().Contains("coupon"))
+                        {
+                            //log
+                            _actLog.LogInformation = "Upgraded from COMP to PAID";
+                            LogUserActivity(_actLog);
+                        }
+
+                        if ((!lastTransaction.OrderNumber.ToLower().Contains("coupon") || !lastTransaction.OrderNumber.ToLower().Contains("comp")) && objTran.OrderID.ToLower().Contains("coupon"))
+                        {
+                            //log
+                            _actLog.LogInformation = "Downgraded from PAID to COMP";
+                            LogUserActivity(_actLog);
+                        }
+                    }
                     //save transaction
                     objTran.SubscriberID = SubscriberID;
                     context.subscriber_tranx.Add(objTran);
