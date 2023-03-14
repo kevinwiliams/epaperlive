@@ -10,6 +10,7 @@ using System.Web.Mvc;
 using ePaperLive.DBModel;
 using ePaperLive.Models;
 using System.IO;
+using Microsoft.AspNet.Identity;
 
 namespace ePaperLive.Controllers.Admin.EpaperSub
 {
@@ -97,10 +98,19 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([Bind(Include = "Subscriber_EpaperID,SubscriberID,EmailAddress,RateID,StartDate,EndDate,IsActive,SubType,CreatedAt,NotificationEmail,PlanDesc,OrderNumber")] Subscriber_Epaper subscriber_Epaper)
         {
+            var _actLog = new ActivityLog();
+            _actLog.SubscriberID = User.Identity.GetUserId();
+            _actLog.EmailAddress = subscriber_Epaper.EmailAddress;
+            _actLog.Role = (User.IsInRole("Admin") ? "Admin" : "Staff");
+
             if (ModelState.IsValid)
             {
                 db.Entry(subscriber_Epaper).State = EntityState.Modified;
                 await db.SaveChangesAsync();
+                //log
+                _actLog.LogInformation = "Modified subscription date (" + User.Identity.Name + ")";
+                Util.LogUserActivity(_actLog);
+
                 return RedirectToAction("Index");
             }
             ViewBag.SubscriberID = new SelectList(db.subscribers, "SubscriberID", "EmailAddress", subscriber_Epaper.SubscriberID);

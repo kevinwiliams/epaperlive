@@ -10,6 +10,7 @@ using System.Web.Mvc;
 using ePaperLive.DBModel;
 using ePaperLive.Models;
 using System.Data.SqlClient;
+using Microsoft.AspNet.Identity;
 
 namespace ePaperLive.Views.Admin.PrintSub
 {
@@ -132,6 +133,11 @@ namespace ePaperLive.Views.Admin.PrintSub
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(PrintSubscribers printSubscribers)
         {
+            var _actLog = new ActivityLog();
+            _actLog.SubscriberID = User.Identity.GetUserId();
+            _actLog.EmailAddress = printSubscribers.EmailAddress;
+            _actLog.Role = (User.IsInRole("Admin") ? "Admin" : "Circulation");
+
             if (ModelState.IsValid)
             {
                 var sql = @"
@@ -146,6 +152,10 @@ namespace ePaperLive.Views.Admin.PrintSub
                 var Id = new SqlParameter("@Id", printSubscribers.AddressID);
 
                 await db.Database.ExecuteSqlCommandAsync(sql, new[] { newCircProID, Id });
+                
+                //log
+                _actLog.LogInformation = "Updated CircPro ID (" + User.Identity.Name + ")";
+                Util.LogUserActivity(_actLog);
                 return RedirectToAction("Index");
             }
             return View(printSubscribers);
