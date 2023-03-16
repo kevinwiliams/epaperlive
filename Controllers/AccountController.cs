@@ -3282,13 +3282,13 @@ namespace ePaperLive.Controllers
                     LogUserActivity(_actLog);
 
                     //tag admin created subs
-                    switch (lastTransaction.PaymentType)
+                    switch (lastTransaction.CardType)
                     {
                         case "CHECK":
                         case "CASH":
                         case "BANK":
                         case "STAFF":
-                            adminTag = lastTransaction.PaymentType;
+                            adminTag = lastTransaction.CardType;
                             isRenewal = "";
                             break;
                         default:
