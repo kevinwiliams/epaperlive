@@ -14,7 +14,7 @@ using System.Data.Entity;
 using System.Configuration;
 using System.Data;
 
-namespace ePaperLive.Controllers.Admin.Subscribers
+namespace ePaperLive.Controllers
 {
     [Authorize(Roles = "Admin")]
     [RoutePrefix("Admin/Subscribers")]

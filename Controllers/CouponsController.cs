@@ -10,7 +10,7 @@ using System.Web.Mvc;
 using ePaperLive.DBModel;
 using ePaperLive.Models;
 
-namespace ePaperLive.Views.Admin.Coupon
+namespace ePaperLive.Controllers
 {
     [Authorize(Roles = "Admin")]
     [RoutePrefix("Admin/Coupons")]

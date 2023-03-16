@@ -12,7 +12,7 @@ using ePaperLive.Models;
 using System.Data.SqlClient;
 using Microsoft.AspNet.Identity;
 
-namespace ePaperLive.Views.Admin.PrintSub
+namespace ePaperLive.Controllers
 {
     [Authorize(Roles = "Admin,Circulation")]
     [RoutePrefix("Admin/PrintSub")]

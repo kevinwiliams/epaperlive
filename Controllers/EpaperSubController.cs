@@ -13,7 +13,7 @@ using System.IO;
 using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
 
-namespace ePaperLive.Controllers.Admin.EpaperSub
+namespace ePaperLive.Controllers
 {
     [Authorize(Roles = "Admin, Circulation")]
     [RoutePrefix("Admin/EpaperSub")]
@@ -252,7 +252,21 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
                         // 2 Character Sub Type
                         var reSubType = form["SubType"].ToUpper().Substring(0, 2);
 
-                        var OrderNumber = (paymentType.Contains("COMP") || paymentType.Contains("STAFF")) ? "COMPLIMENTARY-SUBSCRIPTION" : (paymentType.Contains("HC-COMP")) ? "HC-COMPLIMENTARY-SUBSCRIPTION" : $"{reSubType}{"-"}{DateTime.Now.ToString("yyyyMMddhhmmssfffff")}{"-"}{currency}{"-"}{paddedRateKey}";
+                        var OrderNumber = "";
+
+                        switch (paymentType)
+                        {
+                            case "COMP":
+                            case "STAFF":
+                                OrderNumber = "COMPLIMENTARY-SUBSCRIPTION";
+                                break;
+                            case "HC-COMP":
+                                OrderNumber = "HC-COMPLIMENTARY-SUBSCRIPTION";
+                                break;
+                            default:
+                                OrderNumber = $"{reSubType}{"-"}{DateTime.Now.ToString("yyyyMMddhhmmssfffff")}{"-"}{currency}{"-"}{paddedRateKey}";
+                                break;
+                        }
 
                         PaymentDetails payment = new PaymentDetails
                         {

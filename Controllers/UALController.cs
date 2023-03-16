@@ -12,60 +12,62 @@ using ePaperLive.Models;
 
 namespace ePaperLive.Controllers
 {
-    [Authorize (Roles ="Admin")]
-    [RoutePrefix("Admin/Logs")]
+    [Authorize(Roles = "Admin")]
+    [RoutePrefix("Admin/UserActivtyLog")]
     [Route("action = index")]
-    public class LogErrorsController : Controller
+    public class UALController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        // GET: LogErrors
+        // GET: UAL
         [Route]
         public async Task<ActionResult> Index()
         {
-            return View(await db.log_errors.AsNoTracking().ToListAsync());
+            return View(await db.User_Activity_Logs.ToListAsync());
         }
 
-        // GET: LogErrors/Details/5
-        [Route("details/{id}")]
+        // GET: UAL/Details/5
+        [Route("details/{id:int}")]
         public async Task<ActionResult> Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            log_errors log_errors = await db.log_errors.FindAsync(id);
-            if (log_errors == null)
+            user_activity_log user_activity_log = await db.User_Activity_Logs.FindAsync(id);
+            if (user_activity_log == null)
             {
                 return HttpNotFound();
             }
-            return View(log_errors);
+            return View(user_activity_log);
         }
 
-        // GET: LogErrors/Create
+        // GET: UAL/Create
+        [Route("create")]
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: LogErrors/Create
+        // POST: UAL/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Route("create")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "errID,err_msg,err_date,err_time,err_name,stacktrace")] log_errors log_errors)
+        public async Task<ActionResult> Create([Bind(Include = "LogID,SubscriberID,Role,EmailAddress,IPAddress,LogInformation,SystemInformation,CreatedAt")] user_activity_log user_activity_log)
         {
             if (ModelState.IsValid)
             {
-                db.log_errors.Add(log_errors);
+                db.User_Activity_Logs.Add(user_activity_log);
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
 
-            return View(log_errors);
+            return View(user_activity_log);
         }
 
-        // GET: LogErrors/Edit/5
+        // GET: UAL/Edit/5
         [Route("edit/{id:int}")]
         public async Task<ActionResult> Edit(int? id)
         {
@@ -73,32 +75,32 @@ namespace ePaperLive.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            log_errors log_errors = await db.log_errors.FindAsync(id);
-            if (log_errors == null)
+            user_activity_log user_activity_log = await db.User_Activity_Logs.FindAsync(id);
+            if (user_activity_log == null)
             {
                 return HttpNotFound();
             }
-            return View(log_errors);
+            return View(user_activity_log);
         }
 
-        // POST: LogErrors/Edit/5
+        // POST: UAL/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [Route("edit/{id:int}")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "errID,err_msg,err_date,err_time,err_name,stacktrace")] log_errors log_errors)
+        public async Task<ActionResult> Edit([Bind(Include = "LogID,SubscriberID,Role,EmailAddress,IPAddress,LogInformation,SystemInformation,CreatedAt")] user_activity_log user_activity_log)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(log_errors).State = EntityState.Modified;
+                db.Entry(user_activity_log).State = EntityState.Modified;
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            return View(log_errors);
+            return View(user_activity_log);
         }
 
-        // GET: LogErrors/Delete/5
+        // GET: UAL/Delete/5
         [Route("delete/{id:int}")]
         public async Task<ActionResult> Delete(int? id)
         {
@@ -106,22 +108,22 @@ namespace ePaperLive.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            log_errors log_errors = await db.log_errors.FindAsync(id);
-            if (log_errors == null)
+            user_activity_log user_activity_log = await db.User_Activity_Logs.FindAsync(id);
+            if (user_activity_log == null)
             {
                 return HttpNotFound();
             }
-            return View(log_errors);
+            return View(user_activity_log);
         }
 
-        // POST: LogErrors/Delete/5
+        // POST: UAL/Delete/5
         [HttpPost, ActionName("Delete")]
         [Route("delete/{id:int}")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            log_errors log_errors = await db.log_errors.FindAsync(id);
-            db.log_errors.Remove(log_errors);
+            user_activity_log user_activity_log = await db.User_Activity_Logs.FindAsync(id);
+            db.User_Activity_Logs.Remove(user_activity_log);
             await db.SaveChangesAsync();
             return RedirectToAction("Index");
         }

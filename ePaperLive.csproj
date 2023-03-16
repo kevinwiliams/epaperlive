@@ -373,6 +373,7 @@
     <Compile Include="Controllers\CouponsController.cs" />
     <Compile Include="Controllers\AddressController.cs" />
     <Compile Include="Controllers\LogErrorsController.cs" />
+    <Compile Include="Controllers\UALController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\MIGRATION-SCRIPT.sql" />
@@ -692,6 +693,11 @@
     <Content Include="Views\Emails\PasswordReset.cshtml" />
     <Content Include="Views\Account\FreeAnniversaryMonth.cshtml" />
     <Content Include="Views\Reports\SignUps.cshtml" />
+    <Content Include="Views\UAL\Create.cshtml" />
+    <Content Include="Views\UAL\Delete.cshtml" />
+    <Content Include="Views\UAL\Details.cshtml" />
+    <Content Include="Views\UAL\Edit.cshtml" />
+    <Content Include="Views\UAL\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\roslyn\" />

@@ -1,0 +1,100 @@
+﻿@model IEnumerable<ePaperLive.DBModel.user_activity_log>
+
+@{
+    ViewBag.Title = "User Activity Log";
+}
+
+<div id="main">
+
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+        <div class="container">
+
+            <ol>
+                <li><a href="@Url.Action("index", "home")">Home</a></li>
+                <li>@ViewData["Title"]</li>
+            </ol>
+            <h2>@ViewData["Title"]</h2>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+    <!-- ======= Wizard Section ======= -->
+    <section id="portfolio-details" class="portfolio-details">
+        <div class="container">
+
+            <div class="row gy-4">
+                <div class="col-lg-12">
+                    <!-- start:wizrd -->
+                    <table  class="table table-hover table-responsive table-striped small" id="UALList" width="100%">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Role)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.EmailAddress)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.IPAddress)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.LogInformation)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.SystemInformation)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.CreatedAt)
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Role)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.EmailAddress)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.IPAddress)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.LogInformation)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.SystemInformation)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.CreatedAt)
+                                    </td>
+
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+                    <!-- end:wizrd -->
+                </div>
+
+
+            </div>
+
+        </div>
+    </section><!-- End Wizard Section -->
+
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $('#UALList').DataTable({
+                "pageLength": 25
+            });
+        });
+
+
+    </script>
+}

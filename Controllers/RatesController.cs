@@ -9,7 +9,7 @@ using System.Web.Mvc;
 using ePaperLive.DBModel;
 using ePaperLive.Models;
 
-namespace ePaperLive.Views.Admin.Rates
+namespace ePaperLive.Controllers
 {
     [Authorize(Roles = "Admin")]
     [RoutePrefix("Admin/Rates")]
