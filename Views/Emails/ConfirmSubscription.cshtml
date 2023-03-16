@@ -263,15 +263,17 @@
                                                                 <td>&nbsp;@Model.Password</td>
                                                             </tr>
                                                         }
-                                                        <tr>
-                                                            <td><strong>Payment</strong></td>
-                                                            <td>&nbsp;@String.Format("{0:C}", transDetails.CardAmount)</td>
-                                                        </tr>
-
-                                                        <tr>
-                                                            <td><strong>Payment Type</strong></td>
-                                                            <td>&nbsp;@transDetails.CardType.ToUpper()</td>
-                                                        </tr>
+                                                        @if (transDetails.CardAmount > 0)
+                                                        {
+                                                            <tr>
+                                                                <td><strong>Payment</strong></td>
+                                                                <td>&nbsp;@String.Format("{0:C}", transDetails.CardAmount)</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td><strong>Payment Type</strong></td>
+                                                                <td>&nbsp;@transDetails.CardType.ToUpper()</td>
+                                                            </tr>
+                                                        }
                                                         @if (transDetails.CardType.ToUpper() == "VISA" || transDetails.CardType.ToUpper() == "MASTERCARD")
                                                         {
                                                             <tr>
