@@ -3274,12 +3274,33 @@ namespace ePaperLive.Controllers
                     var user = await UserManager.FindByNameAsync(emailAddress);
                     var lastTransaction = authSubcriber.PaymentDetails.OrderByDescending(x => x.TranxDate).FirstOrDefault(x => x.TransactionID == 0);
                     var isRenewal = (lastTransaction.IsExtension) ? "RN" : (lastTransaction.CardAmount == 0) ? "COMP" : "NB";
+                    var paymentType = lastTransaction.PaymentType;
+                    var adminTag = "";
+
                     //log
                     _actLog.LogInformation = isRenewal + " Subscription - " + SubType + " / " + lastTransaction.RateDescription;
                     LogUserActivity(_actLog);
-                    
+
+                    //tag admin created subs
+                    switch (lastTransaction.PaymentType)
+                    {
+                        case "CHECK":
+                        case "CASH":
+                        case "BANK":
+                        case "STAFF":
+                            adminTag = lastTransaction.PaymentType;
+                            isRenewal = "";
+                            break;
+                        default:
+                            break;
+                    }
+                    //tag HC comp subs
+                    adminTag = (lastTransaction.OrderNumber.Contains("HC-COMP")) ? "HCC" : adminTag;
+
+                    isRenewal = (adminTag != "") ? "" : isRenewal;
+
                     //set up email
-                    string subject = "Subscription Confirmation (" + SubType + ") - " + isRenewal;
+                    string subject = "Subscription Confirmation (" + SubType + ") - " + isRenewal + adminTag;
                     string body = RenderViewToString(this.ControllerContext, "~/Views/Emails/ConfirmSubscription.cshtml", authSubcriber);
                     await UserManager.SendEmailAsync(user.Id, subject, body);
                     sent = true;

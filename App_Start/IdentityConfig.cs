@@ -45,7 +45,10 @@ namespace ePaperLive
                     domain = (string)settings["email_address_domain"],
                     portNumber = (string)settings["email_port_number"],
                     bccPrint = (string)settings["bcc_print"],
-                    bccEpaper = (string)settings["bcc_epaper"];
+                    bccEpaper = (string)settings["bcc_epaper"],
+                    bccEpaperAdmin = (string)settings["bcc_epaper_admin"],
+                    bccEpaperPrint = (string)settings["bcc_epaper_print"];
+                
 
                 int port;
 
@@ -62,9 +65,22 @@ namespace ePaperLive
 
                 if (mailSubject.Contains("Print"))
                     newMsg.Bcc.Add(bccPrint);
-                
-                if (mailSubject.Contains("Epaper"))
+
+                if (mailSubject.Contains("Epaper") && (mailSubject.Contains("NB") || mailSubject.Contains("RN")))
+                {
                     newMsg.Bcc.Add(bccEpaper);
+                }
+                else
+                {
+                    if (mailSubject.Contains("HCC"))
+                    {
+                        newMsg.Bcc.Add(bccEpaperPrint);
+                    }
+                    else
+                    { 
+                        newMsg.Bcc.Add(bccEpaperAdmin);
+                    }
+                }
 
                 if (mailSubject.Contains("Bundle")) { 
                     newMsg.Bcc.Add(bccEpaper);
