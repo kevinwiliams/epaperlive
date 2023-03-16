@@ -7,7 +7,7 @@ $('#mailSend').val(sendMail.toString());
 
 //console.log(sendMail);
 
-$(document).ready(function () {
+$(function () {
     console.log($('#mailSend').val())
 
     $("#eye").click();
@@ -289,19 +289,20 @@ $("#rates-results").on("click", "[name=RateID]", function (e) {
     let rateType = plan.rateType + '|' + desc + '|' + plan.rateDesc + '|' + plan.ratePrice + '|' + freq;
     let rateId = plan.subId;
 
-    console.log('rateDesc', rateDesc);
+    //console.log('rateDesc', rateDesc);
     $('#RateDescription').val(rateDesc);
-    console.log(plan.rateType);
+    //console.log(plan.rateType);
     $('#SubType').val(plan.rateType);
-    console.log(desc);
-    console.log(rateId);
+    //console.log(desc);
+    //console.log(rateId);
     $('#RateID').val(rateId);
-    console.log(plan.subId);
-    console.log(plan.rateDesc);
-    console.log(plan.ratePrice);
+    //console.log(plan.subId);
+    //console.log(plan.rateDesc);
+    //console.log(plan.ratePrice);
     $('#Currency').val(plan.ratePrice.split(" ")[0]);
     $('#CardAmount').val(plan.ratePrice.split("$")[1]);
-
+    $('[name="GetPaymentList"]').trigger("change");
+    console.log('clicked-s');
 
 
 });
@@ -336,6 +337,9 @@ $("[name=deliveryAddressForm]").on('submit', function (e) {
 
 });
 
-$("#rates-results").on("click", "[name=RateID]", function (e) {
-    $('#PaymentList').trigger('change');
+$("#rates-results").on("click", "[name=RateID]", function (ee) {
+   
+    const e = new Event("change");
+    const element = document.querySelector('#PaymentList')
+    element.dispatchEvent(e);
 });

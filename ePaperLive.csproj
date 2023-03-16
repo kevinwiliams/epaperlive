@@ -346,6 +346,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ActivityLog.cs" />
+    <Compile Include="Models\DataTableParameters.cs" />
     <Compile Include="Models\Eusers.cs" />
     <Compile Include="Models\DeliveryAddress.cs" />
     <Compile Include="Models\AddressDetails.cs" />

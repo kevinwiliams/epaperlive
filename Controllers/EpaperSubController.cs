@@ -11,6 +11,7 @@ using ePaperLive.DBModel;
 using ePaperLive.Models;
 using System.IO;
 using Microsoft.AspNet.Identity;
+using Newtonsoft.Json;
 
 namespace ePaperLive.Controllers.Admin.EpaperSub
 {
@@ -27,6 +28,32 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
         {
             var subscriber_epaper = db.subscriber_epaper.Include(s => s.Subscriber).AsNoTracking();
             return View(await subscriber_epaper.ToListAsync());
+        }
+
+        [HttpPost]
+        [Route]
+        public async Task<ActionResult> Index(DataTableParameters dataTableParameters)
+        {
+            var subscriber_epaper = db.subscriber_epaper;
+            var searchTerm = dataTableParameters.search?.value;
+            var filteredData = subscriber_epaper;
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                filteredData = (DbSet<Subscriber_Epaper>)filteredData.Where(x => x.EmailAddress.Contains(searchTerm));
+            }
+
+            filteredData = (DbSet<Subscriber_Epaper>)filteredData.OrderBy(x => x.EmailAddress).Skip(dataTableParameters.start).Take(dataTableParameters.length == 0 ? 25 : dataTableParameters.length);
+
+            var filteredDataList = await filteredData.ToListAsync();
+
+            return Json(new
+            {
+                draw = dataTableParameters.draw,
+                recordsTotal = subscriber_epaper.Count(),
+                recordsFiltered = filteredData.Count(),
+                data = filteredDataList
+            }, JsonRequestBehavior.AllowGet);
         }
 
         // GET: EpaperSub/Details/5
