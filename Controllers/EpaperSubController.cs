@@ -235,7 +235,8 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
                             AddressLine2 = form["AddressLine2"],
                             CityTown = form["CityTown"].Split(',')[0],
                             StateParish = form["StateParish"].Split(',')[0],
-                            CountryCode = form["CountryCode"]
+                            CountryCode = form["CountryCode"],
+                            Phone = form["Phone"]
                         };
                         authUser.AddressDetails.Add(address);
 
@@ -251,22 +252,8 @@ namespace ePaperLive.Controllers.Admin.EpaperSub
                         // 2 Character Sub Type
                         var reSubType = form["SubType"].ToUpper().Substring(0, 2);
 
-                        var OrderNum = "";
+                        var OrderNumber = (paymentType.Contains("COMP") || paymentType.Contains("STAFF")) ? "COMPLIMENTARY-SUBSCRIPTION" : (paymentType.Contains("HC-COMP")) ? "HC-COMPLIMENTARY-SUBSCRIPTION" : $"{reSubType}{"-"}{DateTime.Now.ToString("yyyyMMddhhmmssfffff")}{"-"}{currency}{"-"}{paddedRateKey}";
 
-                        if (paymentType.Contains("COMP") || paymentType.Contains("STAFF"))
-                        {
-                            OrderNum = "COMPLIMENTARY-SUBSCRIPTION";
-                        }
-                        if(paymentType.Contains("HC-COMP"))
-                        {
-                            OrderNum = "HC-COMPLIMENTARY-SUBSCRIPTION";
-                        }
-                        else
-                        {
-                            OrderNum = $"{reSubType}{"-"}{DateTime.Now.ToString("yyyyMMddhhmmssfffff")}{"-"}{currency}{"-"}{paddedRateKey}";
-                        }
-
-                        var OrderNumber = OrderNum;
                         PaymentDetails payment = new PaymentDetails
                         {
                             OrderNumber = OrderNumber,
