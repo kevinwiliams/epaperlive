@@ -63,7 +63,7 @@ namespace ePaperLive
                 var mailSubject = msg.Subject;
                 newMsg.To.Add(msg.Destination);
 
-                if (mailSubject.Contains("Print"))
+                if (mailSubject.Contains("Print") && mailSubject.Contains("Subscription"))
                     newMsg.Bcc.Add(bccPrint);
 
                 if (mailSubject.Contains("Epaper") && (mailSubject.Contains("NB") || mailSubject.Contains("RN")))
@@ -72,17 +72,20 @@ namespace ePaperLive
                 }
                 else
                 {
-                    if (mailSubject.Contains("HCC"))
+                    if (mailSubject.Contains("Subscription"))
                     {
-                        newMsg.Bcc.Add(bccEpaperPrint);
-                    }
-                    else
-                    { 
-                        newMsg.Bcc.Add(bccEpaperAdmin);
+                        if (mailSubject.Contains("HCC"))
+                        {
+                            newMsg.Bcc.Add(bccEpaperPrint);
+                        }
+                        else
+                        {
+                            newMsg.Bcc.Add(bccEpaperAdmin);
+                        }
                     }
                 }
 
-                if (mailSubject.Contains("Bundle")) { 
+                if (mailSubject.Contains("Bundle") && mailSubject.Contains("Subscription")) { 
                     newMsg.Bcc.Add(bccEpaper);
                     newMsg.Bcc.Add(bccPrint);
                 }
