@@ -13,7 +13,7 @@ using ePaperLive.Models;
 namespace ePaperLive.Controllers
 {
     [Authorize(Roles = "Admin")]
-    [RoutePrefix("Admin/UserActivtyLog")]
+    [RoutePrefix("Admin/UserActivityLog")]
     [Route("action = index")]
     public class UALController : Controller
     {

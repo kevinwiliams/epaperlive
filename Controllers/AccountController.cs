@@ -3258,7 +3258,7 @@ namespace ePaperLive.Controllers
                     //send confirmation email
                     var user = await UserManager.FindByNameAsync(emailAddress);
                     var lastTransaction = authSubcriber.PaymentDetails.OrderByDescending(x => x.TranxDate).FirstOrDefault(x => x.TransactionID == 0);
-                    var isRenewal = (lastTransaction.IsExtension) ? "RN" : (lastTransaction.CardAmount == 0) ? "COMP" : "NB";
+                    var isRenewal = (lastTransaction.CardAmount == 0) ? "COMP" : (lastTransaction.IsExtension) ? "RN" : "NB";
                     var paymentType = lastTransaction.PaymentType;
                     var adminTag = "";
 
