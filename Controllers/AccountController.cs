@@ -2308,7 +2308,7 @@ namespace ePaperLive.Controllers
                         }
                     }
 
-                    var selectedPlan = context.printandsubrates.SingleOrDefault(b => b.Rateid == rateID);
+                    var selectedPlan = context.printandsubrates.AsNoTracking().SingleOrDefault(b => b.Rateid == rateID);
 
                     //save transaction log
                     var lastTransaction = authUser.PaymentDetails.OrderByDescending(x => x.TranxDate).FirstOrDefault(x => x.TransactionID > 0);
@@ -2333,12 +2333,15 @@ namespace ePaperLive.Controllers
                     context.subscriber_tranx.Add(objTran);
                     await context.SaveChangesAsync();
 
-                    var existingEpaperPlan = authUser.SubscriptionDetails.FirstOrDefault(x => x.isActive == true && (x.SubType == "Epaper" || x.SubType == "Bundle"));
-                    var existingPrintPlan = authUser.SubscriptionDetails.FirstOrDefault(x => x.isActive == true && (x.SubType == "Print" || x.SubType == "Bundle"));
+                    var existingEpaperPlan = authUser.SubscriptionDetails.FirstOrDefault(x => (x.SubType == "Epaper" || x.SubType == "Bundle"));
+                    var existingPrintPlan = authUser.SubscriptionDetails.FirstOrDefault(x => (x.SubType == "Print" || x.SubType == "Bundle"));
+
 
                     //save based on subscription
                     if (selectedPlan != null)
                     {
+                        var subType = (selectedPlan.RateDescr.Contains("Coupon") || selectedPlan.Rate == 0) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString();
+
                         switch (selectedPlan.Type)
                         {
                             case "Print":
@@ -2347,26 +2350,23 @@ namespace ePaperLive.Controllers
                                     if (printSub != null)
                                     {
                                         //update existing subscription
-                                        var result = context.subscriber_print.FirstOrDefault(x => x.SubscriberID == SubscriberID && x.IsActive == true);
+                                        var result = context.subscriber_print.FirstOrDefault(x => x.SubscriberID == SubscriberID);
                                         if (result != null)
                                         {
                                             context.Entry(result).State = EntityState.Modified;
 
-                                            //result.DeliveryInstructions = objP.DeliveryInstructions;
-                                            //result.RateID = objP.RateID;
+                                            result.DeliveryInstructions = objP.DeliveryInstructions;
+                                            result.RateID = objP.RateID;
+                                            result.AddressID = objDelAdd.AddressID;
+                                            result.OrderNumber = objTran.OrderID;
+                                            result.PlanDesc = selectedPlan.RateDescr;
+                                            result.StartDate = objP.StartDate;
+                                            result.EndDate = objP.EndDate;
                                             result.IsActive = false;
+                                            result.CreatedAt = DateTime.Now;
                                             await context.SaveChangesAsync();
                                         }
 
-                                        //save print subscription
-                                        objP.AddressID = objDelAdd.AddressID;
-                                        objP.SubscriberID = SubscriberID;
-                                        objP.OrderNumber = objTran.OrderID;
-                                        objP.PlanDesc = selectedPlan.RateDescr;
-                                        objP.StartDate = result.StartDate;
-                                        objP.EndDate = result.EndDate.AddDays((double)selectedPlan.PrintTerm * 7);
-                                        context.subscriber_print.Add(objP);
-                                        await context.SaveChangesAsync();
                                     }
                                    
                                 }
@@ -2388,34 +2388,28 @@ namespace ePaperLive.Controllers
                                     if (epaperSub != null)
                                     {
                                         //update existing subscription
-                                        var result = context.subscriber_epaper.FirstOrDefault(x => x.SubscriberID == SubscriberID && x.IsActive == true);
+                                        var result = context.subscriber_epaper.FirstOrDefault(x => x.SubscriberID == SubscriberID);
                                         if (result != null)
                                         {
                                             context.Entry(result).State = EntityState.Modified;
 
-                                            //result.RateID = (int)rateID;
+                                            result.RateID = objE.RateID;
                                             //result.EndDate = objE.EndDate.AddDays((double)selectedPlan.ETerm);
+                                            result.SubType = subType;
+                                            result.OrderNumber = objTran.OrderID;
+                                            result.PlanDesc = selectedPlan.RateDescr;
+                                            result.StartDate = objE.StartDate;
+                                            result.EndDate = objE.EndDate;
                                             result.IsActive = false;
+                                            result.CreatedAt = DateTime.Now;
                                             await context.SaveChangesAsync();
                                         }
-
-                                        //save epaper subscription
-                                        var subType = (selectedPlan.RateDescr.Contains("Coupon") || selectedPlan.Rate == 0) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString();
-                                        objE.SubType = subType;
-                                        objE.SubscriberID = SubscriberID;
-                                        objE.OrderNumber = objTran.OrderID;
-                                        objE.PlanDesc = selectedPlan.RateDescr;
-                                        objE.StartDate = result.StartDate;
-                                        objE.EndDate = result.EndDate.AddDays((double)selectedPlan.ETerm);
-                                        context.subscriber_epaper.Add(objE);
-                                        await context.SaveChangesAsync();
                                     }
                                     
                                 }
                                 else
                                 {
                                     //save epaper subscription
-                                    var subType = (selectedPlan.RateDescr.Contains("Coupon") || selectedPlan.Rate == 0) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString();
                                     objE.SubType = subType;
                                     objE.SubscriberID = SubscriberID;
                                     objE.PlanDesc = selectedPlan.RateDescr;
@@ -2429,27 +2423,23 @@ namespace ePaperLive.Controllers
                                 if (existingPrintPlan != null)
                                 {
                                     //update existing subscription
-                                    var result = context.subscriber_print.FirstOrDefault(x => x.SubscriberID == SubscriberID && x.IsActive == true);
+                                    var result = context.subscriber_print.FirstOrDefault(x => x.SubscriberID == SubscriberID);
                                     if (result != null)
                                     {
                                         context.Entry(result).State = EntityState.Modified;
 
-                                        //result.DeliveryInstructions = objP.DeliveryInstructions;
-                                        //result.RateID = objP.RateID;
-                                        //result.EndDate = objP.EndDate.AddDays((double)selectedPlan.PrintTerm * 7);
+                                        result.DeliveryInstructions = objP.DeliveryInstructions;
+                                        result.RateID = objP.RateID;
+                                        result.AddressID = objDelAdd.AddressID;
+                                        result.SubscriberID = SubscriberID;
+                                        result.PlanDesc = selectedPlan.RateDescr;
+                                        result.OrderNumber = objTran.OrderID;
+                                        result.StartDate = objP.StartDate;
+                                        result.EndDate = objP.EndDate;
                                         result.IsActive = false;
+                                        result.CreatedAt = DateTime.Now;
                                         await context.SaveChangesAsync();
                                     }
-                                    //save print subscription
-                                    objP.AddressID = objDelAdd.AddressID;
-                                    objP.SubscriberID = SubscriberID;
-                                    objP.PlanDesc = selectedPlan.RateDescr;
-                                    objP.OrderNumber = objTran.OrderID;
-                                    objP.StartDate = result.StartDate;
-                                    objP.EndDate = result.EndDate.AddDays((double)selectedPlan.PrintTerm * 7);
-                                    context.subscriber_print.Add(objP);
-                                    await context.SaveChangesAsync();
-
                                 }
                                 else
                                 {
@@ -2470,26 +2460,21 @@ namespace ePaperLive.Controllers
                                     {
                                         context.Entry(result).State = EntityState.Modified;
 
-                                        //result.RateID = (int)rateID;
-                                        //result.EndDate = objE.EndDate.AddDays((double)selectedPlan.ETerm);
+                                        result.RateID = objE.RateID;
+                                        result.SubType = subType;
+                                        result.PlanDesc = selectedPlan.RateDescr;
+                                        result.OrderNumber = objTran.OrderID;
+                                        result.StartDate = objE.StartDate;
+                                        result.EndDate = objE.EndDate;
                                         result.IsActive = false;
+                                        result.CreatedAt = DateTime.Now;
                                         await context.SaveChangesAsync();
                                     }
-                                    //save epaper subscription
-                                    var subType = (selectedPlan.RateDescr.Contains("Coupon") || selectedPlan.Rate == 0) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString();
-                                    objE.SubType = subType;
-                                    objE.SubscriberID = SubscriberID;
-                                    objE.PlanDesc = selectedPlan.RateDescr;
-                                    objE.OrderNumber = objTran.OrderID;
-                                    objE.StartDate = result.StartDate;
-                                    objE.EndDate = result.EndDate.AddDays((double)selectedPlan.ETerm);
-                                    context.subscriber_epaper.Add(objE);
-                                    await context.SaveChangesAsync();
+                                   
                                 }
                                 else
                                 {
                                     //save epaper subscription
-                                    var subType = (selectedPlan.RateDescr.Contains("Coupon") || selectedPlan.Rate == 0) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString();
                                     objE.SubType = subType;
                                     objE.SubscriberID = SubscriberID;
                                     objE.PlanDesc = selectedPlan.RateDescr;
