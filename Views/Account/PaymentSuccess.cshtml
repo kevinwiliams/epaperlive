@@ -111,6 +111,8 @@
                         }
                         <li><strong>Email</strong>: <span class="text-danger">@Model.EmailAddress</span></li>
                         <li><strong>Phone</strong>: <span class="">@phoneNumber</span></li>
+                        @if (transDetails.CardType.ToUpper() == "VISA" || transDetails.CardType.ToUpper() == "MASTERCARD")
+                        {
                         <li><strong>Amount</strong>: <span class="text-success">@String.Format("{0:C}", transDetails.CardAmount)</span></li>
                         <li>
                             <strong>Card</strong>: <span class="">
@@ -119,6 +121,7 @@
                                 ex: @transDetails.CardExp
                             </span>
                         </li>
+                        }
                     </ul>
                         @if (Model.AddressDetails != null)
                         {

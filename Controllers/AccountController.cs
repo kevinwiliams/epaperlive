@@ -665,6 +665,8 @@ namespace ePaperLive.Controllers
                             {
                                 foreach (var payments in tableData.Subscriber_Tranx)
                                 {
+                                    var matchedSub = SubscriptionList.FirstOrDefault(x => x.OrderNumber == payments.OrderID);
+                                    var subType = (payments.OrderID.Contains("PR")) ? "Print" : (payments.OrderID.Contains("BU")) ? "Bundle" : "Epaper";
                                     PaymentDetails paymentDetails = new PaymentDetails
                                     {
                                         CardAmount = (decimal)payments.TranxAmount,
@@ -675,11 +677,14 @@ namespace ePaperLive.Controllers
                                         TranxDate = payments.TranxDate,
                                         RateDescription = payments.PlanDesc,
                                         TransactionID = payments.Subscriber_TranxID,
-                                        OrderNumber = payments.OrderID
-                                    };
+                                        OrderNumber = payments.OrderID,
+                                        SubType = subType,
+                                        RefundRequested = payments.RefundRequested,
+                                        IsActive = (matchedSub != null) ? matchedSub.isActive : false
+                                };
                                     PaymentsList.Add(paymentDetails);
 
-                                    //Update subscription if user requested refund
+                                    //Update subscription if user requested refund : TO BE REMOVED
                                     if (SubscriptionList.FirstOrDefault(x => x.OrderNumber == payments.OrderID) != null)
                                         SubscriptionList.FirstOrDefault(x => x.OrderNumber == payments.OrderID).RefundRequested = payments.RefundRequested;
                                 }
@@ -728,7 +733,7 @@ namespace ePaperLive.Controllers
             try
             {
                 AuthSubcriber authSubcriber = GetAuthSubscriber();
-                List<SubscriptionDetails> subscriptionDetails = authSubcriber.SubscriptionDetails;
+                List<PaymentDetails> subscriptionDetails = authSubcriber.PaymentDetails;
                 if (subscriptionDetails != null)
                 {
 
@@ -824,6 +829,7 @@ namespace ePaperLive.Controllers
                             result.RefundRequested = true;
                             await context.SaveChangesAsync();
                             authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.OrderNumber == orderNumber).RefundRequested = true;
+                            authSubcriber.PaymentDetails.FirstOrDefault(x => x.OrderNumber == orderNumber).RefundRequested = true;
                         }
 
                         var type = orderNumber.Split('-')[0].Trim();

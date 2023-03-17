@@ -63,6 +63,8 @@ namespace ePaperLive.Models
         public string OrderNumber { get; set; }
         public bool IsExtension { get; set; }
         public string PaymentType { get; set; }
+        public bool RefundRequested { get; set; }
+        public bool IsActive { get; set; }
     }
 
     public enum PaymentMethod

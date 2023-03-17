@@ -1,6 +1,6 @@
 ﻿@using ePaperLive.Models
 
-@model IEnumerable<ePaperLive.Models.SubscriptionDetails>
+@model IEnumerable<ePaperLive.Models.PaymentDetails>
 <!-- ======= Breadcrumbs ======= -->
 <section id="breadcrumbs" class="breadcrumbs">
     <div class="container">
@@ -26,16 +26,18 @@
                 @Html.DisplayNameFor(model => model.SubType)
             </th>
             <th>
-                Start Date
+                Transaction Date
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.EndDate)
+                Rate
             </th>
-
+            <th>
+                Order Number
+            </th>
             <th></th>
         </tr>
 
-        @foreach (var item in Model)
+        @foreach (var item in Model.OrderByDescending(x => x.TranxDate))
         {
             <tr>
                 <td>
@@ -45,15 +47,18 @@
                     @Html.DisplayFor(modelItem => item.SubType)
                 </td>
                 <td>
-                    @Convert.ToDateTime(item.StartDate).ToString("dd MMMM yyyy")
+                    @Convert.ToDateTime(item.TranxDate).ToString("dd MMMM yyyy")
                 </td>
                 <td>
-                    @Convert.ToDateTime(item.EndDate).ToString("dd MMMM yyyy")
+                    $@Html.DisplayFor(modelItem => item.CardAmount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderNumber).ToString().ToUpper()
                 </td>
                 <td>
                     @*@Html.ActionLink("Details", "Details", new { id = item.RateID }) |*@
 
-                    @if (!item.RefundRequested && item.isActive && (item.OrderNumber.Contains("EP") || item.OrderNumber.Contains("PR") || item.OrderNumber.Contains("BU")))
+                    @if (!item.RefundRequested && item.IsActive && (item.OrderNumber.Contains("EP") || item.OrderNumber.Contains("PR") || item.OrderNumber.Contains("BU")))
                     {
                         <a href="#" class="" name="cancelBtn" id="@(item.OrderNumber)" data-bs-toggle="modal" data-bs-target="#request-refund">Refund Subscription</a>
                     }
