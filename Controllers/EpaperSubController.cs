@@ -12,6 +12,8 @@ using ePaperLive.Models;
 using System.IO;
 using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
+using System.Data.SqlClient;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace ePaperLive.Controllers
 {
@@ -406,6 +408,69 @@ namespace ePaperLive.Controllers
             
 
             return View(authUser);
+        }
+
+        [Route("addcorp")]
+        public ActionResult AddCorporateRelations()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Route("addcorp")]
+        public async Task<ActionResult> AddCorporateRelations(CorporateAccount corporateAccount)
+        {
+            var _actLog = new ActivityLog();
+            _actLog.SubscriberID = User.Identity.GetUserId();
+            _actLog.EmailAddress = corporateAccount.EmailAddress;
+            _actLog.Role = (User.IsInRole("Admin") ? "Admin" : "Circulation");
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var ac = new AccountController();
+                    ac.InitializeController(this.Request.RequestContext);
+                    ApplicationDbContext db = new ApplicationDbContext();
+
+                    var parentID = await db.Users.FirstOrDefaultAsync(x => x.UserName == corporateAccount.EmailAddress);
+
+                    if (parentID != null)
+                    {
+                        var managedAccts = corporateAccount.ManagedAccts.Split(',');
+
+                        foreach (var account in managedAccts)
+                        {
+                            var email = account.TrimEnd().TrimStart();
+
+                            var sql = @"
+                            UPDATE [dbo].[Subscriber_Epaper]
+                            SET [ParentId] = @ParentEmail
+                            WHERE [EmailAddress] = @ManagedEmail";
+
+                            var parentEmail = new SqlParameter("@ParentEmail", parentID.Id);
+                            var managedEmail = new SqlParameter("@ManagedEmail", email);
+
+                            await db.Database.ExecuteSqlCommandAsync(sql, new[] { parentEmail, managedEmail });
+                        }
+
+                        //log
+                        _actLog.LogInformation = "Added Managed Accounts (" + User.Identity.Name + ") [" + corporateAccount.ManagedAccts.ToString() + "]";
+                        Util.LogUserActivity(_actLog);
+                        ViewBag.Msg = "Corporate relationship saved";
+                        return View(corporateAccount);
+                    }
+                   
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.Msg = "Corporate relationship saved failed";
+                    Util.LogError(ex);
+                    return View(corporateAccount);
+                }
+
+            }
+            return View(corporateAccount);
         }
 
         [Route("generatepassword")]

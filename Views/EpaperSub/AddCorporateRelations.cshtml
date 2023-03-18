@@ -1,0 +1,74 @@
+﻿@model ePaperLive.Models.CorporateAccount
+
+@{
+    ViewBag.Title = "Add Corporate Relations";
+}
+
+
+
+
+<div id="main">
+
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+        <div class="container">
+
+            <ol>
+                <li><a href="@Url.Action("index", "home")">Home</a></li>
+                <li><a href="@Url.Action("epapersub", "admin")">ePaper Subscribers</a></li>
+                <li>@ViewData["Title"]</li>
+            </ol>
+            <h2>@ViewData["Title"]</h2>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+    <!-- ======= Wizard Section ======= -->
+    <section id="portfolio-details" class="portfolio-details">
+        <div class="container">
+
+            <div class="row gy-4">
+                <div class="col-lg-8">
+                    <!-- start:wizrd -->
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-horizontal">
+                            <h4>CorporateAccount</h4>
+                            <hr />
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            <h5>@ViewBag.Msg</h5>
+
+                            <div class="form-group">
+                                Enter Parent Account Email
+                                <div class="col-md-5 py-2">
+                                    @Html.EditorFor(model => model.EmailAddress, new { htmlAttributes = new { @class = "form-control", @required = "required" } })
+                                    @Html.ValidationMessageFor(model => model.EmailAddress, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="">
+                                Add comma delimited email accounts managed
+                                <div class="col-md-12 py-2">
+                                    @Html.TextAreaFor(model => model.ManagedAccts, new { htmlAttributes = new { @class = "form-control", @required = "required"} })
+                                    @Html.ValidationMessageFor(model => model.ManagedAccts, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-md-10">
+                                    <input type="submit" value="Create Relationship" class="btn btn-sign-in" />
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <!-- end:wizrd -->
+                </div>
+                
+
+            </div>
+
+        </div>
+    </section><!-- End Wizard Section -->
+
+</div><!-- End #main -->

@@ -27,5 +27,7 @@ namespace ePaperLive.DBModel
         public virtual Subscriber Subscriber { get; set; }
         public string PlanDesc { get; set; }
         public string OrderNumber { get; set; }
+        [StringLength(128)]
+        public string ParentId { get; set; }
     }
 }

@@ -346,6 +346,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ActivityLog.cs" />
+    <Compile Include="Models\CorporateAccount.cs" />
     <Compile Include="Models\DataTableParameters.cs" />
     <Compile Include="Models\Eusers.cs" />
     <Compile Include="Models\DeliveryAddress.cs" />
@@ -698,6 +699,7 @@
     <Content Include="Views\UAL\Details.cshtml" />
     <Content Include="Views\UAL\Edit.cshtml" />
     <Content Include="Views\UAL\Index.cshtml" />
+    <Content Include="Views\EpaperSub\AddCorporateRelations.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\roslyn\" />
