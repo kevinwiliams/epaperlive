@@ -80,7 +80,7 @@
                                             @Html.DisplayFor(modelItem => item.CardExp)
                                         </td>
                                         <td>
-                                            @Html.DisplayFor(modelItem => item.TranxAmount)
+                                            @String.Format("{0:C}", item.TranxAmount)
                                         </td>
                                         <td>
                                             @Html.DisplayFor(modelItem => item.TranxDate)
@@ -121,7 +121,11 @@
 @section scripts{
 <script>
     $('#tranxList').DataTable({
-        "pageLength": 25
+        "pageLength": 25,
+        dom: 'Bfrtip',
+        buttons: [
+           'excel', 'print'
+        ]
     });
 </script>
 }

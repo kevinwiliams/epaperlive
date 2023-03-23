@@ -2372,20 +2372,21 @@ namespace ePaperLive.Controllers
                                             result.CreatedAt = DateTime.Now;
                                             await context.SaveChangesAsync();
                                         }
+                                        else
+                                        {
+                                            //save print subscription
+                                            objP.AddressID = objDelAdd.AddressID;
+                                            objP.SubscriberID = SubscriberID;
+                                            objP.PlanDesc = selectedPlan.RateDescr;
+                                            objP.OrderNumber = objTran.OrderID;
+                                            context.subscriber_print.Add(objP);
+                                            await context.SaveChangesAsync();
+                                        }
 
                                     }
                                    
                                 }
-                                else
-                                {
-                                    //save print subscription
-                                    objP.AddressID = objDelAdd.AddressID;
-                                    objP.SubscriberID = SubscriberID;
-                                    objP.PlanDesc = selectedPlan.RateDescr;
-                                    objP.OrderNumber = objTran.OrderID;
-                                    context.subscriber_print.Add(objP);
-                                    await context.SaveChangesAsync();
-                                }
+                               
                                 break;
 
                             case "Epaper":
@@ -2410,19 +2411,21 @@ namespace ePaperLive.Controllers
                                             result.CreatedAt = DateTime.Now;
                                             await context.SaveChangesAsync();
                                         }
+                                        else
+                                        {
+                                            //save epaper subscription
+                                            objE.SubType = subType;
+                                            objE.SubscriberID = SubscriberID;
+                                            objE.PlanDesc = selectedPlan.RateDescr;
+                                            objE.OrderNumber = objTran.OrderID;
+                                            context.subscriber_epaper.Add(objE);
+                                            await context.SaveChangesAsync();
+                                        }
                                     }
                                     
+
                                 }
-                                else
-                                {
-                                    //save epaper subscription
-                                    objE.SubType = subType;
-                                    objE.SubscriberID = SubscriberID;
-                                    objE.PlanDesc = selectedPlan.RateDescr;
-                                    objE.OrderNumber = objTran.OrderID;
-                                    context.subscriber_epaper.Add(objE);
-                                    await context.SaveChangesAsync();
-                                }
+                                
                                 break;
 
                             case "Bundle":
@@ -2446,17 +2449,18 @@ namespace ePaperLive.Controllers
                                         result.CreatedAt = DateTime.Now;
                                         await context.SaveChangesAsync();
                                     }
+                                    else
+                                    {
+                                        //save print subscription
+                                        objP.AddressID = objDelAdd.AddressID;
+                                        objP.SubscriberID = SubscriberID;
+                                        objP.PlanDesc = selectedPlan.RateDescr;
+                                        objP.OrderNumber = objTran.OrderID;
+                                        context.subscriber_print.Add(objP);
+                                        await context.SaveChangesAsync();
+                                    }
                                 }
-                                else
-                                {
-                                    //save print subscription
-                                    objP.AddressID = objDelAdd.AddressID;
-                                    objP.SubscriberID = SubscriberID;
-                                    objP.PlanDesc = selectedPlan.RateDescr;
-                                    objP.OrderNumber = objTran.OrderID;
-                                    context.subscriber_print.Add(objP);
-                                    await context.SaveChangesAsync();
-                                }
+                                
 
                                 if (existingEpaperPlan != null)
                                 {
@@ -2476,18 +2480,19 @@ namespace ePaperLive.Controllers
                                         result.CreatedAt = DateTime.Now;
                                         await context.SaveChangesAsync();
                                     }
-                                   
+                                    else
+                                    {
+                                        //save epaper subscription
+                                        objE.SubType = subType;
+                                        objE.SubscriberID = SubscriberID;
+                                        objE.PlanDesc = selectedPlan.RateDescr;
+                                        objE.OrderNumber = objTran.OrderID;
+                                        context.subscriber_epaper.Add(objE);
+                                        await context.SaveChangesAsync();
+                                    }
+
                                 }
-                                else
-                                {
-                                    //save epaper subscription
-                                    objE.SubType = subType;
-                                    objE.SubscriberID = SubscriberID;
-                                    objE.PlanDesc = selectedPlan.RateDescr;
-                                    objE.OrderNumber = objTran.OrderID;
-                                    context.subscriber_epaper.Add(objE);
-                                    await context.SaveChangesAsync();
-                                }
+                                
                                 break;
 
                             default:

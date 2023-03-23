@@ -109,6 +109,11 @@
         $('#eDate').html(moment($('[name=endDate]').val()).format('LL'));
 
         $('#dataTable').DataTable({
+            pageLength: 25,
+            dom: 'Bfrtip',
+            buttons: [
+                'excel', 'print'
+            ],
             footerCallback: function (row, data, start, end, display) {
                 var api = this.api();
 

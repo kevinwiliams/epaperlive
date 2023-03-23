@@ -22,6 +22,7 @@ namespace ePaperLive.Controllers
     public class SubscribersController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+        private ActivityLog _actLog = new ActivityLog();
 
         // GET: Subscribers
         [Route]
@@ -87,6 +88,10 @@ namespace ePaperLive.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([Bind(Include = "SubscriberID,FirstName,LastName,UserName,RoleID,Role,AddressID,IsActive")]UsersWithRoles usersWithRoles) 
         {
+            _actLog.SubscriberID = User.Identity.GetUserId();
+            _actLog.EmailAddress = usersWithRoles.UserName;
+            _actLog.Role = (User.IsInRole("Admin") ? "Admin" : "Circulation");
+
             if (ModelState.IsValid)
             {
                 var store = new UserStore<ApplicationUser>(db);
@@ -97,23 +102,37 @@ namespace ePaperLive.Controllers
                 {
                     //AspnetUser
                     user = manager.FindById(usersWithRoles.SubscriberID);
+                    //log
+                    if (user.Email != usersWithRoles.UserName)
+                    {
+                        _actLog.LogInformation = "Updated email address from (" + user.Email + ")";
+                        Util.LogUserActivity(_actLog);
+                    }
+
                     user.Email = usersWithRoles.UserName;
                     user.UserName = usersWithRoles.UserName;
                     await manager.UpdateAsync(user);
 
+                   
+
                     //Subscribers
                     Subscriber subscriber = await db.subscribers.FindAsync(usersWithRoles.SubscriberID);
+                    //log
+                    if (subscriber.IsActive != (bool)usersWithRoles.IsActive)
+                    {
+                        _actLog.LogInformation = "Update user active status from " + subscriber.IsActive + " to " + (bool)usersWithRoles.IsActive;
+                        Util.LogUserActivity(_actLog);
+                    }
 
                     if (subscriber != null)
                     {
                         db.Entry(subscriber).State = EntityState.Modified;
-
+                        
                         subscriber.FirstName = usersWithRoles.FirstName;
                         subscriber.LastName = usersWithRoles.LastName;
                         subscriber.EmailAddress = usersWithRoles.UserName;
                         subscriber.IsActive = (bool)usersWithRoles.IsActive;
                         await db.SaveChangesAsync();
-
                     }
 
                     //Epaper
@@ -199,6 +218,7 @@ namespace ePaperLive.Controllers
             var idParam = new SqlParameter("Id", id);
 
             UsersWithRoles result = await db.Database.SqlQuery<UsersWithRoles>(sql, idParam).FirstOrDefaultAsync();
+           
             if (result == null)
             {
                 return HttpNotFound();
@@ -232,6 +252,12 @@ namespace ePaperLive.Controllers
                         await command.ExecuteNonQueryAsync();
                         connection.Close();
                         result = true;
+
+                        _actLog.SubscriberID = User.Identity.GetUserId();
+                        _actLog.EmailAddress = User.Identity.GetUserName();
+                        _actLog.Role = (User.IsInRole("Admin") ? "Admin" : "Circulation");
+                        _actLog.LogInformation = "Removed user " + emailAddress + " from the database";
+                        Util.LogUserActivity(_actLog);
                     }
                 }
 

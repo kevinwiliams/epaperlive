@@ -4,9 +4,6 @@
     ViewBag.Title = "Add Corporate Relations";
 }
 
-
-
-
 <div id="main">
 
     <!-- ======= Breadcrumbs ======= -->
@@ -48,7 +45,7 @@
                             </div>
 
                             <div class="">
-                                Add comma delimited email accounts managed
+                                Add comma delimited email accounts managed by the above email
                                 <div class="col-md-12 py-2">
                                     @Html.TextAreaFor(model => model.ManagedAccts, new { htmlAttributes = new { @class = "form-control", @required = "required"} })
                                     @Html.ValidationMessageFor(model => model.ManagedAccts, "", new { @class = "text-danger" })
