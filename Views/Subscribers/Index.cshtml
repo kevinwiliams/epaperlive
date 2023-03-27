@@ -35,7 +35,9 @@
                         <thead>
                             <tr>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.FirstName)&nbsp;
+                                    @Html.DisplayNameFor(model => model.FirstName)
+                                </th>
+                                <th>
                                     @Html.DisplayNameFor(model => model.LastName)
                                 </th>
                                 <th>
@@ -51,29 +53,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var item in Model)
-                            {
-                                <tr>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.FirstName) 
-                                        @Html.DisplayFor(modelItem => item.LastName)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.UserName)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Role)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.IsActive)
-                                    </td>
-                                    <td>
-                                        @Html.ActionLink("Edit", "Edit", new { id = item.SubscriberID })
-                                        @Html.ActionLink("Remove", "Delete", new { id = item.SubscriberID })
-
-                                    </td>
-                                </tr>
-                            }
+                            
                         </tbody>
                     </table>
                     <!-- end:wizrd -->
@@ -88,8 +68,57 @@
 
 @section scripts{
 <script>
-    $('#usersWithRoles').DataTable({
-            "pageLength": 25
+    //$('#usersWithRoles').DataTable({
+    //        "pageLength": 25
+    //});
+
+    function formatDate(dateString) {
+        // Extract the milliseconds from the date string
+        var milliseconds = parseInt(dateString.substr(6));
+        // Create a new Date object with the milliseconds
+        var date = new Date(milliseconds);
+        // Format the date as "YYYY-MMM-DD"
+        var formattedDate = date.getFullYear() + '-' + 
+                            date.toLocaleString('default', { month: 'short' }) + '-' + 
+                            date.getDate();
+        return formattedDate;
+    }
+
+    $(document).ready(function () {
+        $('#usersWithRoles').DataTable({
+             dom: 'Bfrtip',
+        buttons: [
+           'excel', 'print'
+        ],
+        "pageLength": 25,
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
+            "url": '@Url.Action("index", "subscribers")',
+            "type": "POST",
+            "dataType": "json",
+            "data": function (d) {
+                console.log(d);
+                
+                d.start = d.start || 0;
+                d.length = d.length || 25; // This sets the default number of records to 10
+            }
+        },
+        "columns": [
+            { "data": "FirstName" },
+            { "data": "LastName" },
+            { "data": "UserName" },
+            { "data": "Role" },
+            { "data": "IsActive" },
+            {
+            "data": "SubscriberID",
+            "render": function (data, type, row, meta) {
+                //console.log(data);
+                return '<a href="/admin/subscribers/edit/' + data + '">Edit</a> | <a href="/admin/subscribers/delete/' + data + '">Delete</a>';
+            }
+        }
+        ]
     });
+});
 </script>
 }

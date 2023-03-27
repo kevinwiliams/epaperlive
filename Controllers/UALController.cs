@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.Mvc;
 using ePaperLive.DBModel;
 using ePaperLive.Models;
+using System.Linq.Expressions;
 
 namespace ePaperLive.Controllers
 {
@@ -23,9 +24,61 @@ namespace ePaperLive.Controllers
         [Route]
         public async Task<ActionResult> Index()
         {
-            return View(await db.User_Activity_Logs.ToListAsync());
+            //return View(await db.User_Activity_Logs.ToListAsync());
+            await Task.FromResult(0);
+            return View();
         }
 
+        [HttpPost]
+        [Route]
+        public async Task<ActionResult> Index(DataTableParameters dataTableParameters)
+        {
+            var user_activity_log = db.User_Activity_Logs.AsQueryable();
+            var searchTerm = dataTableParameters.search?.value;
+            var filteredData = user_activity_log;
+            try
+            {
+                if (!string.IsNullOrEmpty(searchTerm))
+                {
+                    filteredData = filteredData.Where(x => x.EmailAddress.Contains(searchTerm) || x.LogInformation.Contains(searchTerm) || x.SystemInformation.Contains(searchTerm));
+                }
+
+                // Order the data by the specified column and direction
+                if (!string.IsNullOrEmpty(dataTableParameters.order?.FirstOrDefault()?.column.ToString()))
+                {
+                    var sortColumnIndex = int.Parse(dataTableParameters.order.FirstOrDefault().column.ToString());
+                    var sortColumn = dataTableParameters.columns[sortColumnIndex].data;
+                    var sortDirection = dataTableParameters.order.FirstOrDefault().dir == "desc" ? "OrderByDescending" : "OrderBy";
+                    var property = typeof(user_activity_log).GetProperty(sortColumn);
+                    var parameter = Expression.Parameter(typeof(user_activity_log), "p");
+                    var propertyAccess = Expression.MakeMemberAccess(parameter, property);
+                    var orderByExp = Expression.Lambda(propertyAccess, parameter);
+                    var resultExp = Expression.Call(typeof(Queryable), sortDirection, new Type[] { typeof(user_activity_log), property.PropertyType }, filteredData.Expression, Expression.Quote(orderByExp));
+                    filteredData = filteredData.Provider.CreateQuery<user_activity_log>(resultExp);
+                }
+
+                filteredData = filteredData
+                    //.OrderBy(x => x.EmailAddress)
+                    .Skip(dataTableParameters.start)
+                    .Take(dataTableParameters.length == 0 ? 25 : dataTableParameters.length);
+
+                var filteredDataList = await filteredData.ToListAsync();
+
+                return Json(new
+                {
+                    draw = dataTableParameters.draw,
+                    recordsTotal = user_activity_log.Count(),
+                    recordsFiltered = filteredData.Count(),
+                    data = filteredDataList
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+        }
         // GET: UAL/Details/5
         [Route("details/{id:int}")]
         public async Task<ActionResult> Details(int? id)

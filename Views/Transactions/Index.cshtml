@@ -37,23 +37,14 @@
                                         @Html.DisplayNameFor(model => model.CardOwner)
                                     </th>
                                     <th>
-                                        @Html.DisplayNameFor(model => model.CardType)
-                                    </th>
-                                    <th>
-                                        @Html.DisplayNameFor(model => model.CardExp)
-                                    </th>
-
-                                    <th>
                                         @Html.DisplayNameFor(model => model.TranxAmount)
                                     </th>
                                     <th>
                                         @Html.DisplayNameFor(model => model.TranxDate)
                                     </th>
+                                    
                                     <th>
-                                        @Html.DisplayNameFor(model => model.RateID)
-                                    </th>
-                                    <th>
-                                        @Html.DisplayNameFor(model => model.TranxType)
+                                        @Html.DisplayNameFor(model => model.PlanDesc)
                                     </th>
                                     <th>
                                         @Html.DisplayNameFor(model => model.OrderID)
@@ -63,46 +54,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in Model)
-                                {
-                                    <tr>
-
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.EmailAddress)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.CardOwner)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.CardType)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.CardExp)
-                                        </td>
-                                        <td>
-                                            @String.Format("{0:C}", item.TranxAmount)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.TranxDate)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.RateID)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.TranxType)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.OrderID)
-                                        </td>
-
-                               
-                                        <td>
-                                            @Html.ActionLink("Edit", "Edit", new { id = item.Subscriber_TranxID }) |
-                                            @Html.ActionLink("View", "Details", new { id = item.Subscriber_TranxID }) 
-                                            @*@Html.ActionLink("Delete", "Delete", new { id = item.Subscriber_TranxID })*@
-                                        </td>
-                                    </tr>
-                                }
+                                
                             </tbody>
 
                         </table>
@@ -120,12 +72,69 @@
 
 @section scripts{
 <script>
-    $('#tranxList').DataTable({
-        "pageLength": 25,
-        dom: 'Bfrtip',
+    //$('#tranxList').DataTable({
+    //    "pageLength": 25,
+    //    dom: 'Bfrtip',
+    //    buttons: [
+    //       'excel', 'print'
+    //    ]
+    //});
+
+    function formatDate(dateString) {
+    // Extract the milliseconds from the date string
+    var milliseconds = parseInt(dateString.substr(6));
+    // Create a new Date object with the milliseconds
+    var date = new Date(milliseconds);
+    // Format the date as "YYYY-MMM-DD"
+    var formattedDate = date.getFullYear() + '-' + 
+                        date.toLocaleString('default', { month: 'short' }) + '-' + 
+                        date.getDate();
+    return formattedDate;
+}
+
+    $(document).ready(function () {
+        $('#tranxList').DataTable({
+            dom: 'Bfrtip',
         buttons: [
            'excel', 'print'
+        ],
+        "pageLength": 25,
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
+            "url": '@Url.Action("index", "transactions")',
+            "type": "POST",
+            "dataType": "json",
+            "data": function (d) {
+                console.log(d);
+                
+                d.start = d.start || 0;
+                d.length = d.length || 25; // This sets the default number of records to 10
+            }
+        },
+        "columns": [
+            { "data": "EmailAddress" },
+            {   "data": "CardOwner" },
+            {   "data": "TranxAmount" },
+            {
+                "data": "TranxDate",
+                "render": function (data, type, row) {
+                console.log(data);
+                    if(data != null)
+                        return formatDate(data);
+                }
+            },
+            { "data": "PlanDesc" },
+            { "data": "OrderID" },
+            {
+                "data": "Subscriber_TranxID",
+                "render": function (data, type, row, meta) {
+                    //console.log(data);
+                    return '<a href="/admin/transactions/edit/' + data + '">Edit</a>';
+                }
+            }
         ]
     });
+});
 </script>
 }

@@ -29,19 +29,19 @@
                         <thead>
                             <tr>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.Role)
+                                    @Html.DisplayNameFor(model => model.EmailAddress)
                                 </th>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.EmailAddress)
+                                    @Html.DisplayNameFor(model => model.Role)
                                 </th>
                                 <th>
                                     @Html.DisplayNameFor(model => model.IPAddress)
                                 </th>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.LogInformation)
+                                    @Html.DisplayNameFor(model => model.SystemInformation)
                                 </th>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.SystemInformation)
+                                    @Html.DisplayNameFor(model => model.LogInformation)
                                 </th>
                                 <th>
                                     @Html.DisplayNameFor(model => model.CreatedAt)
@@ -49,30 +49,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var item in Model)
-                            {
-                                <tr>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Role)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.EmailAddress)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.IPAddress)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.LogInformation)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.SystemInformation)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.CreatedAt)
-                                    </td>
-
-                                </tr>
-                            }
+                           
                         </tbody>
 
                     </table>
@@ -89,12 +66,59 @@
 
 @section scripts{
     <script>
-        $(document).ready(function () {
-            $('#UALList').DataTable({
-                "pageLength": 25
-            });
-        });
+        //$(document).ready(function () {
+        //    $('#UALList').DataTable({
+        //        "pageLength": 25
+        //    });
+        //});
 
+        function formatDate(dateString) {
+    // Extract the milliseconds from the date string
+    var milliseconds = parseInt(dateString.substr(6));
+    // Create a new Date object with the milliseconds
+    var date = new Date(milliseconds);
+    // Format the date as "YYYY-MMM-DD"
+    var formattedDate = date.getFullYear() + '-' + 
+                        date.toLocaleString('default', { month: 'short' }) + '-' + 
+                        date.getDate();
+    return formattedDate;
+}
+
+    $(document).ready(function () {
+        $('#UALList').DataTable({
+             dom: 'Bfrtip',
+        buttons: [
+           'excel', 'print'
+        ],
+        "pageLength": 25,
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
+            "url": '@Url.Action("index", "ual")',
+            "type": "POST",
+            "dataType": "json",
+            "data": function (d) {
+                console.log(d);
+                
+                d.start = d.start || 0;
+                d.length = d.length || 25; // This sets the default number of records to 10
+            }
+        },
+        "columns": [
+            { "data": "EmailAddress" },
+            { "data": "Role" },
+            { "data": "IPAddress" },
+            { "data": "SystemInformation" },
+            { "data": "LogInformation" },
+             {
+                "data": "CreatedAt",
+                "render": function (data, type, row) {
+                    return formatDate(data);
+                }
+            }
+        ]
+    });
+});
 
     </script>
 }

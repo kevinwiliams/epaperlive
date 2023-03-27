@@ -44,8 +44,7 @@ namespace ePaperLive.Controllers
             {
                 var sql = @"
                     SELECT LEFT([TranxDate], 11) as SignUpDate, COUNT(*) Total FROM [dbo].[Subscriber_Tranx] 
-                    WHERE [TranxDate] 
-                    BETWEEN @startDate AND @endDate 
+                    WHERE [TranxDate] >= @startDate AND [TranxDate] <= @endDate 
                     AND ([OrderID] like '%' + @orderNumber + '%') 
                     GROUP BY LEFT([TranxDate], 11)";
 

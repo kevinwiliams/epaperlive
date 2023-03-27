@@ -13,6 +13,7 @@ using Microsoft.AspNet.Identity;
 using System.Data.Entity;
 using System.Configuration;
 using System.Data;
+using System.Linq.Expressions;
 
 namespace ePaperLive.Controllers
 {
@@ -30,20 +31,90 @@ namespace ePaperLive.Controllers
         {
             using (var context = new ApplicationDbContext())
             {
-                var sql = @"
-                    SELECT s.SubscriberID, s.FirstName, s.LastName, u.UserName,r.Id as RoleID, r.Name As Role, sa.AddressID, s.IsActive
-                    FROM AspNetUsers u
-                    LEFT JOIN AspNetUserRoles ur ON  ur.UserId = u.Id 
-                    LEFT JOIN AspNetRoles r ON r.Id = ur.RoleId
-                    LEFT JOIN Subscribers s ON s.SubscriberID = u.Id			
-                    LEFT JOIN Subscriber_Address sa ON sa.AddressID = s.AddressID";
-                //WHERE AspNetUsers.Id = @Id";
-                //var idParam = new SqlParameter("Id", theUserId);
+                //var sql = @"
+                //    SELECT s.SubscriberID, s.FirstName, s.LastName, u.UserName,r.Id as RoleID, r.Name As Role, sa.AddressID, s.IsActive
+                //    FROM AspNetUsers u
+                //    LEFT JOIN AspNetUserRoles ur ON  ur.UserId = u.Id 
+                //    LEFT JOIN AspNetRoles r ON r.Id = ur.RoleId
+                //    LEFT JOIN Subscribers s ON s.SubscriberID = u.Id			
+                //    LEFT JOIN Subscriber_Address sa ON sa.AddressID = s.AddressID";
+                ////WHERE AspNetUsers.Id = @Id";
+                ////var idParam = new SqlParameter("Id", theUserId);
 
-                var result = await context.Database.SqlQuery<UsersWithRoles>(sql).ToListAsync();
-                return View(result);
+                //var result = await context.Database.SqlQuery<UsersWithRoles>(sql).ToListAsync();
+                await Task.FromResult(0);
+                return View();
             }
            
+        }
+
+        [HttpPost]
+        [Route]
+        public async Task<ActionResult> Index(DataTableParameters dataTableParameters)
+        {
+            var usersRoles = (from u in db.Users
+                                join r in db.Roles on u.Id equals r.Id into rj
+                                from r in rj.DefaultIfEmpty()
+                                join s in db.subscribers on u.Id equals s.SubscriberID into sj
+                                from s in sj.DefaultIfEmpty()
+                                join sa in db.subscriber_address on s.AddressID equals sa.AddressID into saj
+                                from sa in saj.DefaultIfEmpty()
+                                select new UsersWithRoles
+                                {
+                                    SubscriberID = s.SubscriberID,
+                                    FirstName = s.FirstName,
+                                    LastName = s.LastName,
+                                    UserName = u.UserName,
+                                    RoleID = r.Id,
+                                    Role = r.Name,
+                                    AddressID = sa.AddressID,
+                                    IsActive = s.IsActive
+                                }).AsEnumerable();
+
+
+            var searchTerm = dataTableParameters.search?.value;
+            var filteredData = usersRoles.AsQueryable();
+            try
+            {
+                if (!string.IsNullOrEmpty(searchTerm))
+                {
+                    filteredData = filteredData.Where(x => x.UserName.Contains(searchTerm) || x.FirstName.Contains(searchTerm) || x.LastName.Contains(searchTerm));
+                }
+
+                // Order the data by the specified column and direction
+                if (!string.IsNullOrEmpty(dataTableParameters.order?.FirstOrDefault()?.column.ToString()))
+                {
+                    var sortColumnIndex = int.Parse(dataTableParameters.order.FirstOrDefault().column.ToString());
+                    var sortColumn = dataTableParameters.columns[sortColumnIndex].data;
+                    var sortDirection = dataTableParameters.order.FirstOrDefault().dir == "desc" ? "OrderByDescending" : "OrderBy";
+                    var property = typeof(UsersWithRoles).GetProperty(sortColumn);
+                    var parameter = Expression.Parameter(typeof(UsersWithRoles), "p");
+                    var propertyAccess = Expression.MakeMemberAccess(parameter, property);
+                    var orderByExp = Expression.Lambda(propertyAccess, parameter);
+                    var resultExp = Expression.Call(typeof(Queryable), sortDirection, new Type[] { typeof(UsersWithRoles), property.PropertyType }, filteredData.Expression, Expression.Quote(orderByExp));
+                    filteredData = filteredData.Provider.CreateQuery<UsersWithRoles>(resultExp);
+                }
+
+                filteredData = filteredData
+                    .Skip(dataTableParameters.start)
+                    .Take(dataTableParameters.length == 0 ? 25 : dataTableParameters.length);
+
+                var filteredDataList = await filteredData.ToListAsync();
+
+                return Json(new
+                {
+                    draw = dataTableParameters.draw,
+                    recordsTotal = usersRoles.Count(),
+                    recordsFiltered = filteredData.Count(),
+                    data = filteredDataList
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
         }
 
         // GET: Subscribers/Edit/5

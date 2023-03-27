@@ -9,6 +9,9 @@ using System.Web;
 using System.Web.Mvc;
 using ePaperLive.DBModel;
 using ePaperLive.Models;
+using System.Linq.Expressions;
+using System.Data.SqlClient;
+
 
 namespace ePaperLive.Controllers
 {
@@ -23,8 +26,62 @@ namespace ePaperLive.Controllers
         [Route]
         public async Task<ActionResult> Index()
         {
-            var subscriber_tranx = db.subscriber_tranx.Include(s => s.Subscriber);
-            return View(await subscriber_tranx.AsNoTracking().ToListAsync());
+            //var subscriber_tranx = db.subscriber_tranx.Include(s => s.Subscriber);
+            //return View(await subscriber_tranx.AsNoTracking().ToListAsync());
+            await Task.FromResult(0);
+            return View();
+        }
+
+        [HttpPost]
+        [Route]
+        public async Task<ActionResult> Index(DataTableParameters dataTableParameters)
+        {
+            db.Configuration.ProxyCreationEnabled = false;
+            var subscriber_tranx = db.subscriber_tranx.AsQueryable();
+            var searchTerm = dataTableParameters.search?.value;
+            var filteredData = subscriber_tranx;
+            try
+            {
+                if (!string.IsNullOrEmpty(searchTerm))
+                {
+                    filteredData = filteredData.Where(x => x.EmailAddress.Contains(searchTerm) || x.PlanDesc.Contains(searchTerm) || x.OrderID.Contains(searchTerm));
+                }
+
+                // Order the data by the specified column and direction
+                if (!string.IsNullOrEmpty(dataTableParameters.order?.FirstOrDefault()?.column.ToString()))
+                {
+                    var sortColumnIndex = int.Parse(dataTableParameters.order.FirstOrDefault().column.ToString());
+                    var sortColumn = dataTableParameters.columns[sortColumnIndex].data;
+                    var sortDirection = dataTableParameters.order.FirstOrDefault().dir == "desc" ? "OrderByDescending" : "OrderBy";
+                    var property = typeof(Subscriber_Tranx).GetProperty(sortColumn);
+                    var parameter = Expression.Parameter(typeof(Subscriber_Tranx), "p");
+                    var propertyAccess = Expression.MakeMemberAccess(parameter, property);
+                    var orderByExp = Expression.Lambda(propertyAccess, parameter);
+                    var resultExp = Expression.Call(typeof(Queryable), sortDirection, new Type[] { typeof(Subscriber_Tranx), property.PropertyType }, filteredData.Expression, Expression.Quote(orderByExp));
+                    filteredData = filteredData.Provider.CreateQuery<Subscriber_Tranx>(resultExp);
+                }
+
+                filteredData = filteredData
+                    //.OrderBy(x => x.EmailAddress)
+                    .Skip(dataTableParameters.start)
+                    .Take(dataTableParameters.length == 0 ? 25 : dataTableParameters.length);
+
+                var filteredDataList = await filteredData.ToListAsync();
+
+                return Json(new
+                {
+                    draw = dataTableParameters.draw,
+                    recordsTotal = subscriber_tranx.Count(),
+                    recordsFiltered = filteredData.Count(),
+                    data = filteredDataList
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
         }
 
         // GET: Transactions/Details/5
