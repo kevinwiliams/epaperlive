@@ -48,7 +48,7 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@item.SignUpDate</td>
+                    <td>@item.SignUpDate.ToString("MMM dd yyyy")</td>
                     <td>@item.Total</td>
                 </tr>
             }

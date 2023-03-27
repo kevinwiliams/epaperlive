@@ -1,6 +1,7 @@
 ﻿using ePaperLive.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,11 +27,14 @@ namespace ePaperLive.Controllers
         {
             using (var context = new ApplicationDbContext())
             {
-                var sql = @"
-                    SELECT LEFT([TranxDate], 11) as SignUpDate, COUNT(*) Total FROM [dbo].[Subscriber_Tranx]  
-                    GROUP BY LEFT([TranxDate], 11)";
-
-                var result = await context.Database.SqlQuery<SignUpsList>(sql).ToListAsync();
+                var result = await context.subscriber_tranx
+                   .GroupBy(t => DbFunctions.TruncateTime(t.TranxDate))
+                   .Select(g => new SignUpsList
+                   {
+                       SignUpDate = g.Key ?? DateTime.Now,
+                       Total = g.Count()
+                   })
+                   .ToListAsync();
                 return View(result);
             }
         }
@@ -42,17 +46,17 @@ namespace ePaperLive.Controllers
         {
             using (var context = new ApplicationDbContext())
             {
-                var sql = @"
-                    SELECT LEFT([TranxDate], 11) as SignUpDate, COUNT(*) Total FROM [dbo].[Subscriber_Tranx] 
-                    WHERE [TranxDate] >= @startDate AND [TranxDate] <= @endDate 
-                    AND ([OrderID] like '%' + @orderNumber + '%') 
-                    GROUP BY LEFT([TranxDate], 11)";
+                var endDatePlusOneDay = endDate.AddDays(1);
+                var result = await context.subscriber_tranx
+                    .Where(t => t.TranxDate >= startDate && t.TranxDate < endDatePlusOneDay && t.OrderID.Contains(orderNumber))
+                    .GroupBy(t => DbFunctions.TruncateTime(t.TranxDate))
+                                .Select(g => new SignUpsList
+                                {
+                                    SignUpDate = g.Key ?? DateTime.Now,
+                                    Total = g.Count()
+                                })
+                                .ToListAsync();
 
-                var sDate = new SqlParameter("startDate", startDate);
-                var eDate = new SqlParameter("endDate", endDate);
-                var orderNum = new SqlParameter("orderNumber", orderNumber);
-
-                var result = await context.Database.SqlQuery<SignUpsList>(sql, sDate, eDate, orderNum).ToListAsync();
                 return View(result);
             }
         }
