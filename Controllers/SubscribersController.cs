@@ -95,9 +95,11 @@ namespace ePaperLive.Controllers
                     filteredData = filteredData.Provider.CreateQuery<UsersWithRoles>(resultExp);
                 }
 
-                filteredData = filteredData
-                    .Skip(dataTableParameters.start)
-                    .Take(dataTableParameters.length == 0 ? 25 : dataTableParameters.length);
+                var filteredCount = await filteredData.CountAsync(); // Get the filtered count
+                var pageData = filteredData.Skip(dataTableParameters.start).Take(dataTableParameters.length);
+
+                var pageDataList = await pageData.ToListAsync();
+
 
                 var filteredDataList = await filteredData.ToListAsync();
 
@@ -105,8 +107,8 @@ namespace ePaperLive.Controllers
                 {
                     draw = dataTableParameters.draw,
                     recordsTotal = usersRoles.Count(),
-                    recordsFiltered = filteredData.Count(),
-                    data = filteredDataList
+                    recordsFiltered = filteredCount,
+                    data = pageDataList
                 }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)

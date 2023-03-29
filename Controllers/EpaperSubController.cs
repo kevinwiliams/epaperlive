@@ -63,19 +63,17 @@ namespace ePaperLive.Controllers
                     filteredData = filteredData.Provider.CreateQuery<Subscriber_Epaper>(resultExp);
                 }
 
-                filteredData = filteredData
-                    //.OrderBy(x => x.EmailAddress)
-                    .Skip(dataTableParameters.start)
-                    .Take(dataTableParameters.length == 0 ? 25 : dataTableParameters.length);
+                var filteredCount = await filteredData.CountAsync(); // Get the filtered count
+                var pageData = filteredData.Skip(dataTableParameters.start).Take(dataTableParameters.length);
 
-                var filteredDataList = await filteredData.ToListAsync();
+                var pageDataList = await pageData.ToListAsync();
 
                 return Json(new
                 {
                     draw = dataTableParameters.draw,
                     recordsTotal = subscriber_epaper.Count(),
-                    recordsFiltered = filteredData.Count(),
-                    data = filteredDataList
+                    recordsFiltered = pageDataList,
+                    data = pageDataList
                 }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
