@@ -480,7 +480,11 @@ namespace ePaperLive
 
                 try
                 {
-                    string apiUrl = String.Format("http://ip-api.com/json/{0}", ipAddress);
+                    //get keys from web.config
+                    var ipApiProKey = ConfigurationManager.AppSettings["ipApiProKey"];
+                    var ip2LocationKey = ConfigurationManager.AppSettings["ip2LocationKey"];
+
+                    string apiUrl = String.Format("https://pro.ip-api.com/json/{0}?key={1}", ipAddress, ipApiProKey);
                     using (WebClient client = new WebClient())
                     {
                         string json = client.DownloadString(apiUrl);
@@ -494,7 +498,7 @@ namespace ePaperLive
                         {
                             try
                             {
-                                string url = string.Format("https://api.ip2location.io/?ip={0}&key={1}", ipAddress, "D799EE85BF1EC31305E91E2AF1F6B166"); //
+                                string url = string.Format("https://api.ip2location.io/?ip={0}&key={1}", ipAddress, ip2LocationKey); //
                                 using (WebClient webClient = new WebClient())
                                 {
                                     string jsonRes = webClient.DownloadString(url);
@@ -515,7 +519,8 @@ namespace ePaperLive
                     LogError(exs);
                     try
                     {
-                        string url = string.Format("https://api.ip2location.io/?ip={0}&key={1}", ipAddress, "D799EE85BF1EC31305E91E2AF1F6B166"); //
+                        var ip2LocationKey = ConfigurationManager.AppSettings["ip2LocationKey"];
+                        string url = string.Format("https://api.ip2location.io/?ip={0}&key={1}", ipAddress, ip2LocationKey); //
                         using (WebClient webClient = new WebClient())
                         {
                             string jsonRes = webClient.DownloadString(url);
