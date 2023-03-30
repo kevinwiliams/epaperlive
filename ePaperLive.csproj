@@ -398,6 +398,7 @@
     <Content Include="assets\img\epaper-jol-logo.png" />
     <Content Include="assets\img\epaper-logo.png" />
     <Content Include="assets\img\epaper-print-logo.png" />
+    <Content Include="assets\img\ePaper_App_Logo.png" />
     <Content Include="assets\img\fac.jpg" />
     <Content Include="assets\img\favicon.png" />
     <Content Include="assets\img\features-1.png" />
