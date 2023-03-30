@@ -700,6 +700,7 @@
     <Content Include="Views\UAL\Edit.cshtml" />
     <Content Include="Views\UAL\Index.cshtml" />
     <Content Include="Views\EpaperSub\AddCorporateRelations.cshtml" />
+    <Content Include="Views\Emails\ExtendSubscription.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\roslyn\" />

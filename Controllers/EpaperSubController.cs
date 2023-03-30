@@ -15,6 +15,7 @@ using Newtonsoft.Json;
 using System.Data.SqlClient;
 using Microsoft.AspNet.Identity.Owin;
 using System.Linq.Expressions;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace ePaperLive.Controllers
 {
@@ -72,7 +73,7 @@ namespace ePaperLive.Controllers
                 {
                     draw = dataTableParameters.draw,
                     recordsTotal = subscriber_epaper.Count(),
-                    recordsFiltered = pageDataList,
+                    recordsFiltered = filteredCount,
                     data = pageDataList
                 }, JsonRequestBehavior.AllowGet);
             }
@@ -497,6 +498,60 @@ namespace ePaperLive.Controllers
 
             }
             return View(corporateAccount);
+        }
+
+        [NonAction]
+        public async Task<bool> SendConfirmationEmail(string subscriberID, bool send = true)
+        {
+            AuthSubcriber authSubcriber = new AuthSubcriber();
+            authSubcriber.SubscriptionDetails = new List<SubscriptionDetails>();
+            var sent = false;
+            if (send)
+            {
+                try
+                {
+                    var store = new UserStore<ApplicationUser>(db);
+                    var manager = new UserManager<ApplicationUser>(store);
+                    ApplicationUser user = new ApplicationUser();
+
+                    //AspnetUser
+                    user = manager.FindById(subscriberID);
+                    var emailAddress = user.UserName;
+
+                    using (var context = new ApplicationDbContext())
+                    {
+                        var result = context.subscribers.Include(x => x.Subscriber_Epaper).FirstOrDefault(x => x.EmailAddress == emailAddress);
+                        if (result != null)
+                        {
+                            authSubcriber.FirstName = result.FirstName;
+                            authSubcriber.LastName = result.LastName;
+                            authSubcriber.EmailAddress = result.EmailAddress;
+
+                            SubscriptionDetails sd = new SubscriptionDetails 
+                            { 
+                                SubType = "Epaper",
+                                EndDate = result.Subscriber_Epaper.FirstOrDefault().EndDate
+                            };
+
+                            authSubcriber.SubscriptionDetails.Add(sd);
+                        }
+                    }
+                   
+                    //send confirmation email
+                    //set up email
+                    string subject = "Subscription Renewal ";
+                    string body = RenderViewToString(this.ControllerContext, "~/Views/Emails/ExtendSubscription.cshtml", authSubcriber);
+                    await manager.SendEmailAsync(user.Id, subject, body);
+                    sent = true;
+                }
+                catch (Exception ex)
+                {
+                    Util.LogError(ex);
+                }
+
+            }
+
+            return sent;
         }
 
         [Route("generatepassword")]
