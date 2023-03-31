@@ -8,6 +8,9 @@ let today = moment();
 let tomorrow = moment().add(1, 'days').format('YYYY-MM-DD');
 let currentDate;
 
+var windowWidth = Math.min(window.screen.width, window.outerWidth);
+var mobile = windowWidth < 500;
+console.log('mobile', mobile);
 
 function selectRate() {
     if (preRateDesc) {
@@ -99,9 +102,14 @@ $(document).ready(function () {
     });
 
     $('[name=RateType]').on("click", function () {
+        //scroll on mobile phone
+        if (mobile) {
+            let anchor = $(".plans").offset();
+            window.scrollTo(anchor.left, anchor.top);
+        }
 
         today = moment();
-        console.log(today.format('YYYY-MM-DD'), ' day: ', today.isoWeekday(), ' hr: ', today.hours());
+        //console.log(today.format('YYYY-MM-DD'), ' day: ', today.isoWeekday(), ' hr: ', today.hours());
 
         rateType = $(this).val();
         //console.log($(this).val());
@@ -209,7 +217,7 @@ $(document).ready(function () {
     $("#rates-results").on("click", "[name=RateID]", function (e) {
         let rateDesc = $(this).parent().children().children().first().text();
         let Url = $(this).data("request-url");
-        console.log(Url);
+        //console.log(Url);
         let plan = e.target.dataset;
         var desc = rateDesc.split("|")[0];
         var freq = rateDesc.split("|")[1];
