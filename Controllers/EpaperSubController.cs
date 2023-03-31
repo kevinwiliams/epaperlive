@@ -25,6 +25,7 @@ namespace ePaperLive.Controllers
     public class EpaperSubController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+        ActivityLog _actLog = new ActivityLog();
 
         // GET: EpaperSub
         [Route]
@@ -154,7 +155,6 @@ namespace ePaperLive.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([Bind(Include = "Subscriber_EpaperID,SubscriberID,EmailAddress,RateID,StartDate,EndDate,IsActive,SubType,CreatedAt,NotificationEmail,PlanDesc,OrderNumber")] Subscriber_Epaper subscriber_Epaper)
         {
-            var _actLog = new ActivityLog();
             _actLog.SubscriberID = User.Identity.GetUserId();
             _actLog.EmailAddress = subscriber_Epaper.EmailAddress;
             _actLog.Role = (User.IsInRole("Admin") ? "Admin" : "Staff");
@@ -500,9 +500,12 @@ namespace ePaperLive.Controllers
             return View(corporateAccount);
         }
 
-        [NonAction]
+        [HttpPost]
+        [Route("sendemail")]
         public async Task<bool> SendConfirmationEmail(string subscriberID, bool send = true)
         {
+           
+
             AuthSubcriber authSubcriber = new AuthSubcriber();
             authSubcriber.SubscriptionDetails = new List<SubscriptionDetails>();
             var sent = false;
@@ -510,13 +513,16 @@ namespace ePaperLive.Controllers
             {
                 try
                 {
-                    var store = new UserStore<ApplicationUser>(db);
-                    var manager = new UserManager<ApplicationUser>(store);
+                    var UserManager = Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
                     ApplicationUser user = new ApplicationUser();
 
                     //AspnetUser
-                    user = manager.FindById(subscriberID);
+                    user = UserManager.FindById(subscriberID);
                     var emailAddress = user.UserName;
+
+                    _actLog.SubscriberID = User.Identity.GetUserId();
+                    _actLog.EmailAddress = emailAddress;
+                    _actLog.Role = (User.IsInRole("Admin") ? "Admin" : "Staff");
 
                     using (var context = new ApplicationDbContext())
                     {
@@ -539,9 +545,13 @@ namespace ePaperLive.Controllers
                    
                     //send confirmation email
                     //set up email
-                    string subject = "Subscription Renewal ";
+                    string subject = "Subscription Renewal Notice";
                     string body = RenderViewToString(this.ControllerContext, "~/Views/Emails/ExtendSubscription.cshtml", authSubcriber);
-                    await manager.SendEmailAsync(user.Id, subject, body);
+                    await UserManager.SendEmailAsync(user.Id, subject, body);
+
+                    //log
+                    _actLog.LogInformation = "Renewal email sent (" + User.Identity.Name + ")";
+                    Util.LogUserActivity(_actLog);
                     sent = true;
                 }
                 catch (Exception ex)

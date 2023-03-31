@@ -31,7 +31,7 @@
                         <p>
                             <a href="@Url.Action("addsubscriber", "epapersub")">Create New</a>
                         </p>
-                        <table class="table table-hover table-responsive table-striped small" id="epaperSubList" data-request-url="@Url.Action("edit","epapersub")">
+                        <table class="table table-hover table-responsive table-striped small" id="epaperSubList" data-request-url="@Url.Action("edit","admin/epapersub")">
                             <thead>
                                 <tr>
                                     <th>
@@ -131,7 +131,7 @@
                 "render": function (data, type, row, meta) {
                     //console.log(data);
                     var Url = $('#epaperSubList').data().requestUrl;
-                    return '<a href="/subscribe/admin'+ Url +'/' + data + '">Edit</a>';
+                    return '<a href="'+ Url +'/' + data + '">Edit</a>';
                 }
             }
         ]

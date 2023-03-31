@@ -26,83 +26,91 @@
             <div class="row gy-4">
                 <div class="col-lg-12">
 
-                    @using (Html.BeginForm())
+                    @using (Html.BeginForm("edit","epapersub", FormMethod.Post, htmlAttributes: new { @id = "editForm" } ))
                     {
                         @Html.AntiForgeryToken()
 
-                        <div class="form-horizontal">
-                            <h4>@Html.DisplayFor(model => model.EmailAddress)</h4>
-                            <hr />
-                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                            @Html.HiddenFor(model => model.Subscriber_EpaperID)
-                            @Html.HiddenFor(model => model.SubscriberID)
-                            @Html.HiddenFor(model => model.RateID)
-                            @Html.HiddenFor(model => model.OrderNumber)
-                            @Html.HiddenFor(model => model.CreatedAt)
-                            @Html.HiddenFor(model => model.SubType)
+                    <div class="form-horizontal">
+                        <h4>@Html.DisplayFor(model => model.EmailAddress)</h4>
+                        <hr />
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        @Html.HiddenFor(model => model.Subscriber_EpaperID)
+                        @Html.HiddenFor(model => model.SubscriberID)
+                        @Html.HiddenFor(model => model.RateID)
+                        @Html.HiddenFor(model => model.OrderNumber)
+                        @Html.HiddenFor(model => model.CreatedAt)
+                        @Html.HiddenFor(model => model.SubType)
 
 
 
-                            <div class="form-group">
-                                @Html.LabelFor(model => model.EmailAddress, htmlAttributes: new { @class = "control-label col-md-2" })
-                                <div class="col-md-10">
-                                    @Html.EditorFor(model => model.EmailAddress, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
-                                    @Html.ValidationMessageFor(model => model.EmailAddress, "", new { @class = "text-danger" })
-                                </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.EmailAddress, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.EmailAddress, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                                @Html.ValidationMessageFor(model => model.EmailAddress, "", new { @class = "text-danger" })
                             </div>
-                            <div class="form-group">
-                                @Html.LabelFor(model => model.PlanDesc, htmlAttributes: new { @class = "control-label col-md-2" })
-                                <div class="col-md-10">
-                                    @Html.EditorFor(model => model.PlanDesc, new { htmlAttributes = new { @class = "form-control" } })
-                                    @Html.ValidationMessageFor(model => model.PlanDesc, "", new { @class = "text-danger" })
-                                </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.PlanDesc, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.PlanDesc, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.PlanDesc, "", new { @class = "text-danger" })
                             </div>
+                        </div>
 
-                            <div class="form-group pt-3">
-                                @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-md-2" })
-                                <div class="col-md-4">
-                                    @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control" } })
-                                    @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
-                                </div>
+                        <div class="form-group pt-3">
+                            @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-4">
+                                @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
                             </div>
+                        </div>
 
-                            <div class="form-group pt-3">
-                                @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-md-2" , @type = "date"})
-                                <div class="col-md-4">
-                                    @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control" } })
-                                    @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
-                                    @Html.DropDownList("DaysList", ViewBag.daysList as SelectList, "Add Days", new { @class = "form-control", id = "DaysList" })
+                        <div class="form-group pt-3">
+                            @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-md-2", @type = "date" })
+                            <div class="col-md-4">
+                                @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+                                @Html.DropDownList("DaysList", ViewBag.daysList as SelectList, "Add Days", new { @class = "form-control", id = "DaysList" })
 
-                                </div>
                             </div>
+                        </div>
 
-                            <div class="form-group pt-3">
-                                @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-md-2" })
-                                <div class="col-md-2">
-                                    <div class="checkbox">
-                                        @Html.EditorFor(model => model.IsActive)
-                                        @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                @Html.LabelFor(model => model.NotificationEmail, htmlAttributes: new { @class = "control-label col-md-2" })
-                                <div class="col-md-2">
-                                    <div class="checkbox">
-                                        @Html.EditorFor(model => model.NotificationEmail)
-                                        @Html.ValidationMessageFor(model => model.NotificationEmail, "", new { @class = "text-danger" })
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div class="form-group py-5">
-                                <div class="col-md-offset-2 col-md-10">
-                                    <input type="submit" value="Update" class="btn btn-sign-in" />
+                        <div class="form-group pt-3">
+                            @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-2">
+                                <div class="checkbox">
+                                    @Html.EditorFor(model => model.IsActive)
+                                    @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
                                 </div>
                             </div>
                         </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.NotificationEmail, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-2">
+                                <div class="checkbox">
+                                    @Html.EditorFor(model => model.NotificationEmail)
+                                    @Html.ValidationMessageFor(model => model.NotificationEmail, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.Label("EmailUser", "Email Renewal Notice?", htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-2">
+                                <div class="checkbox">
+                                    <input type="checkbox" id="EmailUser" data-request-url="@Url.Action("sendemail","admin/epapersub")" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group py-5">
+                            <div class="col-md-offset-2 col-md-10">
+                                <input type="submit" value="Update" class="btn btn-sign-in" />
+                            </div>
+                        </div>
+                    </div>
                     }
 
                     <div>
@@ -162,6 +170,21 @@
             
         });
 
-
+        $('#editForm').on('submit', (e) => {
+            if ($("#EmailUser").is(":checked")) {
+                var subscriberID = $('[name=SubscriberID]').val();
+                let Url = $("#EmailUser").data("request-url");
+                console.log(subscriberID);
+                $.ajax({
+                    type: "POST",
+                    url: Url,
+                    data: { subscriberID: subscriberID, send: true },
+                    success: function (result) {
+                        console.log(result);
+                    }
+                });
+            }
+            
+        });
     </script>
 }

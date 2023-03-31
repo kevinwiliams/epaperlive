@@ -128,7 +128,7 @@
                                                 </p>
 
                                                 <p>
-                                                    your <strong>
+                                                    Your <strong>
                                                         Jamaica Observer
                                                         @switch (subtype)
                                                         {
@@ -143,9 +143,10 @@
                                                                 break;
                                                             default:
                                                                 break;
-                                                        } subscription (@Model.EmailAddress) has been renewed until @subDetails.EndDate.ToString("MM dd, YYYY")
-                                                    </strong>
-                                                    Please click the below link to login to
+                                                        } subscription </strong>
+                                                    (@Model.EmailAddress) has been renewed until @subDetails.EndDate.ToString("MMMM dd, yyyy").
+                                                    
+                                                    <p>Please click the below link to login to
                                                     @switch (subtype)
                                                     {
                                                         case "Epaper":
@@ -161,7 +162,7 @@
                                                             @("start reading the ePaper or keep track of your delivery dates");
                                                             break;
                                                     }.
-
+                                                    </p>
 
                                                     <br>
 

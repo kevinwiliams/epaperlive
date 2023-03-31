@@ -31,7 +31,7 @@
                         <a href="@Url.Action("addsubscriber", "epapersub")">Create New</a>
                     </p>
                     <!-- start:wizrd -->
-                    <table class="table table-hover table-responsive table-striped small" id="usersWithRoles" data-request-url="@Url.Action("edit","subscribers")" data-delete-url="@Url.Action("delete","subscribers")">
+                    <table class="table table-hover table-responsive table-striped small" id="usersWithRoles" data-request-url="@Url.Action("edit","admin/subscribers")" data-delete-url="@Url.Action("delete","admin/subscribers")">
                         <thead>
                             <tr>
                                 <th>
@@ -114,7 +114,7 @@
                 //console.log(data);
                 var Url = $('#usersWithRoles').data().requestUrl;
                 var dUrl = $('#usersWithRoles').data().deleteUrl;
-                return '<a href="/subscribe/admin'+ Url +'/' + data + '">Edit</a> | <a href="/subscribe/admin'+ dUrl +'/' + data  + '">Delete</a>';
+                return '<a href="'+ Url +'/' + data + '">Edit</a> | <a href="'+ dUrl +'/' + data  + '">Delete</a>';
             }
         }
         ]
