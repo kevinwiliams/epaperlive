@@ -940,7 +940,7 @@ namespace ePaperLive.Controllers
             catch (HttpAntiForgeryException ex)
             {
                 LogError(ex);
-                return RedirectToAction("orders");
+                return RedirectToAction("dashboard");
             }
             
         }
@@ -1457,7 +1457,7 @@ namespace ePaperLive.Controllers
             catch (HttpAntiForgeryException ex)
             {
                 LogError(ex);
-                return RedirectToAction("extendsubscription");
+                return RedirectToAction("dashboard");
             }
 
             
@@ -1562,7 +1562,7 @@ namespace ePaperLive.Controllers
             catch (HttpAntiForgeryException ex)
             {
                 LogError(ex);
-                return RedirectToAction("extendpayment");
+                return RedirectToAction("dashboard");
             }
 
             
@@ -1651,7 +1651,7 @@ namespace ePaperLive.Controllers
             catch (HttpAntiForgeryException ex)
             {
                 LogError(ex);
-                return RedirectToAction("logindetails");
+                return RedirectToAction("index", "home");
             }
             
         }
@@ -1759,10 +1759,10 @@ namespace ePaperLive.Controllers
             catch (HttpAntiForgeryException ex)
             {
                 LogError(ex);
-                return RedirectToAction("AddressDetails");
+                return RedirectToAction("index", "home");
             }
 
-            
+
         }
 
         [HttpGet]
@@ -2219,9 +2219,9 @@ namespace ePaperLive.Controllers
             catch (HttpAntiForgeryException ex)
             {
                 LogError(ex);
-                return RedirectToAction("PaymentDetails");
+                return RedirectToAction("index", "home");
             }
-            
+
         }
 
         public async Task<bool> SaveSubscriptionInfoAsync(AuthSubcriber authUser)
@@ -2640,7 +2640,7 @@ namespace ePaperLive.Controllers
             {
                 AuthSubcriber clientData = GetAuthSubscriber(); //pull exisiting data
                 var processedClientData = new AuthSubcriber();
-                var deliveryAddress = clientData.AddressDetails.FirstOrDefault(x => x.AddressType == "D");
+                var deliveryAddress = (clientData.AddressDetails != null) ? clientData.AddressDetails.FirstOrDefault(x => x.AddressType == "D") : null;
                 List<PaymentDetails> paymentDetailsList = new List<PaymentDetails>();
                
                 // Setup card processor.
@@ -3028,7 +3028,7 @@ namespace ePaperLive.Controllers
             catch (HttpAntiForgeryException ex)
             {
                 LogError(ex);
-                return RedirectToAction("RedeemCoupon");
+                return RedirectToAction("index", "home");
             }
             
         }
@@ -3140,9 +3140,9 @@ namespace ePaperLive.Controllers
             catch (HttpAntiForgeryException ex)
             {
                 LogError(ex);
-                return RedirectToAction("freemonth");
+                return RedirectToAction("index", "home");
             }
-            
+
         }
 
         [HttpGet]
