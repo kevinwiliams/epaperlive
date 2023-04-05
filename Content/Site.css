@@ -496,74 +496,83 @@
 
     .notfound .notfound-404 {
         position: relative;
-        height: 240px
+        height: 200px;
+        margin: 0 auto 20px;
+        z-index: -1
     }
 
         .notfound .notfound-404 h1 {
             font-family: montserrat,sans-serif;
+            font-size: 236px;
+            font-weight: 200;
+            margin: 0;
+            color: #211b19;
+            text-transform: uppercase;
             position: absolute;
             left: 50%;
             top: 50%;
             -webkit-transform: translate(-50%,-50%);
             -ms-transform: translate(-50%,-50%);
-            transform: translate(-50%,-50%);
-            font-size: 252px;
-            font-weight: 900;
-            margin: 0;
-            color: #262626;
-            text-transform: uppercase;
-            letter-spacing: -40px;
-            margin-left: -20px
+            transform: translate(-50%,-50%)
         }
 
-            .notfound .notfound-404 h1 > span {
-                text-shadow: -8px 0 0 #fff
-            }
-
-        .notfound .notfound-404 h3 {
-            font-family: cabin,sans-serif;
-            position: relative;
-            font-size: 16px;
-            font-weight: 700;
+        .notfound .notfound-404 h2 {
+            font-family: montserrat,sans-serif;
+            font-size: 28px;
+            font-weight: 400;
             text-transform: uppercase;
-            color: #262626;
-            margin: 0;
-            letter-spacing: 3px;
-            padding-left: 6px
+            color: #211b19;
+            background: #fff;
+            padding: 10px 5px;
+            margin: auto;
+            display: inline-block;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0
         }
 
-    .notfound h2 {
-        font-family: cabin,sans-serif;
-        font-size: 20px;
-        font-weight: 400;
+    .notfound a {
+        font-family: montserrat,sans-serif;
+        display: inline-block;
+        font-weight: 700;
+        text-decoration: none;
+        color: #fff;
         text-transform: uppercase;
-        color: #000;
-        margin-top: 0;
-        margin-bottom: 25px
+        padding: 13px 23px;
+        background: #E62B34;
+        font-size: 18px;
+        -webkit-transition: .2s all;
+        transition: .2s all
     }
+
+        .notfound a:hover {
+            color: #E62B34;
+            background: #211b19
+        }
 
 @media only screen and (max-width:767px) {
-    .notfound .notfound-404 {
-        height: 200px
+    .notfound .notfound-404 h1 {
+        font-size: 148px
     }
-
-        .notfound .notfound-404 h1 {
-            font-size: 200px
-        }
 }
 
 @media only screen and (max-width:480px) {
     .notfound .notfound-404 {
-        height: 162px
+        height: 148px;
+        margin: 0 auto 10px
     }
 
         .notfound .notfound-404 h1 {
-            font-size: 162px;
-            height: 150px;
-            line-height: 162px
+            font-size: 86px
         }
 
-    .notfound h2 {
-        font-size: 16px
+        .notfound .notfound-404 h2 {
+            font-size: 16px
+        }
+
+    .notfound a {
+        padding: 7px 15px;
+        font-size: 14px
     }
 }
