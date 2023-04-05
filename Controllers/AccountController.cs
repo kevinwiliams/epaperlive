@@ -108,37 +108,47 @@ namespace ePaperLive.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return View(model);
-            }
-
-            // This doesn't count login failures towards account lockout
-            // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
-            switch (result)
-            {
-                case SignInStatus.Success:
-                    using (var context = new ApplicationDbContext())
-                    {
-                        var subscriber = context.subscribers.FirstOrDefault(e => e.EmailAddress == model.Email);
-
-                        if (subscriber != null) {
-
-                            subscriber.LastLogin = DateTime.Now;
-                            await context.SaveChangesAsync();
-                        }
-                    }
-                    return RedirectToLocal(returnUrl);
-                case SignInStatus.LockedOut:
-                    return View("Lockout");
-                case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
-                case SignInStatus.Failure:
-                default:
-                    ModelState.AddModelError("", "Invalid login attempt.");
+                if (!ModelState.IsValid)
+                {
                     return View(model);
+                }
+
+                // This doesn't count login failures towards account lockout
+                // To enable password failures to trigger account lockout, change to shouldLockout: true
+                var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+                switch (result)
+                {
+                    case SignInStatus.Success:
+                        using (var context = new ApplicationDbContext())
+                        {
+                            var subscriber = context.subscribers.FirstOrDefault(e => e.EmailAddress == model.Email);
+
+                            if (subscriber != null)
+                            {
+
+                                subscriber.LastLogin = DateTime.Now;
+                                await context.SaveChangesAsync();
+                            }
+                        }
+                        return RedirectToLocal(returnUrl);
+                    case SignInStatus.LockedOut:
+                        return View("Lockout");
+                    case SignInStatus.RequiresVerification:
+                        return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+                    case SignInStatus.Failure:
+                    default:
+                        ModelState.AddModelError("", "Invalid login attempt.");
+                        return View(model);
+                }
             }
+            catch (HttpAntiForgeryException ex)
+            {
+                LogError(ex);
+                return RedirectToAction("Login");
+            }
+
         }
 
         //
@@ -161,26 +171,34 @@ namespace ePaperLive.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> VerifyCode(VerifyCodeViewModel model)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return View(model);
-            }
-
-            // The following code protects for brute force attacks against the two factor codes. 
-            // If a user enters incorrect codes for a specified amount of time then the user account 
-            // will be locked out for a specified amount of time. 
-            // You can configure the account lockout settings in IdentityConfig
-            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent:  model.RememberMe, rememberBrowser: model.RememberBrowser);
-            switch (result)
-            {
-                case SignInStatus.Success:
-                    return RedirectToLocal(model.ReturnUrl);
-                case SignInStatus.LockedOut:
-                    return View("Lockout");
-                case SignInStatus.Failure:
-                default:
-                    ModelState.AddModelError("", "Invalid code.");
+                if (!ModelState.IsValid)
+                {
                     return View(model);
+                }
+
+                // The following code protects for brute force attacks against the two factor codes. 
+                // If a user enters incorrect codes for a specified amount of time then the user account 
+                // will be locked out for a specified amount of time. 
+                // You can configure the account lockout settings in IdentityConfig
+                var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent: model.RememberMe, rememberBrowser: model.RememberBrowser);
+                switch (result)
+                {
+                    case SignInStatus.Success:
+                        return RedirectToLocal(model.ReturnUrl);
+                    case SignInStatus.LockedOut:
+                        return View("Lockout");
+                    case SignInStatus.Failure:
+                    default:
+                        ModelState.AddModelError("", "Invalid code.");
+                        return View(model);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+                return RedirectToAction("VerifyCode");
             }
         }
         
@@ -212,29 +230,38 @@ namespace ePaperLive.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var user = await UserManager.FindByNameAsync(model.Email);
-                if (user == null)
+                if (ModelState.IsValid)
                 {
-                    // Don't reveal that the user does not exist or is not confirmed
-                    return View("ForgotPasswordConfirmation");
+                    var user = await UserManager.FindByNameAsync(model.Email);
+                    if (user == null)
+                    {
+                        // Don't reveal that the user does not exist or is not confirmed
+                        return View("ForgotPasswordConfirmation");
+                    }
+
+                    string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+                    var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                    model.CallBackUrl = callbackUrl;
+
+                    string subject = "Reset Password";
+                    string body = RenderViewToString(this.ControllerContext, "~/Views/Emails/PasswordReset.cshtml", model);
+                    await UserManager.SendEmailAsync(user.Id, subject, body);
+
+
+                    return RedirectToAction("ForgotPasswordConfirmation", "Account");
                 }
 
-                string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                model.CallBackUrl = callbackUrl;
-
-                string subject = "Reset Password";
-                string body = RenderViewToString(this.ControllerContext, "~/Views/Emails/PasswordReset.cshtml", model);
-                await UserManager.SendEmailAsync(user.Id, subject, body);
-
-               
-                return RedirectToAction("ForgotPasswordConfirmation", "Account");
+                // If we got this far, something failed, redisplay form
+                return View(model);
             }
-
-            // If we got this far, something failed, redisplay form
-            return View(model);
+            catch (HttpAntiForgeryException ex)
+            {
+                LogError(ex);
+                return RedirectToAction("ForgotPassword");
+            }
+            
         }
 
         //
@@ -260,23 +287,33 @@ namespace ePaperLive.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ResetPassword(ResetPasswordViewModel model)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return View(model);
+                if (!ModelState.IsValid)
+                {
+                    return View(model);
+                }
+                var user = await UserManager.FindByNameAsync(model.Email);
+                if (user == null)
+                {
+                    // Don't reveal that the user does not exist
+                    return RedirectToAction("ResetPasswordConfirmation", "Account");
+                }
+                var result = await UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("ResetPasswordConfirmation", "Account");
+                }
+                AddErrors(result);
+                return View();
             }
-            var user = await UserManager.FindByNameAsync(model.Email);
-            if (user == null)
+            catch (HttpAntiForgeryException ex)
             {
-                // Don't reveal that the user does not exist
-                return RedirectToAction("ResetPasswordConfirmation", "Account");
+                LogError(ex);
+                return RedirectToAction("ResetPassword");
             }
-            var result = await UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
-            if (result.Succeeded)
-            {
-                return RedirectToAction("ResetPasswordConfirmation", "Account");
-            }
-            AddErrors(result);
-            return View();
+
+            
         }
 
         //
@@ -458,9 +495,20 @@ namespace ePaperLive.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
-            Session.Clear();
-            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            return RedirectToAction("Index", "Home");
+            try
+            {
+                Session.Clear();
+                AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+                return RedirectToAction("Index", "Home");
+            }
+            catch (HttpAntiForgeryException ex)
+            {
+                LogError(ex);
+                Session.Clear();
+                AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+                return RedirectToAction("Index", "Home");
+            }
+
         }
 
         //
@@ -761,131 +809,140 @@ namespace ePaperLive.Controllers
         [ValidateGoogleCaptcha]
         public async Task<ActionResult> Orders(FeedbackFormModel model)
         {
-            AuthSubcriber authSubcriber = GetAuthSubscriber();
-            _actLog.SubscriberID = authSubcriber.SubscriberID;
-            _actLog.EmailAddress = authSubcriber.EmailAddress;
-            _actLog.Role = (User.IsInRole("Staff") ? "Staff" : "Subscriber");
-
-            var jsonFile = System.IO.File.ReadAllText(System.Web.HttpContext.Current.Server.MapPath("~/App_Data/email_settings.json"));
-            var settings = JObject.Parse(jsonFile);
-            // Credentials
-            string userName = (string)settings["email_address_username"],
-                pwd = (string)settings["email_password"],
-                smtp_host = (string)settings["smtp_host"],
-                ssl_enabled = (string)settings["ssl_enabled"],
-                password = (string)settings["email_password"],
-                domain = (string)settings["email_address_domain"],
-                portNumber = (string)settings["email_port_number"],
-                feedBackEmails = (string)settings["feedback_email"];
-
-            int port;
-
-            if (ModelState.IsValid)
+            try
             {
-                try
+                AuthSubcriber authSubcriber = GetAuthSubscriber();
+                _actLog.SubscriberID = authSubcriber.SubscriberID;
+                _actLog.EmailAddress = authSubcriber.EmailAddress;
+                _actLog.Role = (User.IsInRole("Staff") ? "Staff" : "Subscriber");
+
+                var jsonFile = System.IO.File.ReadAllText(System.Web.HttpContext.Current.Server.MapPath("~/App_Data/email_settings.json"));
+                var settings = JObject.Parse(jsonFile);
+                // Credentials
+                string userName = (string)settings["email_address_username"],
+                    pwd = (string)settings["email_password"],
+                    smtp_host = (string)settings["smtp_host"],
+                    ssl_enabled = (string)settings["ssl_enabled"],
+                    password = (string)settings["email_password"],
+                    domain = (string)settings["email_address_domain"],
+                    portNumber = (string)settings["email_port_number"],
+                    feedBackEmails = (string)settings["feedback_email"];
+
+                int port;
+
+                if (ModelState.IsValid)
                 {
-                    //TODO: Send Mail
-                    var user = model.Email;
-                    string subject = model.Subject;
-                    string body = model.Message;
-
-                    SmtpClient smtp = new SmtpClient();
-                    smtp.Host = smtp_host;
-                    smtp.Port = (int.TryParse(portNumber, out port) ? port : 25);
-                    smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
-                    smtp.UseDefaultCredentials = true;
-
-                    var newMsg = new MailMessage();
-                    var mailSubject = "Refund Request: " + subject;
-                    newMsg.To.Add(feedBackEmails);
-
-
-                    newMsg.From = new MailAddress(user, model.Name);
-                    newMsg.Subject = mailSubject;
-                    newMsg.Body = body;
-                    newMsg.IsBodyHtml = true;
-
-                    var credentials = new NetworkCredential(userName, pwd);
-                    smtp.Credentials = credentials;
-                    smtp.EnableSsl = bool.Parse(ssl_enabled);
-
-                    // Send
-                    await smtp.SendMailAsync(newMsg);
-
-                    var orderNumber = subject.Split(':')[1].Trim();
-
-                    //log
-                    _actLog.LogInformation = "Requested refund - " + orderNumber;
-                    LogUserActivity(_actLog);
-
-                    //update transactions
-                    using (var context = new ApplicationDbContext())
+                    try
                     {
-                        var result = context.subscriber_tranx.FirstOrDefault(x => x.EmailAddress == user && x.OrderID == orderNumber);
+                        //TODO: Send Mail
+                        var user = model.Email;
+                        string subject = model.Subject;
+                        string body = model.Message;
 
-                        if (result != null)
+                        SmtpClient smtp = new SmtpClient();
+                        smtp.Host = smtp_host;
+                        smtp.Port = (int.TryParse(portNumber, out port) ? port : 25);
+                        smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                        smtp.UseDefaultCredentials = true;
+
+                        var newMsg = new MailMessage();
+                        var mailSubject = "Refund Request: " + subject;
+                        newMsg.To.Add(feedBackEmails);
+
+
+                        newMsg.From = new MailAddress(user, model.Name);
+                        newMsg.Subject = mailSubject;
+                        newMsg.Body = body;
+                        newMsg.IsBodyHtml = true;
+
+                        var credentials = new NetworkCredential(userName, pwd);
+                        smtp.Credentials = credentials;
+                        smtp.EnableSsl = bool.Parse(ssl_enabled);
+
+                        // Send
+                        await smtp.SendMailAsync(newMsg);
+
+                        var orderNumber = subject.Split(':')[1].Trim();
+
+                        //log
+                        _actLog.LogInformation = "Requested refund - " + orderNumber;
+                        LogUserActivity(_actLog);
+
+                        //update transactions
+                        using (var context = new ApplicationDbContext())
                         {
-                            context.Entry(result).State = EntityState.Modified;
-                            result.RefundRequested = true;
-                            await context.SaveChangesAsync();
-                            authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.OrderNumber == orderNumber).RefundRequested = true;
-                            authSubcriber.PaymentDetails.FirstOrDefault(x => x.OrderNumber == orderNumber).RefundRequested = true;
+                            var result = context.subscriber_tranx.FirstOrDefault(x => x.EmailAddress == user && x.OrderID == orderNumber);
+
+                            if (result != null)
+                            {
+                                context.Entry(result).State = EntityState.Modified;
+                                result.RefundRequested = true;
+                                await context.SaveChangesAsync();
+                                authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.OrderNumber == orderNumber).RefundRequested = true;
+                                authSubcriber.PaymentDetails.FirstOrDefault(x => x.OrderNumber == orderNumber).RefundRequested = true;
+                            }
+
+                            var type = orderNumber.Split('-')[0].Trim();
+                            /*
+                            switch (type)
+                            {
+
+                                case "EP":
+                                    var epaperSub = context.subscriber_epaper.FirstOrDefault(x => x.EmailAddress == user && x.OrderNumber == orderNumber);
+                                    if (epaperSub != null)
+                                    {
+                                        epaperSub.IsActive = false;
+                                        await context.SaveChangesAsync();
+                                    }
+                                    break;
+                                case "PR":
+                                    var printSub = context.subscriber_print.FirstOrDefault(x => x.EmailAddress == user && x.OrderNumber == orderNumber);
+                                    if (printSub != null)
+                                    {
+                                        printSub.IsActive = false;
+                                        await context.SaveChangesAsync();
+                                    }
+                                    break;
+                                case "BU":
+                                    var printSubB = context.subscriber_print.FirstOrDefault(x => x.EmailAddress == user && x.OrderNumber == orderNumber);
+                                    if (printSubB != null)
+                                    {
+                                        printSubB.IsActive = false;
+                                        await context.SaveChangesAsync();
+                                    }
+                                    var epaperSubB = context.subscriber_epaper.FirstOrDefault(x => x.EmailAddress == user && x.OrderNumber == orderNumber);
+                                    if (epaperSubB != null)
+                                    {
+                                        epaperSubB.IsActive = false;
+                                        await context.SaveChangesAsync();
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            */
                         }
 
-                        var type = orderNumber.Split('-')[0].Trim();
-                        /*
-                        switch (type)
-                        {
-
-                            case "EP":
-                                var epaperSub = context.subscriber_epaper.FirstOrDefault(x => x.EmailAddress == user && x.OrderNumber == orderNumber);
-                                if (epaperSub != null)
-                                {
-                                    epaperSub.IsActive = false;
-                                    await context.SaveChangesAsync();
-                                }
-                                break;
-                            case "PR":
-                                var printSub = context.subscriber_print.FirstOrDefault(x => x.EmailAddress == user && x.OrderNumber == orderNumber);
-                                if (printSub != null)
-                                {
-                                    printSub.IsActive = false;
-                                    await context.SaveChangesAsync();
-                                }
-                                break;
-                            case "BU":
-                                var printSubB = context.subscriber_print.FirstOrDefault(x => x.EmailAddress == user && x.OrderNumber == orderNumber);
-                                if (printSubB != null)
-                                {
-                                    printSubB.IsActive = false;
-                                    await context.SaveChangesAsync();
-                                }
-                                var epaperSubB = context.subscriber_epaper.FirstOrDefault(x => x.EmailAddress == user && x.OrderNumber == orderNumber);
-                                if (epaperSubB != null)
-                                {
-                                    epaperSubB.IsActive = false;
-                                    await context.SaveChangesAsync();
-                                }
-                                break;
-                            default:
-                                break;
-                        }
-
-                        */
+                        return RedirectToAction("orders");
+                    }
+                    catch (Exception ex)
+                    {
+                        LogError(ex);
+                        return View();
                     }
 
-                    return RedirectToAction("orders");
+                    //below code to be implemented if business decides to automatically deactivate after request
                 }
-                catch (Exception ex)
-                {
-                    LogError(ex);
-                    return View();
-                }
-               
-                //below code to be implemented if business decides to automatically deactivate after request
-            }
 
-            return View(model);
+                return View(model);
+            }
+            catch (HttpAntiForgeryException ex)
+            {
+                LogError(ex);
+                return RedirectToAction("orders");
+            }
+            
         }
 
         public async Task<ActionResult> UserProfile()
@@ -1143,322 +1200,305 @@ namespace ePaperLive.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ExtendSubscription(SubscriptionDetails data, string nextBtn)
         {
-            ViewData["preloadSub"] = GetPreloadSub();
-            
-
-            //load parishes
-            List<SelectListItem> parishes = GetParishes();
-            ViewBag.Parishes = new SelectList(parishes, "Value", "Text");
-            ViewBag.CountryList = GetCountryList();
-
-            UserLocation objLoc = GetSubscriberLocation();
-
-            var countryCode = (objLoc.Country_Code == "JM") ? "JAM" : "";
-
-            if (nextBtn != null)
+            try
             {
-                if (ModelState.IsValid)
+                ViewData["preloadSub"] = GetPreloadSub();
+
+                //load parishes
+                List<SelectListItem> parishes = GetParishes();
+                ViewBag.Parishes = new SelectList(parishes, "Value", "Text");
+                ViewBag.CountryList = GetCountryList();
+
+                UserLocation objLoc = GetSubscriberLocation();
+
+                var countryCode = (objLoc.Country_Code == "JM") ? "JAM" : "";
+
+                if (nextBtn != null)
                 {
-
-                    try
+                    if (ModelState.IsValid)
                     {
-                        ApplicationDbContext db = new ApplicationDbContext();
-                        Subscriber objSub = GetSubscriber();
-                        DeliveryAddress objDelv = GetSubscriberDeliveryAddress();
-                        Subscriber_Epaper objEp = GetEpaperDetails();
-                        Subscriber_Print objPr = GetPrintDetails();
-                        Subscriber_Tranx objTran = GetTransaction();
-                        AuthSubcriber authUser = GetAuthSubscriber();
-                        List<SubscriptionDetails> subscriptionDetails = new List<SubscriptionDetails>();
-                        List<PaymentDetails> paymentDetailsList = new List<PaymentDetails>();
-                        //List<AddressDetails> addressDetails = new List<AddressDetails>();
-                        //remove unused subs from session
-                        if(authUser.SubscriptionDetails != null)
-                            authUser.SubscriptionDetails.RemoveAll(x => x.SubscriptionID == 0);
-                        
-                        objTran.RateID = data.RateID;
 
-                        var selectedPlan = db.printandsubrates.AsNoTracking().FirstOrDefault(x => x.Rateid == data.RateID);
-
-                        if (selectedPlan.Type == "Print")
+                        try
                         {
+                            ApplicationDbContext db = new ApplicationDbContext();
+                            Subscriber objSub = GetSubscriber();
+                            DeliveryAddress objDelv = GetSubscriberDeliveryAddress();
+                            Subscriber_Epaper objEp = GetEpaperDetails();
+                            Subscriber_Print objPr = GetPrintDetails();
+                            Subscriber_Tranx objTran = GetTransaction();
+                            AuthSubcriber authUser = GetAuthSubscriber();
+                            List<SubscriptionDetails> subscriptionDetails = new List<SubscriptionDetails>();
+                            List<PaymentDetails> paymentDetailsList = new List<PaymentDetails>();
+                            //List<AddressDetails> addressDetails = new List<AddressDetails>();
+                            //remove unused subs from session
+                            if (authUser.SubscriptionDetails != null)
+                                authUser.SubscriptionDetails.RemoveAll(x => x.SubscriptionID == 0);
 
-                            var existingPrintPlan = new SubscriptionDetails();
-                            var endDate = DateTime.Now;
-                            if (authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.isActive == true) != null)
+                            objTran.RateID = data.RateID;
+
+                            var selectedPlan = db.printandsubrates.AsNoTracking().FirstOrDefault(x => x.Rateid == data.RateID);
+
+                            if (selectedPlan.Type == "Print")
                             {
-                                existingPrintPlan = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.isActive == true);
-                                data.StartDate = (existingPrintPlan.EndDate > DateTime.Now) ? existingPrintPlan.EndDate : DateTime.Now; 
-                                endDate = data.EndDate = existingPrintPlan.EndDate.AddDays((double)selectedPlan.PrintTerm * 7);
-                            }
-                            else
-                            {
-                                endDate = DateTime.Now.AddDays((double)selectedPlan.PrintTerm * 7);
-                            }
 
-                            SubscriptionDetails printSubscription = new SubscriptionDetails
-                            {
-                                StartDate = data.StartDate,
-                                EndDate = endDate,
-                                RateID = data.RateID,
-                                DeliveryInstructions = data.DeliveryInstructions,
-                                RateType = selectedPlan.Type
-                            };
-
-                            subscriptionDetails.Add(printSubscription);
-                            authUser.SubscriptionDetails.Add(printSubscription);
-
-                            AddressDetails deliveryAddress = new AddressDetails
-                            {
-                                AddressLine1 = objDelv.AddressLine1,
-                                AddressLine2 = objDelv.AddressLine2,
-                                AddressType = "D",
-                                CityTown = objDelv.CityTown,
-                                StateParish = objDelv.StateParish,
-                                CountryCode = objDelv.CountryCode
-                            };
-                            authUser.AddressDetails.Add(deliveryAddress);
-
-                        }
-                        if (selectedPlan.Type == "Epaper")
-                        {
-                            var existingEpaperPlan = new SubscriptionDetails();
-                            var endDat = DateTime.Now;
-                            if (authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.isActive == true) != null)
-                            {
-                                existingEpaperPlan = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.isActive == true);
-                                data.StartDate = (existingEpaperPlan.EndDate > DateTime.Now) ? existingEpaperPlan.EndDate : DateTime.Now;
-                                endDat = data.EndDate = existingEpaperPlan.EndDate.AddDays((double)selectedPlan.ETerm);
-                            }
-                            else
-                            {
-                                endDat = DateTime.Now.AddDays((double)selectedPlan.ETerm);
-                            }
-                            
-                            SubscriptionDetails epaperSubscription = new SubscriptionDetails
-                            {
-                                StartDate = data.StartDate,
-                                EndDate = endDat,
-                                RateID = data.RateID,
-                                SubType = selectedPlan.Type,
-                                RateType = selectedPlan.Type
-                            };
-
-                            subscriptionDetails.Add(epaperSubscription);
-                            authUser.SubscriptionDetails.Add(epaperSubscription);
-
-                        }
-                        if (selectedPlan.Type == "Bundle")
-                        {
-                            var existingPrintPlan = new SubscriptionDetails();
-                            var pEndDate = DateTime.Now;
-                            if (authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.isActive == true) != null)
-                            {
-                                existingPrintPlan = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.isActive == true);
-                                data.StartDate = (existingPrintPlan.EndDate > DateTime.Now) ? existingPrintPlan.EndDate : DateTime.Now;
-                                pEndDate = data.EndDate = existingPrintPlan.EndDate.AddDays((double)selectedPlan.PrintTerm * 7);
-                            }
-                            else
-                            {
-                                pEndDate = DateTime.Now.AddDays((double)selectedPlan.PrintTerm * 7);
-                            }
-                            SubscriptionDetails printSubscription = new SubscriptionDetails
-                            {
-                                StartDate = data.StartDate,
-                                EndDate = pEndDate,
-                                RateID = data.RateID,
-                                DeliveryInstructions = data.DeliveryInstructions,
-                            };
-                            //print subscription
-
-                            subscriptionDetails.Add(printSubscription);
-                            authUser.SubscriptionDetails.Add(printSubscription);
-
-                            var existingEpaperPlan = new SubscriptionDetails();
-                            var eEndDate = DateTime.Now;
-                            if (authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.isActive == true) != null)
-                            {
-                                existingEpaperPlan = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.isActive == true);
-                                data.StartDate = (existingEpaperPlan.EndDate > DateTime.Now) ? existingEpaperPlan.EndDate : DateTime.Now;
-                                eEndDate = data.EndDate = existingEpaperPlan.EndDate.AddDays((double)selectedPlan.ETerm);
-                            }
-                            else
-                            {
-                                eEndDate = DateTime.Now.AddDays((double)selectedPlan.ETerm);
-                            }
-                            SubscriptionDetails epaperSubscription = new SubscriptionDetails
-                            {
-                                StartDate = data.StartDate,
-                                EndDate = eEndDate,
-                                RateID = data.RateID,
-                                SubType = data.SubType,
-                                NotificationEmail = data.NotificationEmail,
-                                RateType = selectedPlan.Type
-
-                            };
-                            //Epaper subscription
-                            subscriptionDetails.Add(epaperSubscription);
-                            authUser.SubscriptionDetails.Add(epaperSubscription);
-
-                            AddressDetails deliveryAddress = new AddressDetails
-                            {
-                                AddressLine1 = objDelv.AddressLine1,
-                                AddressLine2 = objDelv.AddressLine2,
-                                AddressType = "D",
-                                CityTown = objDelv.CityTown,
-                                StateParish = objDelv.StateParish,
-                                CountryCode = objDelv.CountryCode
-                            };
-
-                            authUser.AddressDetails.Add(deliveryAddress);
-                        }
-
-
-                        List<SelectListItem> billparishes = GetParishes();
-                        ViewBag.Parishes = new SelectList(billparishes, "Value", "Text");
-                        ViewBag.CountryList = GetCountryList();
-
-                        AddressDetails billingAddress = new AddressDetails
-                        {
-                            CountryCode = countryCode,
-                            CountryList = GetCountryList()
-                        };
-
-
-                        var printTerm = selectedPlan.PrintTerm + " " + selectedPlan.PrintTermUnit;
-                        var epaperTerm = selectedPlan.ETerm + " " + selectedPlan.ETermUnit;
-                        var rateTerm = (selectedPlan.Type == "Print") ? printTerm : epaperTerm;
-                        var ratePrice = (selectedPlan.OfferIntroRate) ? selectedPlan.IntroRate : selectedPlan.Rate;
-                        PaymentDetails pd = new PaymentDetails
-                        {
-                            RateID = data.RateID,
-                            RateTerm = rateTerm,
-                            RateDescription = selectedPlan.RateDescr,
-                            Currency = selectedPlan.Curr,
-                            CardAmount = (decimal)selectedPlan.Rate,
-                            SubType = selectedPlan.Type,
-                            BillingAddress = billingAddress,
-                            IsExtension = true
-                        };
-
-                        paymentDetailsList.Add(pd);
-                        authUser.PaymentDetails.Add(pd);
-
-                        if (authUser.SubscriptionDetails != null)
-                        {
-                            ViewBag.plans = authUser.SubscriptionDetails;
-
-                            if (authUser.SubscriptionDetails.FirstOrDefault(x => x.isActive == true) != null)
-                            {
-                                var startDate = authUser.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).StartDate;
-                                var endDate = authUser.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).EndDate;
-                                ViewBag.dates = startDate.GetWeekdayInRange(endDate, DayOfWeek.Monday);
-                            }
-                        }
-
-                        if (selectedPlan.Rate == 0)
-                        {
-                            //TODo: Set Coupon COode in WebConfig
-                            var couponCode = WebConfigurationManager.AppSettings["zeroRatedCouponCode"];
-                            authUser.PaymentDetails.OrderByDescending(t => t.TranxDate).FirstOrDefault(x => x.TransactionID == 0).CardType = "N/A";
-                            authUser.PaymentDetails.OrderByDescending(t => t.TranxDate).FirstOrDefault(x => x.TransactionID == 0).CardOwner = authUser.FirstName + " " + authUser.LastName;
-                            authUser.PaymentDetails.OrderByDescending(t => t.TranxDate).FirstOrDefault(x => x.TransactionID == 0).OrderNumber = couponCode;
-
-                            JOL_UserSession session;
-                            var sessionRepository = new SessionRepository();
-                            session = sessionRepository.CreateObject(authUser);
-                            var isSaved = await sessionRepository.AddOrUpdate(pd.OrderNumber, session, data.RateID, authUser);
-                            if (isSaved)
-                            {
-                                var saved = await SaveSubscriptionInfoAsync(authUser);
-                                if (saved)
+                                var existingPrintPlan = new SubscriptionDetails();
+                                var endDate = DateTime.Now;
+                                if (authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.isActive == true) != null)
                                 {
-                                    return View("PaymentSuccess", authUser);
+                                    existingPrintPlan = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.isActive == true);
+                                    data.StartDate = (existingPrintPlan.EndDate > DateTime.Now) ? existingPrintPlan.EndDate : DateTime.Now;
+                                    endDate = data.EndDate = existingPrintPlan.EndDate.AddDays((double)selectedPlan.PrintTerm * 7);
+                                }
+                                else
+                                {
+                                    endDate = DateTime.Now.AddDays((double)selectedPlan.PrintTerm * 7);
+                                }
+
+                                SubscriptionDetails printSubscription = new SubscriptionDetails
+                                {
+                                    StartDate = data.StartDate,
+                                    EndDate = endDate,
+                                    RateID = data.RateID,
+                                    DeliveryInstructions = data.DeliveryInstructions,
+                                    RateType = selectedPlan.Type
+                                };
+
+                                subscriptionDetails.Add(printSubscription);
+                                authUser.SubscriptionDetails.Add(printSubscription);
+
+                                AddressDetails deliveryAddress = new AddressDetails
+                                {
+                                    AddressLine1 = objDelv.AddressLine1,
+                                    AddressLine2 = objDelv.AddressLine2,
+                                    AddressType = "D",
+                                    CityTown = objDelv.CityTown,
+                                    StateParish = objDelv.StateParish,
+                                    CountryCode = objDelv.CountryCode
+                                };
+                                authUser.AddressDetails.Add(deliveryAddress);
+
+                            }
+                            if (selectedPlan.Type == "Epaper")
+                            {
+                                var existingEpaperPlan = new SubscriptionDetails();
+                                var endDat = DateTime.Now;
+                                if (authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.isActive == true) != null)
+                                {
+                                    existingEpaperPlan = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.isActive == true);
+                                    data.StartDate = (existingEpaperPlan.EndDate > DateTime.Now) ? existingEpaperPlan.EndDate : DateTime.Now;
+                                    endDat = data.EndDate = existingEpaperPlan.EndDate.AddDays((double)selectedPlan.ETerm);
+                                }
+                                else
+                                {
+                                    endDat = DateTime.Now.AddDays((double)selectedPlan.ETerm);
+                                }
+
+                                SubscriptionDetails epaperSubscription = new SubscriptionDetails
+                                {
+                                    StartDate = data.StartDate,
+                                    EndDate = endDat,
+                                    RateID = data.RateID,
+                                    SubType = selectedPlan.Type,
+                                    RateType = selectedPlan.Type
+                                };
+
+                                subscriptionDetails.Add(epaperSubscription);
+                                authUser.SubscriptionDetails.Add(epaperSubscription);
+
+                            }
+                            if (selectedPlan.Type == "Bundle")
+                            {
+                                var existingPrintPlan = new SubscriptionDetails();
+                                var pEndDate = DateTime.Now;
+                                if (authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.isActive == true) != null)
+                                {
+                                    existingPrintPlan = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Print" && x.isActive == true);
+                                    data.StartDate = (existingPrintPlan.EndDate > DateTime.Now) ? existingPrintPlan.EndDate : DateTime.Now;
+                                    pEndDate = data.EndDate = existingPrintPlan.EndDate.AddDays((double)selectedPlan.PrintTerm * 7);
+                                }
+                                else
+                                {
+                                    pEndDate = DateTime.Now.AddDays((double)selectedPlan.PrintTerm * 7);
+                                }
+                                SubscriptionDetails printSubscription = new SubscriptionDetails
+                                {
+                                    StartDate = data.StartDate,
+                                    EndDate = pEndDate,
+                                    RateID = data.RateID,
+                                    DeliveryInstructions = data.DeliveryInstructions,
+                                };
+                                //print subscription
+
+                                subscriptionDetails.Add(printSubscription);
+                                authUser.SubscriptionDetails.Add(printSubscription);
+
+                                var existingEpaperPlan = new SubscriptionDetails();
+                                var eEndDate = DateTime.Now;
+                                if (authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.isActive == true) != null)
+                                {
+                                    existingEpaperPlan = authUser.SubscriptionDetails.FirstOrDefault(x => x.SubType == "Epaper" && x.isActive == true);
+                                    data.StartDate = (existingEpaperPlan.EndDate > DateTime.Now) ? existingEpaperPlan.EndDate : DateTime.Now;
+                                    eEndDate = data.EndDate = existingEpaperPlan.EndDate.AddDays((double)selectedPlan.ETerm);
+                                }
+                                else
+                                {
+                                    eEndDate = DateTime.Now.AddDays((double)selectedPlan.ETerm);
+                                }
+                                SubscriptionDetails epaperSubscription = new SubscriptionDetails
+                                {
+                                    StartDate = data.StartDate,
+                                    EndDate = eEndDate,
+                                    RateID = data.RateID,
+                                    SubType = data.SubType,
+                                    NotificationEmail = data.NotificationEmail,
+                                    RateType = selectedPlan.Type
+
+                                };
+                                //Epaper subscription
+                                subscriptionDetails.Add(epaperSubscription);
+                                authUser.SubscriptionDetails.Add(epaperSubscription);
+
+                                AddressDetails deliveryAddress = new AddressDetails
+                                {
+                                    AddressLine1 = objDelv.AddressLine1,
+                                    AddressLine2 = objDelv.AddressLine2,
+                                    AddressType = "D",
+                                    CityTown = objDelv.CityTown,
+                                    StateParish = objDelv.StateParish,
+                                    CountryCode = objDelv.CountryCode
+                                };
+
+                                authUser.AddressDetails.Add(deliveryAddress);
+                            }
+
+
+                            List<SelectListItem> billparishes = GetParishes();
+                            ViewBag.Parishes = new SelectList(billparishes, "Value", "Text");
+                            ViewBag.CountryList = GetCountryList();
+
+                            AddressDetails billingAddress = new AddressDetails
+                            {
+                                CountryCode = countryCode,
+                                CountryList = GetCountryList()
+                            };
+
+
+                            var printTerm = selectedPlan.PrintTerm + " " + selectedPlan.PrintTermUnit;
+                            var epaperTerm = selectedPlan.ETerm + " " + selectedPlan.ETermUnit;
+                            var rateTerm = (selectedPlan.Type == "Print") ? printTerm : epaperTerm;
+                            var ratePrice = (selectedPlan.OfferIntroRate) ? selectedPlan.IntroRate : selectedPlan.Rate;
+                            PaymentDetails pd = new PaymentDetails
+                            {
+                                RateID = data.RateID,
+                                RateTerm = rateTerm,
+                                RateDescription = selectedPlan.RateDescr,
+                                Currency = selectedPlan.Curr,
+                                CardAmount = (decimal)selectedPlan.Rate,
+                                SubType = selectedPlan.Type,
+                                BillingAddress = billingAddress,
+                                IsExtension = true
+                            };
+
+                            paymentDetailsList.Add(pd);
+                            authUser.PaymentDetails.Add(pd);
+
+                            if (authUser.SubscriptionDetails != null)
+                            {
+                                ViewBag.plans = authUser.SubscriptionDetails;
+
+                                if (authUser.SubscriptionDetails.FirstOrDefault(x => x.isActive == true) != null)
+                                {
+                                    var startDate = authUser.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).StartDate;
+                                    var endDate = authUser.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).EndDate;
+                                    ViewBag.dates = startDate.GetWeekdayInRange(endDate, DayOfWeek.Monday);
                                 }
                             }
+
+                            if (selectedPlan.Rate == 0)
+                            {
+                                //TODo: Set Coupon COode in WebConfig
+                                var couponCode = WebConfigurationManager.AppSettings["zeroRatedCouponCode"];
+                                authUser.PaymentDetails.OrderByDescending(t => t.TranxDate).FirstOrDefault(x => x.TransactionID == 0).CardType = "N/A";
+                                authUser.PaymentDetails.OrderByDescending(t => t.TranxDate).FirstOrDefault(x => x.TransactionID == 0).CardOwner = authUser.FirstName + " " + authUser.LastName;
+                                authUser.PaymentDetails.OrderByDescending(t => t.TranxDate).FirstOrDefault(x => x.TransactionID == 0).OrderNumber = couponCode;
+
+                                JOL_UserSession session;
+                                var sessionRepository = new SessionRepository();
+                                session = sessionRepository.CreateObject(authUser);
+                                var isSaved = await sessionRepository.AddOrUpdate(pd.OrderNumber, session, data.RateID, authUser);
+                                if (isSaved)
+                                {
+                                    var saved = await SaveSubscriptionInfoAsync(authUser);
+                                    if (saved)
+                                    {
+                                        return View("PaymentSuccess", authUser);
+                                    }
+                                }
+                            }
+
+                            AuthSubcriber authSubcriber = GetAuthSubscriber();
+                            ViewBag.plans = authSubcriber.SubscriptionDetails;
+
+                            return View("ExtendPayment", pd);
+                        }
+                        catch (Exception ex)
+                        {
+
+                            LogError(ex);
+                            return RedirectToAction("dashboard");
+
                         }
 
-                        AuthSubcriber authSubcriber = GetAuthSubscriber();
-                        ViewBag.plans = authSubcriber.SubscriptionDetails;
-
-                        return View("ExtendPayment", pd);
                     }
-                    catch (Exception ex)
-                    {
-
-                        LogError(ex);
-                        return RedirectToAction("dashboard");
-
-                    }
-
                 }
+
+                return View();
+            }
+            catch (HttpAntiForgeryException ex)
+            {
+                LogError(ex);
+                return RedirectToAction("extendsubscription");
             }
 
-            return View();
+            
         }
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ExtendPayment(PaymentDetails data, string prevBtn, string nextBtn)
         {
-            ViewData["preloadSub"] = GetPreloadSub();
-            AuthSubcriber authSubcriber = GetAuthSubscriber();
-            ViewBag.plans = authSubcriber.SubscriptionDetails;
-
-            var cardType = data.CardType;
-
-            if (prevBtn != null)
+            try
             {
+                ViewData["preloadSub"] = GetPreloadSub();
+                AuthSubcriber authSubcriber = GetAuthSubscriber();
+                ViewBag.plans = authSubcriber.SubscriptionDetails;
 
-                try
-                {
-                    ApplicationDbContext db = new ApplicationDbContext();
-                    Subscriber objSub = GetSubscriber();
-                    Subscriber_Epaper objEp = GetEpaperDetails();
-                    Subscriber_Print objPr = GetPrintDetails();
-                    UserLocation objLoc = GetSubscriberLocation();
-                    var market = (objLoc.Country_Code == "JM") ? "Local" : "International";
+                var cardType = data.CardType;
 
-
-                    SubscriptionDetails sd = new SubscriptionDetails
-                    {
-                        StartDate = objEp.StartDate,
-                        RateID = objEp.RateID,
-                        DeliveryInstructions = objPr.DeliveryInstructions,
-                        SubType = objEp.SubType,
-                        RatesList = db.printandsubrates.AsNoTracking().Where(x => x.Market == market).Where(x => x.Active == true).ToList(),
-                        Market = market
-                    };
-
-                    return View("ExtendSubscription", sd);
-                }
-                catch (Exception ex)
-                {
-                    LogError(ex);
-                    return View(data);
-                }
-
-            }
-
-            if (nextBtn != null)
-            {
-                if (ModelState.IsValid)
+                if (prevBtn != null)
                 {
 
                     try
                     {
-                        //get all session variables
-                        AuthSubcriber authUser = GetAuthSubscriber();
+                        ApplicationDbContext db = new ApplicationDbContext();
                         Subscriber objSub = GetSubscriber();
-                        Subscriber_Address objAdd = GetSubscriberAddress();
-                        Subscriber_Epaper objE = GetEpaperDetails();
-                        Subscriber_Print objP = GetPrintDetails();
-                        Subscriber_Tranx objTran = GetTransaction();
-                        ApplicationUser user = GetAppUser();
+                        Subscriber_Epaper objEp = GetEpaperDetails();
+                        Subscriber_Print objPr = GetPrintDetails();
+                        UserLocation objLoc = GetSubscriberLocation();
+                        var market = (objLoc.Country_Code == "JM") ? "Local" : "International";
 
-                        objTran.CardType = data.CardType;
-                        objTran.CardOwner = data.CardOwner;
-                        objTran.TranxAmount = (double)data.CardAmount;
+
+                        SubscriptionDetails sd = new SubscriptionDetails
+                        {
+                            StartDate = objEp.StartDate,
+                            RateID = objEp.RateID,
+                            DeliveryInstructions = objPr.DeliveryInstructions,
+                            SubType = objEp.SubType,
+                            RatesList = db.printandsubrates.AsNoTracking().Where(x => x.Market == market).Where(x => x.Active == true).ToList(),
+                            Market = market
+                        };
+
+                        return View("ExtendSubscription", sd);
                     }
                     catch (Exception ex)
                     {
@@ -1466,30 +1506,66 @@ namespace ePaperLive.Controllers
                         return View(data);
                     }
 
-                    dynamic summary = await ChargeCard(data);
-                    return Json(data);
-
                 }
+
+                if (nextBtn != null)
+                {
+                    if (ModelState.IsValid)
+                    {
+
+                        try
+                        {
+                            //get all session variables
+                            AuthSubcriber authUser = GetAuthSubscriber();
+                            Subscriber objSub = GetSubscriber();
+                            Subscriber_Address objAdd = GetSubscriberAddress();
+                            Subscriber_Epaper objE = GetEpaperDetails();
+                            Subscriber_Print objP = GetPrintDetails();
+                            Subscriber_Tranx objTran = GetTransaction();
+                            ApplicationUser user = GetAppUser();
+
+                            objTran.CardType = data.CardType;
+                            objTran.CardOwner = data.CardOwner;
+                            objTran.TranxAmount = (double)data.CardAmount;
+                        }
+                        catch (Exception ex)
+                        {
+                            LogError(ex);
+                            return View(data);
+                        }
+
+                        dynamic summary = await ChargeCard(data);
+                        return Json(data);
+
+                    }
+                }
+
+                AddressDetails mailingAddress = authSubcriber.AddressDetails.FirstOrDefault(x => x.AddressType == "M");
+                ViewData["savedAddress"] = true;
+                ViewData["savedAddressData"] = JsonConvert.SerializeObject(mailingAddress);
+
+                if (authSubcriber.SubscriptionDetails != null)
+                {
+                    ViewBag.plans = authSubcriber.SubscriptionDetails;
+
+                    if (authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true) != null)
+                    {
+                        var startDate = authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).StartDate;
+                        var endDate = authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).EndDate;
+                        ViewBag.dates = startDate.GetWeekdayInRange(endDate, DayOfWeek.Monday);
+                    }
+                }
+
+                ViewBag.CountryList = GetCountryList();
+                return View(data);
+            }
+            catch (HttpAntiForgeryException ex)
+            {
+                LogError(ex);
+                return RedirectToAction("extendpayment");
             }
 
-            AddressDetails mailingAddress = authSubcriber.AddressDetails.FirstOrDefault(x => x.AddressType == "M");
-            ViewData["savedAddress"] = true;
-            ViewData["savedAddressData"] = JsonConvert.SerializeObject(mailingAddress);
-
-            if (authSubcriber.SubscriptionDetails != null)
-            {
-                ViewBag.plans = authSubcriber.SubscriptionDetails;
-
-                if (authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true) != null)
-                {
-                    var startDate = authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).StartDate;
-                    var endDate = authSubcriber.SubscriptionDetails.FirstOrDefault(x => x.isActive == true).EndDate;
-                    ViewBag.dates = startDate.GetWeekdayInRange(endDate, DayOfWeek.Monday);
-                }
-             }
-
-            ViewBag.CountryList = GetCountryList();
-            return View(data);
+            
         }
         [AllowAnonymous]
         public ActionResult Subscribe(string pkgType, string term, decimal price = 0)
@@ -1511,64 +1587,73 @@ namespace ePaperLive.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult LoginDetails(LoginDetails data, string nextBtn)
         {
-            ViewData["preloadSub"] = GetPreloadSub();
-
-            if (nextBtn != null)
+            try
             {
-                if (ModelState.IsValid)
+                ViewData["preloadSub"] = GetPreloadSub();
+
+                if (nextBtn != null)
                 {
-                    try
+                    if (ModelState.IsValid)
                     {
-                        var isExist = IsEmailExist(data.EmailAddress);
-                        if (isExist)
+                        try
                         {
-                            ModelState.AddModelError("EmailExist", "Email address is already assigned. Please click sign in above and use forget password option to log in.");
-                            return View(data);
+                            var isExist = IsEmailExist(data.EmailAddress);
+                            if (isExist)
+                            {
+                                ModelState.AddModelError("EmailExist", "Email address is already assigned. Please click sign in above and use forget password option to log in.");
+                                return View(data);
+                            }
+                            AuthSubcriber authUser = GetAuthSubscriber();
+                            Subscriber obj = GetSubscriber();
+                            ApplicationUser user = GetAppUser();
+
+
+                            authUser.FirstName = obj.FirstName = data.FirstName;
+                            authUser.LastName = obj.LastName = data.LastName;
+                            authUser.EmailAddress = obj.EmailAddress = data.EmailAddress;
+                            authUser.Password = data.Password;
+                            //obj.passwordHash = PasswordHash(data.Password);
+                            obj.CreatedAt = DateTime.Now;
+                            obj.IpAddress = Request.UserHostAddress;
+
+                            user.Email = data.EmailAddress;
+                            user.PasswordHash = data.Password;
+
+                            UserLocation objLoc = GetSubscriberLocation();
+
+                            var countryCode = (objLoc.Country_Code == "JM") ? "JAM" : "";
+
+                            //load parishes
+                            List<SelectListItem> parishes = GetParishes();
+                            ViewBag.Parishes = new SelectList(parishes, "Value", "Text");
+                            ViewBag.CountryList = GetCountryList();
+                            ViewBag.Name = data.FirstName;
+
+                            AddressDetails ad = new AddressDetails
+                            {
+                                CountryCode = countryCode,
+                                CountryList = GetCountryList(),
+                            };
+
+                            return View("AddressDetails", ad);
                         }
-                        AuthSubcriber authUser = GetAuthSubscriber();
-                        Subscriber obj = GetSubscriber();
-                        ApplicationUser user = GetAppUser();
-
-
-                        authUser.FirstName = obj.FirstName = data.FirstName;
-                        authUser.LastName = obj.LastName = data.LastName;
-                        authUser.EmailAddress = obj.EmailAddress = data.EmailAddress;
-                        authUser.Password = data.Password;
-                        //obj.passwordHash = PasswordHash(data.Password);
-                        obj.CreatedAt = DateTime.Now;
-                        obj.IpAddress = Request.UserHostAddress;
-                        
-                        user.Email = data.EmailAddress;
-                        user.PasswordHash = data.Password;
-
-                        UserLocation objLoc = GetSubscriberLocation();
-
-                        var countryCode = (objLoc.Country_Code == "JM") ? "JAM" : "";
-
-                        //load parishes
-                        List<SelectListItem> parishes = GetParishes();
-                        ViewBag.Parishes = new SelectList(parishes, "Value", "Text");
-                        ViewBag.CountryList = GetCountryList();
-                        ViewBag.Name = data.FirstName;
-
-                        AddressDetails ad = new AddressDetails
+                        catch (Exception ex)
                         {
-                            CountryCode = countryCode,
-                            CountryList = GetCountryList(),
-                        };
+                            LogError(ex);
+                            return View(data);
 
-                        return View("AddressDetails", ad);
-                    }
-                    catch (Exception ex)
-                    {
-                        LogError(ex);
-                        return View(data);
+                        }
 
                     }
-
                 }
+                return View();
             }
-            return View();
+            catch (HttpAntiForgeryException ex)
+            {
+                LogError(ex);
+                return RedirectToAction("logindetails");
+            }
+            
         }
 
 
@@ -1577,97 +1662,107 @@ namespace ePaperLive.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult AddressDetails(AddressDetails data, string prevBtn, string nextBtn)
         {
-            ViewData["preloadSub"] = GetPreloadSub();
-
-            List<SelectListItem> Addressparishes = GetParishes();
-            ViewBag.Parishes = new SelectList(Addressparishes, "Value", "Text");
-            ViewBag.CountryList = GetCountryList();
-
-            if (prevBtn != null)
+            try
             {
-                try
-                {
-                    Subscriber obj = GetSubscriber();
-                    LoginDetails ld = new LoginDetails
-                    {
-                        FirstName = obj.FirstName,
-                        LastName = obj.LastName,
-                        EmailAddress = obj.EmailAddress
-                    };
+                ViewData["preloadSub"] = GetPreloadSub();
 
-                    return View("LoginDetails", ld);
-                }
-                catch (Exception ex)
-                {
-                    LogError(ex);
-                    return View(data);
-                }
-            }
+                List<SelectListItem> Addressparishes = GetParishes();
+                ViewBag.Parishes = new SelectList(Addressparishes, "Value", "Text");
+                ViewBag.CountryList = GetCountryList();
 
-            if (nextBtn != null)
-            {
-                if (ModelState.IsValid)
+                if (prevBtn != null)
                 {
                     try
                     {
-                        Subscriber objSub = GetSubscriber();
-                        Subscriber_Address objAdd = GetSubscriberAddress();
-                        UserLocation objLoc = GetSubscriberLocation();
-                        ApplicationUser user = GetAppUser();
-                        AuthSubcriber authUser = GetAuthSubscriber();
-                        List<AddressDetails> AddressList = new List<AddressDetails>();
-
-                        var market = (objLoc.Country_Code == "JM") ? "Local" : "International";
-
-                        //use for 2-step auth
-                        user.PhoneNumber = data.Phone;
-                        //add email from subscriber
-                        objAdd.EmailAddress = objSub.EmailAddress;
-                        //address type M - Mailing --- B - Billing
-                        objAdd.AddressType = data.AddressType = "M";
-                        objAdd.AddressLine1 = data.AddressLine1;
-                        objAdd.AddressLine2 = data.AddressLine2;
-                        objAdd.CityTown = data.CityTown;
-                        objAdd.StateParish = data.StateParish;
-                        objAdd.ZipCode = data.ZipCode;
-                        objAdd.CountryCode = data.CountryCode;
-                        objAdd.CreatedAt = DateTime.Now;
-
-                        AddressList.Add(data);
-                        authUser.AddressDetails = AddressList;
-                        //load rates on the next (subscription) page
-                        //GetParishes();
-                        List<SelectListItem> parishes = GetParishes();
-                        ViewBag.Parishes = new SelectList(parishes, "Value", "Text");
-                        ViewBag.CountryList = GetCountryList();
-                        ViewBag.Name = authUser.FirstName;
-
-                        DeliveryAddress delAddressDetails = new DeliveryAddress
-                        { 
-                            CountryList = GetCountryList()
-                        };
-
-                        SubscriptionDetails subscriptionDetails = new SubscriptionDetails
+                        Subscriber obj = GetSubscriber();
+                        LoginDetails ld = new LoginDetails
                         {
-                            StartDate = DateTime.Now,
-                            EndDate = DateTime.Now.AddDays(30),
-                            Market = market,
-                            DeliveryAddress = delAddressDetails
-
+                            FirstName = obj.FirstName,
+                            LastName = obj.LastName,
+                            EmailAddress = obj.EmailAddress
                         };
 
-
-                        return View("SubscriptionInfo", subscriptionDetails);
+                        return View("LoginDetails", ld);
                     }
                     catch (Exception ex)
                     {
                         LogError(ex);
                         return View(data);
                     }
-
                 }
+
+                if (nextBtn != null)
+                {
+                    if (ModelState.IsValid)
+                    {
+                        try
+                        {
+                            Subscriber objSub = GetSubscriber();
+                            Subscriber_Address objAdd = GetSubscriberAddress();
+                            UserLocation objLoc = GetSubscriberLocation();
+                            ApplicationUser user = GetAppUser();
+                            AuthSubcriber authUser = GetAuthSubscriber();
+                            List<AddressDetails> AddressList = new List<AddressDetails>();
+
+                            var market = (objLoc.Country_Code == "JM") ? "Local" : "International";
+
+                            //use for 2-step auth
+                            user.PhoneNumber = data.Phone;
+                            //add email from subscriber
+                            objAdd.EmailAddress = objSub.EmailAddress;
+                            //address type M - Mailing --- B - Billing
+                            objAdd.AddressType = data.AddressType = "M";
+                            objAdd.AddressLine1 = data.AddressLine1;
+                            objAdd.AddressLine2 = data.AddressLine2;
+                            objAdd.CityTown = data.CityTown;
+                            objAdd.StateParish = data.StateParish;
+                            objAdd.ZipCode = data.ZipCode;
+                            objAdd.CountryCode = data.CountryCode;
+                            objAdd.CreatedAt = DateTime.Now;
+
+                            AddressList.Add(data);
+                            authUser.AddressDetails = AddressList;
+                            //load rates on the next (subscription) page
+                            //GetParishes();
+                            List<SelectListItem> parishes = GetParishes();
+                            ViewBag.Parishes = new SelectList(parishes, "Value", "Text");
+                            ViewBag.CountryList = GetCountryList();
+                            ViewBag.Name = authUser.FirstName;
+
+                            DeliveryAddress delAddressDetails = new DeliveryAddress
+                            {
+                                CountryList = GetCountryList()
+                            };
+
+                            SubscriptionDetails subscriptionDetails = new SubscriptionDetails
+                            {
+                                StartDate = DateTime.Now,
+                                EndDate = DateTime.Now.AddDays(30),
+                                Market = market,
+                                DeliveryAddress = delAddressDetails
+
+                            };
+
+
+                            return View("SubscriptionInfo", subscriptionDetails);
+                        }
+                        catch (Exception ex)
+                        {
+                            LogError(ex);
+                            return View(data);
+                        }
+
+                    }
+                }
+                return View(data);
             }
-            return View(data);
+            catch (HttpAntiForgeryException ex)
+            {
+                LogError(ex);
+                return RedirectToAction("AddressDetails");
+            }
+
+            
         }
 
         [HttpGet]
@@ -2023,101 +2118,110 @@ namespace ePaperLive.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> PaymentDetails(PaymentDetails data, string prevBtn, string nextBtn)
         {
-            ViewData["preloadSub"] = GetPreloadSub();
-
-            var cardType = data.CardType;
-
-            if (prevBtn != null)
+            try
             {
+                ViewData["preloadSub"] = GetPreloadSub();
 
-                try
-                {
-                    ApplicationDbContext db = new ApplicationDbContext();
-                    Subscriber objSub = GetSubscriber();
-                    Subscriber_Epaper objEp = GetEpaperDetails();
-                    Subscriber_Print objPr = GetPrintDetails();
-                    UserLocation objLoc = GetSubscriberLocation();
-                    var market = (objLoc.Country_Code == "JM") ? "Local" : "International";
+                var cardType = data.CardType;
 
-
-                    SubscriptionDetails sd = new SubscriptionDetails
-                    {
-                        StartDate = objEp.StartDate,
-                        RateID = objEp.RateID,
-                        DeliveryInstructions = objPr.DeliveryInstructions,
-                        NewsletterSignUp = objSub.Newsletter ?? false,
-                        NotificationEmail = objEp.NotificationEmail,
-                        SubType = objEp.SubType,
-                        RatesList = db.printandsubrates.AsNoTracking().Where(x => x.Market == market).Where(x => x.Active == true).ToList(),
-                        Market = market
-                    };
-
-                    return View("SubscriptionInfo", sd);
-                }
-                catch (Exception ex)
-                {
-                    LogError(ex);
-                }
-
-            }
-
-            if (nextBtn != null)
-            {
-                if (ModelState.IsValid)
+                if (prevBtn != null)
                 {
 
                     try
                     {
-                        //get all session variables
+                        ApplicationDbContext db = new ApplicationDbContext();
                         Subscriber objSub = GetSubscriber();
-                        Subscriber_Tranx objTran = GetTransaction();
+                        Subscriber_Epaper objEp = GetEpaperDetails();
+                        Subscriber_Print objPr = GetPrintDetails();
+                        UserLocation objLoc = GetSubscriberLocation();
+                        var market = (objLoc.Country_Code == "JM") ? "Local" : "International";
 
-                        decimal originalAmount = data.CardAmount;
-                        var selectedPlan = _db.printandsubrates.AsNoTracking().FirstOrDefault(x => x.Rateid == data.RateID);
-                        var rate = (selectedPlan.OfferIntroRate) ? selectedPlan.IntroRate : selectedPlan.Rate;
 
-                        if (data.PromoCode != null)
+                        SubscriptionDetails sd = new SubscriptionDetails
                         {
-                            using (var context = new ApplicationDbContext())
-                            {
-                                var discount = context.promocodes.FirstOrDefault(q => q.PromoCode == data.PromoCode);
+                            StartDate = objEp.StartDate,
+                            RateID = objEp.RateID,
+                            DeliveryInstructions = objPr.DeliveryInstructions,
+                            NewsletterSignUp = objSub.Newsletter ?? false,
+                            NotificationEmail = objEp.NotificationEmail,
+                            SubType = objEp.SubType,
+                            RatesList = db.printandsubrates.AsNoTracking().Where(x => x.Market == market).Where(x => x.Active == true).ToList(),
+                            Market = market
+                        };
 
-                                if (discount != null)
-                                {
-                                    if (discount.EndDate > DateTime.Now && discount.Active == true)
-                                    {
-                                        if (selectedPlan != null)
-                                        {
-                                            originalAmount = (decimal)rate - ((decimal)rate * (decimal)discount.Discount);
-                                            data.PromoCode = discount.PromoCode;
-                                            data.CardAmount = originalAmount;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            data.CardAmount = (decimal)rate;
-                        }
-
-                        objTran.CardType = data.CardType;
-                        objTran.CardOwner = data.CardOwner;
-                        objTran.TranxAmount = (double)data.CardAmount;
+                        return View("SubscriptionInfo", sd);
                     }
                     catch (Exception ex)
                     {
                         LogError(ex);
                     }
 
-                    dynamic summary = await ChargeCard(data);
-                    return Json(data);
-
                 }
-            }
 
-            ViewBag.CountryList = GetCountryList();
-            return View(data);
+                if (nextBtn != null)
+                {
+                    if (ModelState.IsValid)
+                    {
+
+                        try
+                        {
+                            //get all session variables
+                            Subscriber objSub = GetSubscriber();
+                            Subscriber_Tranx objTran = GetTransaction();
+
+                            decimal originalAmount = data.CardAmount;
+                            var selectedPlan = _db.printandsubrates.AsNoTracking().FirstOrDefault(x => x.Rateid == data.RateID);
+                            var rate = (selectedPlan.OfferIntroRate) ? selectedPlan.IntroRate : selectedPlan.Rate;
+
+                            if (data.PromoCode != null)
+                            {
+                                using (var context = new ApplicationDbContext())
+                                {
+                                    var discount = context.promocodes.FirstOrDefault(q => q.PromoCode == data.PromoCode);
+
+                                    if (discount != null)
+                                    {
+                                        if (discount.EndDate > DateTime.Now && discount.Active == true)
+                                        {
+                                            if (selectedPlan != null)
+                                            {
+                                                originalAmount = (decimal)rate - ((decimal)rate * (decimal)discount.Discount);
+                                                data.PromoCode = discount.PromoCode;
+                                                data.CardAmount = originalAmount;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                data.CardAmount = (decimal)rate;
+                            }
+
+                            objTran.CardType = data.CardType;
+                            objTran.CardOwner = data.CardOwner;
+                            objTran.TranxAmount = (double)data.CardAmount;
+                        }
+                        catch (Exception ex)
+                        {
+                            LogError(ex);
+                        }
+
+                        dynamic summary = await ChargeCard(data);
+                        return Json(data);
+
+                    }
+                }
+
+                ViewBag.CountryList = GetCountryList();
+                return View(data);
+            }
+            catch (HttpAntiForgeryException ex)
+            {
+                LogError(ex);
+                return RedirectToAction("PaymentDetails");
+            }
+            
         }
 
         public async Task<bool> SaveSubscriptionInfoAsync(AuthSubcriber authUser)
@@ -2826,102 +2930,111 @@ namespace ePaperLive.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> RedeemCoupon(AuthSubcriber authUser, string nextBtn)
         {
-            authUser.SubscriptionDetails = new List<SubscriptionDetails>();
-            authUser.PaymentDetails = new List<PaymentDetails>();
-
-            if (nextBtn != null)
+            try
             {
-                if (ModelState.IsValid)
+                authUser.SubscriptionDetails = new List<SubscriptionDetails>();
+                authUser.PaymentDetails = new List<PaymentDetails>();
+
+                if (nextBtn != null)
                 {
-                    try
+                    if (ModelState.IsValid)
                     {
-                        var isExist = IsEmailExist(authUser.EmailAddress);
-                        if (isExist)
+                        try
                         {
-                            ModelState.AddModelError("EmailExist", "Email address is already assigned. Please click sign in above and use forget password option to log in.");
-                            return View(authUser);
-                        }
-
-                        authUser.AddressDetails.FirstOrDefault().AddressType = "M";
-                        using (var context = new ApplicationDbContext())
-                        {
-                            var result = context.coupons.FirstOrDefault(x => x.CouponCode == authUser.RedeemCode && x.UsedDate == null && x.ExpiryDate >= DateTime.Now);
-                            if (result != null)
+                            var isExist = IsEmailExist(authUser.EmailAddress);
+                            if (isExist)
                             {
-                                var endDate = DateTime.Now.AddDays((double)result.SubDays);
-
-                                SubscriptionDetails subscriptionDetails = new SubscriptionDetails
-                                {
-                                    StartDate = DateTime.Now,
-                                    EndDate = endDate,
-                                    RateID = 61,
-                                    SubType = "Epaper",
-                                    NotificationEmail = false,
-                                    RateType = "Epaper",
-                                    RateDescription = "ePaper Coupon",
-                                    isActive = true
-
-                                };
-                                authUser.SubscriptionDetails.Add(subscriptionDetails);
-
-                                PaymentDetails pd = new PaymentDetails
-                                {
-                                    RateID = 61,
-                                    RateDescription = "ePaper Coupon",
-                                    RateTerm = "",
-                                    Currency = "JMD",
-                                    CardAmount = 0,
-                                    SubType = "Epaper",
-                                    CardType = "N/A",
-                                    //test data
-                                    CardOwner = authUser.FirstName + " " + authUser.LastName,
-                                    OrderNumber = "Complimentary : Coupon",
-                                };
-                                authUser.PaymentDetails.Add(pd);
-
-
-                                JOL_UserSession session;
-                                var sessionRepository = new SessionRepository();
-                                session = sessionRepository.CreateObject(authUser);
-                                var isSaved = await sessionRepository.AddOrUpdate(pd.OrderNumber, session, 61, authUser);
-
-                                var saved = await SaveSubscriptionInfoAsync(authUser);
-                                if (saved)
-                                {
-                                    //set coupon to used
-                                    var closeCoupon = context.coupons.FirstOrDefault(x => x.CouponCode == authUser.RedeemCode);
-                                    if (closeCoupon != null)
-                                    {
-                                        closeCoupon.UsedDate = DateTime.Now;
-                                        await context.SaveChangesAsync();
-                                    }
-
-                                    //await CompleteTransactionProcess(pd.RateID, pd.OrderNumber, authUser.EmailAddress);
-                                    return View("PaymentSuccess", authUser);
-                                }
+                                ModelState.AddModelError("EmailExist", "Email address is already assigned. Please click sign in above and use forget password option to log in.");
+                                return View(authUser);
                             }
-                            ModelState.AddModelError("InvalidCode", "Invalid Code");
 
+                            authUser.AddressDetails.FirstOrDefault().AddressType = "M";
+                            using (var context = new ApplicationDbContext())
+                            {
+                                var result = context.coupons.FirstOrDefault(x => x.CouponCode == authUser.RedeemCode && x.UsedDate == null && x.ExpiryDate >= DateTime.Now);
+                                if (result != null)
+                                {
+                                    var endDate = DateTime.Now.AddDays((double)result.SubDays);
+
+                                    SubscriptionDetails subscriptionDetails = new SubscriptionDetails
+                                    {
+                                        StartDate = DateTime.Now,
+                                        EndDate = endDate,
+                                        RateID = 61,
+                                        SubType = "Epaper",
+                                        NotificationEmail = false,
+                                        RateType = "Epaper",
+                                        RateDescription = "ePaper Coupon",
+                                        isActive = true
+
+                                    };
+                                    authUser.SubscriptionDetails.Add(subscriptionDetails);
+
+                                    PaymentDetails pd = new PaymentDetails
+                                    {
+                                        RateID = 61,
+                                        RateDescription = "ePaper Coupon",
+                                        RateTerm = "",
+                                        Currency = "JMD",
+                                        CardAmount = 0,
+                                        SubType = "Epaper",
+                                        CardType = "N/A",
+                                        //test data
+                                        CardOwner = authUser.FirstName + " " + authUser.LastName,
+                                        OrderNumber = "Complimentary : Coupon",
+                                    };
+                                    authUser.PaymentDetails.Add(pd);
+
+
+                                    JOL_UserSession session;
+                                    var sessionRepository = new SessionRepository();
+                                    session = sessionRepository.CreateObject(authUser);
+                                    var isSaved = await sessionRepository.AddOrUpdate(pd.OrderNumber, session, 61, authUser);
+
+                                    var saved = await SaveSubscriptionInfoAsync(authUser);
+                                    if (saved)
+                                    {
+                                        //set coupon to used
+                                        var closeCoupon = context.coupons.FirstOrDefault(x => x.CouponCode == authUser.RedeemCode);
+                                        if (closeCoupon != null)
+                                        {
+                                            closeCoupon.UsedDate = DateTime.Now;
+                                            await context.SaveChangesAsync();
+                                        }
+
+                                        //await CompleteTransactionProcess(pd.RateID, pd.OrderNumber, authUser.EmailAddress);
+                                        return View("PaymentSuccess", authUser);
+                                    }
+                                }
+                                ModelState.AddModelError("InvalidCode", "Invalid Code");
+
+                            }
                         }
-                    }
-                    catch (Exception ex)
-                    {
+                        catch (Exception ex)
+                        {
 
-                        LogError(ex);
-                    }
+                            LogError(ex);
+                        }
 
+                    }
                 }
+
+                List<SelectListItem> Addressparishes = GetParishes();
+                ViewBag.Parishes = new SelectList(Addressparishes, "Value", "Text");
+                ViewBag.CountryList = GetCountryList();
+
+                return View();
             }
-
-            List<SelectListItem> Addressparishes = GetParishes();
-            ViewBag.Parishes = new SelectList(Addressparishes, "Value", "Text");
-            ViewBag.CountryList = GetCountryList();
-
-            return View();
+            catch (HttpAntiForgeryException ex)
+            {
+                LogError(ex);
+                return RedirectToAction("RedeemCoupon");
+            }
+            
         }
 
         [AllowAnonymous]
-        public ActionResult FreeMonth()
+        public ActionResult _FreeMonth()
         {
             AuthSubcriber authUser = new AuthSubcriber();
 
@@ -2932,95 +3045,104 @@ namespace ePaperLive.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> FreeMonth(AuthSubcriber authUser, string nextBtn)
+        public async Task<ActionResult> _FreeMonth(AuthSubcriber authUser, string nextBtn)
         {
-            authUser.SubscriptionDetails = new List<SubscriptionDetails>();
-            authUser.PaymentDetails = new List<PaymentDetails>();
-
-            if (nextBtn != null)
+            try
             {
-                if (ModelState.IsValid)
+                authUser.SubscriptionDetails = new List<SubscriptionDetails>();
+                authUser.PaymentDetails = new List<PaymentDetails>();
+
+                if (nextBtn != null)
                 {
-                    try
+                    if (ModelState.IsValid)
                     {
-                        var isExist = IsEmailExist(authUser.EmailAddress);
-                        if (isExist)
+                        try
                         {
-                            ModelState.AddModelError("EmailExist", "Email address is already assigned. Please click sign in above and use forget password option to log in.");
+                            var isExist = IsEmailExist(authUser.EmailAddress);
+                            if (isExist)
+                            {
+                                ModelState.AddModelError("EmailExist", "Email address is already assigned. Please click sign in above and use forget password option to log in.");
+                                return View(authUser);
+                            }
+
+                            using (var context = new ApplicationDbContext())
+                            {
+                                var result = context.coupons.FirstOrDefault(x => x.CouponCode == authUser.RedeemCode && x.UsedDate == null && x.ExpiryDate >= DateTime.Now);
+                                if (result != null)
+                                {
+                                    var market = GetUserLocation().Country_Code;
+                                    var rateID = (market == "JM") ? 32 : 2;
+                                    var currency = (market == "JM") ? "JMD" : "USD";
+
+                                    var selectedPlan = context.printandsubrates.AsNoTracking().FirstOrDefault(x => x.Rateid == rateID);
+
+
+                                    var endDate = DateTime.Now.AddDays((double)result.SubDays);
+
+                                    SubscriptionDetails subscriptionDetails = new SubscriptionDetails
+                                    {
+                                        StartDate = DateTime.Now,
+                                        EndDate = endDate,
+                                        RateID = rateID,
+                                        SubType = "Epaper",
+                                        NotificationEmail = false,
+                                        RateType = "Epaper",
+                                        RateDescription = "1 Month (30 Days) - Free"
+
+                                    };
+                                    authUser.SubscriptionDetails.Add(subscriptionDetails);
+
+                                    PaymentDetails pd = new PaymentDetails
+                                    {
+                                        RateID = rateID,
+                                        RateDescription = "1 Month (30 Days) - Free",
+                                        RateTerm = "",
+                                        Currency = currency,
+                                        CardAmount = 0,
+                                        SubType = "Epaper",
+                                        CardType = "N/A",
+                                        //test data
+                                        CardOwner = authUser.FirstName + " " + authUser.LastName,
+                                        OrderNumber = "FreeTrial:Coupon",
+                                    };
+                                    authUser.PaymentDetails.Add(pd);
+
+
+                                    JOL_UserSession session;
+                                    var sessionRepository = new SessionRepository();
+                                    session = sessionRepository.CreateObject(authUser);
+                                    var isSaved = await sessionRepository.AddOrUpdate(pd.OrderNumber, session, rateID, authUser);
+                                    if (isSaved)
+                                    {
+                                        var saved = await SaveSubscriptionInfoAsync(authUser);
+                                        if (saved)
+                                        {
+                                            return View("PaymentSuccess", authUser);
+                                        }
+                                    }
+                                }
+
+                                ModelState.AddModelError("InvalidCode", "Invalid Code");
+
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            LogError(ex);
                             return View(authUser);
                         }
 
-                        using (var context = new ApplicationDbContext())
-                        {
-                            var result = context.coupons.FirstOrDefault(x => x.CouponCode == authUser.RedeemCode && x.UsedDate == null && x.ExpiryDate >= DateTime.Now);
-                            if (result != null)
-                            {
-                                var market = GetUserLocation().Country_Code;
-                                var rateID = (market == "JM") ? 32 : 2;
-                                var currency = (market == "JM") ? "JMD" : "USD";
-
-                                var selectedPlan = context.printandsubrates.AsNoTracking().FirstOrDefault(x => x.Rateid == rateID);
-
-
-                                var endDate = DateTime.Now.AddDays((double)result.SubDays);
-
-                                SubscriptionDetails subscriptionDetails = new SubscriptionDetails
-                                {
-                                    StartDate = DateTime.Now,
-                                    EndDate = endDate,
-                                    RateID = rateID,
-                                    SubType = "Epaper",
-                                    NotificationEmail = false,
-                                    RateType = "Epaper",
-                                    RateDescription = "1 Month (30 Days) - Free"
-
-                                };
-                                authUser.SubscriptionDetails.Add(subscriptionDetails);
-
-                                PaymentDetails pd = new PaymentDetails
-                                {
-                                    RateID = rateID,
-                                    RateDescription = "1 Month (30 Days) - Free",
-                                    RateTerm = "",
-                                    Currency = currency,
-                                    CardAmount = 0,
-                                    SubType = "Epaper",
-                                    CardType = "N/A",
-                                    //test data
-                                    CardOwner = authUser.FirstName + " " + authUser.LastName,
-                                    OrderNumber = "FreeTrial:Coupon",
-                                };
-                                authUser.PaymentDetails.Add(pd);
-
-
-                                JOL_UserSession session;
-                                var sessionRepository = new SessionRepository();
-                                session = sessionRepository.CreateObject(authUser);
-                                var isSaved = await sessionRepository.AddOrUpdate(pd.OrderNumber, session, rateID, authUser);
-                                if (isSaved)
-                                {
-                                    var saved = await SaveSubscriptionInfoAsync(authUser);
-                                    if (saved)
-                                    {
-                                        return View("PaymentSuccess", authUser);
-                                    }
-                                }
-                            }
-
-                            ModelState.AddModelError("InvalidCode", "Invalid Code");
-
-                        }
                     }
-                    catch (Exception ex)
-                    {
-                        LogError(ex);
-                        return View(authUser);
-                    }
-
                 }
-            }
 
-            return View(authUser);
+                return View(authUser);
+            }
+            catch (HttpAntiForgeryException ex)
+            {
+                LogError(ex);
+                return RedirectToAction("freemonth");
+            }
+            
         }
 
         [HttpGet]
