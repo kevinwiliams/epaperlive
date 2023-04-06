@@ -1,0 +1,150 @@
+﻿@model List<ePaperLive.Models.LocationReport>
+
+@{
+    ViewBag.Title = "Locations";
+}
+
+<h2>Locations</h2>
+
+<div class="container pt-5">
+    <h2>Locations Report</h2>
+    @using (Html.BeginForm("Locations", "Reports", FormMethod.Post, new { @name = "locationsReport" }))
+    {
+        <div class="row p-4">
+
+            <div class="col-lg-3 col-md-6 form-group">
+                @Html.Label("Start Date:")
+                @Html.TextBox("startDate", null, new { @class = "form-control datepicker", @type = "date", @required = "required" })
+            </div>
+            <div class="col-lg-3 col-md-6 form-group">
+                @Html.Label("End Date:")
+                @Html.TextBox("endDate", null, new { @class = "form-control datepicker", @type = "date", @required = "required" })
+            </div>
+            <div class="col-lg-3 col-md-6 form-group">
+                <button id="filterBtn" type="submit" class="btn btn-primary mt-4">Filter</button>
+            </div>
+        </div>
+    }
+
+    <table id="dataTable" class="table">
+        <caption id="dateRange">
+            <strong>From:</strong> <span id="sDate"></span> - <strong>To:</strong> <span id="eDate"></span>
+        </caption>
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email Address</th>
+                <th>Phone Number</th>
+                <th>Plan</th>
+                <th>Region</th>
+                <th>Country</th>
+                <th>Transaction Date</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+            <tr>
+                <td>@item.FirstName</td>
+                <td>@item.LastName</td>
+                <td>@item.EmailAddress</td>
+                <td>@item.PhoneNumber</td>
+                <td>@item.PlanDesc</td>
+                <td>@item.Region</td>
+                <td>@item.Country</td>
+                <td>@item.TransactionDate</td>
+            </tr>
+            }
+        </tbody>
+
+    </table>
+</div>
+@Scripts.Render("~/bundles/jquery")
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" />
+<script>
+
+    //$('[name=startDate]').val(moment().startOf('month').format('YYYY-MM-DD'));
+    //$('[name=endDate]').val(moment().endOf('month').format('YYYY-MM-DD'));
+
+    $('[name=startDate]').change(function (e) {
+        var s = $(this).val();
+        var sDate = moment(s).format('LL');
+        $('#sDate').html(sDate);
+    });
+
+    $('[name=endDate]').change(function (e) {
+        var d = $(this).val();
+        var eDate = moment(d).format('LL');
+        $('#eDate').html(eDate);
+    });
+
+    // Submit form on button click
+    $('#filterBtn').click(function (e) {
+        e.preventDefault();
+        var startDate = $('[name=startDate]').val();
+        var endDate = $('[name=endDate]').val();
+
+        if (startDate == '' || endDate == '') {
+            alert('Please select a start and end date.');
+            return false;
+        }
+
+        if (moment(startDate).isAfter(endDate)) {
+            alert('The end date must be after the start date.');
+            return false;
+        }
+
+        // Submit form
+        $('[name=locationsReport]').submit();
+    });
+
+</script>
+<script>
+    $(document).ready(function () {
+        $('#sDate').html(moment($('[name=startDate]').val()).format('LL'));
+        $('#eDate').html(moment($('[name=endDate]').val()).format('LL'));
+
+        $('#dataTable').DataTable({
+            pageLength: 25,
+            dom: 'Bfrtip',
+            buttons: [
+                'excel', 'print'
+            ],
+            footerCallback: function (row, data, start, end, display) {
+                var api = this.api();
+
+                // Remove the formatting to get integer data for summation
+                var intVal = function (i) {
+                    return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
+                };
+
+                // Total over all pages
+                var total = api
+                    .column(1)
+                    .data()
+                    .reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                // Total over this page
+                var pageTotal = api
+                    .column(1, { page: 'current' })
+                    .data()
+                    .reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                // Update footer
+                //$(api.column(1).footer()).html(pageTotal + ' (' + total + ' total)');
+            },
+
+        });
+        //flatpickr('.datepicker', {
+        //    dateFormat: "Y-m-d",
+        //    disableMobile: true,
+        //});
+    });
+</script>

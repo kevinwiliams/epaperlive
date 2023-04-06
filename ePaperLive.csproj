@@ -704,6 +704,7 @@
     <Content Include="Views\EpaperSub\AddCorporateRelations.cshtml" />
     <Content Include="Views\Emails\ExtendSubscription.cshtml" />
     <Content Include="Views\Error\Error404.cshtml" />
+    <Content Include="Views\Reports\Locations.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\roslyn\" />

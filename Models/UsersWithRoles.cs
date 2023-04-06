@@ -27,4 +27,20 @@ namespace ePaperLive.Models
         public DateTime SignUpDate { get; set; }
         public int Total { get; set; }
     }
+
+    public class LocationReport
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string EmailAddress { get; set; }
+        public string PhoneNumber { get; set; }
+        public string PlanDesc { get; set; }
+        public string Region { get; set; }
+        public string Country { get; set; }
+        [DataType(DataType.Date)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
+        public Nullable<DateTime> TransactionDate { get; set; }
+        public string IpAddress { get; set; }
+        public string OrderNumber { get; set; }
+    }
 }
