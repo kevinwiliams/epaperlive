@@ -2473,7 +2473,7 @@ namespace ePaperLive.Controllers
                                             result.StartDate = objP.StartDate;
                                             result.EndDate = objP.EndDate;
                                             result.IsActive = false;
-                                            result.CreatedAt = DateTime.Now;
+                                            //result.CreatedAt = DateTime.Now;
                                             await context.SaveChangesAsync();
                                         }
                                         else
@@ -2512,7 +2512,7 @@ namespace ePaperLive.Controllers
                                             result.StartDate = objE.StartDate;
                                             result.EndDate = objE.EndDate;
                                             result.IsActive = false;
-                                            result.CreatedAt = DateTime.Now;
+                                            //result.CreatedAt = DateTime.Now;
                                             await context.SaveChangesAsync();
                                         }
                                         else
@@ -2550,7 +2550,7 @@ namespace ePaperLive.Controllers
                                         result.StartDate = objP.StartDate;
                                         result.EndDate = objP.EndDate;
                                         result.IsActive = false;
-                                        result.CreatedAt = DateTime.Now;
+                                        //result.CreatedAt = DateTime.Now;
                                         await context.SaveChangesAsync();
                                     }
                                     else
@@ -2581,7 +2581,7 @@ namespace ePaperLive.Controllers
                                         result.StartDate = objE.StartDate;
                                         result.EndDate = objE.EndDate;
                                         result.IsActive = false;
-                                        result.CreatedAt = DateTime.Now;
+                                        //result.CreatedAt = DateTime.Now;
                                         await context.SaveChangesAsync();
                                     }
                                     else
