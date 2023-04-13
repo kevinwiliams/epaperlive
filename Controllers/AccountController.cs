@@ -1932,6 +1932,21 @@ namespace ePaperLive.Controllers
                         objTran.RateID = data.RateID;
 
                         var selectedPlan = db.printandsubrates.FirstOrDefault(x => x.Rateid == data.RateID);
+                        //add 30 days free epaper sub based on rates
+                        var freeDaysRates = WebConfigurationManager.AppSettings["freeDaysPromoRates"];
+                        var freeDaysCnt = WebConfigurationManager.AppSettings["freeDaysPromoCnt"];
+                        if (!string.IsNullOrWhiteSpace(freeDaysRates))
+                        {
+                            var promoRates = freeDaysRates.Split(',');
+                            foreach (var item in promoRates.ToList())
+                            {
+                                if (data.RateID == int.Parse(item.Trim()))
+                                {
+                                    selectedPlan.ETerm += int.Parse(freeDaysCnt);
+                                }
+                            }
+                            
+                        }
 
                         if (selectedPlan.Type == "Print")
                         {

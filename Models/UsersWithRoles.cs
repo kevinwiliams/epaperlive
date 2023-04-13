@@ -43,4 +43,11 @@ namespace ePaperLive.Models
         public string IpAddress { get; set; }
         public string OrderNumber { get; set; }
     }
+
+    public class CorporateParent
+    {
+        public string SubscriberID { get; set; }
+        public string ParentName { get; set; }
+        public string EmailAddress { get; set; }
+    }
 }

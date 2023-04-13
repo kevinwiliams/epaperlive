@@ -437,6 +437,65 @@ namespace ePaperLive.Controllers
             return View(authUser);
         }
 
+        [Route("corp")]
+        public async Task<ActionResult> CorporateRelations(DataTableParameters dataTableParameters)
+        {
+            var corpParents = (from s in db.subscribers
+                             where db.subscriber_epaper.Any(e => e.ParentId != null && e.ParentId == s.SubscriberID)
+                              select new CorporateParent
+                              {
+                                    SubscriberID = s.SubscriberID,
+                                    ParentName = s.FirstName + " " + s.LastName,
+                                    EmailAddress = s.EmailAddress
+                              });
+
+
+            var searchTerm = dataTableParameters.search?.value;
+            var filteredData = corpParents;
+
+            try
+            {
+                if (!string.IsNullOrEmpty(searchTerm))
+                {
+                    filteredData = filteredData.Where(x => x.ParentName.Contains(searchTerm) || x.EmailAddress.Contains(searchTerm));
+                }
+
+                // Order the data by the specified column and direction
+                if (!string.IsNullOrEmpty(dataTableParameters.order?.FirstOrDefault()?.column.ToString()))
+                {
+                    var sortColumnIndex = int.Parse(dataTableParameters.order.FirstOrDefault().column.ToString());
+                    var sortColumn = dataTableParameters.columns[sortColumnIndex].data;
+                    var sortDirection = dataTableParameters.order.FirstOrDefault().dir == "desc" ? "OrderByDescending" : "OrderBy";
+                    var property = typeof(CorporateParent).GetProperty(sortColumn);
+                    var parameter = Expression.Parameter(typeof(CorporateParent), "p");
+                    var propertyAccess = Expression.MakeMemberAccess(parameter, property);
+                    var orderByExp = Expression.Lambda(propertyAccess, parameter);
+                    var resultExp = Expression.Call(typeof(Queryable), sortDirection, new Type[] { typeof(CorporateParent), property.PropertyType }, filteredData.Expression, Expression.Quote(orderByExp));
+                    filteredData = filteredData.Provider.CreateQuery<CorporateParent>(resultExp);
+                }
+
+                var filteredCount = await filteredData.CountAsync(); // Get the filtered count
+                var pageData = filteredData.Skip(dataTableParameters.start).Take(dataTableParameters.length);
+
+                var pageDataList = await pageData.ToListAsync();
+
+
+
+                return Json(new
+                {
+                    draw = dataTableParameters.draw,
+                    recordsTotal = corpParents.Count(),
+                    recordsFiltered = filteredCount,
+                    data = pageDataList
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
         [Route("addcorp")]
         public ActionResult AddCorporateRelations()
         {

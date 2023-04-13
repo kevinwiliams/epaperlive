@@ -400,6 +400,7 @@
     <Content Include="assets\img\epaper-logo.png" />
     <Content Include="assets\img\epaper-print-logo.png" />
     <Content Include="assets\img\ePaper_App_Logo.png" />
+    <Content Include="assets\img\ePaper_WHITE_icon.jpg" />
     <Content Include="assets\img\fac.jpg" />
     <Content Include="assets\img\favicon.png" />
     <Content Include="assets\img\features-1.png" />
@@ -705,6 +706,7 @@
     <Content Include="Views\Emails\ExtendSubscription.cshtml" />
     <Content Include="Views\Error\Error404.cshtml" />
     <Content Include="Views\Reports\Locations.cshtml" />
+    <Content Include="Views\EpaperSub\CorporateRelations.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\roslyn\" />

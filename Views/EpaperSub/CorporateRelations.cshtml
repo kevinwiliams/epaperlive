@@ -1,0 +1,106 @@
+﻿@model IEnumerable<ePaperLive.Models.CorporateParent>
+
+@{
+    ViewBag.Title = "Corporate Relations";
+}
+
+<div id="main">
+
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+        <div class="container">
+
+            <ol>
+                <li><a href="@Url.Action("index", "home")">Home</a></li>
+                <li><a href="@Url.Action("corp", "admin")">Corporate Relations</a></li>
+                <li>@ViewData["Title"]</li>
+            </ol>
+            <h2>@ViewData["Title"]</h2>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+    <!-- ======= Wizard Section ======= -->
+    <section id="portfolio-details" class="portfolio-details">
+        <div class="container">
+
+            <div class="row gy-4">
+                <div class="col-lg-12">
+                    <!-- start:wizrd -->
+                    <div class="container-fluid ">
+
+                        <p>
+                            <a href="@Url.Action("addcorp", "epapersub")">Create New</a>
+                        </p>
+                        <table class="table table-hover table-responsive table-striped small" id="corpList" data-request-url="@Url.Action("editcorp","admin/epapersub")">
+                            <thead>
+                                <tr>
+                             
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.ParentName)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.EmailAddress)
+                                    </th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Data rows will be populated dynamically by the DataTables plugin -->
+
+                            </tbody>
+
+                        </table>
+                    </div>
+                    <!-- end:wizrd -->
+                </div>
+
+
+            </div>
+
+        </div>
+    </section><!-- End Wizard Section -->
+
+</div>
+
+
+@section scripts{
+    <script>
+    $(document).ready(function () {
+        $('#corpList').DataTable({
+             dom: 'Bfrtip',
+        buttons: [
+           'excel', 'print'
+        ],
+        "pageLength": 25,
+        "processing": true,
+        "paging": true,
+        "serverSide": true,
+        "ajax": {
+            "url": '@Url.Action("corp", "epapersub")',
+            "type": "POST",
+            "dataType": "json",
+            "data": function (d) {
+                console.log(d);
+
+                d.start = d.start || 0;
+                d.length = d.length || 25; // This sets the default number of records to 10
+            }
+        },
+        "columns": [
+           
+            { "data": "ParentName" },
+            { "data": "EmailAddress" },
+            {
+                "data": "SubscriberID",
+                "render": function (data, type, row, meta) {
+                    //console.log(data);
+                    var Url = $('#corpList').data().requestUrl;
+                    return '<a href="'+ Url +'/' + data + '">Edit</a>';
+                }
+            }
+        ]
+    });
+});
+
+    </script>
+}
