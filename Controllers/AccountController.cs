@@ -2169,7 +2169,6 @@ namespace ePaperLive.Controllers
                             Subscriber objSub = GetSubscriber();
                             Subscriber_Tranx objTran = GetTransaction();
 
-                            decimal originalAmount = data.CardAmount;
                             var selectedPlan = _db.printandsubrates.AsNoTracking().FirstOrDefault(x => x.Rateid == data.RateID);
                             var rate = (selectedPlan.OfferIntroRate) ? selectedPlan.IntroRate : selectedPlan.Rate;
 
@@ -2178,6 +2177,7 @@ namespace ePaperLive.Controllers
                                 using (var context = new ApplicationDbContext())
                                 {
                                     var discount = context.promocodes.FirstOrDefault(q => q.PromoCode == data.PromoCode);
+                                    decimal originalAmount = (!string.IsNullOrWhiteSpace(data.CardAmount.ToString())) ? data.CardAmount : (decimal)rate; 
 
                                     if (discount != null)
                                     {
