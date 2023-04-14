@@ -51,4 +51,26 @@ namespace ePaperLive.Models
         public string EmailAddress { get; set; }
         public List<string> ChildAddress { get; set; }
     }
+
+    public class EPaperSubscriberResult
+    {
+        public string EmailAddress { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public string SubType { get; set; }
+        public string PlanDesc { get; set; }
+        public string OrderNumber { get; set; }
+        public string InitialSubType { get; set; }
+        public string InitialOrderId { get; set; }
+        public DateTime InitialCreated { get; set; }
+        public string InitialPlan { get; set; }
+        public DateTime OldestTranxDate { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string AddressLine1 { get; set; }
+        public string AddressLine2 { get; set; }
+        public string CityTown { get; set; }
+        public string StateParish { get; set; }
+        public string CountryCode { get; set; }
+    }
 }

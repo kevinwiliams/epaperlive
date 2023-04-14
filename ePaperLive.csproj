@@ -708,6 +708,7 @@
     <Content Include="Views\Reports\Locations.cshtml" />
     <Content Include="Views\EpaperSub\CorporateRelations.cshtml" />
     <Content Include="Views\EpaperSub\EditCorporateRelations.cshtml" />
+    <Content Include="Views\Reports\SubListEpaper.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\roslyn\" />
