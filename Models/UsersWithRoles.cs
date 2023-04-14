@@ -64,6 +64,7 @@ namespace ePaperLive.Models
         public string InitialOrderId { get; set; }
         public DateTime InitialCreated { get; set; }
         public string InitialPlan { get; set; }
+        public string IpAddress { get; set; }
         public DateTime OldestTranxDate { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }

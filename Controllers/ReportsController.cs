@@ -251,10 +251,13 @@ namespace ePaperLive.Controllers
         {
             try
             {
+                var ipApiProKey = ConfigurationManager.AppSettings["ipApiProKey"];
+                var ip2LocationKey = ConfigurationManager.AppSettings["ip2LocationKey"];
+
                 using (var context = new ApplicationDbContext())
                 {
                     var sql = @"
-                    SELECT c.*, b.oldesttranxdate,	a.StartDate, a.EndDate,	a.SubType,	a.PlanDesc,
+                    SELECT c.*,d.OrderID as OrderNumber, b.oldesttranxdate,	a.StartDate, a.EndDate,	a.SubType,	a.PlanDesc,
                         CASE 
                             WHEN OrderID IN ('FreeTrial:Coupon', 'Free', 'Free30', 'hccomplimentary', 'HC-COMPLIMENTARY-SUBSCRIPTION', 'wascomplimentary', 'AnniversaryGift:Coupon', 'complementary', 'Complimentary : Coupon', 'Complimentary:Coupon', 'COMPLIMENTARY-SUBSCRIPTION') OR LEFT(OrderID,4) = 'coup' THEN 'Complimentary' 
                             ELSE 'Paid' 
@@ -267,6 +270,50 @@ namespace ePaperLive.Controllers
                     LEFT JOIN ( SELECT emailaddress, SubType, MAX(PlanDesc) AS LatestPlanDesc FROM Subscriber_Epaper WHERE Subscriber_EpaperID >= 1 GROUP BY emailaddress, SubType) AS c ON a.EmailAddress = c.emailaddress AND a.PlanDesc = c.LatestPlanDesc AND a.SubType = c.SubType";
 
                     var result = await context.Database.SqlQuery<EPaperSubscriberResult>(sql).ToListAsync();
+
+                    foreach (var location in result)
+                    {
+                       
+                        string apiUrl = String.Format("https://pro.ip-api.com/json/{0}?key={1}", location.IpAddress, ipApiProKey);
+                        if (String.IsNullOrWhiteSpace(location.CountryCode))
+                        {
+                            using (WebClient client = new WebClient())
+                            {
+                                string json = client.DownloadString(apiUrl);
+
+                                dynamic jsonResult = new JavaScriptSerializer().Deserialize<dynamic>(json);
+                                if (jsonResult["status"] == "success")
+                                {
+                                    location.CityTown = jsonResult["regionName"];
+                                    location.CountryCode = jsonResult["country"];
+                                }
+                                else
+                                {
+                                    try
+                                    {
+                                        string url = string.Format("https://api.ip2location.io/?ip={0}&key={1}", location.IpAddress, ip2LocationKey); //
+                                        using (WebClient webClient = new WebClient())
+                                        {
+                                            string jsonRes = webClient.DownloadString(url);
+                                            var userlocation = new JavaScriptSerializer().Deserialize<UserLocation>(jsonRes);
+
+                                            location.CityTown = userlocation.Region_Name;
+                                            location.CountryCode = userlocation.Country_Name;
+
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Util.LogError(ex);
+                                        location.CityTown = "NF";
+                                        location.CountryCode = "NF";
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+
                     return View(result);
 
                 }
@@ -287,10 +334,13 @@ namespace ePaperLive.Controllers
         {
             try
             {
+                var ipApiProKey = ConfigurationManager.AppSettings["ipApiProKey"];
+                var ip2LocationKey = ConfigurationManager.AppSettings["ip2LocationKey"];
+
                 using (var context = new ApplicationDbContext())
                 {
                     var sql = @"
-                    SELECT c.*, b.oldesttranxdate,	a.StartDate, a.EndDate,	a.SubType,	a.PlanDesc,
+                    SELECT c.*, d.OrderID as OrderNumber,b.oldesttranxdate,	a.StartDate, a.EndDate,	a.SubType,	a.PlanDesc,
                         CASE 
                             WHEN OrderID IN ('FreeTrial:Coupon', 'Free', 'Free30', 'hccomplimentary', 'HC-COMPLIMENTARY-SUBSCRIPTION', 'wascomplimentary', 'AnniversaryGift:Coupon', 'complementary', 'Complimentary : Coupon', 'Complimentary:Coupon', 'COMPLIMENTARY-SUBSCRIPTION') OR LEFT(OrderID,4) = 'coup' THEN 'Complimentary' 
                             ELSE 'Paid' 
@@ -308,10 +358,51 @@ namespace ePaperLive.Controllers
                     var orderNum = new SqlParameter("subType", subType);
 
                     var result = await context.Database.SqlQuery<EPaperSubscriberResult>(sql, sDate, eDate, orderNum).ToListAsync();
+                    foreach (var location in result)
+                    {
+
+                        string apiUrl = String.Format("https://pro.ip-api.com/json/{0}?key={1}", location.IpAddress, ipApiProKey);
+                        if (String.IsNullOrWhiteSpace(location.CountryCode))
+                        {
+                            using (WebClient client = new WebClient())
+                            {
+                                string json = client.DownloadString(apiUrl);
+
+                                dynamic jsonResult = new JavaScriptSerializer().Deserialize<dynamic>(json);
+                                if (jsonResult["status"] == "success")
+                                {
+                                    location.CityTown = jsonResult["regionName"];
+                                    location.CountryCode = jsonResult["country"];
+                                }
+                                else
+                                {
+                                    try
+                                    {
+                                        string url = string.Format("https://api.ip2location.io/?ip={0}&key={1}", location.IpAddress, ip2LocationKey); //
+                                        using (WebClient webClient = new WebClient())
+                                        {
+                                            string jsonRes = webClient.DownloadString(url);
+                                            var userlocation = new JavaScriptSerializer().Deserialize<UserLocation>(jsonRes);
+
+                                            location.CityTown = userlocation.Region_Name;
+                                            location.CountryCode = userlocation.Country_Name;
+
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Util.LogError(ex);
+                                        location.CityTown = "NF";
+                                        location.CountryCode = "NF";
+                                    }
+                                }
+
+                            }
+                        }
+                    }
                     return View(result);
 
                 }
-
 
             }
             catch (Exception ex)
