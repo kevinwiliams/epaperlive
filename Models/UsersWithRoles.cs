@@ -49,5 +49,6 @@ namespace ePaperLive.Models
         public string SubscriberID { get; set; }
         public string ParentName { get; set; }
         public string EmailAddress { get; set; }
+        public List<string> ChildAddress { get; set; }
     }
 }

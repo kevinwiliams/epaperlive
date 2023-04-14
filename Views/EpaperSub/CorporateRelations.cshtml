@@ -12,7 +12,7 @@
 
             <ol>
                 <li><a href="@Url.Action("index", "home")">Home</a></li>
-                <li><a href="@Url.Action("corp", "admin")">Corporate Relations</a></li>
+                <li><a href="@Url.Action("epapersub", "admin")">ePaper Subscribers</a></li>
                 <li>@ViewData["Title"]</li>
             </ol>
             <h2>@ViewData["Title"]</h2>
@@ -29,7 +29,7 @@
                     <div class="container-fluid ">
 
                         <p>
-                            <a href="@Url.Action("addcorp", "epapersub")">Create New</a>
+                            <a href="@Url.Action("addcorp", "admin/epapersub")">Create New</a>
                         </p>
                         <table class="table table-hover table-responsive table-striped small" id="corpList" data-request-url="@Url.Action("editcorp","admin/epapersub")">
                             <thead>
@@ -76,7 +76,7 @@
         "paging": true,
         "serverSide": true,
         "ajax": {
-            "url": '@Url.Action("corp", "epapersub")',
+            "url": '@Url.Action("corp", "admin/epapersub")',
             "type": "POST",
             "dataType": "json",
             "data": function (d) {

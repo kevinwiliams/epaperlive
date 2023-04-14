@@ -438,6 +438,13 @@ namespace ePaperLive.Controllers
         }
 
         [Route("corp")]
+        public ActionResult CorporateRelations()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Route("corp")]
         public async Task<ActionResult> CorporateRelations(DataTableParameters dataTableParameters)
         {
             var corpParents = (from s in db.subscribers
@@ -475,9 +482,8 @@ namespace ePaperLive.Controllers
                 }
 
                 var filteredCount = await filteredData.CountAsync(); // Get the filtered count
-                var pageData = filteredData.Skip(dataTableParameters.start).Take(dataTableParameters.length);
 
-                var pageDataList = await pageData.ToListAsync();
+                var pageDataList = await filteredData.ToListAsync();
 
 
 
@@ -557,6 +563,12 @@ namespace ePaperLive.Controllers
 
             }
             return View(corporateAccount);
+        }
+
+        [Route("editcorp")]
+        public ActionResult EditCorporateRelations()
+        {
+            return View();
         }
 
         [HttpPost]
