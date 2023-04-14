@@ -83,7 +83,7 @@
                                             @if (User.IsInRole("Admin"))
                                             {
                                                 <li>@Html.ActionLink("Create New User", "addsubscriber", "epapersub")</li>
-                                                <li>@Html.ActionLink("Add Corp Relationship", "AddCorporateRelations", "epapersub")</li>
+                                                <li>@Html.ActionLink("Corp Relationship", "CorporateRelations", "epapersub")</li>
                                                 <li>@Html.ActionLink("Users & Roles", "subscribers", "admin")</li>
                                                 <li>@Html.ActionLink("ePaper Subscriptions", "epapersub", "admin")</li>
                                                 <li>@Html.ActionLink("Print Subscriptions", "printsub", "admin")</li>
@@ -95,6 +95,7 @@
                                                 <li class="dropdown">
                                                     <a href="#"><span>Reports</span> <i class="bi bi-chevron-right"></i></a>
                                                     <ul>
+                                                        <li>@Html.ActionLink("Epaper Subs", "SubListEpaper", "reports")</li>
                                                         <li>@Html.ActionLink("Sign Ups", "signups", "reports")</li>
                                                         <li>@Html.ActionLink("Locations", "locations", "reports")</li>
                                                         <li>@Html.ActionLink("User Activity Log", "UserActivityLog", "admin")</li>
