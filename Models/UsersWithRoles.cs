@@ -55,16 +55,24 @@ namespace ePaperLive.Models
     public class EPaperSubscriberResult
     {
         public string EmailAddress { get; set; }
+        [DataType(DataType.Date)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
         public DateTime StartDate { get; set; }
+        [DataType(DataType.Date)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
         public DateTime EndDate { get; set; }
         public string SubType { get; set; }
         public string PlanDesc { get; set; }
         public string OrderNumber { get; set; }
         public string InitialSubType { get; set; }
         public string InitialOrderId { get; set; }
+        [DataType(DataType.Date)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
         public DateTime InitialCreated { get; set; }
         public string InitialPlan { get; set; }
         public string IpAddress { get; set; }
+        [DataType(DataType.Date)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}")]
         public DateTime OldestTranxDate { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }

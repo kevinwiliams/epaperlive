@@ -80,9 +80,10 @@ namespace ePaperLive.Controllers
             }
             catch (Exception ex)
             {
-
-                throw ex;
+                Util.LogError(ex);
             }
+
+            return View();
            
         }
 
