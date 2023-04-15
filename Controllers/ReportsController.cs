@@ -351,7 +351,7 @@ namespace ePaperLive.Controllers
                     INNER JOIN subscribers AS f ON a.EmailAddress = f.EmailAddress
                     LEFT JOIN Subscriber_Address AS h ON f.AddressID = h.AddressID
                     LEFT JOIN ( SELECT emailaddress, SubType, MAX(PlanDesc) AS LatestPlanDesc FROM Subscriber_Epaper WHERE Subscriber_EpaperID >= 1 GROUP BY emailaddress, SubType) AS c ON a.EmailAddress = c.emailaddress AND a.PlanDesc = c.LatestPlanDesc AND a.SubType = c.SubType
-                    WHERE d.TranxDate BETWEEN @startDate AND @endDate AND (c.SubType = @subType )";
+                    WHERE d.TranxDate BETWEEN @startDate AND @endDate AND (c.SubType LIKE @subType +'%')";
 
                     var sDate = new SqlParameter("startDate", startDate);
                     var eDate = new SqlParameter("endDate", endDate.AddDays(1));
