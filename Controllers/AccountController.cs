@@ -2480,7 +2480,7 @@ namespace ePaperLive.Controllers
                     //save based on subscription
                     if (selectedPlan != null)
                     {
-                        var subType = (selectedPlan.RateDescr.Contains("Coupon") || selectedPlan.Rate == 0) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString();
+                        var subType = (selectedPlan.RateDescr.Contains("Coupon") || selectedPlan.Rate == 0 || objTran.OrderID.ToLower().Contains("complimentary")) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString();
 
                         switch (selectedPlan.Type)
                         {
@@ -3581,7 +3581,7 @@ namespace ePaperLive.Controllers
                                 StartDate = item.SubscriptionStart,
                                 EndDate = item.SubscriptionEnd,
                                 RateID = rateID, //TODO
-                                SubType = (item.Country !=null && item.Country.Contains("complimentary")) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString(),
+                                SubType = (item.Country !=null && item.Country.ToLower().Contains("complimentary")) ? SubscriptionType.Complimentary.ToString() : SubscriptionType.Paid.ToString(),
                                 IsActive = (item.SubscriptionEnd > DateTime.Now && item.Active == "yes") ? true : false,
                                 EmailAddress = emailAddress,
                                 NotificationEmail = (item.Newsletter == "yes") ? true : false,
@@ -3596,7 +3596,7 @@ namespace ePaperLive.Controllers
                                 RateID = rateID,
                                 IpAddress = item.Ip,
                                 CardOwner = item.CardOwnerName,
-                                CardType = (item.CardType.Contains("comp")) ? "COMP" : item.CardType.ToUpper().Trim(),
+                                CardType = (item.CardType.ToLower().Contains("comp")) ? "COMP" : item.CardType.ToUpper().Trim(),
                                 CardExp = "00/00",
                                 CardLastFour = "0000",
                                 TranxAmount = (double)item.CardAmount,
@@ -3618,7 +3618,7 @@ namespace ePaperLive.Controllers
                             {
                                 SubscriberID = newAccount.Id;
 
-                                var userRole = (newAccount.Email.Contains("jamaicaobserver.com")) ? "Staff" : "Subscriber";
+                                var userRole = (newAccount.Email.ToLower().Contains("jamaicaobserver.com")) ? "Staff" : "Subscriber";
                                 //assign User Role
                                 createAccount = await UserManager.AddToRoleAsync(SubscriberID, userRole);
                                 //save address
