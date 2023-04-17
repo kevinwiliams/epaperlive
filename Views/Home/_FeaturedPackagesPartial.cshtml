@@ -16,7 +16,7 @@
         var ratePrice = (plans.OfferIntroRate) ? plans.IntroRate : plans.Rate;
 
         <div class="col-lg-3 col-md-6 pb-sm-3 @tabClass">
-            <div class="box @isCTA" data-aos="zoom-in" data-aos-delay="@delay">
+            <div class="d-flex flex-column box @isCTA" data-aos="zoom-in" data-aos-delay="@delay">
                 @if (plans.BestDealFlag == true)
                 {
                     <span class="advanced">Best Deal</span>
@@ -62,7 +62,7 @@
                         <li><span class="@cssClass">@featureText</span></li>
                     }
                 </ul>
-                <div class="btn-wrap  mb-3">
+                <div class="mt-auto btn-wrap  mb-3">
                     <a href="" class="btn-buy"
                        name="subscribeNow"
                        data-del-freq="@("Delivery Frequency: " + rateFreq)"

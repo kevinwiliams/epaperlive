@@ -14,11 +14,9 @@
         <div class="text-center">
             <a href="https://wwww.jamaicaobserver.com/" class="text-center"><img src="@Url.Content("~/assets/img/jol-logo-sm.png")" alt="" width="235" class="img-fluid"></a>
         </div>
-        @if (!string.IsNullOrWhiteSpace((string)ViewData["pkgType"]))
-        {
-            <p>@ViewData["pkgType"] Plan</p><br />
+        @{ 
+            var planDays = "";
         }
-
         @if ((Dictionary<string, int>)ViewData["preloadSub"] != null)
         {
             var preloadSub = (Dictionary<string, int>)ViewData["preloadSub"];
@@ -28,7 +26,8 @@
                     ViewData["rateType"] = plans.Key.Split('|')[0];
                     var freq = plans.Key.Split('|')[4];
                     freq = (freq != "undefined" && freq != null) ? freq.Split(':')[0] + "<br>" + freq.Split(':')[1] : String.Empty;
-
+                    planDays = plans.Key.Split('|')[1];
+                   
                     <strong>@plans.Key.Split('|')[0].ToUpper() SUBSCRIPTION</strong><br />
                     @plans.Key.Split('|')[1];<br />
                     if (plans.Key.Split('|')[0].ToUpper() != "EPAPER" )
@@ -63,10 +62,15 @@
                 switch (rateType)
                 {
                     case "Epaper":
+
                         <li><i class="bx bx-chevron-right"></i>Access to our multi featured e-paper app</li>
                         <li><i class="bx bx-chevron-right"></i>Digital editions of all print media</li>
                         <li><i class="bx bx-chevron-right"></i>Full access to articles and premium content</li>
                         <li><i class="bx bx-chevron-right"></i>Access 30 days previous editions</li>
+                        if (planDays.Contains("360 Days"))
+                        {
+                            <li><i class="bx bx-chevron-right"></i><strong>PLUS 30 DAYS ADDITIONAL FREE</strong></li>
+                        }
                         break;
                     case "Print":
                         <li><i class="bx bx-chevron-right"></i>Delivery of all printed editions *</li>
