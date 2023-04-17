@@ -102,7 +102,7 @@
                         @Html.DisplayFor(modelItem => item.EmailAddress)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.OldestTranxDate)
+                        <span class="hidden">@item.OldestTranxDate.ToString("yyyyMMdd")</span>@Html.DisplayFor(modelItem => item.OldestTranxDate)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.InitialSubType)
@@ -120,10 +120,10 @@
                         @Html.DisplayFor(modelItem => item.LastName)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.StartDate)
+                        <span class="hidden">@item.StartDate.ToString("yyyyMMdd")</span>@Html.DisplayFor(modelItem => item.StartDate)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.EndDate)
+                        <span class="hidden">@item.EndDate.ToString("yyyyMMdd")</span>@Html.DisplayFor(modelItem => item.EndDate)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.SubType)
