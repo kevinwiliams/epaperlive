@@ -257,7 +257,7 @@ namespace ePaperLive.Controllers
                 using (var context = new ApplicationDbContext())
                 {
                     var sql = @"
-                    SELECT c.*,d.OrderID as OrderNumber, b.oldesttranxdate,	a.StartDate, a.EndDate,	a.SubType,	a.PlanDesc,
+                            SELECT c.*, b.oldesttranxdate,	a.StartDate, a.EndDate,	a.SubType,	a.PlanDesc,
                         CASE 
                             WHEN OrderID IN ('FreeTrial:Coupon', 'Free', 'Free30', 'hccomplimentary', 'HC-COMPLIMENTARY-SUBSCRIPTION', 'wascomplimentary', 'AnniversaryGift:Coupon', 'complementary', 'Complimentary : Coupon', 'Complimentary:Coupon', 'COMPLIMENTARY-SUBSCRIPTION') OR LEFT(OrderID,4) = 'coup' THEN 'Complimentary' 
                             ELSE 'Paid' 
@@ -267,7 +267,7 @@ namespace ePaperLive.Controllers
                     INNER JOIN ( SELECT emailaddress, PlanDesc, OrderID, TranxDate, IpAddress FROM Subscriber_Tranx) AS d ON b.EmailAddress = d.EmailAddress AND b.oldesttranxdate = d.TranxDate
                     INNER JOIN subscribers AS f ON a.EmailAddress = f.EmailAddress
                     LEFT JOIN Subscriber_Address AS h ON f.AddressID = h.AddressID
-                    LEFT JOIN ( SELECT emailaddress, SubType, MAX(PlanDesc) AS LatestPlanDesc FROM Subscriber_Epaper WHERE Subscriber_EpaperID >= 1 GROUP BY emailaddress, SubType) AS c ON a.EmailAddress = c.emailaddress AND a.PlanDesc = c.LatestPlanDesc AND a.SubType = c.SubType";
+                    LEFT JOIN ( SELECT emailaddress, SubType, OrderNumber, MAX(PlanDesc) AS LatestPlanDesc FROM Subscriber_Epaper WHERE Subscriber_EpaperID >= 1 GROUP BY emailaddress, SubType, OrderNumber) AS c ON a.EmailAddress = c.emailaddress AND a.PlanDesc = c.LatestPlanDesc AND a.SubType = c.SubType";
 
                     var result = await context.Database.SqlQuery<EPaperSubscriberResult>(sql).ToListAsync();
 
@@ -340,7 +340,7 @@ namespace ePaperLive.Controllers
                 using (var context = new ApplicationDbContext())
                 {
                     var sql = @"
-                    SELECT c.*, d.OrderID as OrderNumber,b.oldesttranxdate,	a.StartDate, a.EndDate,	a.SubType,	a.PlanDesc,
+                    SELECT c.*, b.oldesttranxdate,	a.StartDate, a.EndDate,	a.SubType,	a.PlanDesc,
                         CASE 
                             WHEN OrderID IN ('FreeTrial:Coupon', 'Free', 'Free30', 'hccomplimentary', 'HC-COMPLIMENTARY-SUBSCRIPTION', 'wascomplimentary', 'AnniversaryGift:Coupon', 'complementary', 'Complimentary : Coupon', 'Complimentary:Coupon', 'COMPLIMENTARY-SUBSCRIPTION') OR LEFT(OrderID,4) = 'coup' THEN 'Complimentary' 
                             ELSE 'Paid' 
@@ -350,7 +350,7 @@ namespace ePaperLive.Controllers
                     INNER JOIN ( SELECT emailaddress, PlanDesc, OrderID, TranxDate, IpAddress FROM Subscriber_Tranx) AS d ON b.EmailAddress = d.EmailAddress AND b.oldesttranxdate = d.TranxDate
                     INNER JOIN subscribers AS f ON a.EmailAddress = f.EmailAddress
                     LEFT JOIN Subscriber_Address AS h ON f.AddressID = h.AddressID
-                    LEFT JOIN ( SELECT emailaddress, SubType, MAX(PlanDesc) AS LatestPlanDesc FROM Subscriber_Epaper WHERE Subscriber_EpaperID >= 1 GROUP BY emailaddress, SubType) AS c ON a.EmailAddress = c.emailaddress AND a.PlanDesc = c.LatestPlanDesc AND a.SubType = c.SubType
+                    LEFT JOIN ( SELECT emailaddress, SubType, OrderNumber, MAX(PlanDesc) AS LatestPlanDesc FROM Subscriber_Epaper WHERE Subscriber_EpaperID >= 1 GROUP BY emailaddress, SubType, OrderNumber) AS c ON a.EmailAddress = c.emailaddress AND a.PlanDesc = c.LatestPlanDesc AND a.SubType = c.SubType
                     WHERE d.TranxDate BETWEEN @startDate AND @endDate AND (c.SubType LIKE @subType +'%')";
 
                     var sDate = new SqlParameter("startDate", startDate);
