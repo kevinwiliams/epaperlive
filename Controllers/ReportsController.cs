@@ -262,7 +262,6 @@ namespace ePaperLive.Controllers
 	                            WHEN OrderID LIKE '%free%' THEN  'Complimentary'
 	                            WHEN OrderID LIKE '%comp%' THEN  'Complimentary'
 		                        WHEN OrderID = 'to_be_added' THEN  'Not sure'
-		                        WHEN LEFT(OrderID,4) = 'coup'  and DATEDIFF(DAY,d.TranxDate, a.EndDate ) <= 30 THEN  'Complimentary'
 	                            WHEN OrderID IN ('check', 'cheque') THEN  'Paid' ELSE 'Paid' 
                                 END AS initialsubtype, orderid AS initialorderid, d.TranxDate AS initialcreated, d.PlanDesc AS initialplan, d.IpAddress, f.firstname, f.lastname, h.AddressLine1, h.addressline2, h.CityTown, h.stateparish, h.countrycode
                             FROM Subscriber_Epaper AS a
@@ -349,7 +348,6 @@ namespace ePaperLive.Controllers
 	                    WHEN OrderID LIKE '%free%' THEN  'Complimentary'
 	                    WHEN OrderID LIKE '%comp%' THEN  'Complimentary'
 	                    WHEN OrderID = 'to_be_added' THEN  'Not sure'
-	                    WHEN LEFT(OrderID,4) = 'coup'  and DATEDIFF(DAY,d.TranxDate, a.EndDate ) <= 30 THEN  'Complimentary'
 	                    WHEN OrderID IN ('check', 'cheque') THEN  'Paid' ELSE 'Paid' 
                         END AS initialsubtype, orderid AS initialorderid, d.TranxDate AS initialcreated, d.PlanDesc AS initialplan, d.IpAddress, f.firstname, f.lastname, h.AddressLine1, h.addressline2, h.CityTown, h.stateparish, h.countrycode
                     FROM Subscriber_Epaper AS a
