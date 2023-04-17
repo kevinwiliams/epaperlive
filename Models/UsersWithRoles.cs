@@ -63,6 +63,7 @@ namespace ePaperLive.Models
         public DateTime EndDate { get; set; }
         public string SubType { get; set; }
         public string PlanDesc { get; set; }
+        public string PhoneNumber { get; set; }
         public string OrderNumber { get; set; }
         public string InitialSubType { get; set; }
         public string InitialOrderId { get; set; }
