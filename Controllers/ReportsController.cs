@@ -357,7 +357,16 @@ namespace ePaperLive.Controllers
                     LEFT JOIN Subscriber_Address AS h ON f.AddressID = h.AddressID
                     LEFT JOIN ( SELECT emailaddress, SubType, OrderNumber, MAX(PlanDesc) AS LatestPlanDesc FROM Subscriber_Epaper WHERE Subscriber_EpaperID >= 1 GROUP BY emailaddress, SubType, OrderNumber) AS c ON a.EmailAddress = c.emailaddress AND a.PlanDesc = c.LatestPlanDesc AND a.SubType = c.SubType            
                     LEFT JOIN AspNetUsers AS u ON a.EmailAddress = u.Email
-                    WHERE d.TranxDate BETWEEN @startDate AND @endDate AND (a.SubType LIKE @subType +'%')";
+                    WHERE d.TranxDate BETWEEN @startDate AND @endDate AND (
+                        CASE 
+                        WHEN OrderID LIKE '%coupon%' THEN  'Complimentary'
+                        WHEN OrderID LIKE 'free%' THEN  'Complimentary'
+                        WHEN OrderID LIKE '%comp%' THEN  'Complimentary'
+                        WHEN OrderID = 'to_be_added' THEN  'Not sure'
+                        WHEN OrderID IN ('check', 'cheque') THEN  'Paid' ELSE 'Paid' 
+                        END 
+                        LIKE @subType + '%'
+                    )";
 
                     var sDate = new SqlParameter("startDate", startDate);
                     var eDate = new SqlParameter("endDate", endDate.AddDays(1));
