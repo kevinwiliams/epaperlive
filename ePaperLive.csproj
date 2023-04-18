@@ -358,6 +358,7 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\PaymentDetails.cs" />
     <Compile Include="Models\PrintSubscribers.cs" />
+    <Compile Include="Models\RoleViewModel.cs" />
     <Compile Include="Models\UserProfile.cs" />
     <Compile Include="Models\UsersWithRoles.cs" />
     <Compile Include="Models\PrintSubRates.cs" />
@@ -709,6 +710,7 @@
     <Content Include="Views\EpaperSub\CorporateRelations.cshtml" />
     <Content Include="Views\EpaperSub\EditCorporateRelations.cshtml" />
     <Content Include="Views\Reports\SubListEpaper.cshtml" />
+    <Content Include="Views\Admin\AddRole.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\roslyn\" />

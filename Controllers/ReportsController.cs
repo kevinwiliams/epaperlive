@@ -13,7 +13,7 @@ using System.Web.Script.Serialization;
 
 namespace ePaperLive.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Marketing")]
     [RoutePrefix("Admin/Reports")]
     [Route("action = index")]
     public class ReportsController : Controller
@@ -210,18 +210,25 @@ namespace ePaperLive.Controllers
         [Route("signups")]
         public async Task<ActionResult> SignUps()
         {
-            using (var context = new ApplicationDbContext())
+            try
             {
-                var result = await context.subscriber_tranx
-                   .GroupBy(t => DbFunctions.TruncateTime(t.TranxDate))
-                   .Select(g => new SignUpsList
-                   {
-                       SignUpDate = g.Key ?? DateTime.Now,
-                       Total = g.Count()
-                   })
-                   .ToListAsync();
-                return View(result);
+                using (var context = new ApplicationDbContext())
+                {
+                    var sql = @"
+                    SELECT LEFT([TranxDate], 11) as SignUpDate, COUNT(*) Total FROM [dbo].[Subscriber_Tranx]  
+                    GROUP BY LEFT([TranxDate], 11)";
+
+                    var result = await context.Database.SqlQuery<SignUpsList>(sql).ToListAsync();
+                    return View(result);
+                }
             }
+            catch (Exception ex)
+            {
+
+                Util.LogError(ex);
+                return View();
+            }    
+            
         }
 
 
@@ -231,18 +238,32 @@ namespace ePaperLive.Controllers
         {
             using (var context = new ApplicationDbContext())
             {
-                var endDatePlusOneDay = endDate.AddDays(1);
-                var result = await context.subscriber_tranx
-                    .Where(t => t.TranxDate >= startDate && t.TranxDate < endDatePlusOneDay && t.OrderID.Contains(orderNumber))
-                    .GroupBy(t => DbFunctions.TruncateTime(t.TranxDate))
-                                .Select(g => new SignUpsList
-                                {
-                                    SignUpDate = g.Key ?? DateTime.Now,
-                                    Total = g.Count()
-                                })
-                                .ToListAsync();
 
-                return View(result);
+                try
+                {
+                    var coupon = (orderNumber.ToLower().Contains("coupon")) ? "'%' + @orderNumber + '%'" : "@orderNumber + '%'";
+                    var sql = @"
+                    SELECT LEFT([TranxDate], 11) as SignUpDate, COUNT(*) Total FROM [dbo].[Subscriber_Tranx] 
+                    WHERE [TranxDate] 
+                    BETWEEN @startDate AND @endDate 
+                    AND ([OrderID] LIKE " + coupon + @") 
+                    GROUP BY LEFT([TranxDate], 11)";
+
+                    var sDate = new SqlParameter("startDate", startDate);
+                    var eDate = new SqlParameter("endDate", endDate.AddDays(1));
+                    var orderNum = new SqlParameter("orderNumber", orderNumber);
+
+                    var result = await context.Database.SqlQuery<SignUpsList>(sql, sDate, eDate, orderNum).ToListAsync();
+
+                    return View(result);
+                }
+                catch (Exception ex)
+                {
+
+                    Util.LogError(ex);
+                }
+
+                return View();
             }
         }
 
@@ -333,7 +354,7 @@ namespace ePaperLive.Controllers
 
         [HttpPost]
         [Route("epapersublist")]
-        public async Task<ActionResult> SubListEpaper(string subType, DateTime startDate, DateTime endDate)
+        public async Task<ActionResult> SubListEpaper(DateTime startDate, DateTime endDate)
         {
             try
             {
@@ -357,22 +378,13 @@ namespace ePaperLive.Controllers
                     LEFT JOIN Subscriber_Address AS h ON f.AddressID = h.AddressID
                     LEFT JOIN ( SELECT emailaddress, SubType, OrderNumber, MAX(PlanDesc) AS LatestPlanDesc FROM Subscriber_Epaper WHERE Subscriber_EpaperID >= 1 GROUP BY emailaddress, SubType, OrderNumber) AS c ON a.EmailAddress = c.emailaddress AND a.PlanDesc = c.LatestPlanDesc AND a.SubType = c.SubType            
                     LEFT JOIN AspNetUsers AS u ON a.EmailAddress = u.Email
-                    WHERE d.TranxDate BETWEEN @startDate AND @endDate AND (
-                        CASE 
-                        WHEN OrderID LIKE '%coupon%' THEN  'Complimentary'
-                        WHEN OrderID LIKE 'free%' THEN  'Complimentary'
-                        WHEN OrderID LIKE '%comp%' THEN  'Complimentary'
-                        WHEN OrderID = 'to_be_added' THEN  'Not sure'
-                        WHEN OrderID IN ('check', 'cheque') THEN  'Paid' ELSE 'Paid' 
-                        END 
-                        LIKE @subType + '%'
-                    )";
+                    WHERE d.TranxDate BETWEEN @startDate AND @endDate";
 
                     var sDate = new SqlParameter("startDate", startDate);
                     var eDate = new SqlParameter("endDate", endDate.AddDays(1));
-                    var orderNum = new SqlParameter("subType", subType);
+                    //var orderNum = new SqlParameter("subType", subType);
 
-                    var result = await context.Database.SqlQuery<EPaperSubscriberResult>(sql, sDate, eDate, orderNum).ToListAsync();
+                    var result = await context.Database.SqlQuery<EPaperSubscriberResult>(sql, sDate, eDate).ToListAsync();
                     foreach (var location in result)
                     {
 

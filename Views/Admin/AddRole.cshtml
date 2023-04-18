@@ -1,0 +1,62 @@
+﻿
+@{
+    ViewBag.Title = "AddRole";
+}
+@model string
+
+
+<div id="main">
+
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+        <div class="container">
+
+            <ol>
+                <li><a href="@Url.Action("index", "home")">Home</a></li>
+                <li>@ViewData["Title"]</li>
+            </ol>
+            <h2>@ViewData["Title"]</h2>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+    <!-- ======= Wizard Section ======= -->
+    <section id="portfolio-details" class="portfolio-details">
+        <div class="container">
+
+            <div class="row gy-4">
+                <div class="col-lg-12">
+                    <!-- start:wizrd -->
+
+                    <h2>Add Role</h2>
+
+                    @if (Model != null && !string.IsNullOrWhiteSpace(Model))
+                    {
+                        <div class="alert alert-success">
+                            Role @Model created successfully.
+                        </div>
+                    }
+
+                    @using (Html.BeginForm("AddRole", "Admin", FormMethod.Post))
+                    {
+                        <div class="form-group">
+                            @Html.Label("Role Name")
+                            @Html.TextBox("roleName", null, new { @class = "form-control" })
+                        </div>
+
+                        <button type="submit" class="btn btn-sign-in">Create Role</button>
+                    }
+
+                    <div>
+                        @Html.ActionLink("Back to List", "Index")
+                    </div>
+                    <!-- end:wizrd -->
+                </div>
+
+
+            </div>
+
+        </div>
+    </section><!-- End Wizard Section -->
+
+</div>
+
