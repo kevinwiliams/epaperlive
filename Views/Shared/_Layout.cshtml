@@ -75,7 +75,7 @@
 
                                 <li>@Html.ActionLink("Orders", "orders", "account")</li>
 
-                                if (User.IsInRole("Circulation") || User.IsInRole("Admin"))
+                                if (User.IsInRole("Circulation") || User.IsInRole("Admin") || User.IsInRole("Marketing"))
                                 {
                                     <li class="dropdown">
                                         <a href="#"><span>System</span> <i class="bi bi-chevron-down"></i></a>
@@ -83,6 +83,7 @@
                                             @if (User.IsInRole("Admin"))
                                             {
                                                 <li>@Html.ActionLink("Create New User", "addsubscriber", "epapersub")</li>
+                                                <li>@Html.ActionLink("Add User Role", "addrole", "admin")</li>
                                                 <li>@Html.ActionLink("Corp Relationship", "CorporateRelations", "epapersub")</li>
                                                 <li>@Html.ActionLink("Users & Roles", "subscribers", "admin")</li>
                                                 <li>@Html.ActionLink("ePaper Subscriptions", "epapersub", "admin")</li>
@@ -107,6 +108,15 @@
                                             {
                                                 <li>@Html.ActionLink("Add New Subscription", "addsubscriber", "epapersub")</li>
                                                 <li>@Html.ActionLink("Print Subscriptions", "printsub", "admin")</li>
+                                            }
+                                            @if (User.IsInRole("Marketing"))
+                                            {
+                                                <li class="dropdown">
+                                                    <a href="#"><span>Reports</span> <i class="bi bi-chevron-right"></i></a>
+                                                    <ul>
+                                                        <li>@Html.ActionLink("Epaper Subs", "SubListEpaper", "reports")</li>
+                                                    </ul>
+                                                </li>
                                             }
 
                                         </ul>

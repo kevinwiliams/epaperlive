@@ -1,8 +1,9 @@
 ﻿
 @{
-    ViewBag.Title = "AddRole";
+    ViewBag.Title = "Add User Role";
 }
-@model string
+@*@model string*@
+@model List<ePaperLive.Models.RoleViewModel>
 
 
 <div id="main">
@@ -29,26 +30,41 @@
 
                     <h2>Add Role</h2>
 
-                    @if (Model != null && !string.IsNullOrWhiteSpace(Model))
-                    {
-                        <div class="alert alert-success">
-                            Role @Model created successfully.
-                        </div>
-                    }
+                    @*@if (Model != null && !string.IsNullOrWhiteSpace(Model))
+                        {
+                            <div class="alert alert-success">
+                                Role @Model created successfully.
+                            </div>
+                        }*@
 
                     @using (Html.BeginForm("AddRole", "Admin", FormMethod.Post))
                     {
-                        <div class="form-group">
+                        <div class="form-group col-lg-4">
                             @Html.Label("Role Name")
                             @Html.TextBox("roleName", null, new { @class = "form-control" })
                         </div>
 
-                        <button type="submit" class="btn btn-sign-in">Create Role</button>
+                        <button type="submit" class="btn btn-sign-in my-4">Create Role</button>
                     }
 
-                    <div>
-                        @Html.ActionLink("Back to List", "Index")
-                    </div>
+                
+
+                    <table id="dataTable" class="table">
+                        <thead>
+                            <tr>
+                                <th>Role</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.Name</td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
                     <!-- end:wizrd -->
                 </div>
 
@@ -59,4 +75,21 @@
     </section><!-- End Wizard Section -->
 
 </div>
+
+@Scripts.Render("~/bundles/jquery")
+@*<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" />*@
+<script>
+    $(document).ready(function () {
+
+        $('#dataTable').DataTable({
+            pageLength: 25
+
+        });
+        //flatpickr('.datepicker', {
+        //    dateFormat: "Y-m-d",
+        //    disableMobile: true,
+        //});
+    });
+</script>
 
