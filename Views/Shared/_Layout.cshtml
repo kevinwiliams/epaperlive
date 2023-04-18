@@ -85,21 +85,21 @@
                                                 <li>@Html.ActionLink("Create New User", "addsubscriber", "epapersub")</li>
                                                 <li>@Html.ActionLink("Add User Role", "addrole", "admin")</li>
                                                 <li>@Html.ActionLink("Corp Relationship", "CorporateRelations", "epapersub")</li>
-                                                <li>@Html.ActionLink("Users & Roles", "subscribers", "admin")</li>
-                                                <li>@Html.ActionLink("ePaper Subscriptions", "epapersub", "admin")</li>
-                                                <li>@Html.ActionLink("Print Subscriptions", "printsub", "admin")</li>
-                                                <li>@Html.ActionLink("Transactions", "transactions", "admin")</li>
-                                                <li>@Html.ActionLink("Coupons", "coupons", "admin")</li>
-                                                <li>@Html.ActionLink("Addresses", "address", "admin")</li>
-                                                <li>@Html.ActionLink("Subscription Rates", "rates", "admin")</li>
-                                                <li>@Html.ActionLink("Error Logs", "logs", "admin")</li>
+                                                <li>@Html.ActionLink("Users & Roles", "index", "subscribers")</li>
+                                                <li>@Html.ActionLink("ePaper Subscriptions", "index", "epapersub")</li>
+                                                <li>@Html.ActionLink("Print Subscriptions", "index", "printsub")</li>
+                                                <li>@Html.ActionLink("Transactions", "index", "transactions")</li>
+                                                <li>@Html.ActionLink("Coupons", "index", "coupons")</li>
+                                                <li>@Html.ActionLink("Addresses", "index", "address")</li>
+                                                <li>@Html.ActionLink("Subscription Rates", "index", "rates")</li>
+                                                <li>@Html.ActionLink("Error Logs", "index", "logerrors")</li>
                                                 <li class="dropdown">
                                                     <a href="#"><span>Reports</span> <i class="bi bi-chevron-right"></i></a>
                                                     <ul>
                                                         <li>@Html.ActionLink("Epaper Subs", "SubListEpaper", "reports")</li>
                                                         <li>@Html.ActionLink("Sign Ups", "signups", "reports")</li>
                                                         <li>@Html.ActionLink("Locations", "locations", "reports")</li>
-                                                        <li>@Html.ActionLink("User Activity Log", "UserActivityLog", "admin")</li>
+                                                        <li>@Html.ActionLink("User Activity Log", "index", "UAL")</li>
 
                                                     </ul>
                                                 </li>
@@ -107,7 +107,7 @@
                                             @if (User.IsInRole("Circulation"))
                                             {
                                                 <li>@Html.ActionLink("Add New Subscription", "addsubscriber", "epapersub")</li>
-                                                <li>@Html.ActionLink("Print Subscriptions", "printsub", "admin")</li>
+                                                <li>@Html.ActionLink("Print Subscriptions", "index", "printsub")</li>
                                             }
                                             @if (User.IsInRole("Marketing"))
                                             {
