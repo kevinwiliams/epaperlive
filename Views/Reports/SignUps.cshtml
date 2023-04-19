@@ -14,10 +14,9 @@
             <div class="col-lg-3 col-md-6 form-group">
                 @Html.Label("Order:")
                 @Html.DropDownList("orderNumber", new SelectList(new[] {
-                    new { Text = "Epaper", Value = "EP" },
-                    new { Text = "Print", Value = "PR" },
+                    new { Text = "Epaper - Paid", Value = "EP" },
                     new { Text = "Bundle", Value = "BU" },
-                    new { Text = "Coupons", Value = "Coupon" }
+                    new { Text = "Complimentary", Value = "COMP" }
                 }, "Value", "Text"), "All", new { @class = "form-control" })
             </div>
             <div class="col-lg-3 col-md-6 form-group">
@@ -48,7 +47,7 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@item.SignUpDate</td>
+                    <td><span class="hidden">@item.SignUpDate.ToString("yyyyMMdd")</span>@item.SignUpDate.ToString("MMM dd yyyy")</td>
                     <td>@item.Total</td>
                 </tr>
             }

@@ -215,8 +215,9 @@ namespace ePaperLive.Controllers
                 using (var context = new ApplicationDbContext())
                 {
                     var sql = @"
-                    SELECT LEFT([TranxDate], 11) as SignUpDate, COUNT(*) Total FROM [dbo].[Subscriber_Tranx]  
-                    GROUP BY LEFT([TranxDate], 11)";
+                    SELECT CONVERT(date, CreatedAt) as SignUpDate, COUNT(*) Total FROM [dbo].[Subscriber_Epaper]
+                    GROUP BY CONVERT(date, CreatedAt) 
+                    ORDER BY CONVERT(date, CreatedAt)";
 
                     var result = await context.Database.SqlQuery<SignUpsList>(sql).ToListAsync();
                     return View(result);
@@ -241,13 +242,14 @@ namespace ePaperLive.Controllers
 
                 try
                 {
-                    var coupon = (orderNumber.ToLower().Contains("coupon")) ? "'%' + @orderNumber + '%'" : "@orderNumber + '%'";
+                    var coupon = (orderNumber.ToLower().Contains("comp")) ? "'%' + @orderNumber + '%' OR SubType = 'Complimentary'" : "@orderNumber + '%'";
+                   
                     var sql = @"
-                    SELECT LEFT([TranxDate], 11) as SignUpDate, COUNT(*) Total FROM [dbo].[Subscriber_Tranx] 
-                    WHERE [TranxDate] 
-                    BETWEEN @startDate AND @endDate 
-                    AND ([OrderID] LIKE " + coupon + @") 
-                    GROUP BY LEFT([TranxDate], 11)";
+                    SELECT CONVERT(date, CreatedAt) as SignUpDate, COUNT(*) Total FROM [dbo].[Subscriber_Epaper]
+                    WHERE [CreatedAt] BETWEEN @startDate AND @endDate  
+                    AND ([OrderNumber] LIKE " + coupon + @") 
+                    GROUP BY CONVERT(date, CreatedAt) 
+                    ORDER BY CONVERT(date, CreatedAt)";
 
                     var sDate = new SqlParameter("startDate", startDate);
                     var eDate = new SqlParameter("endDate", endDate.AddDays(1));

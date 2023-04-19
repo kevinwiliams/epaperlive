@@ -22,9 +22,9 @@ namespace ePaperLive.Models
 
     public class SignUpsList
     {
-        //[DataType(DataType.Date)]
-        //[DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")] 
-        public string SignUpDate { get; set; }
+        [DataType(DataType.Date)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
+        public DateTime SignUpDate { get; set; }
         public int Total { get; set; }
     }
 
