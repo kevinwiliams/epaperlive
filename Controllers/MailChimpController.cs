@@ -38,7 +38,7 @@ namespace ePaperLive.Controllers
                     var sql = @"
                     SELECT s.FirstName, s.LastName, t.EmailAddress FROM [dbo].[Subscriber_Tranx] t
                     JOIN [dbo].[Subscribers] s ON s.SubscriberID = t.SubscriberID
-                    WHERE t.OrderID LIKE 'FreeTrial%' AND t.EmailAddress  not like '%jamaicaobserver%'";
+                    WHERE t.OrderID LIKE 'FreeTrial%' AND t.EmailAddress NOT LIKE '%jamaicaobserver%'";
 
                     var result = await context.Database.SqlQuery<MailChimpFields>(sql).ToListAsync();
 
@@ -49,7 +49,7 @@ namespace ePaperLive.Controllers
                         member.MergeFields.Add("LNAME", item.LastName);
                         await manager.Members.AddOrUpdateAsync(mailChimpListID, member);
 
-                        tags.MemberTags.Add(new Tag() { Name = "ePaper Subscriber", Status = "active" });
+                        tags.MemberTags.Add(new Tag() { Name = "Free Trial Subscriber", Status = "active" });
                         await manager.Members.AddTagsAsync(mailChimpListID, item.EmailAddress, tags);
                     }
                     
