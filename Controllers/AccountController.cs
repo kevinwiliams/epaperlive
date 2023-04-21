@@ -28,6 +28,10 @@ using System.Net;
 using System.Web.Routing;
 using System.Data.SqlClient;
 using System.Web.Configuration;
+using MailChimp.Net;
+using MailChimp.Net.Interfaces;
+using MailChimp.Net.Models;
+using Subscriber = ePaperLive.DBModel.Subscriber;
 
 namespace ePaperLive.Controllers
 {
@@ -1943,7 +1947,6 @@ namespace ePaperLive.Controllers
                         List<PaymentDetails> paymentDetailsList = authUser.PaymentDetails = new List<PaymentDetails>();
                         //List<AddressDetails> addressDetails = new List<AddressDetails>();
 
-                        objSub.Newsletter = data.NewsletterSignUp;
                         objTran.RateID = data.RateID;
 
                         var selectedPlan = db.printandsubrates.FirstOrDefault(x => x.Rateid == data.RateID);
@@ -1972,6 +1975,7 @@ namespace ePaperLive.Controllers
                                 EndDate = endDate,
                                 RateID = data.RateID,
                                 DeliveryInstructions = data.DeliveryInstructions,
+                                NewsletterSignUp = data.NewsletterSignUp,
                                 RateType = selectedPlan.Type,
                                 SubType = selectedPlan.Type,
                                 RateDescription = selectedPlan.RateDescr
@@ -2001,6 +2005,7 @@ namespace ePaperLive.Controllers
                                 RateID = data.RateID,
                                 SubType = selectedPlan.Type,
                                 NotificationEmail = data.NotificationEmail,
+                                NewsletterSignUp = data.NewsletterSignUp,
                                 RateType = selectedPlan.Type,
                                 RateDescription = selectedPlan.RateDescr
                             };
@@ -2017,6 +2022,7 @@ namespace ePaperLive.Controllers
                                 RateID = data.RateID,
                                 DeliveryInstructions = data.DeliveryInstructions,
                                 RateType = selectedPlan.Type,
+                                NewsletterSignUp = data.NewsletterSignUp,
                                 SubType = "Print",
                                 RateDescription = selectedPlan.RateDescr
                             };
@@ -2031,6 +2037,7 @@ namespace ePaperLive.Controllers
                                 RateID = data.RateID,
                                 SubType = "Epaper",
                                 NotificationEmail = data.NotificationEmail,
+                                NewsletterSignUp = data.NewsletterSignUp,
                                 RateType = selectedPlan.Type,
                                 RateDescription = selectedPlan.RateDescr
                             };
@@ -2333,6 +2340,8 @@ namespace ePaperLive.Controllers
                         NotificationEmail = epaperSub.NotificationEmail,
                         PlanDesc = epaperSub.RateDescription
                     };
+                    //add newsletter sign up
+                    objSub.Newsletter = epaperSub.NewsletterSignUp;
                 }
 
                 SubscriptionDetails printSub = authUser.SubscriptionDetails.OrderByDescending(t => t.EndDate).FirstOrDefault(x => x.SubscriptionID == 0 && (x.RateType == "Print" || x.RateType == "Bundle" /*&& x.SubType == "Print"*/));
@@ -2400,6 +2409,10 @@ namespace ePaperLive.Controllers
                     //create oauthuser login
                     if (authUser.Login != null)
                         await UserManager.AddLoginAsync(newAccount.Id, authUser.Login);
+                    
+                    //add new user to mail chimp
+                    if (objSub.Newsletter == true)
+                        await AddToMailChimpList(new MailChimpFields { FirstName = objSub.FirstName, LastName = objSub.LastName, EmailAddress = emailAddress });
                 }   
                 //get Subscriber ID
                 SubscriberID = (!String.IsNullOrEmpty(SubscriberID)) ? SubscriberID : newAccount.Id;
@@ -2649,6 +2662,32 @@ namespace ePaperLive.Controllers
             }
             
             return false;
+        }
+
+        public async Task AddToMailChimpList(MailChimpFields mcf) 
+        {
+
+            try
+            {
+                var mailChimpApiKey = ConfigurationManager.AppSettings["MailChimpApiKey"];
+                var mailChimpListID = ConfigurationManager.AppSettings["MailChimpListID"];
+                IMailChimpManager manager = new MailChimpManager(mailChimpApiKey);
+                Tags tags = new Tags();
+
+                var member = new Member { EmailAddress = mcf.EmailAddress, StatusIfNew = Status.Subscribed };
+                member.MergeFields.Add("FNAME", mcf.FirstName);
+                member.MergeFields.Add("LNAME", mcf.LastName);
+                await manager.Members.AddOrUpdateAsync(mailChimpListID, member);
+
+                tags.MemberTags.Add(new Tag() { Name = "ePaper Subscriber", Status = "active" });
+                await manager.Members.AddTagsAsync(mailChimpListID, mcf.EmailAddress, tags);
+            }
+            catch (Exception ex)
+            {
+
+                Util.LogError(ex);
+            }
+          
         }
 
         [AllowAnonymous]
