@@ -28,7 +28,6 @@ namespace ePaperLive.Controllers
                 var mailChimpListID = ConfigurationManager.AppSettings["MailChimpListID"];
 
                 IMailChimpManager manager = new MailChimpManager(mailChimpApiKey);
-                Tags tags = new Tags();
 
                 //var mailChimpListCollection = await manager.Lists.GetAllAsync().ConfigureAwait(false);
                 //var allMembers = await manager.Members.GetAllAsync(listId).ConfigureAwait(false);
@@ -36,7 +35,7 @@ namespace ePaperLive.Controllers
                 using (var context = new ApplicationDbContext())
                 {
                     var sql = @"
-                    SELECT s.FirstName, s.LastName, t.EmailAddress FROM [dbo].[Subscriber_Tranx] t
+                    SELECT DISTINCT s.FirstName, s.LastName, t.EmailAddress FROM [dbo].[Subscriber_Tranx] t
                     JOIN [dbo].[Subscribers] s ON s.SubscriberID = t.SubscriberID
                     WHERE t.OrderID LIKE 'FreeTrial%' AND t.EmailAddress NOT LIKE '%jamaicaobserver%'";
 
@@ -48,13 +47,12 @@ namespace ePaperLive.Controllers
                         member.MergeFields.Add("FNAME", item.FirstName);
                         member.MergeFields.Add("LNAME", item.LastName);
                         await manager.Members.AddOrUpdateAsync(mailChimpListID, member);
-
+                        
+                        Tags tags = new Tags();
                         tags.MemberTags.Add(new Tag() { Name = "Free Trial Subscriber", Status = "active" });
                         await manager.Members.AddTagsAsync(mailChimpListID, item.EmailAddress, tags);
                     }
-                    
                 }
-
             }
             catch (Exception ex)
             {
