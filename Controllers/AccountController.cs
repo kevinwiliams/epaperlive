@@ -2681,10 +2681,10 @@ namespace ePaperLive.Controllers
                     member.MergeFields.Add("FNAME", mcf.FirstName);
                     member.MergeFields.Add("LNAME", mcf.LastName);
                     await manager.Members.AddOrUpdateAsync(mailChimpListID, member);
-
-                    tags.MemberTags.Add(new Tag() { Name = "ePaper Subscriber", Status = "active" });
-                    await manager.Members.AddTagsAsync(mailChimpListID, mcf.EmailAddress, tags);
                 }
+                tags.MemberTags.Add(new Tag() { Name = "ePaper Subscriber", Status = "active" });
+                await manager.Members.AddTagsAsync(mailChimpListID, mcf.EmailAddress, tags);
+                
                
             }
             catch (Exception ex)

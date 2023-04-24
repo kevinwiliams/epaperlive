@@ -101,11 +101,12 @@ namespace ePaperLive.Controllers
                             member.MergeFields.Add("FNAME", item.FirstName.Trim());
                             member.MergeFields.Add("LNAME", item.LastName.Trim());
                             await manager.Members.AddOrUpdateAsync(mailChimpListID, member);
-
-                            Tags tags = new Tags();
-                            tags.MemberTags.Add(new Tag() { Name = "Free Trial Subscriber", Status = "active" });
-                            await manager.Members.AddTagsAsync(mailChimpListID, emailAddress, tags);
                         }
+
+                        Tags tags = new Tags();
+                        tags.MemberTags.Add(new Tag() { Name = "ePaper Subscriber", Status = "active" });
+                        await manager.Members.AddTagsAsync(mailChimpListID, emailAddress, tags);
+                        
 
                     }
                 }

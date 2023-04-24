@@ -735,6 +735,7 @@
     <Content Include="Views\Reports\SubListEpaper.cshtml" />
     <Content Include="Views\Admin\AddRole.cshtml" />
     <Content Include="Views\MailChimp\GetAllList.cshtml" />
+    <Content Include="Views\MailChimp\UploadExistingList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\roslyn\" />
