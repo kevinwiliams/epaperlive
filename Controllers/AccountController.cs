@@ -2674,13 +2674,18 @@ namespace ePaperLive.Controllers
                 IMailChimpManager manager = new MailChimpManager(mailChimpApiKey);
                 Tags tags = new Tags();
 
-                var member = new Member { EmailAddress = mcf.EmailAddress, StatusIfNew = Status.Subscribed };
-                member.MergeFields.Add("FNAME", mcf.FirstName);
-                member.MergeFields.Add("LNAME", mcf.LastName);
-                await manager.Members.AddOrUpdateAsync(mailChimpListID, member);
+                var exists = await manager.Members.ExistsAsync(mailChimpListID, mcf.EmailAddress);
+                if (!exists)
+                {
+                    var member = new Member { EmailAddress = mcf.EmailAddress, StatusIfNew = Status.Subscribed };
+                    member.MergeFields.Add("FNAME", mcf.FirstName);
+                    member.MergeFields.Add("LNAME", mcf.LastName);
+                    await manager.Members.AddOrUpdateAsync(mailChimpListID, member);
 
-                tags.MemberTags.Add(new Tag() { Name = "ePaper Subscriber", Status = "active" });
-                await manager.Members.AddTagsAsync(mailChimpListID, mcf.EmailAddress, tags);
+                    tags.MemberTags.Add(new Tag() { Name = "ePaper Subscriber", Status = "active" });
+                    await manager.Members.AddTagsAsync(mailChimpListID, mcf.EmailAddress, tags);
+                }
+               
             }
             catch (Exception ex)
             {
