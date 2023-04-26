@@ -59,9 +59,9 @@
                             <div id="search-form">
                                 <div class="plans pb-3">
                                     <div class="row justify-content-md-center">
-                                        <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.RateType, "Epaper", htmlAttributes: new { @autocomplete = "off", @id = "ePaper", @data_request_url = Url.Action("GetRatesList", "account") })<label for="ePaper">ePaper Edition</label></div>
-                                        <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.RateType, "Print", htmlAttributes: new { @autocomplete = "off", @id = "Print", @data_request_url = Url.Action("GetRatesList", "account") })<label for="Print">Print Edition</label></div>
-                                        <div class="col-lg-3 col-sm-4 p-2">@Html.RadioButtonFor(x => x.RateType, "Bundle", htmlAttributes: new { @autocomplete = "off", @id = "Bundle", @data_request_url = Url.Action("GetRatesList", "account") })<label for="Bundle">Print & ePaper Bundle</label></div>
+                                        <div class="col-lg-3 pb-lg-2 pb-2">@Html.RadioButtonFor(x => x.RateType, "Epaper", htmlAttributes: new { @autocomplete = "off", @id = "ePaper", @data_request_url = Url.Action("GetRatesList", "account") })<label for="ePaper">ePaper Edition</label></div>
+                                        <div class="col-lg-3 pb-lg-2 pb-2">@Html.RadioButtonFor(x => x.RateType, "Print", htmlAttributes: new { @autocomplete = "off", @id = "Print", @data_request_url = Url.Action("GetRatesList", "account") })<label for="Print">Print Edition</label></div>
+                                        <div class="col-lg-3 pb-lg-2 pb-2">@Html.RadioButtonFor(x => x.RateType, "Bundle", htmlAttributes: new { @autocomplete = "off", @id = "Bundle", @data_request_url = Url.Action("GetRatesList", "account") })<label for="Bundle">Print & ePaper Bundle</label></div>
                                     </div>
                                 </div>
                                 @* @Html.Action("GetRatesList", "Account")*@
@@ -113,6 +113,12 @@
                                             @Html.LabelFor(model => model.NotificationEmail, htmlAttributes: new { @class = "form-check-label" })
                                         </div>
                                     </div>
+                                    <br/>
+                                    <hr />
+                                    <strong class="small"><p>Marketing Permissions (newsletter opt-in)</p></strong>
+                                    <p class="small">Jamaica Observer Limited will use the information you provide on this form to be in touch with you and to provide updates and marketing. You can change your mind at any time by clicking the unsubscribe link in the footer of any email you receive from us, or by contacting us at newsletter@jamaicaobserver.com. We will treat your information with respect. </p>
+                                    <p class="small">We use Mailchimp as our marketing platform. By clicking below to subscribe, you acknowledge that your information will be transferred to Mailchimp for processing. <a href="https://mailchimp.com/legal/terms" target="_blank">Learn more about Mailchimp's privacy practices here.</a></p>
+
                                 </div>
                             </div>
                             <div class="form-group">
