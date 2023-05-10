@@ -2712,7 +2712,12 @@ namespace ePaperLive.Controllers
 
             try
             {
+                
+
                 AuthSubcriber clientData = GetAuthSubscriber(); //pull exisiting data
+                //clear session table before transaction incase of previous cc failure
+                ClearDBSession(clientData.EmailAddress);
+
                 var processedClientData = new AuthSubcriber();
                 var deliveryAddress = (clientData.AddressDetails != null) ? clientData.AddressDetails.FirstOrDefault(x => x.AddressType == "D") : null;
                 List<PaymentDetails> paymentDetailsList = new List<PaymentDetails>();
@@ -2824,7 +2829,6 @@ namespace ePaperLive.Controllers
                         {
                             case PaymentStatus.Successful:
                                 //await SaveSubscriptionAsync();
-                                paymentDetails.IsMadeLiveSuccessful = true;
                                 paymentDetails.TransactionSummary = summary;
                                 paymentDetails.OrderNumber = transactionDetails.OrderNumber;
                                 paymentDetails.ConfirmationNumber = summary.ReferenceNo;
