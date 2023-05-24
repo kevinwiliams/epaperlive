@@ -54,6 +54,7 @@ namespace ePaperLive.Models
         public DbSet<Delivery_Zones> delivery_zones { get; set; }
         public DbSet<Coupons> coupons { get; set; }
         public DbSet<user_activity_log> User_Activity_Logs { get; set; }
+        public DbSet<school_govt_rates> school_govt_rates { get; set; }
 
     }
 }

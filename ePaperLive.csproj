@@ -344,6 +344,7 @@
     <Compile Include="Controllers\SubscribersController.cs" />
     <Compile Include="Controllers\TransactionsController.cs" />
     <Compile Include="DBModel\ClientSnapShot.cs" />
+    <Compile Include="DBModel\school_govt_rates.cs" />
     <Compile Include="DBModel\user_activity_logs.cs" />
     <Compile Include="DBModel\delivery_zones.cs" />
     <Compile Include="DBModel\JOL_UserSession.cs" />
