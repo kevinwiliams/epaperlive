@@ -341,6 +341,7 @@
     <Compile Include="Controllers\PaymentsController.cs" />
     <Compile Include="Controllers\ReaderController.cs" />
     <Compile Include="Controllers\ReportsController.cs" />
+    <Compile Include="Controllers\SchoolGovRatesController.cs" />
     <Compile Include="Controllers\SubscribersController.cs" />
     <Compile Include="Controllers\TransactionsController.cs" />
     <Compile Include="DBModel\ClientSnapShot.cs" />
@@ -366,6 +367,10 @@
     <Compile Include="Migrations\202211082016407_Init.cs" />
     <Compile Include="Migrations\202211082016407_Init.designer.cs">
       <DependentUpon>202211082016407_Init.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202305241656267_SetIdentitySeed.cs" />
+    <Compile Include="Migrations\202305241656267_SetIdentitySeed.designer.cs">
+      <DependentUpon>202305241656267_SetIdentitySeed.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -737,6 +742,11 @@
     <Content Include="Views\Admin\AddRole.cshtml" />
     <Content Include="Views\MailChimp\GetAllList.cshtml" />
     <Content Include="Views\MailChimp\UploadExistingList.cshtml" />
+    <Content Include="Views\SchoolGovRates\Create.cshtml" />
+    <Content Include="Views\SchoolGovRates\Delete.cshtml" />
+    <Content Include="Views\SchoolGovRates\Details.cshtml" />
+    <Content Include="Views\SchoolGovRates\Edit.cshtml" />
+    <Content Include="Views\SchoolGovRates\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\roslyn\" />
@@ -776,6 +786,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202211082016407_Init.resx">
       <DependentUpon>202211082016407_Init.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202305241656267_SetIdentitySeed.resx">
+      <DependentUpon>202305241656267_SetIdentitySeed.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -1,9 +1,10 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace ePaperLive.DBModel
+﻿namespace ePaperLive.DBModel
 {
+    using System;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+
+
     public class school_govt_rates
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]

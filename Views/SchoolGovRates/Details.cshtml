@@ -1,0 +1,98 @@
+﻿@model ePaperLive.DBModel.school_govt_rates
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>school_govt_rates</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ParentRateID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ParentRateID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Domains)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Domains)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Category)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Category)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RateDescr)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RateDescr)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Curr)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Curr)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Rate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Rate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Term)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Term)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Units)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Units)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UpdatedAt)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UpdatedAt)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Active)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Active)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.SchGovtID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
