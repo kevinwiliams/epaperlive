@@ -269,6 +269,67 @@ namespace ePaperLive.Controllers
             }
         }
 
+        [Route("plans")]
+        public async Task<ActionResult> Plans()
+        {
+            try
+            {
+                using (var context = new ApplicationDbContext())
+                {
+                    var sql = @"
+                    SELECT PlanDesc, COUNT(*) Total FROM [dbo].[Subscriber_Epaper]
+                    GROUP BY PlanDesc 
+                    ORDER BY PlanDesc";
+
+                    var result = await context.Database.SqlQuery<PlansList>(sql).ToListAsync();
+                    return View(result);
+                }
+            }
+            catch (Exception ex)
+            {
+
+                Util.LogError(ex);
+                return View();
+            }
+
+        }
+
+
+        [HttpPost]
+        [Route("plans")]
+        public async Task<ActionResult> Plans(DateTime startDate, DateTime endDate)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+
+                try
+                {
+                    
+
+                    var sql = @"
+                    SELECT PlanDesc, COUNT(*) Total FROM [dbo].[Subscriber_Epaper]
+                    WHERE [CreatedAt] BETWEEN @startDate AND @endDate  
+                    GROUP PlanDesc 
+                    ORDER BY PlanDesc";
+
+                    var sDate = new SqlParameter("startDate", startDate);
+                    var eDate = new SqlParameter("endDate", endDate.AddDays(1));
+
+
+                    var result = await context.Database.SqlQuery<PlansList>(sql, sDate, eDate).ToListAsync();
+
+                    return View(result);
+                }
+                catch (Exception ex)
+                {
+
+                    Util.LogError(ex);
+                }
+
+                return View();
+            }
+        }
+
         [Route("epapersublist")]
         public async Task<ActionResult> SubListEpaper()
         {

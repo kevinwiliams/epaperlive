@@ -747,6 +747,7 @@
     <Content Include="Views\SchoolGovRates\Details.cshtml" />
     <Content Include="Views\SchoolGovRates\Edit.cshtml" />
     <Content Include="Views\SchoolGovRates\Index.cshtml" />
+    <Content Include="Views\Reports\Plans.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\roslyn\" />

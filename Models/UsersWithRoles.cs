@@ -28,6 +28,12 @@ namespace ePaperLive.Models
         public int Total { get; set; }
     }
 
+    public class PlansList
+    {
+        public string PlanTitle { get; set; }
+        public int Total { get; set; }
+    }
+
     public class LocationReport
     {
         public string FirstName { get; set; }
