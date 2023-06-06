@@ -31,6 +31,7 @@ namespace ePaperLive.Models
     public class PlansList
     {
         public string PlanTitle { get; set; }
+        public string SubType { get; set; }
         public int Total { get; set; }
     }
 

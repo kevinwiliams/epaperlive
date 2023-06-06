@@ -33,16 +33,18 @@
         <thead>
             <tr>
                 <th>Plan</th>
+                <th>SubType</th>
                 <th>Total</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var item in Model)
             {
-                <tr>
-                    <td>@item.PlanTitle</td>
-                    <td>@item.Total</td>
-                </tr>
+            <tr>
+                <td>@item.PlanTitle</td>
+                <td>@item.SubType</td>
+                <td>@item.Total</td>
+            </tr>
             }
         </tbody>
         <tfoot>
@@ -100,6 +102,7 @@
         $('#eDate').html(moment($('[name=endDate]').val()).format('LL'));
 
         $('#dataTable').DataTable({
+            order :[[1, 'desc']],
             pageLength: 25,
             dom: 'Bfrtip',
             buttons: [
@@ -115,7 +118,7 @@
 
                 // Total over all pages
                 var total = api
-                    .column(1)
+                    .column(2)
                     .data()
                     .reduce(function (a, b) {
                         return intVal(a) + intVal(b);
@@ -123,7 +126,7 @@
 
                 // Total over this page
                 var pageTotal = api
-                    .column(1, { page: 'current' })
+                    .column(2, { page: 'current' })
                     .data()
                     .reduce(function (a, b) {
                         return intVal(a) + intVal(b);

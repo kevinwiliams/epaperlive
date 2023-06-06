@@ -282,6 +282,13 @@ namespace ePaperLive.Controllers
                     ORDER BY CONCAT(PlanDesc, ' - ', SubType)";
 
                     var result = await context.Database.SqlQuery<PlansList>(sql).ToListAsync();
+                    foreach (var item in result)
+                    {
+                        var subType = item.PlanTitle.Split('-')[item.PlanTitle.Split('-').Length - 1];
+                        var planDesc = item.PlanTitle.Replace("-" + subType, "");
+                        item.SubType = subType;
+                        item.PlanTitle = planDesc;
+                    }
                     return View(result);
                 }
             }
@@ -315,6 +322,14 @@ namespace ePaperLive.Controllers
 
 
                     var result = await context.Database.SqlQuery<PlansList>(sql, sDate, eDate).ToListAsync();
+
+                    foreach (var item in result)
+                    {
+                        var subType = item.PlanTitle.Split('-')[item.PlanTitle.Split('-').Length - 1];
+                        var planDesc = item.PlanTitle.Replace("-" + subType, "");
+                        item.SubType = subType;
+                        item.PlanTitle = planDesc;
+                    }
 
                     return View(result);
                 }
