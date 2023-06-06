@@ -7,7 +7,7 @@
 <h2>SignUps</h2>
 
 <div class="container pt-5">
-    <h2>Sign Ups Report</h2>
+    <h2>Plans Breakdown Report</h2>
     @using (Html.BeginForm("Plans", "Reports", FormMethod.Post, new { @name = "plansReport" }))
     {
         <div class="row p-4">
@@ -40,7 +40,7 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>>@item.PlanTitle</td>
+                    <td>@item.PlanTitle</td>
                     <td>@item.Total</td>
                 </tr>
             }

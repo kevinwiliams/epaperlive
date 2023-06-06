@@ -14,7 +14,7 @@
         public string Domains { get; set; }
         [StringLength(5)]
         public string Category { get; set; }
-        [StringLength(5)]
+        [StringLength(250)]
         public string RateDescr { get; set; }
         [StringLength(10)]
         public string Curr { get; set; }

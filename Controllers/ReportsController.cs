@@ -277,9 +277,9 @@ namespace ePaperLive.Controllers
                 using (var context = new ApplicationDbContext())
                 {
                     var sql = @"
-                    SELECT PlanDesc, COUNT(*) Total FROM [dbo].[Subscriber_Epaper]
-                    GROUP BY PlanDesc 
-                    ORDER BY PlanDesc";
+                    SELECT CONCAT(PlanDesc, ' - ', SubType) as PlanTitle, COUNT(*) Total FROM [dbo].[Subscriber_Epaper]
+                    GROUP BY CONCAT(PlanDesc, ' - ', SubType) 
+                    ORDER BY CONCAT(PlanDesc, ' - ', SubType)";
 
                     var result = await context.Database.SqlQuery<PlansList>(sql).ToListAsync();
                     return View(result);
@@ -304,13 +304,11 @@ namespace ePaperLive.Controllers
 
                 try
                 {
-                    
-
                     var sql = @"
-                    SELECT PlanDesc, COUNT(*) Total FROM [dbo].[Subscriber_Epaper]
-                    WHERE [CreatedAt] BETWEEN @startDate AND @endDate  
-                    GROUP PlanDesc 
-                    ORDER BY PlanDesc";
+                    SELECT CONCAT(PlanDesc, ' - ', SubType) as PlanTitle, COUNT(*) Total FROM [dbo].[Subscriber_Epaper]
+                    WHERE [CreatedAt] BETWEEN @startDate AND @endDate    
+                    GROUP BY CONCAT(PlanDesc, ' - ', SubType) 
+                    ORDER BY CONCAT(PlanDesc, ' - ', SubType)";
 
                     var sDate = new SqlParameter("startDate", startDate);
                     var eDate = new SqlParameter("endDate", endDate.AddDays(1));
