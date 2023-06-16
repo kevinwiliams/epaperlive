@@ -1815,6 +1815,7 @@ namespace ePaperLive.Controllers
             {
                 try
                 {
+                    Subscriber objSub = GetSubscriber();
                     UserLocation objLoc = GetSubscriberLocation();
                     var market = (objLoc.Country_Code == "JM") ? "Local" : "International";
 
@@ -1822,7 +1823,30 @@ namespace ePaperLive.Controllers
                     List<printandsubrate> ratesList = db.printandsubrates.AsNoTracking()
                                         .Where(x => x.Market == market)
                                         .Where(x => x.Active == true).ToList();
+                    
+                    var userDomain = objSub.EmailAddress.Split('@')[1];
+                    school_govt_rates schoolGovRate = db.school_govt_rates.AsNoTracking()
+                        .Where(x => x.Domains == userDomain)
+                        .Where(x => x.Active == true).FirstOrDefault();
 
+                    if (schoolGovRate != null)
+                    {
+                        ratesList.RemoveAll(x => x.Type == "Epaper");
+                        printandsubrate addSchGovtRate = new printandsubrate
+                        {
+                            Rateid = schoolGovRate.SchGovtID,
+                            Market = "Local",
+                            Type = "Epaper",
+                            RateDescr = schoolGovRate.RateDescr,
+                            ETerm = schoolGovRate.Term,
+                            ETermUnit = schoolGovRate.Units,
+                            Curr = schoolGovRate.Curr,
+                            Rate = schoolGovRate.Rate,
+                            Active = schoolGovRate.Active
+                        };
+
+                        ratesList.Add(addSchGovtRate);
+                    }
 
                     var nratesList = (rateType != null) ? ratesList.Where(x => x.Type == rateType).ToList() : ratesList;
      
@@ -1830,7 +1854,7 @@ namespace ePaperLive.Controllers
                     {
                         item.PrintDayPattern = DeliveryFreqToDate(item.PrintDayPattern);
                     }
-
+                    Session["currentSubRates"] = nratesList;
                     model.Rates = nratesList;
                     model.RateType = rateType;
                     model.IsRenewal = isRenewal;
@@ -1949,7 +1973,9 @@ namespace ePaperLive.Controllers
 
                         objTran.RateID = data.RateID;
 
-                        var selectedPlan = db.printandsubrates.FirstOrDefault(x => x.Rateid == data.RateID);
+                        //var selectedPlan = db.printandsubrates.FirstOrDefault(x => x.Rateid == data.RateID);
+                        var currentPlans = GetCurrentRatesList();
+                        var selectedPlan = currentPlans.FirstOrDefault(x => x.Rateid == data.RateID);
                         //add 30 days free epaper sub based on rates
                         var freeDaysRates = WebConfigurationManager.AppSettings["freeDaysPromoRates"];
                         var freeDaysCnt = WebConfigurationManager.AppSettings["freeDaysPromoCnt"];
@@ -2206,7 +2232,10 @@ namespace ePaperLive.Controllers
                             Subscriber objSub = GetSubscriber();
                             Subscriber_Tranx objTran = GetTransaction();
 
-                            var selectedPlan = _db.printandsubrates.AsNoTracking().FirstOrDefault(x => x.Rateid == data.RateID);
+                            //var selectedPlan = db.printandsubrates.FirstOrDefault(x => x.Rateid == data.RateID);
+                            var currentPlans = GetCurrentRatesList();
+                            var selectedPlan = currentPlans.FirstOrDefault(x => x.Rateid == data.RateID);
+
                             var rate = (selectedPlan.OfferIntroRate) ? selectedPlan.IntroRate : selectedPlan.Rate;
 
                             if (data.PromoCode != null)
@@ -3870,6 +3899,17 @@ namespace ePaperLive.Controllers
             }
 
             return (List<SelectListItem>)Session["Parishes"]; ;
+        }
+
+        public List<printandsubrate> GetCurrentRatesList()
+        {
+           
+            if (Session["currentSubRates"] == null)
+            {
+                Session["currentSubRates"] = new List<printandsubrate>();
+            }
+            return (List<printandsubrate>)Session["currentSubRates"];
+            
         }
         private void RemoveSubscriber()
         {
