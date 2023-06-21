@@ -1815,7 +1815,7 @@ namespace ePaperLive.Controllers
             {
                 try
                 {
-                    Subscriber objSub = GetSubscriber();
+                    AuthSubcriber authUser = GetAuthSubscriber();
                     UserLocation objLoc = GetSubscriberLocation();
                     var market = (objLoc.Country_Code == "JM") ? "Local" : "International";
 
@@ -1824,7 +1824,7 @@ namespace ePaperLive.Controllers
                                         .Where(x => x.Market == market)
                                         .Where(x => x.Active == true).ToList();
                     
-                    var userDomain = objSub.EmailAddress.Split('@')[1];
+                    var userDomain = authUser.EmailAddress.Split('@')[1];
                     school_govt_rates schoolGovRate = db.school_govt_rates.AsNoTracking()
                         .Where(x => x.Domains == userDomain)
                         .Where(x => x.Active == true).FirstOrDefault();
