@@ -2489,8 +2489,35 @@ namespace ePaperLive.Controllers
                             await context.SaveChangesAsync();
                         }
                     }
+                    //TODO: GetRatesList
+                    List<printandsubrate> ratesList = context.printandsubrates.AsNoTracking().Where(x => x.Active == true).ToList();
 
-                    var selectedPlan = context.printandsubrates.AsNoTracking().SingleOrDefault(b => b.Rateid == rateID);
+                    var userDomain = authUser.EmailAddress.Split('@')[1];
+                    school_govt_rates schoolGovRate = context.school_govt_rates.AsNoTracking()
+                        .Where(x => x.Domains == userDomain)
+                        .Where(x => x.Active == true).FirstOrDefault();
+
+                    if (schoolGovRate != null)
+                    {
+                        ratesList.RemoveAll(x => x.Type == "Epaper");
+                        printandsubrate addSchGovtRate = new printandsubrate
+                        {
+                            Rateid = schoolGovRate.SchGovtID,
+                            Market = "Local",
+                            Type = "Epaper",
+                            RateDescr = schoolGovRate.RateDescr,
+                            ETerm = schoolGovRate.Term,
+                            ETermUnit = schoolGovRate.Units,
+                            Curr = schoolGovRate.Curr,
+                            Rate = schoolGovRate.Rate,
+                            Active = schoolGovRate.Active
+                        };
+
+                        ratesList.Add(addSchGovtRate);
+                    }
+
+                    var selectedPlan = ratesList.SingleOrDefault(b => b.Rateid == rateID);
+                    //var selectedPlan = context.printandsubrates.AsNoTracking().SingleOrDefault(b => b.Rateid == rateID);
 
                     //save transaction log
                     var lastTransaction = authUser.PaymentDetails.OrderByDescending(x => x.TranxDate).FirstOrDefault(x => x.TransactionID > 0);

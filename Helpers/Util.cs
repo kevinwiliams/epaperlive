@@ -591,42 +591,41 @@ namespace ePaperLive
         #region Encryption Functions
         public static string EncryptData(string plaintext)
         {
+            byte[] plaintextBytes = Encoding.Unicode.GetBytes(plaintext);
 
-            TripleDESCryptoServiceProvider TripleDes = new TripleDESCryptoServiceProvider();
+            using (TripleDESCryptoServiceProvider TripleDes = new TripleDESCryptoServiceProvider())
+            {
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    using (CryptoStream encStream = new CryptoStream(ms, TripleDes.CreateEncryptor(), CryptoStreamMode.Write))
+                    {
+                        encStream.Write(plaintextBytes, 0, plaintextBytes.Length);
+                        encStream.FlushFinalBlock();
 
-            byte[] plaintextBytes = System.Text.Encoding.Unicode.GetBytes(plaintext);
-
-            // Create the stream. 
-            System.IO.MemoryStream ms = new System.IO.MemoryStream();
-            // Create the encoder to write to the stream. 
-            CryptoStream encStream = new CryptoStream(ms, TripleDes.CreateEncryptor(), System.Security.Cryptography.CryptoStreamMode.Write);
-
-            // Use the crypto stream to write the byte array to the stream.
-            encStream.Write(plaintextBytes, 0, plaintextBytes.Length);
-            encStream.FlushFinalBlock();
-
-            // Convert the encrypted stream to a printable string. 
-            return Convert.ToBase64String(ms.ToArray());
+                        return Convert.ToBase64String(ms.ToArray());
+                    }
+                }
+            }
         }
 
         public static string DecryptData(string encryptedtext)
         {
-            TripleDESCryptoServiceProvider TripleDes = new TripleDESCryptoServiceProvider();
-
-            // Convert the encrypted text string to a byte array. 
             byte[] encryptedBytes = Convert.FromBase64String(encryptedtext);
 
-            // Create the stream. 
-            System.IO.MemoryStream ms = new System.IO.MemoryStream();
-            // Create the decoder to write to the stream. 
-            CryptoStream decStream = new CryptoStream(ms, TripleDes.CreateDecryptor(), CryptoStreamMode.Write);
+            using (TripleDESCryptoServiceProvider TripleDes = new TripleDESCryptoServiceProvider())
+            {
+                using (MemoryStream ms = new MemoryStream(encryptedBytes))
+                {
+                    using (CryptoStream decStream = new CryptoStream(ms, TripleDes.CreateDecryptor(), CryptoStreamMode.Read))
+                    {
+                        byte[] decryptedBytes = new byte[encryptedBytes.Length];
 
-            // Use the crypto stream to write the byte array to the stream.
-            decStream.Write(encryptedBytes, 0, encryptedBytes.Length);
-            decStream.FlushFinalBlock();
+                        int bytesRead = decStream.Read(decryptedBytes, 0, decryptedBytes.Length);
 
-            // Convert the plaintext stream to a string. 
-            return Encoding.Unicode.GetString(ms.ToArray());
+                        return Encoding.Unicode.GetString(decryptedBytes, 0, bytesRead);
+                    }
+                }
+            }
         }
 
         public static dynamic EncryptRijndaelManaged(string raw, string action)
